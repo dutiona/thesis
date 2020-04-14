@@ -1,0 +1,26 @@
+\graphicspath{{chapt_dutch/}{chapt2/}{chapt3/}{chapt4/}}
+\renewcommand{\thesection}{\arabic{section}}    % chapter without number, so don't use chapterno.sectionno
+
+\renewcommand{\bibname}{Referenties}
+% Header
+\renewcommand\evenpagerightmark{{\scshape\small Nederlandse Samenvatting}}
+\renewcommand\oddpageleftmark{{\scshape\small Summary in Dutch}}
+
+\chapter[Nederlandse samenvatting]%
+{Nederlandse samenvatting \\\makebox[2.82in]{--Summary in Dutch--}}
+
+\hyphenation{job-respons-tijd blijkt dynami-sche mo-nitoringarchitectuur monito-ringplatform service-manager verde-ling reke-ning orga-nisatieprofielen resource-interconnec-ties}
+\def\hyph{-\penalty0\hskip0pt\relax}
+
+nederlandse samenvatting
+
+\clearpage
+
+\bibliographystyle{phdbib}
+\bibliography{PhD}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\renewcommand*{\thesection}{\thechapter.\arabic{section}}       % reset again to chaptnum.sectnum
+
+
