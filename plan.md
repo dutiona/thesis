@@ -10,10 +10,10 @@ Plan manuscrit
 Introduction
 --- 
 
-* Définition, sujet, contexte d'étude  reprendre texte de ma thèses en 3 mn
-* Question de départ, problématique  généricité + traitement d'images
-* Présentation rapide de la méthodologie  génie logiciel + traitement d'image
-* Objectif et plan  2 axes GL+TI
+* Définition, sujet, contexte d'étude -> reprendre texte de ma thèses en 3 mn
+* Question de départ, problématique -> généricité + traitement d'images
+* Présentation rapide de la méthodologie -> génie logiciel + traitement d'image
+* Objectif et plan -> 2 axes GL+TI
 * Justification de l'étude
  
  
