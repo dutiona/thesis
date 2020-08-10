@@ -78,7 +78,6 @@
       * VIGRA
       * Cython
       * cppyy
-   * forward ref sur pont statique-dynamique
 
 ### Taxonomie des images et algorithmes
 
@@ -110,11 +109,13 @@
 * rappel de la problématique (backward ref depuis Généricité/4.)
 * expliquer l'approche hybride (son design et les techniques de dispatch n*n avec variants)
 * bench, trade-off
-* continuité sur JIT avec autowig, cppyy
+* continuité sur JIT avec autowig, cppyy (perspective)
 
-### Conclusion
+### Conclusion et perspectives
 
 * Synthèse générale
 * Réponse à la problématique d'Introduction
 * confrontation à d'autres travaux de recherche ayant donné naissance à une bibliothèque de TI
 * Ouvertures, perspectives, limites
+  * continuité JIT
+  * ce qu'il reste à faire
