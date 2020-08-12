@@ -275,15 +275,15 @@ KOMA-script documentation for details.}]{fancyhdr}
 %	DECLARATION PAGE DESIGN
 %----------------------------------------------------------------------------------------
 
-\newcommand{\authorshipname}{Declaration}
-\providecaptionname{american,australian,british,canadian,english,newzealand,UKenglish,USenglish}{\authorshipname}{Declaration} % Declaration of Authorship text for English countries
+\newcommand{\authorshipnamee}{Declaration}
+\providecaptionname{american,australian,british,canadian,english,newzealand,UKenglish,USenglish}{\authorshipnamee}{Declaration} % Declaration of Authorship text for English countries
 \providecaptionname{german,ngerman,austrian,naustrian}{\authorshipname}{Eidesstattliche Erkl\"arung} % Declaration of Authorship text for Germanic countries
 
 \newenvironment{declaration}{
-	\tttypeout{\authorshipname}
+	\tttypeout{\authorshipnamee}
 	\thispagestyle{plain}
 	\null\vfil
-	{\noindent\huge\bfseries\authorshipname\par\vspace{10pt}}
+	{\noindent\huge\bfseries\authorshipnamee\par\vspace{10pt}}
 }{}
 
 %----------------------------------------------------------------------------------------

@@ -48,6 +48,7 @@
 \usepackage{ifthen}     % ifthenelse command
 %\usepackage{mathenv}	% better eqnarray
 \usepackage{listings}
+\usepackage{lipsum}
 
 
 %%%%%%%%%%%%%%%%%
@@ -75,31 +76,31 @@
 %%   FRONT PAGE       %%
 %%%%%%%%%%%%%%%%%%%%%%%%
 % 
- \thispagestyle{empty}   % no headings for this page
+\thispagestyle{empty}   % no headings for this page
 % 
 % % Header
- \noindent
- \begin{minipage}{3cm}%
-   \includegraphics*[width=2cm]{UGentlogo}% logo ugent
- \end{minipage}\hfill
- \begin{minipage}{8cm}
- \raggedleft
- \textsf{Universiteit Gent\\
- Faculteit Ingenieurswetenschappen\\
- Vakgroep Informatietechnologie}
- \end{minipage}
+\noindent
+\begin{minipage}{3cm}%
+  \includegraphics*[width=2cm]{UGentlogo}% logo ugent
+\end{minipage}\hfill
+\begin{minipage}{8cm}
+  \raggedleft
+  \textsf{Universiteit Gent\\
+    Faculteit Ingenieurswetenschappen\\
+    Vakgroep Informatietechnologie}
+\end{minipage}
 % 
 % % Title
 \bigskip
-   \begin{flushleft}
-     \Large \textsf{Architecturen en algoritmen voor netwerk- en dienstbewust Grid-resourcebeheer}\\
-     \vspace{0.1in}\large{\textsf{Architectures and Algorithms for Network and Service Aware Grid Resource Management}}%\noindent
-   \end{flushleft}
- \hrule
+\begin{flushleft}
+  \Large \textsf{Architecturen en algoritmen voor netwerk- en dienstbewust Grid-resourcebeheer}\\
+  \vspace{0.1in}\large{\textsf{Architectures and Algorithms for Network and Service Aware Grid Resource Management}}%\noindent
+\end{flushleft}
+\hrule
 % 
- \bigskip
-   \LARGE\noindent \textsf{Bruno Volckaert} \hfill
- \bigskip
+\bigskip
+\LARGE\noindent \textsf{Bruno Volckaert} \hfill
+\bigskip
 % 
 % % Front Figure
 % %\bigskip
@@ -114,20 +115,20 @@
 %   \centering%
 %   \includegraphics*[height=10cm, keepaspectratio, clip]{figFront}%
 % \end{figure}%
- \normalsize
+\normalsize
 % 
 % % Footer
- \vfill
- \begin{minipage}{2.0cm}%
-     \includegraphics*[width=2.0cm]{intec}%       % intec logo
- \end{minipage}\hfill
- \begin{minipage}{9cm}
- \raggedleft
- \textsf{Proefschrift tot het bekomen van de graad van \\
- Doctor in de Ingenieurswetenschappen: \\
- Computerwetenschappen \\
- Academiejaar 2005-2006}
- \end{minipage}
+\vfill
+\begin{minipage}{2.0cm}%
+  \includegraphics*[width=2.0cm]{intec}%       % intec logo
+\end{minipage}\hfill
+\begin{minipage}{9cm}
+  \raggedleft
+  \textsf{Proefschrift tot het bekomen van de graad van \\
+    Doctor in de Ingenieurswetenschappen: \\
+    Computerwetenschappen \\
+    Academiejaar 2005-2006}
+\end{minipage}
 
 
 %% INFORMATION PAGE     %%
@@ -144,16 +145,16 @@
   \includegraphics*[width=2cm]{UGentlogo}% logo ugent
 \end{minipage}\hfill
 \begin{minipage}{8cm}
-\raggedleft
-\textsf{Universiteit Gent\\
-Faculteit Ingenieurswetenschappen\\
-Vakgroep Informatietechnologie}
+  \raggedleft
+  \textsf{Universiteit Gent\\
+    Faculteit Ingenieurswetenschappen\\
+    Vakgroep Informatietechnologie}
 \end{minipage}
 \\[2cm]
 
 \noindent \begin{tabular}{ @{} l l}
-Promotoren: & Prof.\ Dr.\ Ir.\ Bart Dhoedt \\
- & Prof.\ Dr.\ Ir.\ Filip De Turck \\
+  Promotoren: & Prof.\ Dr.\ Ir.\ Bart Dhoedt    \\
+              & Prof.\ Dr.\ Ir.\ Filip De Turck \\
 \end{tabular}
 \\[2cm]
 
@@ -163,7 +164,7 @@ Promotoren: & Prof.\ Dr.\ Ir.\ Bart Dhoedt \\
 \\[0.3cm]
 \noindent Vakgroep Informatietechnologie \\
 \noindent Gaston Crommenlaan 8 bus 201,
-\noindent B-9050 Gent, Belgi\"e 
+\noindent B-9050 Gent, Belgi\"e
 \\[0.3cm]
 \noindent Tel.: +32-9-331.49.00\\
 \noindent Fax.: +32-9-331.48.99
@@ -173,14 +174,14 @@ Promotoren: & Prof.\ Dr.\ Ir.\ Bart Dhoedt \\
 \vfill
 
 \begin{minipage}{2.0cm}%
-    \includegraphics*[width=2.0cm]{intec}%       % intec logo
+  \includegraphics*[width=2.0cm]{intec}%       % intec logo
 \end{minipage}\hfill
 \begin{minipage}{9cm}
-\raggedleft
-\textsf{Proefschrift tot het behalen van de graad van \\
-Doctor in de Ingenieurswetenschappen: \\
-Computerwetenschappen \\
-Academiejaar 2005-2006}
+  \raggedleft
+  \textsf{Proefschrift tot het behalen van de graad van \\
+    Doctor in de Ingenieurswetenschappen: \\
+    Computerwetenschappen \\
+    Academiejaar 2005-2006}
 \end{minipage}
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
@@ -197,7 +198,7 @@ Academiejaar 2005-2006}
 dankwoord...
 
 \begin{flushright}{\emph{Gent, maart 2006\\
-Bruno Volckaert}}
+      Bruno Volckaert}}
 \end{flushright}
 \selectlanguage{english}
 
@@ -230,7 +231,7 @@ Bruno Volckaert}}
 %\renewcommand\citeform{\thechapter.}
 %\addcontentsline{toc}{section}{\listfigurename}   % not really sure
 
-	%% SUMMARY IN DUTCH       %%
+%% SUMMARY IN DUTCH       %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \selectlanguage{dutch}
 \include{chapt_dutch/chapt_dutch}
