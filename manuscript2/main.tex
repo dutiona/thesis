@@ -1,0 +1,218 @@
+\documentclass{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[numbers]{natbib}
+\usepackage[mode=buildmissing]{standalone}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{subcaption}
+\usepackage{minted}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{tikz-uml}
+\usepackage[]{siunitx}
+\usepackage{makecell}
+
+\usetikzlibrary{3d,calc,positioning}
+\tikzumlset{font=\scriptsize\tt}
+\setminted{fontsize=\scriptsize}
+
+\renewcommand\UrlFont{\color{blue}\rmfamily}
+
+\begin{document}
+%
+\title{Programming in modern C++ for image processing}
+
+
+\author{Michaël Roynard}
+
+%\institute{EPITA Research and Development Laboratory\\
+%  \email{michael.roynard@lrde.epita.fr}
+%}
+
+
+\maketitle
+
+\section{Acknowledgement}
+
+
+\section{Abstract}
+  TODO EN
+
+  TODO FR
+
+\section{Long abstract}
+
+
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\cleardoublepage
+
+
+\chapter{Introduction}
+
+\begin{itemize}
+  \item Définition, sujet, contexte d'étude -> reprendre texte de ma thèses en 3 mn
+  \item Question de départ, problématique -> généricité + traitement d'images
+  \item Présentation rapide de la méthodologie -> génie logiciel bas niveau dans le but de remonter haut niveau pour utilisateur TI
+  \item Objectif et plan
+  \item Justification de l'étude
+\end{itemize}
+
+\cleardoublepage
+
+
+\chapter{Motivations and context}
+
+\begin{itemize}
+  \item Domaines du TI et besoins par domaine
+  \item Profils des utilisateurs et besoins en fonction des profils Intégrateur/Développeur vs Praticien
+  \item Contexte du LRDE (Expériences de Olena \& spécialisation en Morph. Math, Topo. Discrète), définitions de nos besoins spécifiques (outils pour l'expérimentation, outils pour l'éducation, outils pour le logiciel de production)
+  \item Définitions du périmètre de la bibliothèque et de ses objectifs:
+    \begin{itemize}
+      \item Performance
+      \item Facile d'utilisation (UX client)
+      \item Facile de développement (Core developer xp)
+      \item Versatilité des types d'images
+      \item Utilisable depuis Python, Orientée MM
+    \end{itemize}
+\end{itemize}
+
+\cleardoublepage
+
+
+\chapter{Genericity}
+
+\section{Les différentes façon d'atteindre la généricité}
+
+\begin{itemize}
+  \item Approches de la généricité dans les bibliothèques
+  \item Approches de la généricité dans les langages
+\end{itemize}
+
+\section{La généricité en C++ pre-11}
+
+\begin{itemize}
+  \item explications techniques bas niveau, SFINAE
+  \item aboutissement à SCOOP -> synthèse et explication des travaux précédents sur SCOOP
+\end{itemize}
+
+\section{La généricité en Modern C++, C++11 et C++20 (concepts)}
+
+\begin{itemize}
+  \item post C++11 :
+    \begin{itemize}
+      \item simplification d'écriture du SFINAE (variadic, traits)
+      \item if constexpr (c++14), lambda auto
+      \item apports du C++17 pour simplifier encore : folds, template deduction guides, visit/overload for variant, any, template <auto V> struct S
+      \item apports du C++20 : concepts, ranges
+    \end{itemize}
+  \item montrer des exemples de simplification de code
+  \item faire des bench de temps de compilation (flagrant quand passage du SFINAE aux concepts)
+\end{itemize}
+
+\section{Les templates C++ dans un monde dynamique}
+
+\begin{itemize}
+   \item rapide rappel pros./cons. language compilés vs. languages interprétés
+   \item rappel template C++ -> pas de binaire
+   \item faire un topo sur la problématique de distribution de binaire et/ou de compilation chez le client pour un code générique
+   \item passer en revue les solutions existantes :
+     \begin{itemize}
+       \item SWILENA
+       \item VCSN
+       \item VIGRA
+       \item Cython
+       \item cppyy
+    \end{itemize}
+\end{itemize}
+
+
+\cleardoublepage
+
+
+\chapter{Images and algorithms taxonomy}
+
+\begin{itemize}
+\item Définitions des types/catégories de types/propriétés de types
+\item Value/Ref semantics des images
+\item Conceptualisation expliquer par l'exemple (papier rrpr) la relation Image (n) <-> Implem (m) avec n >> m
+  \begin{itemize}
+  \item Concepts déduis des algorithmes et non des types
+  \item Plusieurs algos pour le même opérateur
+  \item Plusieurs implems pour le même algo
+  \end{itemize}
+\item Vision ensembliste des types d'images/algo
+  \begin{itemize}
+  \item versions d'algorithmes
+  \item spécialisations d'algorithmes
+  \end{itemize}
+\item canvas d'algorithmes
+  \begin{itemize}
+  \item factorisation
+  \item opportunités d'optimisation (utilisation de propriétés, parallélisation)
+  \end{itemize}
+\item listing et explications des concepts de la bibliothèque (images, élément structurant)
+\end{itemize}
+
+\cleardoublepage
+
+
+\chapter{Images views}
+
+\begin{itemize}
+\item origine, parallèle avec range-v3
+\item Comment préserver les propriétés
+\item Évaluation paresseuse
+\item Composabilité/chaînage
+\item ...
+\item Performances + Bench
+\end{itemize}
+
+\cleardoublepage
+
+
+\chapter{Static-dynamic bridge}
+
+\begin{itemize}
+  \item rappel de la problématique (backward ref depuis Généricité/4.)
+  \item expliquer l'approche hybride (son design et les techniques de dispatch n*n avec variants)
+  \item bench, trade-off
+  \item continuité sur JIT avec autowig, cppyy (perspective)
+\end{itemize}
+
+\cleardoublepage
+
+
+\chapter{Conclusion and perspectives}
+
+\begin{itemize}
+  \item Synthèse générale
+  \item Réponse à la problématique d'Introduction
+  \item confrontation à d'autres travaux de recherche ayant donné naissance à une bibliothèque de TI
+  \item Ouvertures, perspectives, limites
+  \begin{itemize}
+    \item continuité JIT
+    \item ce qu'il reste à faire
+  \end{itemize}
+\end{itemize}
+
+\cleardoublepage
+
+
+\chapter{Appendices}
+
+\appendix
+
+\section{Bibliography}
+
+\bibliography{bibliography}
+
+
+\end{document}

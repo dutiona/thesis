@@ -21,6 +21,8 @@
 *.mw
 *.nlo
 *.xmpi
+*.pdf
 *.run.xml
 *.synctex.gz
 *.fdb_latexmk
+/**/_minted-*/
