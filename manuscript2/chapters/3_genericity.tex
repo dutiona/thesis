@@ -1,0 +1,145 @@
+\chapter{What is Genericity}
+
+In natural language we say that something is generic when it can fit several purpose at once while being decently
+efficient. For instance, a computer is generic tool that allows one to write documents, access emails, browse Internet,
+play video games, watch movies, read e-books etc. In programming, we will say that a tool is generic when it can fit
+several purposes. For instance, the gcc compiler can compile several programming languages (C, C++, Objective-C,
+Objective-C++, Fortran, Ada, D, Go, and BRIG (HSAIL)) as well as target several architectures (IA-32 (x86), x86-64, ARM,
+SPARC, etc.). Henceforth we can say that gcc is a generic compiler. At this point it is important to note that even
+though a tool is deemed generic, there is a scope on what the tool can do and what the tool cannot do. A compiler
+despite supporting many languages and architectures, will not be able to make a phone call.
+
+Projecting the notion of genericity to Image Processing, we can deduce that we need two important aspects to be generic.
+First, the data structures whose topology and underlying data must be decorelated from the algorithms: we want our
+algorithms to support as much data structures as possible. Second, many algorithms share the same computational shape
+and can be factorized together.
+
+\section{Bringing genericity in IP libraries: solutions and problems}
+
+Many IP libraries have emerged, developed in many programming
+languages. They all faced this problem and tried to bring solutions,
+some of which are reviewed in \cref{sec.state.of.the.art}. Among these
+solutions, we see that \emph{generic programming} is good starting
+point~\cite{geraud.2000.icpr} to design a \emph{generic} library but
+still has many problem. In particular, we focus on the case of
+\textsc{Milena}~\cite{levillain.2010.icip, geraud2012ipolmeeting}, a generic 
+pre-modern C++ IP libray and its shortcomings that led to the design of 
+\textsc{Pylena}~\cite{carlinet2018pylena}.  The work presented in this paper 
+contrasts with the previous works on obtaining genericity for mathematical 
+morphology operators~\cite{darbon.2002.ismm,levillain.2009.ismm} and digital 
+topology operators~\cite{levillain.2012.wadgmm}.
+
+
+
+
+
+Tools able to handle many data representations are said to be
+\emph{generic}. In the particular case of a \emph{library} providing a
+set of \emph{routines}, \emph{genericity} means that the \emph{routines}
+can be applied to a variety of inputs (as opposed to \emph{specific}
+routines that support inputs of unique \emph{predefined} type). As an
+example, consider the morphological \emph{dilation} that takes two
+inputs: an image and a flat structuring element (SE). Then, the set of
+some possible inputs is depicted in~\cref{fig.espaceSAV}. Note that in
+this example, the image is already a type product between the
+underlying \emph{structure kind} and the \emph{value kind}. Let $s$ be
+the number of structures, $v$ the number of types of values, and $k$
+the number of structuring elements. With no \emph{generalization}, one
+would have to write $s \times v \times k$ \emph{dilation} routines.
+
+\begin{figure}[tbp]
+  \centering
+  \subcaptionbox{}{\includestandalone[width=.48\linewidth]{figs/espaceSeI}}
+  \subcaptionbox{}{\includestandalone[width=.48\linewidth]{figs/espaceSAV}}
+  \caption{The space of possible implementation of the \emph{dilation(image, se)}
+    routine. The image axis shown in (a) is in-fact multidimensional and should
+    be considered 2D as in (b).}
+  \label{fig.espaceSAV}
+\end{figure}
+
+Many IP libraries have emerged, developed in many programming
+languages. They all faced this problem and tried to bring solutions,
+some of which are reviewed in \cref{sec.state.of.the.art}. Among these
+solutions, we see that \emph{generic programming} is good starting
+point~\cite{geraud.2000.icpr} to design a \emph{generic} library but
+still has many problem. In particular, we focus on the case of
+\textsc{Milena}~\cite{levillain.2010.icip, geraud2012ipolmeeting}, a generic 
+pre-modern C++ IP libray and its shortcomings that led to the design of 
+\textsc{Pylena}~\cite{carlinet2018pylena}.  The work presented in this paper 
+contrasts with the previous works on obtaining genericity for mathematical 
+morphology operators~\cite{darbon.2002.ismm,levillain.2009.ismm} and digital 
+topology operators~\cite{levillain.2012.wadgmm}.
+
+In \cref{sec.generic}, we present this new generic design, that emerged with the
+evolution of the Modern C++ and allowed solving some \textsc{Milena}'s
+shortcomings. Not only does this new design re-conciliate \emph{simplicity} and
+\emph{performance}, but it also promotes \emph{extensibility} as it enables
+easily creating custom image types as those shown in \cref{subsec.views}.
+
+
+
+
+\section{Bringing genericity in IP libraries: solutions and problems}
+\label{sec.state.of.the.art}
+
+\emph{Generic programming} aims at providing more flexibility to programs. It is
+itself a very \emph{generic} term that means different things to different
+people. It may refer to \emph{parametric polymorphism} (which is the common
+sense in C++), but it may also refer to \emph{data abstraction} and
+\emph{reflection /meta-programming} \citep{gibbons2007datatype}. The accordance
+on a strict definition of \emph{generic programming} is not our objective, but
+we can observe a manifestation of the \emph{generic programming}: a
+parametrization of the routines to augment flexibility.
+
+To tackle the problem of a \emph{generic} dilation from the introduction,
+several programming techniques have been reviewed by \citet{levillain.14.ciarp,
+  geraud.12.hdr}. We discuss these techniques w.r.t. some criteria:
+\emph{usability} (simplicity from the end-user ), \emph{maintainability}
+(simplicity from the library developer stand-point), \emph{run-time
+  availability} (running routines on images whose \emph{kind} is unknown until
+run-time), \emph{efficiency} (speed and binary size tradeoff).
+
+
+\section{Les différentes façon d'atteindre la généricité}
+
+\begin{itemize}
+  \item Approches de la généricité dans les bibliothèques
+  \item Approches de la généricité dans les langages
+\end{itemize}
+
+\section{La généricité en C++ pre-11}
+
+\begin{itemize}
+  \item explications techniques bas niveau, SFINAE
+  \item aboutissement à SCOOP -> synthèse et explication des travaux précédents sur SCOOP
+\end{itemize}
+
+\section{La généricité en Modern C++, C++11 et C++20 (concepts)}
+
+\begin{itemize}
+  \item post C++11 :
+    \begin{itemize}
+      \item simplification d'écriture du SFINAE (variadic, traits)
+      \item if constexpr (c++14), lambda auto
+      \item apports du C++17 pour simplifier encore : folds, template deduction guides, visit/overload for variant, any, template <auto V> struct S
+      \item apports du C++20 : concepts, ranges
+    \end{itemize}
+  \item montrer des exemples de simplification de code
+  \item faire des bench de temps de compilation (flagrant quand passage du SFINAE aux concepts)
+\end{itemize}
+
+\section{Les templates C++ dans un monde dynamique}
+
+\begin{itemize}
+   \item rapide rappel pros./cons. language compilés vs. languages interprétés
+   \item rappel template C++ -> pas de binaire
+   \item faire un topo sur la problématique de distribution de binaire et/ou de compilation chez le client pour un code générique
+   \item passer en revue les solutions existantes :
+     \begin{itemize}
+       \item SWILENA
+       \item VCSN
+       \item VIGRA
+       \item Cython
+       \item cppyy
+    \end{itemize}
+\end{itemize}

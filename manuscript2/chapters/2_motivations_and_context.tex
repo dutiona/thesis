@@ -1,0 +1,62 @@
+\chapter{Image processing and its needs}
+\label{motivations_and_context.chap.image_processing_and_its_needs}
+
+Image processing nowadays is very diverse and cover a wide variety of purpose. Henceforth there are many tools for many
+different usages, from prototyping to production or from 2D image to graph \& complex images. All the complex image
+processing applications relies on the same building blocks that are used and reused to get the wanted applicative
+result. Following this assessment, it makes a lot of sense to provide a user-friendly toolbox of basic building blocks
+that can be used to solve as many problem as possible, and with greet efficiency so that it does not need to be fully
+rewritten when switching from prototyping to production. This paper discusses how we can achieve this goal with
+genericity and how modern C++ (standard 2020) allows the implementation of generic, simple and efficient algorithms.
+This paper later discusses the algorithm composability into pipeline (widely used in image processing) and how modern
+C++, with views, provide the tools to naturally achieve this goal, being efficient by default. Furthermore, the methods
+discussed in this paper are not specific to image processing and can be reapplied to other scientific library aiming at
+solving different kind of problems.
+
+Image processing has evolved over time to become a field where a very wide array of problematics has arisen. The time
+when the 2-dimensional images whose colors were encoded within three 8-bits RGB channels, was a complex construct is
+long gone. Instead, and in the last 20 years, there are many new kind of image being brought by the need in new
+application domains, be they: medical (3D images from MRI), video games (real time 3D rendering, meshes, visual
+effects), astronomy (hyperspectral images with thousands of bands), trees (tree of shapes), graphs (for segmentation,
+maps), and so on.
+
+However, despite those kinds of images may originates from different technology domains, they still are being processed
+through common, more simple algorithms (such as mathematical morphology) which are the basis of more complex
+computations. Thus, it makes sense to have a common base of algorithms to build upon, later, for more complex field
+specific applications.
+
+As such, the concept of genericity was introduced. It aims at providing a common ground about how an image should behave
+when passed to basic algorithms needed for complex applications. This way, in theory, one only needs to write the
+algorithm once for it to work with any given kind of image. In practice, it is also possible to provide a specific
+version of a specific algorithm taking advantage of specific properties when available, to for instance, increase
+execution speed or decrease memory consumption.
+
+Another aspect that Image processing is in a dire need nowadays is efficiency. Be it with Artificial Intelligence that
+needs deep learning on large data set of images or simply the images themselves that are very larges (e.g. 3D mesh with
+over 5 million triangles, several hundred of Go for a satellite image), efficiency is pivotal and mandatory. However
+genericity and efficiency are often conflicting. Coming up with a solution allying those two aspects is a long time
+ongoing work, which is still of topicality nowadays.
+
+\chapter{User profile}
+
+
+
+
+\chapter{Image processing at Epita's Research and Development Laboratory (LRDE)}
+
+\chapter{Library's perimeter and goals}
+
+\begin{itemize}
+  \item Domaines du TI et besoins par domaine
+  \item Profils des utilisateurs et besoins en fonction des profils Intégrateur/Développeur vs Praticien
+  \item Contexte du LRDE (Expériences de Olena \& spécialisation en Morph. Math, Topo. Discrète), définitions de nos
+  besoins spécifiques (outils pour l'expérimentation, outils pour l'éducation, outils pour le logiciel de production)
+  \item Définitions du périmètre de la bibliothèque et de ses objectifs:
+    \begin{itemize}
+      \item Performance
+      \item Facile d'utilisation (UX client)
+      \item Facile de développement (Core developer xp)
+      \item Versatilité des types d'images
+      \item Utilisable depuis Python, Orientée MM
+    \end{itemize}
+\end{itemize}
