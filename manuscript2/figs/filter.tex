@@ -1,0 +1,28 @@
+%TODO : schema with filtered lena color
+
+\documentclass[svgnames,tikz]{standalone}
+\usetikzlibrary{positioning,arrows,calc}
+
+\input{common.tikz}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzset{every node/.style={node distance=5pt, font=\Huge}}
+
+\node[txt] (p0) { filter( };
+
+\node[img, yslant=.5] (p1) [right=of p0, anchor=west] { \includegraphics[width=2cm]{../images/lena_color.png}};
+
+\node[txt] (p2) [right=of p1.west -| p1.east] { , };
+
+\node[txt] (p2) [right=of p2, font=\normalsize, text width=3.5cm] { \verb|[](int x) { | \\%
+    \verb|    return (x % 2) == 0;| \\%
+    \verb|}| };
+
+\node[txt] (p3) [right=of p2] { ) $\rightarrow$ };
+
+
+\node[img, yslant=.5] (p5) [right=of p3] { \includegraphics[width=2cm]{../images/lena_color_filtered.png} };
+
+\end{tikzpicture}
+\end{document}

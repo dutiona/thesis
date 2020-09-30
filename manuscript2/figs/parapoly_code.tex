@@ -1,0 +1,18 @@
+\documentclass[varwidth=4cm,border={0.1cm 0.1cm 0.1cm 0.1cm}]{standalone}
+
+\usepackage{minted}
+
+\setminted[c++]{fontsize=\scriptsize}
+
+\begin{document}
+\begin{minted}{c++}
+template <class InImage>
+void fill(InImage& in,
+  InImage::value_type val)
+{
+  for (auto p :
+      in.get_iterator())
+    out.set_pixel(p, val);
+}
+\end{minted}
+\end{document}

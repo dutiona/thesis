@@ -1,0 +1,20 @@
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{positioning,arrows,calc,3d}
+
+\input{../common.tikz}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzset{every node/.style={node distance=5pt, font=\Huge}}
+
+\node[txt] (p0) { clip( };
+
+\node[img, yslant=.5] (p1) [right=1.2cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_color.png} };
+
+\node[txt] (p2) [right=4.7cm of p0.center] { , Face\_ROI ) $\rightarrow$ };
+
+\node[img, yslant=.5] (p3) [right=9cm of p0.center] { \includegraphics[width=1.5cm]{../../images/lena_color_clipped.png} };
+
+\end{tikzpicture}
+\end{document}

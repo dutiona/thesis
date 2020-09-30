@@ -1,0 +1,39 @@
+\documentclass[svgnames,tikz]{standalone}
+\usetikzlibrary{positioning,backgrounds,calc}
+
+\begin{document}
+\begin{tikzpicture}
+  \tikzset{
+    Box/.style={draw, align=center, minimum height=30pt},
+    ImageBox/.style={Box, fill=LightBlue},
+    AlgoBox/.style={Box, fill=LightGreen}
+  };
+
+
+  \node[ImageBox] (A0) []            {Input\\ \small (RGB-16)};
+  \node[AlgoBox]  (A1) [right=of A0] {Grayscale\\Conversion};
+  \node[AlgoBox]  (A2) [right=of A1] {Sub-quantization\\ \small (8-bit conversion)};
+  \node[AlgoBox]  (A3) [right=of A2] {Dilation};
+  \node[ImageBox] (A4) [right=of A3] {Output\\ \small (Gray 8-bit)};
+
+  \draw[-latex] (A0) -- (A1);
+  \draw[-latex] (A1) -- (A2);
+  \draw[-latex] (A2) -- (A3);
+  \draw[-latex] (A3) -- (A4);
+
+  %%\node [Olive, above=of A2] {Algorithm Composition};
+  \draw[DarkGreen, very thick] ($ (A3.north east) + (.5,.75) $) node [DarkGreen, above left] {Algorithm Composition = MyComplexOperator}
+  rectangle ($ (A1.south west) + (-.5,-.25) $);
+
+
+  \draw[Magenta, very thick] ($ (A0.south west) + (-.5,-.75) $) node [Magenta, below right] {Image Composition = MyComplexImage}
+  rectangle ($ (A2.north east) + (.5,.25) $);
+
+  \begin{scope}[on background layer]
+    \fill[LightGray] ($ (A1.north west) + (-.5,.75) $) rectangle ($ (A3.south east) + (.5,-.25) $);
+    \fill[DarkRed,opacity=0.25] ($ (A0.north west) + (-.5,.25) $) rectangle ($ (A2.south east) + (.5,-.75) $);
+  \end{scope}
+
+  
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,30 @@
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{positioning,arrows,calc,3d}
+
+\input{../common.tikz}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzset{every node/.style={node distance=5pt, font=\Huge}}
+
+\node[txt] (p0) { transform( };
+
+\node[img, yslant=.5] (p1) [right=1.5cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_color.png} };
+
+\node[txt] (p2) [right=4.7cm of p0.center] { , };
+
+\node[img,yslant=.5] (p3) [right=5.2cm of p0.center] {
+  \begin{tikzpicture}
+    \draw (0,0) rectangle (3,3);
+    \draw[blue] (0,3) -- (3,0);
+  \end{tikzpicture}
+};
+
+\node[txt] (p4) [right=8.6cm of p0.center] { ) $\rightarrow$ };
+
+
+\node[img, yslant=.5] (p5) [right=10cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_color_inverted.png} };
+
+\end{tikzpicture}
+\end{document}

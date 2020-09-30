@@ -1,0 +1,35 @@
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{positioning,arrows,calc,3d}
+
+\input{../common.tikz}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzset{every node/.style={node distance=5pt, font=\Huge}}
+
+\node[txt] (p0) { zip( };
+
+\node[img, yslant=.5] (p1) [right=1cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_red.png} };
+
+\node[txt] (p2) [right=4.2cm of p0.center] { , };
+
+\node[img, yslant=.5] (p3) [right=5cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_green.png} };
+
+\node[txt] (p4) [right=8.2cm of p0.center] { , };
+
+\node[img, yslant=.5] (p5) [right=9cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_blue.png} };
+
+\node[txt] (p6) [right=12.4cm of p0.center] { ) $\rightarrow$ };
+
+\begin{scope}[yscale=1, transform shape]
+  \node[img, yslant=.5] (p7) [right=15.7cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_red.png} };
+  \node[img, xshift=1cm, yslant=.5] (p8) [right=15.7cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_green.png} };
+  \node[img, xshift=2cm, yslant=.5] (p9) [right=15.7cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_blue.png} };
+\end{scope}
+
+\node[txt] (p10) [right=13.6cm of p0.center] { Image( };
+\node[txt] (p11) [right=21.2cm of p0.center] { ) };
+
+\end{tikzpicture}
+\end{document}

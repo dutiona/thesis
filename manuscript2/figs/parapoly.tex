@@ -1,0 +1,31 @@
+\documentclass[svgnames,tikz]{standalone}
+
+\usepackage{tikz-uml}
+\usetikzlibrary{3d,calc,positioning}
+\tikzumlset{font=\scriptsize\tt}
+
+\begin{document}
+\begin{tikzpicture}[scale=.5]
+  \umlclass[type=concept]{Image}
+  {
+    typedef iterator\\
+    typedef value\_type\\
+    typedef point\_type\\[.2cm]
+    get\_iterator() const : iterator\\
+    get\_pixel (p : point\_type) : value\_type\\
+    set\_pixel (p : point\_type, v : value\_type)\\
+  }
+  
+  \umlclass[below=.5cm of Image, template=T]{image2d}
+  {
+    using iterator = iterator2d<T>\\
+    using value\_type = T\\
+    using point\_type = point2d\\[.2cm]
+    get\_iterator() const : iterator2d<T>\\
+    get\_pixel (p : point2d) : T\\
+    set\_pixel (p : point2d, v : T)\\
+  }
+  
+  \umlreal{image2d}{Image}
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,25 @@
+\documentclass[svgnames,tikz]{standalone}
+
+\usepackage{tikz-uml}
+\usetikzlibrary{3d,calc,positioning}
+\tikzumlset{font=\scriptsize\tt}
+
+\begin{document}
+\begin{tikzpicture}[scale=.5]
+\umlclass[type=abstract class]{AnyNDImage}
+{
+  \umlvirt{+ get\_iterator() const : any\_iterator}\\
+  \umlvirt{+ get\_pixel(p : any\_point) : std::any}\\
+  \umlvirt{+ set\_pixel(p : any\_point, v : std::any)}\\
+}
+
+\umlclass[below=1cm of AnyNDImage]{image2d-uint8}
+{
+  get\_iterator() const : any\_iterator\\
+  get\_pixel(p : any\_point) : std::any\\
+  set\_pixel(p : any\_point, v : std::any)\\
+}
+
+\umlinherit{image2d-uint8}{AnyNDImage}
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,20 @@
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{positioning,arrows,calc,3d}
+
+\input{../common.tikz}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzset{every node/.style={node distance=5pt, font=\Huge}}
+
+\node[txt] (p0) { green( };
+
+\node[img, yslant=.5] (p1) [right=0.9cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_color.png}};
+
+\node[txt] (p2) [right=4.1cm of p0.center] { ) $\rightarrow$ };
+
+\node[img, yslant=.5] (p3) [right=5.6cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_green.png}};
+
+\end{tikzpicture}
+\end{document}

@@ -1,22 +1,22 @@
 \chapter*{Introduction}
 \label{introduction.chap.introduction}
 
-Nowadays Image processing is omnipresent in day to day's life of people. It is present each time we pass by a CCTV
-camera, each time we go to the hospital do an IMR, each time we drive our car and pass in front of a speed camera and
-each time we use our computer, smartphone or tablet. We just cannot avoid it anymore. The systems using this technology
-sometimes are simple, sometimes are complex. Also the usage made of this technology has several different purposes:
-space observation, medical, quality of life improvement, surveillance, control, autonomous system, etc. Henceforth,
-Image processing is a wide research area and dispite having a mass of previous of work already contributed to, there are
-still a lot to explore.
+Nowadays Image processing is omnipresent in the day to day's life of the people. It is present each time we pass by a
+CCTV camera, each time we go to the hospital do an IMR, each time we drive our car and pass in front of a speed camera
+and each time we use our computer, smartphone or tablet. We just cannot avoid it anymore. The systems using this
+technology sometimes are simple, sometimes are complex. Also the usage made of this technology has several different
+purposes: space observation, medical, quality of life improvement, surveillance, control, autonomous system, etc.
+Henceforth, Image processing is a wide research area and despite having a mass of previous of work already contributed
+to, there are still a lot to explore.
 
 Let us take the example of a modern smartphone application which provides facial recognition in order to recognize
-people whom are featuring inside a photo. To provide accurate result, this application would have to a lot of different
-processing. Indeed, there a a lot of different cases to handle. We can list (non exhaustively) the weather, the light
-exposition, the resolution, the orientation, the number of person, finding the person, distinguishing humans from
-animals, etc. All this in order to finally recognizing the person(s) inside the photo. What the application does not
-tell you is the complexity of the image processing pipeline behind the scene that can not event be executed in its
+people whom are featuring inside a photo. To provide accurate result, this application would have to do a lot of
+different processing. Indeed, there are a lot of different cases to handle. We can list (non exhaustively) the weather,
+the light exposition, the resolution, the orientation, the number of person, finding the person, distinguishing humans
+from animals, etc. All this in order to finally recognizing the person(s) inside the photo. What the application does
+not tell you is the complexity of the image processing pipeline behind the scene that can not event be executed in its
 entirety on your device. Indeed, image processing is costly in computing ressources and would not meet the time
-requirement desired by the user if the entire pipeline was executed on the device. Furthemore, for the final part
+requirement desired by the user if the entire pipeline was executed on the device. Furthermore, for the final part
 "recognize the person on the photo", one needs to feed the pre-processed photo to a neural network trained beforehand
 through deep learning techniques in order to give an accurate response. These neural network system usually are
 abstracted away in cloud technologies making them available only via Internet. When uploading his image, the user does
@@ -24,9 +24,9 @@ not imagine the amount of technologies and computing power that will be used to 
 
 We now understand that in order to build applications that interact with photos or videos nowadays, we need to be able
 to do accurate, fast and scalable image processing on a multitude of devices. In order to achieve this goal, image
-processing practitioners needs to have two kinds of tools at their disposal. One will be the prototyping environement, a
-toolbox which allow the practitioner to develop, test and improve its application logic. The other is the production
-environement which deploy the viable version of the application that was developped by the practitioner. Both
+processing practitioners needs to have two kinds of tools at their disposal. One will be the prototyping environnement,
+a toolbox which allow the practitioner to develop, test and improve its application logic. The other is the production
+environnement which deploy the viable version of the application that was developed by the practitioner. Both
 environment may not have the same needs. On one hand, the prototyping environment usually requires to have a fast
 feedback loop for testing, an availability of state-of-the-art algorithms and existing software so that the practitioner
 can easily build upon them and be fast enough so that the practitioner is not waiting for results when testing many
@@ -41,8 +41,18 @@ designing its application. Then, if those building blocks can be intelligent eno
 optimization opportunities, the practitioner would have a huge performance improvement, by default, without specifically
 tweaking its application.
 
+Finally, it is often known that there is a rule of three about genericity, performance and ease of use. The rule states
+that one can only have two of those items by sacrificing the third one. If one wants to be generic and efficient, then
+the naive solution will be very complex to use with lot of parameters. If one wants a solution to be generic and easy to
+use, then it will be not very efficient by default. If one wants a solution to be easy to use and efficient then it will
+not be very generic. This thesis leverages the modern C++ language and its many new features related to genericity and
+performance to break this rule in the image processing area. Through continuing work onto the image processing library
+Pylene~\cite{carlinet.2018.pylena}, we demonstrate how a library can be generic, efficient and easy to use all at the
+same time. This thesis finally attempts, through a static/dynamic bridge, to bring low level tools and concepts from the
+static world to the high level and dynamic prototyping world for a better ease of use.
+
 With this philosophy in mind, this manuscript will aim at presenting our thesis work related to the C++ language applied
-to the Image Processing domain. This manuscript is organized as followed :
+to the Image Processing domain. It is organized as followed:
 
 \paragraph{Motivation and Context~\ref{part.motivations_and_context}} presents in-depth specificities about what are the
 needs of Image processing. It will then explain who are the different kind of users we find in this area and how this
@@ -52,19 +62,19 @@ to be.
 \paragraph{Genericity~\ref{part.genericity}} presents a state-of-the-art overview about the notion of genericity. We
 will explain its origin, how it has evolved (especially within the C++ language), what issues it is solving, what issues
 it is creating. Finally we will tour around existing facilities that allows genericity (intrinsically restricted to
-compiled language) to exists in the dynamic world (with interprated languages such as Python).
+compiled language) to exists in the dynamic world (with interpreted languages such as Python).
 
-\paragraph{Images and Algorythms taxonomy~\ref{part.image_and_algorithms_taxonomy}} presents our first contribution
-which is a comprehensive work in the image processing area around the taxonomy of different images families and of
-different algorithms families as well. This part explains, among others, the notion of concept and how it applies to the
+\paragraph{Images and Algorithms taxonomy~\ref{part.image_and_algorithms_taxonomy}} presents our first contribution
+which is a comprehensive work in the image processing area around the taxonomy of different images families as well of
+different algorithms families. This part explains, among others, the notion of concept and how it applies to the
 image processing domain.
 
 \paragraph{Images Views~\ref{part.image_views}} presents our second contribution which is a generalization of the
 concept of View (from the C++ language) to images. This allows the creation of lightweight, cheap-to-copy images. It
-also enable a much simplier way to design image processing pipeline by chaining operations directly in the code in an
+also enable a much simpler way to design image processing pipeline by chaining operations directly in the code in an
 intuitive way.
 
-\paragraph{Static dynamic bridge~\ref{part.static_dynamic_bridge}} presents our thrid contribution which is a way to
+\paragraph{Static dynamic bridge~\ref{part.static_dynamic_bridge}} presents our third contribution which is a way to
 grant access to the generic facilities of a compiled language (such as C++) to a dynamic language (such as Python) to
 ease the gap between the prototyping phase and the production phase. Indeed, why not enable the practitioner to have
 access to production-ready fast algorithm by default? In this part, we discuss some ways of achieving this and offer our
@@ -72,11 +82,34 @@ take in the shape of an hybrid solution.
 
 
 
-\begin{itemize}
-  \item Définition, sujet, contexte d'étude -> reprendre texte de ma thèses en 3 mn
-  \item Question de départ, problématique -> généricité + traitement d'images
-  \item Présentation rapide de la méthodologie -> génie logiciel bas niveau dans le but de remonter haut niveau pour utilisateur TI
-  \item Objectif et plan
-  \item Justification de l'étude
-\end{itemize}
 
+Image processing has evolved over time to become a field where a very wide array of problematic has
+arisen. The time when the 2-dimensional images whose colors were encoded within three 8-bits RGB channels, was a complex
+construct is long gone. Instead, and in the last 20 years, there are many new kind of image being brought by the need in
+new application domains, be they: medical (3D images from MRI), video games (real time 3D rendering, meshes, visual
+effects), astronomy (hyperspectral images with thousands of bands), trees (tree of shapes), graphs (for segmentation,
+maps), and so on.
+
+However, despite those kinds of images may originates from different technology domains, they still are being processed
+through common, more simple algorithms (such as mathematical morphology) which are the basis of more complex
+computations. Thus, it makes sense to have a common base of algorithms to build upon, later, for more complex field
+specific applications.
+
+As such, the concept of genericity was introduced. It aims at providing a common ground about how an image should behave
+when passed to basic algorithms needed for complex applications. This way, in theory, one only needs to write the
+algorithm once for it to work with any given kind of image. In practice, it is also possible to provide a specific
+version of a specific algorithm taking advantage of specific properties when available, to for instance, increase
+execution speed or decrease memory consumption.
+
+Another aspect that Image processing is in a dire need nowadays is efficiency. Be it with Artificial Intelligence that
+needs deep learning on large data set of images or simply the images themselves that are very larges (e.g. 3D mesh with
+over 5 million triangles, several hundred of Go for a satellite image), efficiency is pivotal and mandatory. However
+genericity and efficiency are often conflicting. Coming up with a solution allying those two aspects is a long time
+ongoing work, which is still of topicality nowadays.~\citep{geraud.2012.hdr}
+
+% This paper first present in~\ref{sec.genericity} our approach of genericity and how we achieve it with efficiency in
+% mind, through image and algorithm taxonomy. Following, we explain how we can generalize this genericity by introducing a
+% new tool in~\ref{sec.views}: the views. They add another abstraction level to images allow one to have a new approach of
+% writing an image processing pipelines more naturally and without pulling down efficiency with trade-offs. Finally, we
+% present in~\ref{sec.algo} our work on image processing algorithm taxonomy to offer the user the possibility to have
+% efficient and reusable code by default even when writing prototypes of algorithms.

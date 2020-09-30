@@ -1,0 +1,26 @@
+%TODO : schema with filtered lena color
+
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{positioning,arrows,calc,3d}
+
+\input{../common.tikz}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzset{every node/.style={node distance=5pt, font=\Huge}}
+
+\node[txt] (p0) { filter( };
+
+\node[img, yslant=.5] (p1) [right=1.3cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_color.png} };
+
+\node[txt] (p2) [right=4.7cm of p0.center] { , };
+
+\node[img] (p3) [right=5.7cm of p0.center] { \includegraphics[height=3cm]{eq/filter_eq.pdf} };
+
+\node[txt] (p4) [right=12.5cm of p0.center] { ) $\rightarrow$ };
+
+\node[img, yslant=.5] (p3) [right=14cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_color_filtered.png} };
+
+\end{tikzpicture}
+\end{document}

@@ -13,8 +13,29 @@
 \usepackage{multirow}
 \usepackage{tabularx}
 \usepackage{tikz-uml}
+\usepackage{threeparttable}
 \usepackage[]{siunitx}
 \usepackage{makecell}
+\usepackage{graphbox}
+\usepackage[draft]{fixme}
+\usepackage{makecell}
+\usepackage{bibentry}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{svg}
+
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\eqmark}{{\bf $\approx$}}
+
+\definecolor{lightgray}{rgb}{0.83, 0.83, 0.83}
+\definecolor{lightblue}{rgb}{0.68, 0.85, 0.9}
+\definecolor{lightgreen}{rgb}{0.56, 0.93, 0.56}
+\definecolor{thistle}{rgb}{0.85, 0.75, 0.85}
+
+\newcommand{\FIXME}[1]{{\color{red}#1}}
+\newcommand{\PLAGIAT}[1]{{\color{magenta}#1}}
 
 \renewcommand{\baselinestretch}{1} 
 
@@ -44,9 +65,9 @@
 
 \section{Abstract}
 \label{sec.abstract}
-  TODO EN
+TODO EN
 
-  TODO FR
+TODO FR
 
 \section{Long abstract}
 \label{sec.long_abstract}
@@ -128,6 +149,7 @@
 \chapter{Bibliography}
 \label{chap.bibliography}
 
+\bibliographystyle{abbrv}
 \bibliography{bibliography}
 
 

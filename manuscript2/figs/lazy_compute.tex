@@ -1,0 +1,66 @@
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{arrows, calc, matrix, positioning}
+
+\newcommand\randmin{}
+\newcommand\randmax{}
+\newcommand\randmultof{}
+\newcommand\setrand[4]
+  {\def\randmin{#1}
+   \def\randmax{#2}
+   \def\randmultof{#3}
+   \pgfmathsetseed{#4}
+  }
+\newcommand\nextrand
+  {\pgfmathparse{int(int((rnd*(\randmax-\randmin+1)+\randmin)/\randmultof)*\randmultof)}
+   \xdef\thisrand{\pgfmathresult}
+  }
+
+\begin{document}
+
+\setrand{0}{255}{1}{72}
+
+\begin{tikzpicture}[
+  every node/.style={node distance=50pt},
+  cell/.style={rectangle, draw=black},
+  space/.style={minimum height=1.5em, matrix of nodes,
+    row sep=-\pgflinewidth, column sep=-\pgflinewidth},
+  text depth=0.5ex,
+  text height=2ex,
+  nodes in empty cells]
+
+
+\matrix (first) [
+  space,
+  column 1/.style={nodes={cell, minimum width=4em}},
+  column 2/.style={nodes={cell, minimum width=4em}},
+  column 3/.style={nodes={cell, minimum width=4em}}]
+{
+  \nextrand $\thisrand$ & \nextrand $\thisrand$ & \nextrand $\thisrand$ \\
+  \nextrand $\thisrand$ & \nextrand $\thisrand$ & \nextrand $\thisrand$ \\
+  \nextrand $\thisrand$ & \nextrand $\thisrand$ & \nextrand $\thisrand$ \\
+};
+
+
+\matrix (second) [
+  right=of first,
+  space,
+  column 1/.style={nodes={cell, minimum width=4em}},
+  column 2/.style={nodes={cell, minimum width=4em}},
+  column 3/.style={nodes={cell, minimum width=4em}}]
+{
+  &          & \\
+  & $f(130)$ & \\
+  &          & \\
+};
+
+\draw[color=red, ->, >=stealth', semithick] (0, .25) arc (105 : 75 : 12);
+
+\draw[color=red] (-.4, -.25) rectangle (.4, .25);
+\draw[color=red] (5.65, -.25) rectangle (6.8, .25);
+
+\draw[color=red, .style={font=\scriptsize}] (3.1, 0)    node {computation};
+\draw[color=red, .style={font=\scriptsize}] (3.1, -.5)  node {on demand};
+
+\end{tikzpicture}
+\end{document}

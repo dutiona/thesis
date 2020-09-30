@@ -1,0 +1,26 @@
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{positioning,arrows,calc,3d}
+
+\input{common.tikz}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzset{every node/.style={node distance=5pt, font=\large}}
+
+\begin{scope}
+  \fill[gray!30!white]              (0, 0)      circle    (3);
+  \fill[red!30!white]               (0, -.2)    circle    (2.3);
+  \draw[black, fill=blue!30!white]  (-1.2, -1.5)  rectangle (1.2, .1);
+\end{scope}
+
+\node at (0, 2.5) {Images types};
+\node at (0, 1)   {Images writable};
+\node at (0, -.7) [align=center]  {Contiguous\\ buffer\\ in memory};
+\node at (4.5, -.7) [draw, align=center]  {Specialized\\ algorithm};
+
+\draw[color=red, <-, >=stealth', semithick] (1.2, -.7) -- (3.39, -.7);
+
+
+\end{tikzpicture}
+\end{document}

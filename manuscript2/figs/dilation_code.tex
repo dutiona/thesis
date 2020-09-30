@@ -1,0 +1,18 @@
+\documentclass[varwidth=4cm, border={0.1cm 0.1cm 0.1cm 0.1cm}]{standalone}
+
+\usepackage{minted}
+
+\setminted[python]{fontsize=\scriptsize}
+
+\begin{document}
+
+\begin{minted}{python}
+def dilate(img, se, out):
+  for pnt in zip(img.points()):
+    out(pnt) = img(pnt)
+    for nx in se(pnt):
+      out(pnt) = \
+        max(out(pnt), img(nx))
+\end{minted}
+
+\end{document}

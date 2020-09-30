@@ -101,6 +101,7 @@
 * Comment préserver les propriétés
 * Évaluation paresseuse
 * Composabilité/chaînage
+* Gestion des bordures
 * ...
 * Performances + Bench
 
@@ -109,7 +110,7 @@
 * rappel de la problématique (backward ref depuis Généricité/4.)
 * expliquer l'approche hybride (son design et les techniques de dispatch n*n avec variants)
 * bench, trade-off
-* continuité sur JIT avec autowig, cppyy (perspective)
+* continuité sur JIT avec autowig, cppyy, xeus-cling (perspective)
 
 ### Conclusion et perspectives
 

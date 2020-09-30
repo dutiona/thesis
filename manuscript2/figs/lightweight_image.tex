@@ -1,0 +1,53 @@
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{positioning,arrows,calc,matrix,3d}
+
+\newcommand\randmin{}
+\newcommand\randmax{}
+\newcommand\randmultof{}
+\newcommand\setrand[4]
+  {\def\randmin{#1}
+   \def\randmax{#2}
+   \def\randmultof{#3}
+   \pgfmathsetseed{#4}
+  }
+\newcommand\nextrand
+  {\pgfmathparse{int(int((rnd*(\randmax-\randmin+1)+\randmin)/\randmultof)*\randmultof)}
+   \xdef\thisrand{\pgfmathresult}
+  }
+
+
+\begin{document}
+
+\setrand{0}{255}{1}{42}
+
+\begin{tikzpicture}[
+  every node/.style={node distance=50pt, font=\small},
+  cell/.style={rectangle,draw=black},
+  space/.style={minimum height=2em,matrix of nodes,row sep=-\pgflinewidth,
+  column sep=-\pgflinewidth, text height=2ex, text depth=0.5ex},
+  nodes in empty cells]
+
+\node (first) [color=black, fill=gray!30!white, draw, align=left]  {
+  Transform\\
+  $\quad \cdot \; f$\\
+  $\quad \cdot \; ptr$
+};
+
+\matrix (second) at (3.5, -1.3)[
+  space,
+  column 1/.style={nodes={cell, minimum width=4em}},
+  column 2/.style={nodes={cell, minimum width=4em}},
+  column 3/.style={nodes={cell, minimum width=4em}}]
+{
+  \nextrand $\thisrand$ & \nextrand $\thisrand$ & \nextrand $\thisrand$ \\
+  \nextrand $\thisrand$ & \nextrand $\thisrand$ & \nextrand $\thisrand$ \\
+  \nextrand $\thisrand$ & \nextrand $\thisrand$ & \nextrand $\thisrand$ \\
+};
+
+\draw[color=red, ->, >=stealth', semithick] (0.3, -.4) -- (1.4, -.4);
+
+\node (third) at (3.5, 0) [color=black, align=left]  {Data buffer};
+
+\end{tikzpicture}
+\end{document}

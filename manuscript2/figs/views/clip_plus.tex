@@ -1,0 +1,24 @@
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{positioning,arrows,calc,3d}
+
+\input{../common.tikz}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzset{every node/.style={node distance=5pt, font=\Huge}}
+
+\node[txt] (p0) { clip( };
+
+\node[img, yslant=.5] (p1) [right=1.2cm of p0.center] { \includegraphics[width=3cm]{../../images/planet.png} };
+
+\node[txt] (p2) [right=4.7cm of p0.center] { , Planet\_ROI ) $+$ };
+
+\node[img, yslant=.5] (p3) [right=9.3cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_color_minus_clipped.png} };
+
+\node[txt] (p4) [right=13cm of p0.center] { $\rightarrow$ };
+
+\node[img, yslant=.5] (p5) [right=14.5cm of p0.center] { \includegraphics[width=3cm]{../../images/lena_+_planet_color.png} };
+
+\end{tikzpicture}
+\end{document}

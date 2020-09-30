@@ -1,0 +1,31 @@
+\documentclass[tikz]{standalone}
+\usepackage{xcolor}
+\usetikzlibrary{positioning}
+
+
+\begin{document}
+\begin{tikzpicture}
+\tikzset{
+  SE/.style={left=.2cm, thick, append after command={+(-.1,0) -- +(.1,0)}},
+  repere/.style={thick,-latex},
+  IM/.style={below=.2cm, thick, align=center,
+    append after command={+(0,-.1) -- +(0,.1)}
+  },
+}
+% Label 1
+\draw[green!50!black,repere] (0,0) -- (0,5) node[right] {SE};
+\draw[green!50!black] (0,1) node[SE] {Ball};
+\draw[green!50!black] (0,2) node[SE] {Diamond};
+\draw[green!50!black] (0,3) node[SE] {\ldots};
+\draw[green!50!black] (0,4) node[SE] {Square};
+
+% Label 2
+\draw[yellow!50!black,repere] (0,0) -- (6,0) node[below left] {...} node[right] {Image};
+\draw[yellow!50!black] (1,0,0) node[IM] {16-bits\\ gray 2D};
+\draw[yellow!50!black] (3,0,0) node[IM] {24-bits\\ RGB 2D};
+\draw[yellow!50!black] (5,0,0) node[IM] {double\\gray 3D};
+\end{tikzpicture}
+\end{document}
+
+
+
