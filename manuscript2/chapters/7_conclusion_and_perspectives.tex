@@ -1,11 +1,40 @@
+Through concrete benchmarks and examples, we have shown how to leverage genericity nowadays without slowing down the
+performances. There are several types of genericity which have been presented, as well as several widely used
+implementation of them in the industry. Our take offer a new approach to reach the goal of having one code for several
+algorithm, one algorithm for several image types. Furthermore, we introduce meta-algorithms (canvas) that are based on
+behavior patterns known once the image type is known. We also show how C++ template metaprogramming techniques allow not
+to impact the performances despites the indirections induced. Finally, we show how an approach based on properties (on
+image type as well as on external data such as structuring elements) can be beneficial to introduce customization points
+to take advantage of opportunities to increase performances. When coupling both properties and algorithm canvas, it
+becomes standard for a user to write efficient and generic algorithm by default.
+
+It is also shown how we were able to abstract two of the three main families of algorithms. First are point-wise
+algorithms that can all be expressed through the \emph{views}.\emph{Views} enables streamlining the writting process of
+image processing pipelines so that it is shorter, efficient and expressive. Second are local algorithm whose
+problematics (border management, structuring elements, pass number) can all be abstracted away behind a canvas hiding
+the complexity and taking advantage of opportunities to increase performance for you.
+
+The solutions presented in this paper do have some disadvantages, such as the readability when using local algorithm
+canvas, code-bloat due to heavy instantiation of C++ templates especially in the views and finally the lack of
+availability to the dynamic (prototyping) world by default. Indeed, C++ metaprogramming needs to be compiled at the time
+of its usage preventing direct link with dynamic languages such as python. There is on-going work to introduce dynamic
+dispatch at some key points to reduce code size without impairing the performance. For instance, a dynamic dispatch to
+select the correct version of an algorithm has much less impact than a dynamic dispatch when accessing the value of a
+pixel. Further work is required to improve the static-dynamic bridge and bring the capabilities of the techniques
+presented in this paper to the dynamic world, and in particular, python which is vastly used in the image processing
+world.
+
+\clearpage
+
+
 
 \begin{itemize}
   \item Synthèse générale
   \item Réponse à la problématique d'Introduction
   \item confrontation à d'autres travaux de recherche ayant donné naissance à une bibliothèque de TI
   \item Ouvertures, perspectives, limites
-  \begin{itemize}
-    \item continuité JIT
-    \item ce qu'il reste à faire
-  \end{itemize}
+        \begin{itemize}
+          \item continuité JIT
+          \item ce qu'il reste à faire
+        \end{itemize}
 \end{itemize}

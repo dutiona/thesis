@@ -80,13 +80,13 @@ ease the gap between the prototyping phase and the production phase. Indeed, why
 access to production-ready fast algorithm by default? In this part, we discuss some ways of achieving this and offer our
 take in the shape of an hybrid solution.
 
+\vspace{1cm}
 
 
-
-Image processing has evolved over time to become a field where a very wide array of problematic has
-arisen. The time when the 2-dimensional images whose colors were encoded within three 8-bits RGB channels, was a complex
-construct is long gone. Instead, and in the last 20 years, there are many new kind of image being brought by the need in
-new application domains, be they: medical (3D images from MRI), video games (real time 3D rendering, meshes, visual
+Image processing has evolved over time to become a field where a very wide array of problematic has arisen. The time
+when the 2-dimensional images whose colors were encoded within three 8-bits RGB channels, was a complex construct is
+long gone. Instead, and in the last 20 years, there are many new kind of image being brought by the need in new
+application domains, be they: medical (3D images from MRI), video games (real time 3D rendering, meshes, visual
 effects), astronomy (hyperspectral images with thousands of bands), trees (tree of shapes), graphs (for segmentation,
 maps), and so on.
 
@@ -107,9 +107,9 @@ over 5 million triangles, several hundred of Go for a satellite image), efficien
 genericity and efficiency are often conflicting. Coming up with a solution allying those two aspects is a long time
 ongoing work, which is still of topicality nowadays.~\citep{geraud.2012.hdr}
 
-% This paper first present in~\ref{sec.genericity} our approach of genericity and how we achieve it with efficiency in
-% mind, through image and algorithm taxonomy. Following, we explain how we can generalize this genericity by introducing a
-% new tool in~\ref{sec.views}: the views. They add another abstraction level to images allow one to have a new approach of
-% writing an image processing pipelines more naturally and without pulling down efficiency with trade-offs. Finally, we
-% present in~\ref{sec.algo} our work on image processing algorithm taxonomy to offer the user the possibility to have
-% efficient and reusable code by default even when writing prototypes of algorithms.
+This paper first present in~\ref{part.genericity} our approach of genericity and how we achieve it with efficiency in
+mind, through image and algorithm taxonomy. Following, we explain how we can generalize this genericity by introducing a
+new tool in~\ref{part.image_views}: the views. They add another abstraction level to images allow one to have a new
+approach of writing an image processing pipelines more naturally and without pulling down efficiency with trade-offs.
+Finally, we present in~\ref{part.image_and_algorithms_taxonomy} our work on image processing algorithm taxonomy to offer
+the user the possibility to have efficient and reusable code by default even when writing prototypes of algorithms.

@@ -14,90 +14,8 @@ First, the data structures whose topology and underlying data must be decorelate
 algorithms to support as much data structures as possible. Second, many algorithms share the same computational shape
 and can be factorized together.
 
-\section{Bringing genericity in IP libraries: solutions and problems}
-
-Many IP libraries have emerged, developed in many programming
-languages. They all faced this problem and tried to bring solutions,
-some of which are reviewed in \cref{sec.state.of.the.art}. Among these
-solutions, we see that \emph{generic programming} is good starting
-point~\cite{geraud.2000.icpr} to design a \emph{generic} library but
-still has many problem. In particular, we focus on the case of
-\textsc{Milena}~\cite{levillain.2010.icip, geraud.2012.ipolmeeting}, a generic
-pre-modern C++ IP libray and its shortcomings that led to the design of
-\textsc{Pylena}~\cite{carlinet.2018.pylena}.  The work presented in this paper
-contrasts with the previous works on obtaining genericity for mathematical
-morphology operators~\cite{darbon.2002.ismm,levillain.2009.ismm} and digital
-topology operators~\cite{levillain.2012.wadgmm-lncs}.
 
 
-
-
-
-Tools able to handle many data representations are said to be
-\emph{generic}. In the particular case of a \emph{library} providing a
-set of \emph{routines}, \emph{genericity} means that the \emph{routines}
-can be applied to a variety of inputs (as opposed to \emph{specific}
-routines that support inputs of unique \emph{predefined} type). As an
-example, consider the morphological \emph{dilation} that takes two
-inputs: an image and a flat structuring element (SE). Then, the set of
-some possible inputs is depicted in~\cref{fig.espaceSAV}. Note that in
-this example, the image is already a type product between the
-underlying \emph{structure kind} and the \emph{value kind}. Let $s$ be
-the number of structures, $v$ the number of types of values, and $k$
-the number of structuring elements. With no \emph{generalization}, one
-would have to write $s \times v \times k$ \emph{dilation} routines.
-
-\begin{figure}[tbp]
-  \centering
-  %\subcaptionbox{}{\includestandalone[width=.48\linewidth]{figs/espaceSeI}}
-  %\subcaptionbox{}{\includestandalone[width=.48\linewidth]{figs/espaceSAV}}
-  \caption{The space of possible implementation of the \emph{dilation(image, se)}
-    routine. The image axis shown in (a) is in-fact multidimensional and should
-    be considered 2D as in (b).}
-  \label{fig.espaceSAV}
-\end{figure}
-
-Many IP libraries have emerged, developed in many programming
-languages. They all faced this problem and tried to bring solutions,
-some of which are reviewed in \cref{sec.state.of.the.art}. Among these
-solutions, we see that \emph{generic programming} is good starting
-point~\cite{geraud.2000.icpr} to design a \emph{generic} library but
-still has many problem. In particular, we focus on the case of
-\textsc{Milena}~\cite{levillain.2010.icip, geraud.2012.ipolmeeting}, a generic
-pre-modern C++ IP libray and its shortcomings that led to the design of
-\textsc{Pylena}~\cite{carlinet.2018.pylena}.  The work presented in this paper
-contrasts with the previous works on obtaining genericity for mathematical
-morphology operators~\cite{darbon.2002.ismm,levillain.2009.ismm} and digital
-topology operators~\cite{levillain.2012.wadgmm-lncs}.
-
-In \cref{sec.generic}, we present this new generic design, that emerged with the
-evolution of the Modern C++ and allowed solving some \textsc{Milena}'s
-shortcomings. Not only does this new design re-conciliate \emph{simplicity} and
-\emph{performance}, but it also promotes \emph{extensibility} as it enables
-easily creating custom image types as those shown in \cref{subsec.views}.
-
-
-
-
-\section{Bringing genericity in IP libraries: solutions and problems}
-\label{sec.state.of.the.art}
-
-\emph{Generic programming} aims at providing more flexibility to programs. It is
-itself a very \emph{generic} term that means different things to different
-people. It may refer to \emph{parametric polymorphism} (which is the common
-sense in C++), but it may also refer to \emph{data abstraction} and
-\emph{reflection /meta-programming} \citep{gibbons.2007.datatype}. The accordance
-on a strict definition of \emph{generic programming} is not our objective, but
-we can observe a manifestation of the \emph{generic programming}: a
-parametrization of the routines to augment flexibility.
-
-To tackle the problem of a \emph{generic} dilation from the introduction,
-several programming techniques have been reviewed by \citet{levillain.2014.ciarp,
-  geraud.2012.hdr}. We discuss these techniques w.r.t. some criteria:
-\emph{usability} (simplicity from the end-user ), \emph{maintainability}
-(simplicity from the library developer stand-point), \emph{run-time
-  availability} (running routines on images whose \emph{kind} is unknown until
-run-time), \emph{efficiency} (speed and binary size tradeoff).
 
 
 Genericity can have two different meanings depending on the people you ask. For instance, some will argue that
@@ -109,30 +27,30 @@ framework to handle code of any use-case we will use \emph{generic}. In this pap
 figure~\ref{fig.type.vs.algo} illustrates this result of the same generic watershed implementation applied on an image
 2D, a graph as well as a mesh.
 
-%\begin{figure}[tbh]
-%  \centering
-%  \begin{tabular}{cccc}
-%                                                                     & image 2D
-%                                                                     & graph    & mesh \\[5pt]
-%    input:                                                           &
-%    \fbox{\includegraphics[width=.2\linewidth]{figs/geninput-000b}}  &
-%    \fbox{\includegraphics[width=.2\linewidth]{figs/geninput-001b}}  &
-%    \fbox{\includegraphics[width=.2\linewidth]{figs/geninput-002b}}
-%    \\[5pt]
-%    %
-%    output:                                                          &
-%    \fbox{\includegraphics[width=.2\linewidth]{figs/genoutput-000}}  &
-%    \fbox{\includegraphics[width=.2\linewidth]{figs/genoutput-001b}} &
-%    \fbox{\includegraphics[width=.2\linewidth]{figs/genoutput-002b}}
-%    \\
-%  \end{tabular}
-%  \bigskip
-%
-%  \text{The same code run on all these input.}
-%
-%  \caption{Watershed algorithm applied to three different image types.}
-%  \label{fig.type.vs.algo}
-%\end{figure}
+\begin{figure}[tbh]
+  \centering
+  \begin{tabular}{cccc}
+                                                                     & image 2D
+                                                                     & graph    & mesh \\[5pt]
+    input:                                                           &
+    \fbox{\includegraphics[width=.2\linewidth]{figs/geninput-000b}}  &
+    \fbox{\includegraphics[width=.2\linewidth]{figs/geninput-001b}}  &
+    \fbox{\includegraphics[width=.2\linewidth]{figs/geninput-002b}}
+    \\[5pt]
+    %
+    output:                                                          &
+    \fbox{\includegraphics[width=.2\linewidth]{figs/genoutput-000}}  &
+    \fbox{\includegraphics[width=.2\linewidth]{figs/genoutput-001b}} &
+    \fbox{\includegraphics[width=.2\linewidth]{figs/genoutput-002b}}
+    \\
+  \end{tabular}
+  \bigskip
+
+  \text{The same code run on all these input.}
+
+  \caption{Watershed algorithm applied to three different image types.}
+  \label{fig.type.vs.algo}
+\end{figure}
 
 In image processing, there are 3 main axes around which genericity is working. The first axis is about the data type:
 grey level or RGB color (8-bits, 10-bits), decimal (double) and so on. The second axis, is about the structure of the
@@ -309,28 +227,28 @@ architecture level, henceforth, we will not broach this topic in this paper.
 The table comparing all the pros. and cons. from the aforementioned approaches is presented
 in~\cref{table.gen.approaches}.
 
-%\begin{table}[tbh]
-%  \centering
-%  \begin{threeparttable}
-%    \caption{Genericity approaches: pros. \& cons.}
-%    \begin{tabular}{l|ccccc}
-%      Paradigm             & TC      & CS      & E       & 1IA    & EA      \\
-%      \hline
-%      Code Duplication     & \cmark  & \xmark  & \cmark  & \xmark & \xmark  \\
-%      Code Generalization  & \xmark  & \eqmark & \eqmark & \cmark & \xmark  \\
-%      Object-Orientation   & \eqmark & \cmark  & \xmark  & \cmark & \cmark  \\
-%      Generic Programming: &         &         &         &        &         \\
-%      \quad with C++11     & \cmark  & \eqmark & \cmark  & \cmark & \eqmark \\
-%      \quad with C++17     & \cmark  & \cmark  & \cmark  & \cmark & \eqmark \\
-%      \quad with C++20     & \cmark  & \cmark  & \cmark  & \cmark & \cmark  \\
-%    \end{tabular}
-%    \begin{tablenotes}
-%      \item TC: type checking; CS: code simplicity; E: efficiency
-%      \item 1IA: one implementation per algorithm; EA: explicit abstractions / constrained genericity
-%    \end{tablenotes}
-%    \label{table.gen.approaches}
-%  \end{threeparttable}
-%\end{table}
+\begin{table}[tbh]
+  \centering
+  \begin{threeparttable}
+    \caption{Genericity approaches: pros. \& cons.}
+    \begin{tabular}{l|ccccc}
+      Paradigm             & TC      & CS      & E       & 1IA    & EA      \\
+      \hline
+      Code Duplication     & \cmark  & \xmark  & \cmark  & \xmark & \xmark  \\
+      Code Generalization  & \xmark  & \eqmark & \eqmark & \cmark & \xmark  \\
+      Object-Orientation   & \eqmark & \cmark  & \xmark  & \cmark & \cmark  \\
+      Generic Programming: &         &         &         &        &         \\
+      \quad with C++11     & \cmark  & \eqmark & \cmark  & \cmark & \eqmark \\
+      \quad with C++17     & \cmark  & \cmark  & \cmark  & \cmark & \eqmark \\
+      \quad with C++20     & \cmark  & \cmark  & \cmark  & \cmark & \cmark  \\
+    \end{tabular}
+    \begin{tablenotes}
+      \item TC: type checking; CS: code simplicity; E: efficiency
+      \item 1IA: one implementation per algorithm; EA: explicit abstractions / constrained genericity
+    \end{tablenotes}
+    \label{table.gen.approaches}
+  \end{threeparttable}
+\end{table}
 
 
 \subsection{Unjustified limitations}
@@ -543,107 +461,10 @@ This new notion of concept is very important because it decorrelate the requirem
 algorithms from the way the data structures are designed. One wan always wrap a specific data structure so that it can
 behave properly into an algorithm, without needing to rewrite that algorithm.
 
-\subsection{Version \& Specialization}
-
-Achieving true genericity in a satisfactory way is a complex problem that has components of different levels. The first
-goal is to natively support as many sets of image type as possible. Natively means that there is no need for a
-conversion from one type to a supertype under the hood. The second step is to support an abstraction layer above the
-underlying data type for each pixel. Indeed, the structure of an image is decorrelated from the underlying data type.
-The third step is to write image processing algorithms for each set of image type. Fourthly, the performance trade-off
-shall be negligible if not null. Finally, the final step is to provide a high degree of friendliness for the end user.
-Ease of use is always to be considered.
-
-Considering the available options to achieve our goal, the parametric polymorphism approach is the way to go. This
-allows the implementer to design image types and algorithms with behavior in mind. To illustrate this remark, let us
-consider the set of supported set of image types shown in figure~\ref{fig.image.version}.
-
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/image_version.pdf}
-  \caption{Set of supported image type.}
-  \label{fig.image.version}
-\end{figure}
-
-To implement a basic image algorithm such as \texttt{fill} there really are two distinct ways of writing it. For the
-set of images type whose data type is encoded into each pixel, one must traverse the image and set each pixel's color
-to the new one. However, for the set of images type whose data type is encoded in a look-up table, one only has to
-traverse the look-up table to set each color to the new one. This translates into two distinct algorithms shown
-in~\cref{traverse.vs.LUT}:
-
-\begin{figure}[tbh]
-  \centering
-  \scriptsize
-  \subfloat[Writable image fill algorithm]{
-    $fill(I, v)\colon \forall{p}\in\mathcal{D}, I(p) = v$
-  }
-  \hfil
-  \subfloat[Image LUT fill algorithm]{
-    $fill(I, v)\colon \forall{i}\in I.LUT, i = v$
-  }
-
-  \caption{Comparison of implementation of the \texttt{fill} algorithm for two
-    families of image type.}
-  \label{traverse.vs.LUT}
-\end{figure}
-
-More generally, we consider that the set of image type is formed of several subset of image types. In the example there
-are two subsets: images whose pixel are writable and images whose data type are ordered in a look-up table. \emph{For
-  each one of these subsets, if there is a way to implement an algorithm then we have a \emph{version} of this algorithm}.
-
-Sometimes, it is possible to take advantage of a property on a particular image set, that may be correlated to an
-external data, to write the algorithm in a more efficient way. When those properties are linked to the types, this is
-call \emph{specialization}. For instance, when considering a dilation algorithm, if the structuring element (typically
-the disc) is decomposable then we can branch on an algorithm taking advantage of this opportunity: decompose the
-dilation disc into small vectors and apply each one of them on the image through multiple passes. The speed-up comparing
-to a single pass with a large dilation disc is really significant (illustrated in~\ref{fig.gen.bench.square.disc}). The
-code in~\ref{fig.decomp.dilate} illustrate how an algorithm can be written to take advantage of the structuring
-element's decomposability property. The algorithm will first decompose the structuring element into smaller 1D periodic
-lines. It will then recursively call itself with those lines to do the multi-pass and thanks to known optimizations on
-periodic lines~\cite{vanherk.1992.localminmax}, it will be much faster.
-
-
-\begin{figure}[tbh]
-  \centering
-  \begin{minted}{c++}
-  template <Image Img, StructuringElement SE>
-  auto dilate(Img img, SE se) {
-    if (se.is_decomposable()) {
-      lst_small_se = se.decompose();
-      for (auto small_se : lst_small_se)
-        img = dilate(img, small_se) // Recursive call
-      return img;
-    } else if (is_pediodic_line(se))
-      return fast_dilate1d(img, se) // Van Herk's algorithm;
-    else
-      return dilate_normal(img, se) // Classic algorithm;
-  }
-  \end{minted}
-
-  \caption{Dilate algorithm with decomposable structuring element.}
-  \label{fig.decomp.dilate}
-\end{figure}
-
-The figure~\ref{fig.image.specialization} shows how an algorithm specialization may exists in a set of algorithms
-version. In this figure there exists a specialization of algorithms when it is known that the data buffer has the
-following property: its memory is contiguous. This implies that, for example, an algorithm like \texttt{fill} can be
-implemented using low level and fast primitives such as \texttt{memset} to increase its efficiency.
-
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/image_version_specialization.pdf}
-  \caption{Algorithm specialization within a set.}
-  \label{fig.image.specialization}
-\end{figure}
-
-There are more details that go in depth when considering the distinction between runtime dispatch (dynamic) and
-compile time dispatch (static) that the interested reader can consult in appendix~\ref{appendix.dispatch.dyn.static}.
-Those details are not mandatory for the overall comprehension of this paper, hence why they are omitted here.
 
 
 
-
-
-
+\clearpage
 
 
 

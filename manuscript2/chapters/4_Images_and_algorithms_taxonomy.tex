@@ -1,22 +1,238 @@
 
+\section{Version \& Specialization}
+
+Achieving true genericity in a satisfactory way is a complex problem that has components of different levels. The first
+goal is to natively support as many sets of image type as possible. Natively means that there is no need for a
+conversion from one type to a supertype under the hood. The second step is to support an abstraction layer above the
+underlying data type for each pixel. Indeed, the structure of an image is decorrelated from the underlying data type.
+The third step is to write image processing algorithms for each set of image type. Fourthly, the performance trade-off
+shall be negligible if not null. Finally, the final step is to provide a high degree of friendliness for the end user.
+Ease of use is always to be considered.
+
+Considering the available options to achieve our goal, the parametric polymorphism approach is the way to go. This
+allows the implementer to design image types and algorithms with behavior in mind. To illustrate this remark, let us
+consider the set of supported set of image types shown in figure~\ref{fig.image.version}.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.5\linewidth]{figs/image_version.pdf}
+  \caption{Set of supported image type.}
+  \label{fig.image.version}
+\end{figure}
+
+To implement a basic image algorithm such as \texttt{fill} there really are two distinct ways of writing it. For the
+set of images type whose data type is encoded into each pixel, one must traverse the image and set each pixel's color
+to the new one. However, for the set of images type whose data type is encoded in a look-up table, one only has to
+traverse the look-up table to set each color to the new one. This translates into two distinct algorithms shown
+in~\cref{traverse.vs.LUT}:
+
+\begin{figure}[tbh]
+  \centering
+  \scriptsize
+  \subfloat[Writable image fill algorithm]{
+    $fill(I, v)\colon \forall{p}\in\mathcal{D}, I(p) = v$
+  }
+  \hfil
+  \subfloat[Image LUT fill algorithm]{
+    $fill(I, v)\colon \forall{i}\in I.LUT, i = v$
+  }
+
+  \caption{Comparison of implementation of the \texttt{fill} algorithm for two
+    families of image type.}
+  \label{traverse.vs.LUT}
+\end{figure}
+
+More generally, we consider that the set of image type is formed of several subset of image types. In the example there
+are two subsets: images whose pixel are writable and images whose data type are ordered in a look-up table. \emph{For
+  each one of these subsets, if there is a way to implement an algorithm then we have a \emph{version} of this algorithm}.
+
+Sometimes, it is possible to take advantage of a property on a particular image set, that may be correlated to an
+external data, to write the algorithm in a more efficient way. When those properties are linked to the types, this is
+call \emph{specialization}. For instance, when considering a dilation algorithm, if the structuring element (typically
+the disc) is decomposable then we can branch on an algorithm taking advantage of this opportunity: decompose the
+dilation disc into small vectors and apply each one of them on the image through multiple passes. The speed-up comparing
+to a single pass with a large dilation disc is really significant (illustrated in~\ref{fig.gen.bench.square.disc}). The
+code in~\ref{fig.decomp.dilate} illustrate how an algorithm can be written to take advantage of the structuring
+element's decomposability property. The algorithm will first decompose the structuring element into smaller 1D periodic
+lines. It will then recursively call itself with those lines to do the multi-pass and thanks to known optimizations on
+periodic lines~\cite{vanherk.1992.localminmax}, it will be much faster.
+
+
+\begin{figure}[tbh]
+  \centering
+  \begin{minted}{c++}
+  template <Image Img, StructuringElement SE>
+  auto dilate(Img img, SE se) {
+    if (se.is_decomposable()) {
+      lst_small_se = se.decompose();
+      for (auto small_se : lst_small_se)
+        img = dilate(img, small_se) // Recursive call
+      return img;
+    } else if (is_pediodic_line(se))
+      return fast_dilate1d(img, se) // Van Herk's algorithm;
+    else
+      return dilate_normal(img, se) // Classic algorithm;
+  }
+  \end{minted}
+
+  \caption{Dilate algorithm with decomposable structuring element.}
+  \label{fig.decomp.dilate}
+\end{figure}
+
+The figure~\ref{fig.image.specialization} shows how an algorithm specialization may exists in a set of algorithms
+version. In this figure there exists a specialization of algorithms when it is known that the data buffer has the
+following property: its memory is contiguous. This implies that, for example, an algorithm like \texttt{fill} can be
+implemented using low level and fast primitives such as \texttt{memset} to increase its efficiency.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.5\linewidth]{figs/image_version_specialization.pdf}
+  \caption{Algorithm specialization within a set.}
+  \label{fig.image.specialization}
+\end{figure}
+
+There are more details that go in depth when considering the distinction between runtime dispatch (dynamic) and
+compile time dispatch (static) that the interested reader can consult in appendix~\ref{appendix.dispatch.dyn.static}.
+Those details are not mandatory for the overall comprehension of this paper, hence why they are omitted here.
+
+
+\section{Algorithm genericity}
+\label{sec.algo}
+
+In image processing there are a lot of common patterns when looking at algorithms, the most famous being \emph{for all
+  pixel of image, do something to pixel}. But there are other more high-level similarities that we can leverage to have
+more generic algorithm. First let us study two basic algorithm: dilation and erosion. The python code of such algorithm
+is naively be given in figure~\ref{fig.erode.dilate}.
+
+\begin{figure}[tbh]
+  \centering
+  \subfloat[Dilation]{
+    \includegraphics[width=1.64in]{figs/dilation_code}
+  }%
+  \hfil
+  \subfloat[Erosion]{
+    \includegraphics[width=1.64in]{figs/erosion_code}
+  }%
+  \caption{Dilate vs. Erode algorithms.}
+  \label{fig.erode.dilate}
+\end{figure}
+
+The algorithms are almost written the same way. The only change is the operation \emph{min} and \emph{max} when
+selecting the value to keep. As such, we can easily see a way to factorize code by passing the operator as an argument.
+The algorithms can then be rewritten as shown in figure~\ref{fig.erode.dilate.factorized}.
+
+\begin{figure}[tbh]
+  \centering
+  \subfloat[Local algorithm with custom operator]{
+    \includegraphics[width=3.28in]{figs/local_op_code}
+  }%
+  \vfil
+  \smallskip
+  \subfloat[Dilation (delegated)]{
+    \includegraphics[width=1.64in]{figs/local_op_dilation_code}
+  }%
+  \hfil
+  \subfloat[Erosion (delegated)]{
+    \includegraphics[width=1.64in]{figs/local_op_erosion_code}
+  }%
+  \caption{New Dilate vs. Erode algorithms.}
+  \label{fig.erode.dilate.factorized}
+\end{figure}
+
+\subsection{Taxonomy and canvas}
+
+This approach leads to question a way to classify algorithm in families where this factorization can be possible, more
+broadly. In essence there are three big families of algorithm when looking at the state of the art of image processing
+today. The first is the point-wise family. In essence those algorithms only need to know the current pixel to do the
+work. Those are the most basic algorithm. Some useful point-wise algorithms are: gamma correction, thresholding,
+contrast correction projection. The second family consists in all the local algorithm. To work they need to know a
+structuring element which is the window to consider around a pixel. Those algorithms introduce several very important
+notions: neighborhood (of a pixel), separability and decomposability (of a structuring element) and border management.
+Some useful local algorithms are: dilation, erosion, gradient, rank filter, median filter or hit or miss. Finally, the
+third family consists in all the algorithm that propagate their computation while traversing the image. The chamfer
+distance tranform is such an algorithm. Those algorithms are less friendly to factorization of code.
+
+For the first family of algorithm, one can write them all with views so that factorizing code is hardly an issue. The
+second family of algorithm may be abstracted behind an algorithm canvas where the user provides the work to do at each
+point of the algorithm. For instance, a single pass local algorithm will always have shape given
+in~\ref{fig.local.algorithm.canvas}:
+\begin{figure}[tbh]
+  \centering
+  \begin{minted}[linenos,xleftmargin=17pt,gobble=2]{python}
+  def local_canvas(img, out, se):
+    # do something before outer loop
+    for pnt in img.points():
+      # do something before inner loop
+      for nx in se(pnt):
+        # do something inner loop
+      # do something after inner loop
+    # do something after outer loop
+  \end{minted}
+
+  \caption{Local algorithm canvas.}
+  \label{fig.local.algorithm.canvas}
+\end{figure}
+
+This canvas can be customized to do a specific job, especially at the lines 2, 4, 6, 7 and 8. The user would then
+provide callbacks and the canvas would do the job. This is especially useful when knowing that the canvas would handle
+the border management (the user would provide a handling strategy like mirroring the image or filling it with a value).
+The canvas would also take advantage of optimization opportunities (such as the decomposability of a structuring
+element) that the user would probably forget, or not know, when first writing his local algorithm. Another advantage is
+the opportunity to do more complex optimization such as parallelizing the execution or offloading part of the
+calculation on a GPU. More generally, all optimization done through heterogeneous computing would be available by
+default even if the user is not an area expert.
+
+Despite all these advantages, one big disadvantage is the readability of the algorithm user-side. For instance, the
+dilation algorithm is rewritten in figure~\ref{fig.local.algorithm.dilate}.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{minted}{python}
+def dilate(img, out, se):
+  do_nothing = lambda *args, **kwargs: None
+
+  def before_inner_loop(img, out, pnt):
+    out(pnt) = img(pnt)
+  
+  def inner_loop(ipix, opix, nx):
+    out(pnt) = max(out(pnt), img(nx))
+
+  local_canvas(img, out, se,
+    before_outer_loop = do_nothing,
+    before_inner_loop = before_inner_loop,
+    inner_loop        = inner_loop,
+    after_inner_loop  = do_nothing,
+    after_outer_loop  = do_nothing
+  )
+  \end{minted}
+
+  \caption{Local algorithm canvas.}
+  \label{fig.local.algorithm.dilate}
+\end{figure}
+
+This way of thinking algorithms is far less readable than the classic way. The user does not see the loops happening and
+it can becomes very messy when several passes are happening (closing, opening, hit or miss, etc.)
+
+\clearpage
+
 \begin{itemize}
   \item Définitions des types/catégories de types/propriétés de types
   \item Value/Ref semantics des images
   \item Conceptualisation expliquer par l'exemple (papier rrpr) la relation Image (n) <-> Implem (m) avec n >> m
-    \begin{itemize}
-      \item Concepts déduis des algorithmes et non des types
-      \item Plusieurs algos pour le même opérateur
-      \item Plusieurs implems pour le même algo
-    \end{itemize}
+        \begin{itemize}
+          \item Concepts déduis des algorithmes et non des types
+          \item Plusieurs algos pour le même opérateur
+          \item Plusieurs implems pour le même algo
+        \end{itemize}
   \item Vision ensembliste des types d'images/algo
-    \begin{itemize}
-      \item versions d'algorithmes
-      \item spécialisations d'algorithmes
-    \end{itemize}
+        \begin{itemize}
+          \item versions d'algorithmes
+          \item spécialisations d'algorithmes
+        \end{itemize}
   \item canvas d'algorithmes
-    \begin{itemize}
-      \item factorisation
-      \item opportunités d'optimisation (utilisation de propriétés, parallélisation)
-    \end{itemize}
+        \begin{itemize}
+          \item factorisation
+          \item opportunités d'optimisation (utilisation de propriétés, parallélisation)
+        \end{itemize}
   \item listing et explications des concepts de la bibliothèque (images, élément structurant)
 \end{itemize}
