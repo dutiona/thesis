@@ -1,6 +1,109 @@
 \section{Introducing Views}
 \label{sec.views}
 
+
+\subsection{Practical genericity for efficiency: the Views}
+\label{subsec.views}
+
+Let us introduce another key point enabled by genericity and concepts: the \emph{Views}. A \emph{View} is defined by a
+non-owning lightweight image, inspired by the design introduced in \emph{Ranges for the Standard
+  Library}~\citep{niebler.2014.ranges} proposal for \emph{non-owning collections}. A similar design is also called
+\emph{Morphers} in \textsc{Milena}~\citep{levillain.2009.ismm, geraud.2012.hdr}. \emph{Views} feature the following
+properties: \emph{cheap to copy}, \emph{non-owner} (does not \emph{own} any data buffer), \emph{lazy evaluation}
+(accessing the value of a pixel may require computations) and \emph{composition}. When chained, the compiler builds a
+\emph{tree of expressions} (or \emph{expression template} as used in many scientific computing libraries such as
+Eigen~\cite{guennebaud.2010.eigen}), thus it knows at compile-time the type of the composition and ensures a 0-overhead
+at evaluation.
+
+There are four fundamental kind of views, inspired by functional programming paradigm: \texttt{transform(input, f)}
+applies the transformation $f$ on each pixel of the image \emph{input}, \texttt{filter(input, pred)} keeps the pixels of
+\emph{input} that satisfy the predicate \emph{pred}, \texttt{subimage(input, domain)} keeps the pixels of \emph{input}
+that are in the domain \emph{domain}, \texttt{zip($input_1$, $input_2$, \ldots, $input_n$)} allows to pack several pixel
+of several image to iterate on them all at the same time.
+
+\emph{Lazy-evaluation} combined with the view \emph{chaining} allows the user to write clear and very efficient code
+whose evaluation is delayed till very last moment as shown in~\cref{fig.lazy} (see \cite{geraud.2018.gtgdmm} for
+additional examples). Neither memory allocation nor computation are performed; the image $i$ has just recorded all the
+operations required to compute its values.
+
+\begin{figure}[htbp]
+  \begin{minipage}[l]{0.48\linewidth}
+    \begin{minted}{C++}
+image2d<rgb8>  ima1 = /* ... */;
+image2d<uint8_t> ima2 = /* ... */;
+
+// Projection: project the red channel value
+auto f = view::transform(ima, [](auto v) {
+  return v.r;
+});
+
+// Lazy-evaluation of the element-wise
+// minimum
+auto g = view::transform(view::zip(f, ima2),
+  [](auto value) {
+    return std::min(std::get<0>(value),
+             std::get<1>(value));
+});
+\end{minted}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[l]{0.48\linewidth}
+    \begin{minted}{C++}
+// Lazy-Filtering: keep pixels whose value
+// is below < 128
+auto h = view::filter(g, [] (auto value) {
+  return value < 128;
+}));
+
+// Lazy-evaluation of a gamma correction
+using value_t = typename Image::value_type;
+constexpr float gamma = 2.2f;
+constexpr auto max_val =
+  std::numeric_limits<value_t>::max();
+auto i = view::transform(h,
+  [gamma_corr = 1 / gamma] (auto value) {
+    return std::pow(value / max_val,
+             gamma_corr) * max_val;
+});
+\end{minted}
+  \end{minipage}
+
+  \caption{Lazy-evaluation and \emph{view} chaining.}
+  \label{fig.lazy}
+\end{figure}
+
+\noindent The tree of type resulting from this view chaining is illustrated by~\cref{fig.viewAST}.
+
+\begin{figure}[htb]
+  \includegraphics[height=2cm]{figs/viewAST.png}
+  \caption{Abstract Syntax Tree of the types chained by the code above}
+  \label{fig.viewAST}
+\end{figure}
+
+The concept of \emph{View} brought to us a fundamental issue when dealing with images: \blockquote{\emph{What is an
+    image?}}. More precisely: should an image always be the owner of its data buffer? Should we have a shared ownership of
+the data buffer between all the images using it? Then what happens when the data changes? The issue about the semantic
+of an image is crucial but also very similar to the issue there is to differentiate a \emph{container} (such as
+\texttt{std::vector}, that is to say the data buffer) and a \emph{view} on this container in the \emph{Ranges TS}.
+
+From here we have considered two approaches. The first one is to have \emph{shared ownership} of the data buffer for the
+image and its derived views. However this does not allow the differentiation between an already computed image and a
+lazy image. To be able to make this differentiation is crucial in an \emph{Image Processing library} as we want to make
+the most out of the data we already have and we do not want to compute data we do not need. Also, we cannot distinguish
+when the \emph{copyability} property is required. This is the main reason why we did not adopt this approach.
+
+The second one is to make the differentiation between a \emph{concrete image} which owns the data (like the standard
+containers) and the \emph{views} that are lightweight cheap-to-copy objects. Not all \emph{concrete image} may be
+\emph{copyable}, but all \emph{views} are. This is a very important property as it simplify greatly the reasoning when
+performance is needed. It also enables us to have a library design similar to the standard library which the user is
+familiar with and, why not, have standard algorithm and standard view work on our images types. All of these are the
+main reason why we decided to adopt this design. Henceforth from now on the \emph{Image} concept is similar to the
+\emph{View} concept from which we refines a \emph{ConcreteImage} concept that requires a specific behavior as it owns
+data.
+
+
+\vspace{1cm}
+
 In~\cref{subsec.gen.concept}, we saw that what is truly important is the behavior: an algorithm will require its input
 to be able to behave a certain way, and if those requirements are fulfilled, then the algorithm can be used with this
 set of inputs. This enables non-standard type of image to be input in algorithms, providing they still behave correctly.
@@ -237,6 +340,7 @@ Image out = subquantize16to8b(
 
 \begin{itemize}
   \item origine, parallèle avec range-v3
+  \item Value/Ref semantics des images
   \item Comment préserver les propriétés
   \item Évaluation paresseuse
   \item Composabilité/chaînage

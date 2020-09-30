@@ -1,4 +1,339 @@
 
+\section{Rewriting an algorithm to extract a concept}
+
+
+
+\subsection{Gamma correction}
+
+Let us take the gamma correction algorithm as an example. The naive way to write this algorithm can be:
+
+\begin{minted}[linenos]{C++}
+template <class Image>
+void gamma_correction(Image& ima, double gamma)
+{
+  const auto gamma_corr = 1 / gamma;
+
+  for (int x = 0; x < ima.width(); ++x)
+    for (int y = 0; y < ima.height(); ++y)
+    {
+      ima(x, y).r = std::pow((255 * ima(x, y).r) / 255, gamma_corr);
+      ima(x, y).g = std::pow((255 * ima(x, y).g) / 255, gamma_corr);
+      ima(x, y).b = std::pow((255 * ima(x, y).b) / 255, gamma_corr);
+    }
+}
+\end{minted}
+
+\noindent This algorithm here does the job but it also makse a lot of hypothesis. Firstly, we suppose that we can write
+in the image via the \texttt{=} operator (l.9-11): it may not be true if the image is sourced from a generator function.
+Secondly, we suppose that we have a 2D image via the double loop (l.6-7). Finally, we suppose we are operating on 8bits
+range (0-255) RGB via \texttt{'.r'}, \texttt{'.g'}, \texttt{'.b'} (l.9-11). Those hypothesis are unjustified.
+Intrinsically, all we want to say is \blockquote{\emph{For each value of \texttt{ima}, apply a gamma correction on
+    it.}}. Let us proceed to make this algorithm the most generic possible by lifting those unjustified constraints one by
+one.
+
+
+
+\paragraph{Lifting RGB constraint:}
+First, we get rid of the 8bits color range (0-255) RGB format requirement. The loops become:
+
+\begin{minted}{C++}
+  using value_t = typename Image::value_type;
+
+  const auto gamma_corr = 1 / gamma;
+  const auto max_val = std::numeric_limits<value_t>::max();
+
+  for(int x = 0; x < ima.width(); ++x)
+    for(int y = 0; y < ima.height(); ++y)
+      ima(x, y) = std::pow((max_val * ima(x, y)) / max_val, gamma_corr);
+\end{minted}
+
+\noindent By lifting this constraint, we now require the type Image to define a nested type \texttt{Image::value\_type}
+(returned by \texttt{ima(x, y)}) on which \texttt{std::numeric\_limits} and \texttt{std::pow} are defined. This way the
+compiler will be able to check the types at compile-time and emit warning and/or errors in case it detects
+incompatibilities. We are also able to detect it beforehand using a \texttt{static\_assert} for instance.
+
+
+
+\paragraph{Lifting bi-dimensional constraint:}
+Here we need to introduce a new abstraction layer, the \emph{pixel}. A \emph{pixel} is a couple $(point, value)$. The
+double loop then becomes:
+
+\begin{minted}{C++}
+  for (auto&& pix : ima.pixels())
+    pix.value() = std::pow((max_val * pix.value()) / max_val, gamma_corr);
+\end{minted}
+
+\noindent This led to us requiring that the type \emph{Image} requires to provide a method \texttt{Image::pixels()} that
+returns \emph{something} we can iterate on with a range-for loop: this \emph{something} is a \emph{Range} of
+\emph{Pixel}. This \emph{Range} is required to behave like an \emph{iterable}: it is an abstraction that provides a way
+to browse all the elements one by one. The \emph{Pixel} is required to provide a method \texttt{Pixel::value()} that
+returns a \emph{Value} which is \emph{Regular}~(see \cref{term.regular}). Here, we use \texttt{auto\&\&} instead of
+\texttt{auto\&} to allow the existence of proxy iterator (think of \texttt{vector<bool>}). Indeed, we may be iterating
+over a lazy-computed view~\ref{part.image_views}.
+
+
+
+\paragraph{Lifting writability constraint:}
+Finally, the most subtle one is the requirement about the \emph{writability} of the image. This requirement can be
+expressed directly via the new C++20 syntax for \emph{concepts}. All we need to do is changing the template declaration
+by:
+
+\begin{minted}{C++}
+template <WritableImage Image>
+\end{minted}
+
+\noindent In practice the C++ keyword \texttt{const} is not enough to express the \emph{constness} or the
+\emph{mutability} of an image. Indeed, we can have an image whose pixel values are returned by computing $cos(x+y)$ (for
+a 2D point). Such an image type can be instantiated as \emph{non-const} in C++ but the values will not be
+\emph{mutable}: this type will not model the \emph{WritableImage} concept.
+
+
+
+\paragraph{Final version}
+
+\begin{minted}{C++}
+template <WritableImage Image>
+void gamma_correction(Image& ima, double gamma)
+{
+  using value_t = typename Image::value_type;
+
+  const auto gamma_corr = 1 / gamma;
+  const auto max_val = numeric_limits<value_t>::max();
+
+  for (auto&& pix : ima.pixels())
+    pix.value() = std::pow((max_val * pix.value()) / max_val, gamma_corr);
+}
+\end{minted}
+
+\noindent When re-writing a lot of algorithms this way: lifting constraints by requiring behavior instead, we are able
+to deduce what our \emph{concepts} needs to be. The real question for a \emph{concept} is: \blockquote{\emph{what
+    behavior should be required?}}
+
+
+
+\subsection{Dilation algorithm}
+To show the versatility of this approach, we will now attempt to deduces the requirements necessary to write a classical
+\emph{dilate} algorithm. First let us start with a naive implementation:
+
+\begin{minted}[linenos]{C++}
+template <class InputImage, class OutputImage>
+void dilate(const InputImage& input_ima, OutputImage& output_ima)
+{
+  assert(input_ima.height() == output_ima.height()
+    && input_ima.width() == output_ima.width());
+
+  for (int x = 2; x < input_ima.width() - 2; ++x)
+    for (int y = 2; y < input_ima.height() - 2; ++y)
+    {
+      output_ima(x, y) = input_ima(x, y)
+      for (int i = x - 2; i <= x + 2; ++i)
+        for (int j = y - 2; j <= y + 2; ++j)
+          output_ima(x, y) = std::max(output_ima(x, y), input_ima(i, j));
+    }
+}
+\end{minted}
+
+\noindent Here we are falling into the same pitfall as for the \emph{gamma correction} example: there are a lot of
+unjustified hypothesis. We suppose that we have a 2D image (l.7-8), that we can write in the \texttt{output\_image}
+(l.10, 13). We also require that the input image does not handle borders, (cf. loop index arithmetic l.7-8, 11-12).
+Additionally, the \emph{structuring element} is restricted to a $5 \times 5$ window (l.11-12) whereas we may need to
+dilate via, for instance, a $11 \times 15$ window, or a sphere. Finally, the algorithm does not exploit any potential
+properties such as the \emph{decomposability} (l.11-12) to improve its efficiency. Those hypothesis are, once again,
+unjustified. Intrinsically, all we want to say is \blockquote{For each value of \texttt{input\_ima}, take the maximum
+  of the $X \times X$ window around and then write it in \texttt{output\_ima}}.
+
+To lift those constraints, we need a way to know which kind of \emph{structuring element} matches a specific algorithm.
+Thus, we will pass it as a parameter. Additionally, we are going to lift the first two constraints the same way we did
+for \emph{gamma correction}:
+
+\begin{minted}{C++}
+template <Image InputImage, WritableImage OutputImage, StructuringElement SE>
+void dilate(const InputImage& input_ima, OutputImage& output_ima, const SE& se)
+{
+  assert(input_ima.size() == output_ima.size());
+
+  for(auto&& [ipix, opix] : zip(input_ima.pixels(), output_ima.pixels())
+  {
+    opix.value() = ipix.value();
+    for (const auto& nx : se(ipix))
+      opix.value() = std::max(nx.value(), opix.value());
+  }
+}
+\end{minted}
+
+\noindent We now do not require anything except that the \emph{structuring element} returns the neighbors of a pixel.
+The returned value must be an \emph{iterable}. In addition, this code uses the \texttt{zip} utility which allows us to
+iterate over two ranges at the same time. Finally, this way of writing the algorithm allows us to delegate the issue
+about the border handling to the neighborhood machinery. Henceforth, we will not address this specific point deeper in
+this paper.
+
+
+
+
+\subsection{Concept definition}
+The more algorithms we analyze to extract their requirements, the clearer the \emph{concepts} become. They are slowly
+appearing. Let us now attempt to formalize them. The formalization of the \emph{concept Image} from the information and
+requirements we have now is shown in~\cref{concept.tables.definitions} for the required type definitions and
+in~\cref{concept.tables.expressions} for the required valid expressions.
+
+\begin{table}[htbp]
+
+  \begin{scriptsize}
+    \texttt{Let \emph{Ima} be a type that models the concept \emph{Image}. Let \emph{WIma} be a type that models the concept
+      \emph{WritableImage}. Then \emph{WIma} inherits all types defined for \emph{Image}. Let \emph{SE} be a type that models
+      the concept \emph{StructuringElement} . Let \emph{DSE} be a type that models the concept \emph{Decomposable}. Then
+      \emph{DSE} inherits all types defined for \emph{StructuringElement}. Let \emph{Pix} be a type that models the concept
+      \emph{Pixel}. Then we can define:}
+
+    \smallskip
+    \begin{tabular}{l|l|l|l|}
+      \cline{2-4}
+                                                   & \thead{Definition }                            & \thead{Description}   & \thead{Requirement}               \\
+      % Image
+      \cline{1-4}
+      \multicolumn{1}{|c|}{\multirow{3}{*}{Image}} & \scriptsize{\texttt{Ima::const\_pixel\_range}} & \makecell{type of the
+      range to iterate over                                                                                                                                     \\ all the constant pixels} & \makecell{models the concept \\
+      \emph{ForwardRange}}                                                                                                                                      \\
+      \cline{2-4}
+      \multicolumn{1}{|c|}{}                       & \scriptsize{\texttt{Ima::pixel\_type}}         & type of a pixel       & models the concept \emph{Pixel}   \\
+      \cline{2-4}
+      \multicolumn{1}{|c|}{}                       & \scriptsize{\texttt{Ima::value\_type}}         & type of a value       & models the concept \emph{Regular}
+      \\
+      \cline{1-4}
+      % Writable Image
+      \multicolumn{1}{|c|}{\makecell{Writable                                                                                                                   \\ Image}} & \scriptsize{\texttt{WIma::pixel\_range}} & \makecell{type of the
+      range to iterate over                                                                                                                                     \\ all the non-constant pixels} & \makecell{models the concept \\
+      \emph{ForwardRange}}                                                                                                                                      \\
+      \cline{1-4}
+      % StructuringElement
+      %  \multicolumn{1}{|c|}{StructuringElement} &  &  & \\
+      %  \cline{1-4}
+      % Decomposable
+      %  \multicolumn{1}{|c|}{Decomposable} &  &  & \\
+      %  \cline{1-4}
+    \end{tabular}
+  \end{scriptsize}
+  \smallskip
+
+  \caption{Concepts formalization: definitions}
+  \label{concept.tables.definitions}
+\end{table}
+
+
+\begin{table}[htbp]
+
+  \begin{scriptsize}
+    \texttt{Let \emph{cima} be an instance of \emph{const Ima}. Let \emph{wima} be an instance of \emph{WIma}. Then all the
+      valid expressions defined for \emph{Image} are valid for \emph{WIma}. Let \emph{cse} be an instance of \emph{const SE}.
+      Let \emph{cdse} be an instance of \emph{const DSE}. Then all the valid expressions defined for \emph{StructuringElement}
+      are valid for \emph{const DSE} Let \emph{cpix} be an instance of \emph{const Pix}. Then we have the following valid
+      expressions:}
+
+    \smallskip
+    \begin{tabular}{l|l|l|l|}
+      \cline{2-4}
+                                                     & \thead{Expression}                  & \thead{Return Type} & \thead{Description} \\
+      \cline{1-4}
+      % Image
+      \multicolumn{1}{|c|}{Image}                    & \texttt{cima.pixels()}              &
+      \scriptsize{\texttt{Ima::const\_pixel\_range}} & \makecell{returns a range of
+      constant pixels                                                                                                                  \\ to iterate over it} \\
+      \cline{1-4}
+      % Writable Image
+      \multicolumn{1}{|c|}{\makecell{Writable                                                                                          \\ Image}} &\texttt{wima.pixels()} &
+      \scriptsize{\texttt{WIma::pixel\_range}}       & \makecell{returns a range of pixels
+      \\ to iterate over it} \\
+      \cline{1-4}
+      % StructuringElement
+      \multicolumn{1}{|c|}{\makecell{Structuring                                                                                       \\ Element}} &\texttt{cse(cpix)} &
+      \scriptsize{\texttt{WIma::pixel\_range}}       & \makecell{returns a range of the
+      neighboring                                                                                                                      \\ pixels to iterate over it} \\
+      \cline{1-4}
+      % Decomposable
+      \multicolumn{1}{|c|}{Decomposable}             & \texttt{cdse.decompose()}           &
+      \scriptsize{\texttt{implementation defined}}   & \makecell{ returns a range of
+      structuring                                                                                                                      \\ elements to iterate over it} \\
+      \cline{1-4}
+    \end{tabular}
+  \end{scriptsize}
+  \smallskip
+
+  \caption{Concepts formalization: expressions}
+  \label{concept.tables.expressions}
+\end{table}
+
+The \emph{concept Image} does not provide a facility to write inside it. To do so, we have refined a second
+\emph{concept} named \emph{WritableImage} that provides the necessary facilities to write inside it. We say
+\blockquote{\emph{WritableImage} refines \emph{Image}}.
+
+The \emph{sub-concept ForwardRange} can be seen as a requirement on the underlying type. We need to be able to browse
+all the pixels in a forward way. Its \emph{concept} will not be detailed here as it is very similar to \emph{concept} of
+the same name~\cite{niebler.2018.mergingranges,niebler.2018.deepranges} (soon in the STL). Also, in practice, the
+\emph{concepts} described here are incomplete. We would need to analyze several other algorithms to deduce all the
+requirements so that our \emph{concepts} are the most complete possible. One thing important to note here is that to
+define a simple \emph{Image concept}, there are already a large amount of prerequisites:
+\label{term.regular}\emph{Regular}, \emph{Pixel} and \emph{ForwardRange}. Those \emph{concepts} are basic but are also
+tightly linked to the \emph{concept} in the STL~\cite{carter.2018.concepts}. We refer to the STL \emph{concepts} as
+\emph{fundamental concepts}. \emph{Fundamentals concepts} are the basic building blocks on which we work to build our
+own \emph{concepts}. We show the C++20 code implementing those \emph{concepts} in~\ref{concept.cpp20.code}.
+
+\begin{figure}[htbp]
+
+  \begin{minipage}[l]{0.48\linewidth}
+    \begin{minted}{C++}
+template <class Ima>
+concept Image = requires {
+    typename Ima::value_type;
+    typename Ima::pixel_type;
+    typename Ima::const_pixel_range;
+  } && Regular<Ima::value_type>
+  && ForwardRange<Ima::const_pixel_range>
+  && requires(const Ima& cima) {
+    { cima.pixels() }
+      -> Ima::const_pixel_range;
+  };
+
+template <class I>
+using pixel_t = typename I::pixel_type;
+template <class SE, class Ima>
+concept StructuringElement = Image<Ima>
+  && requires(const SE& cse,
+       const pixel_t<Ima> cpix){
+    { se(cpix) } -> Ima::const_pixel_range;
+  };
+\end{minted}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[r]{0.48\linewidth}
+    \begin{minted}{C++}
+template <class WIma>
+concept WritableImage = requires Image<WIma>
+  && requires {
+    typename WIma::pixel_range;
+  } && ForwardRange<WIma::pixel_range>
+  && ForwardRange<WIma::pixel_range,
+       WIma::pixel_type>
+  && requires(WIma& wima) {
+    { wima.pixels() } -> WIma::pixel_range;
+  };
+
+template <class DSE, class Ima>
+concept Decomposable =
+  StructuringElement<DSE, Ima>
+  && requires(const DSE& cdse) {
+    { cdse.decompose() }
+      -> /*impl. defined*/;
+  };
+\end{minted}
+  \end{minipage}
+
+  \caption{Concepts in C++20 codes}
+  \label{concept.cpp20.code}
+\end{figure}
+
+
+
+
 \section{Version \& Specialization}
 
 Achieving true genericity in a satisfactory way is a complex problem that has components of different levels. The first
@@ -217,7 +552,6 @@ it can becomes very messy when several passes are happening (closing, opening, h
 
 \begin{itemize}
   \item Définitions des types/catégories de types/propriétés de types
-  \item Value/Ref semantics des images
   \item Conceptualisation expliquer par l'exemple (papier rrpr) la relation Image (n) <-> Implem (m) avec n >> m
         \begin{itemize}
           \item Concepts déduis des algorithmes et non des types

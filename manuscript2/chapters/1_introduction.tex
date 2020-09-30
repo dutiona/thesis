@@ -113,3 +113,62 @@ new tool in~\ref{part.image_views}: the views. They add another abstraction leve
 approach of writing an image processing pipelines more naturally and without pulling down efficiency with trade-offs.
 Finally, we present in~\ref{part.image_and_algorithms_taxonomy} our work on image processing algorithm taxonomy to offer
 the user the possibility to have efficient and reusable code by default even when writing prototypes of algorithms.
+
+\vspace{1cm}
+
+As many other numerical fields of computer science, \emph{Computer Vision} and \emph{Image Processing (IP)} have to face
+the constantly varying form of the input data. The data are becoming bigger and comes from a wider range of input
+devices: the current issue is generally not about acquiring data, but rather about handling and processing it (in a
+short time if possible\ldots). In image processing, the two-dimensional RGB model has become too restrictive to handle
+the whole variety of \emph{kinds} of image that comes with the variety of images fields. A non-exhaustive list of them
+includes: \emph{remote sensing} (satellites may produce hyperspectral images with some thousands of bands),
+\emph{medical imaging}, (scans may provide 3D and 3D+t volumes with several modalities), \emph{virtual reality} (RGB-D
+cameras used for motion capture provide 2D/3D images with an extra 16-bits \emph{depth} channel), \emph{computational
+  photography} (some high-dynamic-range sensors produce 32-bits images to preserve details in all ranges of the
+luminance)\ldots
+
+These examples already highlight the need for versatility, but some more domain-oriented applications attempt to broaden
+further the definition of images. For example, in digital geometry, one would define images over non-regular domains as
+graphs, meshes or hexagonal grids. The increase of image type should not require to write several implementation of the
+algorithm. A single version should be able to work on several image types. The~\cref{fig.type.vs.algo2} illustrates this
+idea with the same watershed implementation applied on an image 2D, a graph as well as a mesh.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[height=5cm]{figs/type_vs_algo.png}
+  \caption{Watershed algorithm applied to three different image types}
+  \label{fig.type.vs.algo2}
+\end{figure}
+
+Tools able to handle many data representations are said to be \emph{generic}. In the particular case of a \emph{library}
+providing a set of \emph{routines}, \emph{genericity} means that the \emph{routines} can be applied to a variety of
+inputs (as opposed to \emph{specific} routines that support inputs of unique \emph{predefined} type). As an example,
+consider the morphological \emph{dilation} that takes two inputs: an image and a flat structuring element (SE). Then,
+the set of some possible inputs is depicted in~\cref{fig.espaceSAV}. Note that in this example, the image is already a
+type product between the underlying \emph{structure kind} and the \emph{value kind}. Let $s$ be the number of
+structures, $v$ the number of types of values, and $k$ the number of structuring elements. With no
+\emph{generalization}, one would have to write $s \times v \times k$ \emph{dilation} routines.
+
+\begin{figure}[htbp]
+  \centering
+  \subcaptionbox{}{\includestandalone[width=.48\linewidth]{figs/espaceSeI}}
+  \subcaptionbox{}{\includestandalone[width=.48\linewidth]{figs/espaceSAV}}
+  \caption{The space of possible implementation of the \emph{dilation(image, se)}
+    routine. The image axis shown in (a) is in-fact multidimensional and should
+    be considered 2D as in (b).}
+  \label{fig.espaceSAV}
+\end{figure}
+
+Many IP libraries have emerged, developed in many programming languages. They all faced this problem and tried to bring
+solutions, some of which are reviewed in \cref{part.motivations_and_context}. Among these solutions, we see that
+\emph{generic programming} is good starting point~\cite{geraud.2000.icpr} to design a \emph{generic} library but still
+has many problem. In particular, we focus on the case of \textsc{Milena}~\cite{levillain.2010.icip,
+  geraud.2012.ipolmeeting}, a generic pre-modern C++ IP libray and its shortcomings that led to the design of
+\textsc{Pylena}~\cite{carlinet.2018.pylena}.  The work presented in this paper contrasts with the previous works on
+obtaining genericity for mathematical morphology operators~\cite{darbon.2002.ismm,levillain.2009.ismm} and digital
+topology operators~\cite{levillain.2012.wadgmm-lncs}.
+
+In \cref{part.genericity}, we present this new generic design, that emerged with the evolution of the Modern C++ and
+allowed solving some \textsc{Milena}'s shortcomings. Not only does this new design re-conciliate \emph{simplicity} and
+\emph{performance}, but it also promotes \emph{extensibility} as it enables easily creating custom image types as those
+shown in \cref{part.image_views}.

@@ -24,8 +24,47 @@ pixel. Further work is required to improve the static-dynamic bridge and bring t
 presented in this paper to the dynamic world, and in particular, python which is vastly used in the image processing
 world.
 
-\clearpage
+\vspace{1cm}
 
+Through a simple example, we have shown a step-by-step methodology to make an algorithm \emph{generic} with zero
+overhead~\footnote{The zero-cost abstraction of our approach is not argued here but will be discussed in an incoming
+  paper with a comparison with the state of the art libraries}. To reach such a level of genericity and be able to write
+versatile algorithms, we had to \emph{abstract} and \emph{define} the most simple and fundamental elements of the libray
+(e.g. \emph{image}, \emph{pixel}, \emph{structuring element}). We have shown that some tools of the Modern C++, such as
+\emph{concepts}, greatly facilitate the definition and the usage of such abstractions. These tools enable the library
+designer to focus on the abstraction of the library components and on the user-visible development. The complex
+\emph{template meta-programming} layer that used to be a large part of \emph{C++ generic programming} is no more
+inevitable. In this context, it is worth pointing out the approach is not limited Image Processing libraries but works
+for any library that wants to be modernized to augment its productivity.
+
+As one may have noticed, the solution presented in this paper is mostly dedicated to C++ developer and C++ end-user.
+Unlike dynamic environments (such as Python), C++ is not the most appropriate language when one has to prototype or
+experiment an IP solution. As a future work, we will study the conciliation of the \emph{static genericity} from C++
+(where types have to be known at compile time) with a \emph{dynamic} language (with a run-time polymorphism) to allows
+the interactive usage of a C++ generic library.
+
+The main issue, if we consider having an effective Python binding as our future main objective, is intrinsic to the way
+generic C++ code works. To be able to bind Python and C++, we need a compiled binary that will be called from Python.
+However, generic code is, by essence, \emph{header-only}. That means an abstraction layer that instantiate our generic
+code with predefined types is needed to generate the binary code required by Python. However this induces two
+disadvantages. First, there is no more \emph{zero-overhead} as the abstraction layer based on virtual dispatch will
+impact performances. Second, it will be very hard to consider injecting new types from the Python side into the library.
+
+A solution to the last disadvantage would be to consider solutions that compiles our C++ code on the fly when we know
+the types injected from the Python side. There already exists a tool based on Clang/LLVM that makes this integration
+relatively feasible. Namely there is Pythran~\cite{guelton.2015.pythran}, an ahead of time compiler that compiles
+annotated Python code into optimized native code (with SIMD instructions). This would allow the injection of Python code
+into our C++ at runtime. Henceforth this would provide a solution to inject new types defined on python side into the
+already compiled C++ binary code and have the virtual dispatch somehow use it.
+
+Another approach would be to consider a solution using another very promising tool:
+cppyy~\cite{wimtlplavrijsen.2016.cppyy} which is a an automatic Python/C++ binding generator designed for large scale
+programs. The C++ interpreter is based on Cling~\footnote{https://root.cern.ch/cling} (an interpreter based on
+Clang/LLVM and maintained by CERN). This would allow us to compile our generic C++ code directly from our Python code
+and have our bindings automatically generated. As a future work, we will implement both approaches to benchmark them in
+order to measure which one is the most effective for the many use-cases we have.
+
+\clearpage
 
 
 \begin{itemize}

@@ -385,6 +385,52 @@ long work to introduce them that goes back from
 standard~\cite{voutilainen.2017.concepts} (referred as C++20). This allows us, as of today, to write code leveraging
 this facility.
 
+
+\PLAGIAT{
+
+  C++ is a multi-paradigm language that enables the developer to write code that can be \emph{object oriented},
+  \emph{procedural}, \emph{functional} and \emph{generic}. However, there were limitations that were mostly due to the
+  backward compatibility constraint as well as the zero-cost abstraction principle. In particular the \emph{generic
+    programming} paradigm is provided by the \emph{template metaprogramming} machinery which can be rather obscure and
+  error-prone. Furthermore, when the code is incorrect, due to the nature of templates (and the way they are specified)
+  it is extremely difficult for a compiler to provide a clear and useful error message. To solve this issue, a new
+  facility named \emph{concepts} was brought to the language. It enables the developer to constraint types: we say that
+  the type \emph{models} the \emph{concept(s)}. For instance, to compare two images, a function \emph{compare} would
+  restrict its input image types to the ones whose value type provides the \emph{comparison operator ==}.
+
+  In spite of the history behind the \emph{concept checking} facilities being very
+  turbulent~\citep{seymour.2009.concepts,stroustrup.2003.concepts,sutton.2017.concepts}, it will finally appear in the
+  next standard~\cite{voutilainen.2017.concepts} (C++20).
+
+}
+
+
+\PLAGIAT{
+
+  The C++ \emph{Standard Template Library} (STL) is a collection of algorithms and data structures that allow the
+  developer to code with generic facilities. For instance, there is a standard way to \emph{reduce} a collection of
+  elements: \texttt{std:: accumulate} that is agnostic to the underlying collection type. The collection just needs to
+  provide a facility so that it can work. This facility is called \emph{iterator}. All STL algorithms behave this way:
+  the type is a template parameter so it can be anything. What is important is how this type behaves. Some collection
+  requires you to define a \texttt{hash} functions (\texttt{std::map}), some requires you to set an \emph{order} on your
+  elements (\texttt{std::set}) etc. This emphasis the power of genericity. The most important point to remember here
+  (and explained very early in 1988~\cite{musser.1988.generic}) is the answer to: \blockquote{\emph{What is a generic
+      algorithm?}}. The answer is: \blockquote{\emph{An algorithm is generic when it is expressed in the most abstract way
+      possible}}.
+
+  Later, in his book~\cite{stepanov.2009.elements}, Stepanov explained the design decision behind those algorithms as
+  well as an important notion born in the early 2000s: the concepts. The most important point about concepts is that it
+  constraints the behavior. Henceforth: \blockquote{\emph{It is not the types that define the concepts: it is the
+      algorithms}}.
+
+  The \emph{Image Processing} and \emph{Computer Vision} fields are facing this issue because there are a lot of
+  algorithms, a lot of different kind of images and a lot of different kind of requirements/properties for those
+  algorithms to work. In fact, when analyzing the algorithms, you can always extract those requirements in the form of
+  one or several \emph{concepts}.
+
+}
+
+
 Image processing algorithms, similarly, are \emph{generic} by
 nature~\cite{ritter.1990.cvgi,geraud.2000.icpr,darbon.2002.ismm,levillain.2010.icip,levillain.2014.ciarp}. When writing
 an image processing algorithm, there is always a way to express it with a high level of genericity. For instance, if is
@@ -460,6 +506,9 @@ when input with one (e). From this behavior we can deduce the following concept:
 This new notion of concept is very important because it decorrelate the requirements on behavior required inside
 algorithms from the way the data structures are designed. One wan always wrap a specific data structure so that it can
 behave properly into an algorithm, without needing to rewrite that algorithm.
+
+
+
 
 
 
