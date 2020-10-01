@@ -1,3 +1,147 @@
+\section{Static dynamic bridge}
+\label{sec.bridge.sd}
+
+Image processing communities like to have bridges with interpretable language such as Python or Matlab, to interface
+with their favorite tools, algorithms and/or facilities. As an example, with Python, the module
+NumPy~\cite{oliphant.2006.numpy} is community standard which is heavily used. Henceforth, to broaden the usage of our
+library, we should be able to provide a way to communicate between our library and NumPy. However here is a showstopper:
+we only distribute source code, we don't hand over binaries. Indeed, genericity in C++ is achieved via usage of template
+metaprogramming. One caveat of it is that the C++ compiler cannot generate a binary until it knows which type (of image,
+of value) will be used. But we don't know this information: the user (on Python's end) is not going to recompile our
+library each time he has another set of types to exercise. From here, there are still multiple ways to achieve our goal.
+
+First option is to embark a JIT (Just-in-time) compiler whose job would be to generate the binaries and bindings just as
+they are used. This solution brings speed (excluding the first run that includes the compilation time) and unrestrained
+genericity. However we are now bound to specificities of a compiler vendor and loose platform portability.
+
+Another option is to type-erase our types to enables the use of various concrete types through a single generic
+interface. This would translate into a class hierarchy whose concrete classes are on the leaves (thus, whose value type
+and dimension are known). This induces a non negligible slow down but allow us to keep the genericity and portability at
+the cost of maintaining the class hierarchy.
+
+Type generalization can also be considered: cast everything into a super-type that is suitable for the vast majority of
+cases. For instance, we could say that we have a super-type \texttt{image4D<double>} into which we can easily cast
+sub-types such as \texttt{image2D<int>} or \texttt{image3D<float>}. Of course we would loose the generic aspect and
+induce non negligible speed cost. Although portability is kept.
+
+And finally there is the dynamic dispatch. It consists in embarking dynamic information at runtime about types, and
+dispatch (think of switch/case) to the correct facility which can handle those types. The obvious caveat is the cost of
+maintenance induced by the genericity as we would have a number of possible dispatches that grow in a multiplicative way
+with the number of handled types. Which is not very generic. On the other hand there is almost no speed loss and the
+portability is guaranteed. Theoretical models exists that could bring solutions to lower the number of dispatcher to
+write, such as multi-method~\cite{pirkelbauer.2010.multimethods}. Unfortunately they are currently not part of C++.
+
+\bigskip
+
+In Pylene we have chosen an hybrid solution between type-erasure and dynamic dispatch. The aim is to have a set of known
+types for which we have no speed cost as well as continuing to handle other types to remain generic. To achieve this
+goal, we have worked together with Célian Gossec~\cite{gossec.2019.pybind}, a student co-supervised by the authors of
+this report, in order to type-erased the most important types (images) as well as the algorithms. We then embark runtime
+information about carried types in the type-erased object. When the algorithm is called on the type-erased object, we
+attempt to cast this object into a known set of types (dimensions: 2, 3, 4; value: int, double, rgba). Should the cast
+succeed then we can call the fast, optimized routine. Otherwise we fallback onto an algorithm relying on dynamic
+dispatch even for its most basic operation (e.g. addition).
+
+Let us illustrate this path with an example: the stretch algorithm. First let's see the naive algorithm:
+\begin{minted}{C++}
+  template <typename T>
+  image2d<float> stretch(const image2d<T>& src)
+  {
+    auto res = image2d<float>(src.width(), src.height());
+    auto values_span = src.values();
+    std::transform(values_span.begin(), values_span.end(), res.values().begin(),
+      [](T val) -> float
+      {
+        return static_cast<float>(val) / std::numeric_limits<T>::max();
+      }
+    );
+    return res;
+  }
+\end{minted}
+
+One should observe that the function parameter is templated by a type \texttt{T}. This induces that "span" further in
+the code is also templated. Both needs to be type erased. Furthermore, getting the max value of the type \texttt{T} is
+also an issue that needs to be abstracted away.
+
+We aim at obtaining this prototype:
+
+\begin{minted}{C++}
+  image2d<> stretch_py(const image2d<>& src);
+\end{minted}
+
+Here \texttt{image2d<>} which is also \texttt{image2d<void>} is the type-erased type of \texttt{image2d<T>}. This means
+that we have hierarchy where \texttt{image2d<T>} inherits from \texttt{image2d<void>}. We then introduce an intermediate
+step:
+
+\begin{minted}[linenos]{C++}
+  template <typename T>
+  struct apply_stretch_t
+  {
+    auto operator()(const image2d<>& src)
+    {
+      return stretch(*src.cast_to<T>());
+    }
+  };
+
+  image2d<float> stretch(const image2d<>& src)
+  {
+    return visit<apply_stretch_t>(src.type().tid(), src);
+  };
+\end{minted}
+
+This piece of code is interesting in many ways. It introduces the way we dispatch according to the known types (line
+12): there is the embedded runtime type information we are going to use for the dispatch. Then there is the call to
+\texttt{visit} parametrized by the templated structure \texttt{apply\_stretch\_t}. This visitor will statically
+instantiate the correct \texttt{apply\_stretch\_t} with the correct dynamic type (\text{src.type().tid()}) and call a
+non type-erased version of the function stretch after having cast the values of the images. However, for this to work we
+still have to tweak the first implementation a little.
+
+\begin{minted}[linenos]{C++}
+  template <class T>
+  image2d<float> stretch(const image2d<T>& src)
+  {
+    auto        res  = image2d<float>(src.width(), src.height());
+    auto        span = src.values();
+    const auto& vs   = src.get_value_set();
+    std::transform(span.begin(), span.end(), res.values().begin(),
+                   [&vs](auto val) -> float
+                   {
+                     auto tmp = vs.max();
+                     return vs.template cast<float>(val) / vs.template cast<float>(tmp);
+                   });
+    return res;
+  }
+\end{minted}
+
+We introduce a new tool: the value-set (line 6). This value-set is a type-erased way to provide basic operations on
+types such as casting, division, addition, getting the global max etc. This powerful tool, also embedded in the image,
+allow us to write the algorithm in a generic way lines 10-11.
+
+Thanks to this design, we have been able to type-erase our image types so that our algorithms can be called through
+python via bindings generated by pybind~\cite{jakob.2017.pybind11}. As an example, we can then call our stretch
+algorithm this way:
+
+\begin{minted}{python}
+  import pylena as pln, imageio, numpy as np
+  img_in = imageio.imread("lena.png")
+  np_arr = np.array(img_in, dtype='int8')
+  img = pln.image2d(np_arr)
+  print(timeit.timeit('img_out = pln.stretch(img)', number=1000,
+        globals=globals()))
+  >> 0.24129085899949132 # Seconds for 1000 cycles
+
+  # Using a type that isn't int8 or int16
+  np_arr64 = np.array(img_in, dtype='int64')
+  img64 = pln.image2d(np_arr64)
+  print(timeit.timeit('img_out64 = pln.invert(img64)', number=1000,
+        globals=globals()))
+  >> 26.124844277999728 # Seconds for 1000 cycles
+\end{minted}
+
+We can observe a hundred time factor between the fast and optimized path and the slow dynamically dispatched path.
+
+\clearpage
+
 \begin{itemize}
   \item rappel de la problématique (backward ref depuis Généricité/4.)
   \item expliquer l'approche hybride (son design et les techniques de dispatch n*n avec variants)

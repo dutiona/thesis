@@ -1,6 +1,100 @@
+\section{Introducing range-based image traversing}
+\label{sec.range.traversing}
+
+Previously in Milena~\cite{levillain.2009.ismm} we had a very customized way of traversing images: macro-based. It aimed
+at hiding the complexity of such a task while loosing as little performance as possible. For example, the dilation
+algorithm was written this way:
+
+\begin{minted}{c++}
+  template<class I, class SE>
+  mln_concrete(I) dilate(const I& f, const SE& se)
+  {
+    mln_concrete(I) g;
+    initialize(g, f);
+    mln_piter(I) p(f.domain());
+    mln_qiter(SE) q(se, p);
+    for_all(p) // for all p in f domain
+    {
+      mln_value(I) v = f(p);
+      for_all(q) // for all q in se(p)
+        if(f.has(q) and f(q) > v)
+          v = f(q);
+      g(p) = v;
+    }
+    return g;
+  }
+\end{minted}
+
+In this code \texttt{mln\_concrete}, \texttt{mln\_piter}, \texttt{mln\_qiter}, \texttt{for\_all} and \texttt{mln\_value}
+are all macros aiming at hiding the underlying complexity. Our goal is to replace those macros with existing C++ core
+language code to improve the user experience as well as ease the maintenance, contribution and further improvement of
+the library. Nowadays, a tool named range (and especially Eric Niebler's range-v3) allow seamless traversing of an
+image. For instance, we can rewrite the above algorithm this way:
+
+\begin{minted}{c++}
+  template<class I, class SE>
+  image_concrete_t<I> dilate(const I& f, const SE& se)
+  {
+    auto g = f.concretize();
+    auto supr = accu::supremum<image_value_t<I>>();
+    for(auto [f_px, g_px] : zip(f.pixels(), g.pixels()))
+    {
+      for(auto qx : se(f_px))
+        supr.take(qx.val());
+      g_px.val() = supr.result();
+    }
+    return g;
+  }
+\end{minted}
+
+Here we have a much more efficient code that, in theory, enables compiler optimizations such as vectorization or inner
+loops unrolling. But through benchmarking, we have learned that this solution doesn't mix well with the multidimensional
+nature of images. The issue originates from the fact that we have no way to explicitly say in the code that the
+multidimensional range is made of chunk of contiguous rows of memory. Indeed, for each element we have to compute an
+index originating from potentially $N$ dimensions. This disables critical optimizations such as vectorization.
+
+We solved this problem by augmenting range-v3's ranges with our own multidimensional ranges. Indeed, we only need to
+have contiguity on the last dimension to provide the compiler code it can optimize. Which means that each for-loop that
+traverses the whole n-dimensional image can be transformed into a double for-loop whose inner loop is guaranteed to be a
+contiguous row. This way we have now an outer range as well as an inner range, as illustrated in
+figure~\ref{fig.inner.outer.range}.
+
+\begin{figure}[htbp]
+  \centering
+  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{svg-inkscape/linear_rng_svg-tex.pdf}}
+  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{svg-inkscape/segmented_rng_svg-tex.pdf}}
+  \caption{Range-v3's ranges (a) vs. multidimensional ranges (b).}
+  \label{fig.inner.outer.range}
+\end{figure}
+
+Thanks to this new design we can now rewrite our algorithm with a double for-loop for the image traversing. Hopefully it
+stays really similar to what one would be used to when working with the classical two dimension image. As an example, we
+can rewrite the dilation algorithm this way:
+
+\begin{minted}{c++}
+  template<class I, class SE>
+  image_concrete_t<I> dilate(const I& f, const SE& se)
+  {
+    auto g = f.concretize();
+    auto supr = accu::supremum<image_value_t<I>>();
+    auto zipped_pixels = zip(f.pixels(), g.pixels());
+    for(auto&& row : ranges::rows(zipped_pixels))
+      for(auto [f_px, g_px] : row)
+      {
+        for(auto qx : se(f_px))
+          supr.take(qx.val());
+        g_px.val() = supr.result();
+      }
+    return g;
+  }
+\end{minted}
+
+The highlight of this code is the usage a new tool: \texttt{ranges::rows} to bring out an inner range (contiguous) from
+the multidimensional outer range.
+
+
 \section{Introducing Views}
 \label{sec.views}
-
 
 \subsection{Practical genericity for efficiency: the Views}
 \label{subsec.views}
@@ -333,6 +427,102 @@ Image out = subquantize16to8b(
     \colorbox{thistle}{views}.}
   \label{fig.view.comp.sub_bg}
 \end{figure}
+
+
+\section{From local algorithm to border management}
+\label{sec.localgo.bm}
+
+In image processing there are three main families of algorithms:
+\begin{itemize}
+  \item Point-wise algorithms: they process each value of the image, individually from each others (e.g.
+        multiplication).
+  \item Local algorithms: they process each value of the image, helped with the knowledge of the neighboring values
+        catched in a window: the structuring element (e.g. convolution).
+  \item Global algorithms: they propagate the changes downstream during the algorithm unrolling. Knowledge of previously
+        computed values is required (e.g. chamfer distance transform).
+\end{itemize}
+Here we are interested in particular in local algorithms. The long recurring issue is about the behavior on the border
+of the image. There are many ways of dealing with this problem. One is to allocate additional memory for the border and
+paste values in it. Another is to check the bounds when looping over the neighbors. We can also decorate the image to
+return a correct lazily computed value when accessing out-of-image's-bound value still inside the extension. The point
+is: all these methods have advantages as well as disadvantages.
+
+\subsubsection{Memory allocated border}
+The border width is fixed at the image's creation and cannot be augmented without doing a reallocation. There is also a
+cost when computing border's values (to fill it) which is proportional to the border's width and to the image's size. On
+the other hand, the access time of a border value during the algorithm unrolling is as fast as a native access time
+within the image itself. The last issue remaining would be that the border is not infinite. We cannot process a local
+algorithm with a structuring element that does not fit in the extension. This method is especially adapted when there is
+medium structuring elements with a known size which will yield a lot of out-of-image's bound accesses. When speed is
+required, this method is a defacto standard.
+
+\subsubsection{Bound checking}
+Assuming there is no border and we are not allowed to access out-of-image's-bound values, a bound check is required when
+accessing each values. Another way to do would be to decorate the facility that yields the neighbors of a pixel: do not
+yield out-of-image's-bound pixels. This removes the need to bound check for each pixel's value which is relatively
+faster. The caveats of this method are that it induces a slight slow down when yielding the pixel's neighbors from the
+structuring element, and that it is not always viable: some algorithm do need to access values in an extension to
+produce proper results.
+
+\subsubsection{Image decoration}
+The border is infinite and we make a view of our image to decorate it with the required extension. This method has the
+advantage to \textit{always work}. Given any structuring element of any size, any algorithm will work. The disadvantage
+is that we need to check for out-of-bound access at the image level, and lazily compute the value in case of
+out-of-image's-bound access. The slowness induced is not negligible and should be weighted carefully.
+
+\bigskip
+
+It is important to note the very close relation between an image's domain (to perform out-of-bound checks), the
+structuring element (notably its size) and the extension (its width). A user may require, for a specific set of those
+three elements, to decorate the image, and/or the structuring element and/or to perform computation and/or reallocation.
+To resolve this issue, we decided to provide the user with a new facility: the \textit{border manager} whose job is to
+prepare a suitable couple (image and structuring element) given a set of configuration wanted by the user.
+
+We designed the configuration to be configured from a given set of a policy and a method. We currently offer two
+policies: native and auto.
+
+\begin{itemize}
+  \item Native: if the border is large enough: forward the image as-is to the algorithm to allow the fastest access
+        possible. Otherwise, the border manager fails and halt the program.
+  \item Auto: if the border is large enough: forward the image as-is to the algorithm to allow the fastest access
+        possible. Otherwise, decorate the image with a view whose extension will emulate what is required by the algorithm
+        with the given structuring element.
+\end{itemize}
+
+We also provide seven different methods to fill the values of our extension. It is important to note that not all the
+methods are available for both policies. The policies are: none, fill, mirror, periodize, clamp, image and user.
+
+\begin{itemize}
+  \item None: enforce a policy where there is no border to use. The method cannot fail as it enforces the border to
+        vanish. To enforce this method, the border manager decorate the structuring element in a view that checks the domain
+        inclusion of each neighboring point.
+  \item Fill: will fill the border with a specific value.
+  \item Mirror: will mirror the image following an axial symmetry of image's edges.
+  \item Periodize: replicate the image around, like a mosaic.
+  \item Clamp: expand the value at the image's edge on the border.
+  \item Image: assume all points out of the current image's domain are to be picked inside another image. A basic
+        use-case is preparing tiles from a large image. The position of our image can be offset in the image acting as an
+        extension which ease the ease of usage.
+  \item User: Assume the user knows what he is doing and do not touch nor decorate the given image in any way. Both
+        policies lead to the same behavior: check wether the structuring element fit and then forward the image as-is if it
+        fits. An exception is raised if it does not.
+\end{itemize}
+
+As a consequence the usage of a local algorithm becomes very eased:
+
+\begin{minted}{C++}
+  // default border width is 3
+  image2d<int> ima = {{0, 1, 0}, {0, 1, 1}, {0, 1, 0}};
+  auto disc_se = se::disc{1}; // radius is 1
+  auto bm = extension::bm::fill(0); // fill border with 0 with policy auto
+
+  local_algorithm(ima, disc_se, bm); // will handle the border for you
+\end{minted}
+
+The border manager \texttt{bm} is set with the method fill (with value 0) and policy \texttt{auto} (wich is the default
+policy). To use the policy \texttt{native}, one would write \texttt{extension::bm::native::fill(0)} instead.
+
+\FIXME{put schemas showing different type of border management}
 
 
 \clearpage

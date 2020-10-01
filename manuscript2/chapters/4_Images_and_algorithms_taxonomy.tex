@@ -548,6 +548,185 @@ def dilate(img, out, se):
 This way of thinking algorithms is far less readable than the classic way. The user does not see the loops happening and
 it can becomes very messy when several passes are happening (closing, opening, hit or miss, etc.)
 
+\vspace{1cm}
+
+
+\section{Heterogeneous computing: a partial solution, canvas}
+\label{sec.hc.canvas}
+
+One of the key aspect driving genericity is performance. We have the following mantra: "write once, work for every
+types, run everywhere". However when considering the "run" aspect, one has a lot to do. Indeed, nowadays, exploiting the
+available resources to their maximum is long standing issue. There are many ongoing work on the subject, such as
+SyCL~\cite{brown.2019.heterogeneous,wong.2019.heterogeneous}, Boost.SIMD~\cite{esterie.2014.boostsimd} or even
+VCL~\cite{fog.2013.vcl}. After taking some distance to study the subject, we can infer that there are three main aspects
+to consider when optimizing performance.
+
+The first one, the most important one is the algorithm to use in function of certain set of data. This aspect is covered
+by the C++ language and its builtin genericity tool: template metaprogramming. Indeed, we select the most optimized
+algorithm for a particular set of data.
+
+The second one is the ability for the code to be understood by the compiler so that is is further optimized during the
+generation of the binary. Indeed, when compiling for the native architecture of a recent processor, one can use the most
+recent assembly instructions to use wide vectorized registries (AVX512). The use of a recent compiler also brings the
+help much needed.
+
+Finally, the third aspect is not as trivial as the first two ones. It consists in studying the structure of an algorithm
+to allow distributed computation. Sometimes algorithm are friendly to be distributed on several processing unit that
+compute a part of the result concurrently. This is what we call parallelism. There exists several way to take advantage
+of parallelism. First there is the use of several CPU unit on the host computer. Then there is the use of GPU units
+working in combination with the CPU units to take advantage of the massive amount of core a graphic card can provide.
+Finally there is the use of cloud computing which consists in using several "virtual" computers, each of them offering
+of CPU and GPU units in order to compute a result. One should be aware that each time we introduce a new layer of
+abstraction, there is a cost to orchestrate the computation, send the input data and retrieve the results. It is thus
+very important to study case by case what is needed. Some solutions exists that abstract away completely the hardware
+through a DSL~\footnote{Domain Specific Language} such as Halide~\cite{ragankelley.2013.halide}: the DSL compiler's job
+will be to try very hard to make the most out of both the available (or targeted) hardware and the code. Those solutions
+are not satisfactory for us as we want to avoid DSL and remain at code level. We are not developing a compiler: we are
+working with it.
+
+There is one true issue when studying parallel algorithm: it is wether they can be parallelized or not. Not all
+algorithms can be parallelized. Some just intrinsically cannot, typically, algorithms that immediately need the result
+at the previous iteration to compute the next iteration. There are still way to parallelize those one but it is not
+trivial and will not be treated in this paper. What interest us are the algorithms whose structure is an accumulation
+over a data type that can be defined as a monoid. We assert that every algorithm that can be rewritten as an
+accumulation over a monoid can be parallelized and/or distributed. This model that consists in distributing computation
+like an accumulation over a monoid data structure is also call the map-reduce. This model has two steps: the
+distribution (map) and then the accumulation (reduce).
+
+The map step will dispatch computation on sub-units with small set of data. The reduce step will retrieve and accumulate
+all those resulting data, as soon as they are ready.
+
+The accumulation algorithm has this form:
+\begin{minted}[linenos]{C++}
+  template <class In, class T, class Op>
+  auto accumulate(In input, T init, Op op)
+  {
+    for(auto e : input)
+    {
+      init = op(init, e);
+    }
+    return init;
+  }
+\end{minted}
+
+The loop line 4 can be split into several calculation units which are going to be distributed, and then be accumulated
+later once the units have finished their computation.
+
+The issue left here is the monoid. What exactly is a monoid here? A monoid is a data structure which operates over a set
+of values, finite or infinite. This data structure must provide a binary operation which is closed and associative.
+Finally, this data structure must also provide a neutral element (aka the identity). Some trivial monoids comes to mind:
+\begin{itemize}
+  \item boolean. For binary operation "and", identity is "true" whereas for binary operation "or", identity is "false".
+  \item integer. For binary operation "-" and "+", identity is "0" whereas for binary operation "*" and "/", identity is
+        "1".
+  \item string. For concatenation, identity is empty string.
+  \item optional value (also known as monadic structure in haskell programming language).
+\end{itemize}
+There are many more monoids, less trivial but very handy, such as the unsigned integer/max/0 set and the signed
+integer/min/global max set.
+
+This theory is extremely benefic to image processing as the most commonly used algorithms, the local algorithms, can all
+be written in the form of an accumulation over the pixels of an image. The fact that finding an identity for the
+operation processed by the algorithm is often quite trivial led us to the idea of canvas. A canvas is a standard way to
+write an iteration over an image which abstract the underlying data structure. A canvas is a tool for the user to
+provide its computation model based on events such as: "entering inner loop" or "exiting inner loop". The user can then
+provide its operations as if he was writing his algorithm himself (restricted to the accumulation model). As the
+maintainer of the library provides the canvas of execution, he can know also make change to take advantage of it. For
+instance, computing a CUDA kernel at one point and dispatching it on GPU units is totally within scope and transparent
+for the user of the library. Although there is a caveat: rewriting our algorithm in an accumulate form and chunking it
+in fragments to feed to the canvas is definitely not intuitive. Indeed, we require our user to change his way of
+thinking from the procedural paradigm to the event-driven paradigm. This approach is not new and is used in other
+libraries such as Boost.Graph~\cite{siek.2001.boostgraph} for similar purposes.
+
+\FIXME{quote C++Now 2019: Ben Deane “Identifying Monoids: Exploiting Compositional Structure in Code”}
+
+\vspace{1cm}
+\begin{verbatim}
+
+## Issue: wide subject, a lot to consider
+
+Genericity: "write once, work for every types, run everywhere"
+
+The 'run' aspect can be a combination of:
+
+* as fast as possible on a single CPU unit
+* as fast as possible on thanks to using many CPU units
+* as fast as possible on thanks to using many GPU units
+* as fast as possible on thanks to using many computers (cloud) and their
+  CPU/GPU units.
+
+There is no simple answer to this question.
+
+## Challenge: find the customization point
+
+* Find what can be parallelized/distributed.
+* Find an algorithm abstraction.
+
+For us it is the local algorithms. They all have an accumulation pattern:
+
+```cpp
+  template <class In, class Out, class SE, class T, class Op>
+  auto local_accumulate(In input, Out output, SE se, T init, Op op)
+  {
+    for(auto&& row : ranges::rows(input.pixels()))
+      for(auto p : row)
+      {
+        auto v = init;
+        for(auto nb : se(p))
+          v = op(init, nb.val());
+        init += v;
+      }
+    return init;
+  }
+```
+
+## Data structure requirement: monoid
+
+\small
+Monoid, definition:
+
+1. operates over a set of values, finite or infinite
+2. provides a binary operation which is closed and associative
+3. provide a neutral element, the identity
+
+Easy monoids:
+
+* boolean, *and*, "true" -> binary erosion
+* boolean, *or*, "false" -> binary dilation
+* unsigned integer, *max", "0" -> dilation
+* signed integer, *min", "global max" -> erosion
+
+## Solution: algorithms canvas
+
+\scriptsize
+
+* Algorithm canvas: standard way to iterate over an image to perform a
+  computation
+* Structure similar to accumulation for local algorithms
+* Friendly for factorizing code
+* Decoupling image traversing from actual computation
+* Change of paradigm: procedural -> event-driven
+* Non intuitive way to decompose an algorithm for the user
+* Allow customization points by maintainer without restraining the user.
+
+```cpp
+  Image img_in = ..., img_out = ... ;
+  StructuringElement se = ... ;
+  auto z = ranges::view::zip(img_in.pixels(), img_out.pixels());
+  for (auto rows : ranges::rows(z)) {
+    user_callbacks->ExecuteAtLineStart();
+    for (auto [px_in, px_out] : rows) {
+      user_callbacks->EvalBeforeLocalLoop(px_in.val(), px_out.val());
+      for (auto nbhs_in : se(px_in))
+        user_callbacks->EvalInLocalLoop(nbhs_in.val(), px_in.val(),
+                                        px_out.val());
+      user_callbacks->EvalAfterLocalLoop(px_in.val(), px_out.val());
+    }
+  }
+```
+\end{verbatim}
+
+
 \clearpage
 
 \begin{itemize}

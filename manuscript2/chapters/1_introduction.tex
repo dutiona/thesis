@@ -172,3 +172,19 @@ In \cref{part.genericity}, we present this new generic design, that emerged with
 allowed solving some \textsc{Milena}'s shortcomings. Not only does this new design re-conciliate \emph{simplicity} and
 \emph{performance}, but it also promotes \emph{extensibility} as it enables easily creating custom image types as those
 shown in \cref{part.image_views}.
+
+
+\vspace{1cm}
+
+Our work on bringing genericity to image processing through C++ template metaprogramming and concepts is presented
+in~\citep{roynard.2019.rrpr}. Continuing this previous work, we focused on the main goals of the library. First is the
+zero-cost of traversing an image, overhauling the existing system which is macro-based. The new system presented in
+section~\ref{part.image_views} is based on
+range-v3~\cite{niebler.2014.ranges,niebler.2018.deepranges,niebler.2018.mergingranges}. Following, we will show in
+section~\ref{part.image_views} a design around image's domain definition, extension and structuring element: how those
+concepts link with each other when used to write local algorithms. Another objective of the library is the ease of use
+and the binding with existing ecosystem, such as Python and NumPy. So we will present in
+section~\ref{part.static_dynamic_bridge} our work about binding a generic C++ library to python. Finally, we will
+discuss in section~\ref{part.image_and_algorithms_taxonomy} the issue of heterogeneous computing. We offer an avenue
+around the idea of canvas algorithm that can be exploited to bring performance without being intrusive for the user.
+Though it comes with its lot of disadvantage, such as a paradigm switch to event-driven programming.

@@ -64,6 +64,37 @@ Clang/LLVM and maintained by CERN). This would allow us to compile our generic C
 and have our bindings automatically generated. As a future work, we will implement both approaches to benchmark them in
 order to measure which one is the most effective for the many use-cases we have.
 
+\vspace{1cm}
+
+During our $2^{nd}$ year of work on our Ph.D. we have broaden our horizon and seen many issues as well as studied
+potential leads of solutions.
+
+For traversing of an image, a satisfactory solution has been found that does not hinder performances, though some small
+issues remain to be studied later.
+
+Concerning the way to handle an image's borders when processing a local algorithm, we have studied the question in depth
+and exercised the presented design against different kind of problem such as structuring elements which are static,
+dynamic or adaptive. All of these are within scope and handled by the solution presented in this paper.
+
+The static dynamic bridge proved to be a big challenge as there was very little experience feedback from existing
+solution experimented by other libraries. It took a lot of incremental trial and error to design the hybrid solution
+that would perform with satisfactory performances for common use cases without duplicating code. This question still
+remains open as we would like to study the usability of bringing in a C++ interpreter such as
+Cppyy~\cite{wimtlplavrijsen.2016.cppyy} (based on clang) to dynamically generate python bindings on the fly when those
+are missing for specific types. This would allows us to inject user type from python into the C++ core library code. The
+solution of code generation through tools like AsmJIT~\cite{kobalicek.2011.asmjit} also remains open for future work.
+
+Finally the reflection about how we can bring parallelism and more generally heterogeneous computing into the library
+brought us to study different approaches, different paradigms and think about how our data structure operate with the
+on-going computation. We attempted to bring a solution with the algorithm canvas though we did not took advantage of it
+for the moment. For instance, we do not dispatch CUDA kernel yet. This question remains open and can still be studied
+further.
+
+To conclude, the priority in the future will be put into having a first stable release of the library. Indeed, we want
+to provide the library for the students so that they can give feedbacks on its usability. We will study both the
+usability of the C++ aspect and the python aspect.
+
+
 \clearpage
 
 
