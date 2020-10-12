@@ -13,7 +13,7 @@ C++, with views, provide the tools to naturally achieve this goal, being efficie
 discussed in this paper are not specific to image processing and can be reapplied to other scientific library aiming at
 solving different kind of problems.
 
-Image processing has evolved over time to become a field where a very wide array of problematics has arisen. The time
+Image processing has evolved over time to become a field where a very wide array of problematic has arisen. The time
 when the 2-dimensional images whose colors were encoded within three 8-bits RGB channels, was a complex construct is
 long gone. Instead, and in the last 20 years, there are many new kind of image being brought by the need in new
 application domains, be they: medical (3D images from MRI), video games (real time 3D rendering, meshes, visual
@@ -39,24 +39,212 @@ ongoing work, which is still of topicality nowadays.
 
 \chapter{User profile}
 
+Nous avons identifiés quatre catégories distinctes d'acteurs liés à une bibliothèque de traitements
+d'images :
+\begin{itemize}
+  \item les assembliers;
+  \item les créateurs-concepteurs;
+  \item les fournisseurs;
+  \item les architectes.
+\end{itemize}
+\paragraph{ASSEMBLIERS}. Un assemblier se contente de manipuler les briques de base offertes par la
+bibliothèque pour composer une application. Il ne réalise que de l'assemblage de composants. Mis
+bout à bout ces derniers forment une solution. L'outil idéal pour un assemblier est un environnement
+de programmation visuelle. Sa tâche consiste à dessiner des diagrammes de flux de données.
+Chaque boîte d'un tel diagramme matérialise un traitement et les liens entre les boîtes matérialise
+le flux des données. Si un diagramme ressemble à une séquence d'appels à des fonctions et
+comporte des structures de contrôle, le résultat n'est pas, à proprement parlé, un algorithme mais
+une "chaîne de traitements". Grâce à l'interface graphique d'un environnement de programmation
+visuelle, l'assemblier n'a besoin d'aucune compétence particulière en informatique et, a fortiori, en
+"véritable" programmation. En l'absence d'un environnement, les enchaînements de traitements
+sont décrits à l'aide d'un langage de programmation textuel, le C par exemple. Mais, pour ce type de
+tâche, les connaissances requises en programmation restent d'un niveau relativement bas puisqu'il
+s'agit de ne réaliser que des appels aux fonctions.
+\paragraph{CRÉATEURS} . Un créateur cherche à concevoir un nouvel algorithme ou une nouvelle méthode
+de traitement d'images. Il ne peut pas se contenter d'assembler des fonctions existantes pour obtenir
+ce qu'il veut. Son but est de créer une nouvelle fonction, quelle soit plutôt élémentaire, comme un
+"simple" opérateur de traitement d'images, soit de plus haut niveau, comme une tâche applicative
+"complexe". Il a un réel besoin de programmation; d'ailleurs, un environnement de programmation
+visuelle ne peut pas lui rendre le service qu'il attend. Les connaissances requises en programmation
+pour un créateur sont d'un niveau déjà supérieur à celui d'un assemblier, sans toutefois atteindre un
+niveau très élevé. La plupart des traiteurs d'images programmant se situent dans cette catégorie
+d'utilisateurs. Cette catégorie est le sujet de la discussion du préambule, page 5 et suivantes : le
+traiteur d'images créateur est véritablement un concepteur de programmes. Pour cela, il doit être
+aidé par son outil, la bibliothèque, surtout si son niveau d'informatique reste relativement modeste.
+C'est à cette personne au comportement dual, créateur de traitements et concepteur de programmes,
+que s'adresse le travail décrit dans ce rapport.
+\paragraph{FOURNISSEURS} . Un fournisseur se distingue d'un créateur car il n'apporte pas des fonctions
+mais de la matière première. Cette matière se divide en deux catégories : les types de données et les
+utilitaires. Parmi les types de données se trouvent les structures de données servant à définir des
+images, par exemple, un type pour gérer une image bi-dimensionnelle en niveaux de gris, et des
+types destinés aux valeurs des pixels, par exemple le type de couleur correspondant à un espace
+colorimétrique donné comme RGB (Red-Green-Blue). Les types de données représentent la matière
+manipulée par les fonctions, cette matière formant le flux de données d'un programme de traitement.
+Définir des types de données nécessite des compétences déjà avancées en informatique. En effet il
+s'agit d'abord de comprendre comment ces types doivent être formés pour être compatibles, donc
+utilisables sans problème, avec la bibliothèque. Il en va de même pour les "petits" objets utilitaires
+qui doivent se marier parfaitement avec les types de données et les algorithmes. Contrairement
+aux deux catégories précédentes, assemblier et créateur, un fournisseur doit avoir l'âme d'un
+informaticien.
+\paragraph{ARCHITECTES} . Un architecte ne fait clairement pas de traitement d'images; son travail est
+centré sur la bibliothèque en tant que logiciel. Il effectue de la maintenance : des mises à jour,
+des correctifs, des améliorations; et peut-être même de la conception, du re-modelage de logiciel
+(refactoring), du génie informatique, de l'architecture logicielle. Pour cette dernière catégorie, le
+niveau informatique attendu est supérieur, voire nettement supérieur,à celui des autres catégories.En
+effet, un architecte doit pouvoir saisir les différentes problématiques liées à l'organisation complexe
+que peut être celle d'une bibliothèque et, pour cela, doit bien maîtriser l'outil informatique.
 
+insert figure here
+
+Pour se fixer les idées quant aux compétences requises par ces différents utilisateurs, on peut
+observer les artefacts suivants : un assembleur, s'il programme, écrit essentiellement des appels à
+des fonctions; un créateur doit savoir écrire des boucles telles que "pour chaque point de l'image";
+un fournisseur connaît les mots-clefs struct et/ou class et les notions associées; un architecte a déjà
+ouvert la norme du langage qu'il utilise. Pour donner une répartition de la population d'utilisateurs
+dans ces différentes catégories, il faut tenir compte qu'une même personne a souvent un rôle
+double. Le cas manifeste est celui du créateur qui, pour son travail, utilise des fonctions déjà toutes
+14 UNE BIBLIOTHÈQUE GÉNÉRIQUE
+faites et, par cela, est également partiellement un assembleur. Au final, une tentative de répartition
+approximativement est dans la table 1.
+Cette répartition se comprend par temps passé dans une des catégories. Elle est statistique par
+personne, par temps passé et corrigée par le poids de code considéré. Un créateur, par exemple,
+lorsqu'il appelle une fonction existante ne passe que peu de temps à écrire cet appel, pourtant le
+poids, en nombre de lignes de code dépliées, appelées en cascade par cette fonction, est important;
+le poids en tant qu'assemblier devient fort car la quantité de matière utilisée (et non créée) est très
+significative.
+Une telle répartition peut aussi être rapportée à la fréquence des tâches : utiliser l'existant
+(assembler) est courant, créer l'est moins, et fournir un nouveau type de données ou un nouvel
+utilitaire est déjà très rare.
+
+insert figure here
+
+Une bibliothèque n'est pas toujours un outil isolé; elle peut être partie intégrante d'un environ-
+nement logiciel plus large. Une architecture possible pour ce dernier est donnée en figure 1.
+Du côté de l'utilisateur, cet environnement peut comprendre des outils indépendants qui lui
+permettent de travailler sans pour autant devoir coder dans le langage de programmation de la
+bibliothèque. Citons par exemple :
+\begin{itemize}
+  \item un jeu de commandes en ligne pour lancer des traitements à partir d'un invite de commandes
+        (shell), ou pour pouvoir écrire des scripts
+  \item un outil de programmation visuelle, comme C ANTATA de K HOROS ;
+  \item un logiciel de traitement d'images avec interface graphique, comme T HE GIMP, dans lequel
+  \item une interface écrite dans un langage de programmation tiers afin de pouvoir appeler les
+        fonctions de la bibliothèque à partir d'un autre environnement, par exemple, en Java lorsque la
+        bibliothèque est écrite en C++;
+  \item etc.
+\end{itemize}
+Au final, ces outils utilisent les fonctionnalités offertes par la bibliothèque, même si l'utilisateur
+ne voit pas explicitement que celle-ci est utilisée, asservie, en interne. Les fonctions de traitement
+d'images qui sont appelées de tous les outils satellites imaginables sont véritablement celles de la
+bibliothèque. Autant dire qu'elle est donc finalement le cœur de l'environnement.
+L'ensemble des fonctions de traitement d'images disponibles pour l'utilisateur correspond à
+celui que fournit la bibliothèque, ou à un sous-ensemble si toutes les fonctionnalités ne sont pas
+"traduites" vers les outils satellites, rendues accessibles à ces outils. Pour que l'utilisateur puisse
+profiter de tout ce qu'offre une bibliothèque, cette transmission de fonctionnalités vers les outils
+satellites doit est réalisée soit complètement automatiquement, soit sans effort supplémentaire.
+Pour cela, nous avons inclus dans l'architecture une description des fonctionnalités sous la forme
+de composants. Cette description, qui doit rester en phase avec le contenu de la bibliothèque, est
+exploitée comme donnée brute pour générer les ponts entre la bibliothèque et tous ses périphériques.
+Ainsi, l'accès aux fonctionnalités peut être garanti.
+Les fonctionnalités des outils de l'environnement provenant de la bibliothèque, il faut bien
+comprendre que les services sont donc finalement rendus à l'utilisateur par la bibliothèque. Les
+outils satellites sont en fait des sur-couches, côté utilisateur, du cœur central qu'est la bibliothèque.
+Le périmètre des fonctionnalités de l'environnement est clairement défini par le contenu de la
+bibliothèque. Ces fonctionnalités sont internes, bien encloses dans la bibliothèque. En corollaire,
+une remarque cruciale émerge lorsque l'on considère l'extérieur de ce périmètre : tout se qui est
+impossible pour la bibliothèque restera obligatoirement impossible pour l'utilisateur final, quelque
+soit l'outil périphérique qu'il emploie. Avec la notion de périmètre vient celle de limite. Si la
+bibliothèque possède des limitations, celles-ci sont automatiquement transmises à l'environnement.
+Le périmètre d'utilisation d'une bibliothèque a donc tout intérêt à être le plus large possible. Cette
+conclusion semble assez évidente; ce qui ne l'est pas, en revanche, est de considérer qu'obtenir le
+plus large périmètre d'utilisation possible doit être une des priorités principales de la conception
+d'une bibliothèque.
 
 
 \chapter{Image processing at Epita's Research and Development Laboratory (LRDE)}
 
 \chapter{Library's perimeter and goals}
 
+In the same way libraries are collections of reusable code, it is
+possible to create generic libraries made of reusable generic code.
+In C ++ such libraries are composed of function and class templates.
+But unlike traditional libraries, which contains compiled code (e.g.,
+files ending in ' .a ', ' .so ', ' .lib ', ' .dll ', etc.), generic libraries are
+merely collection or source code containing templates. Indeed
+generic algorithms and data types cannot be turned into compiled
+code unless they are specialized. Thus to preserve their most
+general (abstract) form, they must be distributed and installed as
+source files.
+The most famous generic library is probably the Standard Tem-
+plate Library (STL). The STL is a collection of generic containers
+(character strings, vectors, lists, dictionaries, queues, etc.) and
+generic algorithms for these data structures (for sorting, search-
+ing, copying, applying transformations, etc.).
+STL data structures and algorithms are orthogonal: any STL
+algorithm can be applied to any STL container, as long as the
+combination is valid (for instance, a random shuffling algorithm
+cannot be applied to a container that does not support random
+accesses). Therefore, data structures and algorithms from the
+STL are loosely coupled: the former can be extended irrespective
+of the later, and vice versa. This powerful property is due to
+the use of iterators, acting as abstract handles on the values of
+a container. The concept of iterator belongs to the set of design
+patterns presented by Gamma et al.. STL algorithms do not
+take containers as input, but iterators: therefore, they are not tied
+to a particular data structure, or even to an abstract interface (e.g.,
+the interface of a sequential or random-access container). The
+only interface between containers and algorithms are iterators:
+they are provided by the former and use by the latter. The
+STL algorithms have been designed to be also compatible with
+ordinary C arrays, as C pointers can be used as iterators as well.
+Most of the STL has been integrated into the ISO C ++ standard
+library.
+We can illustrate the possibilities of the STL with the follow-
+ing example: a dynamic array ( std::vector<int> ) of three in-
+tegers is created ( push_back() calls), sorted ( std::sort ), and
+copied ( std::copy ) into a linked list of floating point values
+2.2 history of generic programming 35
+( std::list<float> ), with on-the-fly conversion of int values
+into float ones.
+
+\begin{minted}{cpp}
+std::vector <int> ints;
+ints.push_back(2);
+ints.push_back(3);
+ints.push_back(1);
+std::sort(ints.begin(), ints.end());
+std::list<float> floats;
+std::copy(ints.begin(), ints.end(),
+std::back_inserter(floats));
+\end{minted}
+
+Method calls c.begin() and c.end() return iterators pointing
+to the beginning and (past) the end of the container c . std::
+back_inserter creates a special iterator inserting data at the end
+of its container.
+In addition to containers, algorithms and iterators, the STL
+defines a set of concepts defining syntactic and semantic require-
+ments over types. Concepts are addressed in Section 2.4 (p. 52).
+Section 2.2.3 (p. 38) provides additional information on the STL.
+Besides the STL, there are many successful generic libraries in
+C ++ . We present some of them in Section 2.3 (p. 49).
+Our proposal for a generic image processing platform is cen-
+tered on a generic image processing library. We reuse and extend
+ideas that have been made popular by the STL and other libraries,
+including data structure/algorithm uncoupling, iterator-based
+traversals, etc.
+
 \begin{itemize}
   \item Domaines du TI et besoins par domaine
   \item Profils des utilisateurs et besoins en fonction des profils Intégrateur/Développeur vs Praticien
   \item Contexte du LRDE (Expériences de Olena \& spécialisation en Morph. Math, Topo. Discrète), définitions de nos
-  besoins spécifiques (outils pour l'expérimentation, outils pour l'éducation, outils pour le logiciel de production)
+        besoins spécifiques (outils pour l'expérimentation, outils pour l'éducation, outils pour le logiciel de production)
   \item Définitions du périmètre de la bibliothèque et de ses objectifs:
-    \begin{itemize}
-      \item Performance
-      \item Facile d'utilisation (UX client)
-      \item Facile de développement (Core developer xp)
-      \item Versatilité des types d'images
-      \item Utilisable depuis Python, Orientée MM
-    \end{itemize}
+        \begin{itemize}
+          \item Performance
+          \item Facile d'utilisation (UX client)
+          \item Facile de développement (Core developer xp)
+          \item Versatilité des types d'images
+          \item Utilisable depuis Python, Orientée MM
+        \end{itemize}
 \end{itemize}
