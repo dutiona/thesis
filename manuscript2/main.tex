@@ -37,6 +37,11 @@
 \newcommand{\FIXME}[1]{{\color{red}#1}}
 \newcommand{\PLAGIAT}[1]{{\color{magenta}#1}}
 
+% Reset chapter number after each part
+\makeatletter
+\@addtoreset{chapter}{part}
+\makeatother  
+
 %\renewcommand{\baselinestretch}{1} 
 
 \usetikzlibrary{3d,calc,positioning}
@@ -93,10 +98,10 @@ TODO FR
 \cleardoublepage
 
 
-\part{Motivations and context}
-\label{part.motivations_and_context}
+\part{Context and Motivations}
+\label{part.context_and_Motivations}
 
-\input{chapters/2_motivations_and_context.tex}
+\input{chapters/2_context_and_motivations.tex}
 
 \cleardoublepage
 
