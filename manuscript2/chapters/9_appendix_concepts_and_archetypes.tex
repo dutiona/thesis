@@ -1,0 +1,1172 @@
+\section{Concepts}
+
+\subsection{Index}
+
+\begin{minted}{c++}
+// Index
+template <typename Idx>
+concept Index = std::signed_integral<Idx>;
+\end{minted}
+
+
+\subsection{Value}
+
+\begin{minted}{c++}
+// Value
+template <typename Val>
+concept Value = std::semiregular<Val>;
+
+// ComparableValue
+template <typename RegVal>
+concept ComparableValue =
+  std::regular<RegVal>;
+
+// OrderedValue
+template <typename STORegVal>
+concept OrderedValue =
+  std::regular<STORegVal> &&
+  std::totally_ordered<STORegVal>;
+\end{minted}
+
+
+\subsection{Point}
+
+\begin{minted}{c++}
+// Point
+template <typename P>
+concept Point =
+  std::regular<P> &&
+  std::totally_ordered<P>;
+\end{minted}
+
+
+\subsection{Pixel}
+
+\begin{minted}{c++}
+// Pixel
+template <class Pix> concept Pixel =
+std::is_base_of_v<mln::details::Pixel<Pix>, Pix> &&
+  std::copy_constructible<Pix> &&
+  std::move_constructible<Pix> &&
+  requires {
+    typename pixel_value_t<Pix>;
+    typename pixel_reference_t<Pix>;
+    typename pixel_point_t<Pix>;
+  } &&
+  std::semiregular<pixel_value_t<Pix>> &&
+  Point<pixel_point_t<Pix>> &&
+  !std::is_const_v<pixel_value_t<Pix>> &&
+  !std::is_reference_v<pixel_value_t<Pix>> &&
+  requires(const Pix cpix, Pix pix, pixel_point_t<Pix> p) {
+    { cpix.point() } -> std::convertible_to<pixel_point_t<Pix>>;
+    { cpix.val() }   -> std::convertible_to<pixel_reference_t<Pix>>;
+    { pix.shift(p) };
+  };
+
+// WritablePixel
+template <typename WPix>
+concept WritablePixel =
+  Pixel<WPix> &&
+  requires(const WPix cpix, pixel_value_t<WPix> v) {
+    // Not deep-const, view-semantic.
+    { cpix.val() = v };
+    // Proxy rvalues must not be deep-const on their assignement semantic (unlike tuple...)
+    { const_cast<typename WPix::reference const &&>(cpix.val()) = v };
+  };
+
+// OutputPixel
+template <typename Pix>
+concept OutputPixel = detail::WritablePixel<Pix>;
+\end{minted}
+
+
+\subsection{Ranges}
+
+\begin{minted}{c++}
+template <class C>
+concept MDCursor =
+  std::ranges::detail::forward_cursor<C> &&
+  std::ranges::detail::forward_cursor<std::ranges::detail::begin_cursor_t<C>> &&
+  requires (C c)
+  {
+    { c.read() } -> std::ranges::forward_range;
+    c.end_cursor();
+  };
+
+template <class C>
+concept NDCursor = std::semiregular<C> &&
+  requires (C c)
+  {
+    { C::rank } -> std::same_as<int>;
+    c.read();
+    c.move_to_next(0);
+    c.move_to_end(0);
+  };
+
+template <class C>
+concept MDBidirectionalCursor = MDCursor<C> &&
+  requires (C c)
+  {
+    c.move_to_prev();
+    c.move_to_prev_line();
+  };
+
+template <class R>
+concept MDRange =
+  requires(R r)
+  {
+    { r.rows() } -> std::ranges::forward_range;
+    { r.begin_cursor() } -> MDCursor;
+    { r.end_cursor() } -> std::same_as<std::ranges::default_sentinel_t>;
+  };
+
+template <class R>
+concept MDBidirectionalRange = MDRange<R> &&
+  requires (R r)
+  {
+    { r.rrows() } -> std::ranges::forward_range;
+    { r.rbegin_cursor() } -> MDCursor;
+    { r.rend_cursor() } -> std::same_as<std::ranges::default_sentinel_t>;
+  };
+
+template <class R>
+concept mdrange = MDRange<R> || std::ranges::range<R>;
+
+template <class R, class V>
+concept output_mdrange = mdrange<R> && std::ranges::output_range<mdrange_row_t<R>, V>;
+
+template <class R>
+concept reversible_mdrange = MDBidirectionalRange<R> || std::ranges::bidirectional_range<R>;
+\end{minted}
+
+
+\subsection{Domain}
+
+\begin{minted}{c++}
+// Domain
+template <typename Dom>
+concept Domain =
+  mln::ranges::mdrange<Dom> &&
+  Point<mln::ranges::mdrange_value_t<Dom>> &&
+  requires(const Dom cdom, mln::ranges::mdrange_value_t<Dom> p) {
+  { cdom.has(p) }   -> std::same_as<bool>;
+  { cdom.empty() }  -> std::same_as<bool>;
+  { cdom.dim() }    -> std::same_as<int>;
+  };
+
+
+// SizedDomain
+template <typename Dom>
+concept SizedDomain =
+  Domain<Dom> &&
+  requires(const Dom cdom) {
+  { cdom.size() } -> std::unsigned_integral;
+  };
+
+// ShapedDomain
+template <typename Dom>
+concept ShapedDomain =
+  SizedDomain<Dom> &&
+  requires(const Dom cdom) {
+    { cdom.extents() }  -> std::ranges::forward_range;
+  };
+\end{minted}
+
+
+\subsection{Extension}
+
+\begin{minted}{c++}
+template <typename Ext, typename Pnt>
+concept Extension =
+  std::is_base_of_v<mln::Extension<Ext>, Ext> &&
+  requires {
+    typename Ext::support_fill;
+    typename Ext::support_mirror;
+    typename Ext::support_periodize;
+    typename Ext::support_clamp;
+    typename Ext::support_extend_with;
+  } &&
+  Value<typename Ext::value_type> &&
+  requires (const Ext cext,
+      mln::archetypes::StructuringElement<
+        Pnt,
+        mln::archetypes::Pixel> se, const Pnt pnt) {
+    { cext.fit(se) }      -> bool;
+    { cext.extent() }     -> int;
+  };
+
+template <typename Ext>
+concept FillableExtension =
+  Extension<Ext> &&
+  std::convertible_to<typename Ext::support_fill, std::true_type> &&
+  requires {
+    typename Ext::value_type;
+  } &&
+  requires (Ext ext, const Ext cext, const typename Ext::value_type& v) {
+    { ext.fill(v) };
+    { cext.is_fill_supported() }  -> bool;
+  };
+
+template <typename Ext>
+concept MirrorableExtension =
+  Extension<Ext> &&
+  std::convertible_to<typename Ext::support_mirror, std::true_type> &&
+  requires (Ext ext, const Ext cext, std::size_t padding) {
+    { ext.mirror() };
+    { ext.mirror(padding) };
+    { cext.is_mirror_supported() }  -> bool;
+  };
+
+template <typename Ext>
+concept PeriodizableExtension =
+  Extension<Ext> &&
+  std::convertible_to<typename Ext::support_periodize, std::true_type> &&
+  requires (Ext ext, const Ext cext) {
+    { ext.periodize() };
+    { cext.is_periodize_supported() }  -> bool;
+  };
+
+template <typename Ext>
+concept ClampableExtension =
+  Extension<Ext> &&
+  std::convertible_to<typename Ext::support_clamp, std::true_type> &&
+  requires (Ext ext, const Ext cext) {
+    { ext.clamp() };
+    { cext.is_clamp_supported() }  -> bool;
+  };
+
+template <typename Ext, typename U>
+concept ExtendWithExtension =
+  Extension<Ext> &&
+  std::convertible_to<typename Ext::support_extend_with, std::true_type> &&
+  InputImage<U> &&
+  requires {
+    typename Ext::value_type;
+    typename Ext::point_type;
+  } &&
+  std::convertible_to<typename U::value_type, typename Ext::value_type> &&
+  std::convertible_to<typename Ext::point_type, typename U::point_type> &&
+  requires (Ext ext, const Ext cext, U u, typename Ext::point_type offset) {
+    { ext.extend_with(u, offset) };
+    { cext.is_extend_with_supported() }  -> bool;
+  };
+\end{minted}
+
+
+\subsection{Image}
+
+\begin{minted}{c++}
+template <typename I>
+concept Image =
+  // Minimum constraint on image object
+  // Do not requires DefaultConstructible
+  std::is_base_of_v<mln::details::Image<I>, I> &&
+  std::copy_constructible<I> &&
+  std::move_constructible<I> &&
+  std::derived_from<image_category_t<I>, forward_image_tag> &&
+  requires {
+    typename image_pixel_t<I>;
+    typename image_point_t<I>;
+    typename image_value_t<I>;
+    typename image_domain_t<I>;
+    typename image_reference_t<I>;
+    typename image_concrete_t<I>;
+    typename image_ch_value_t<I, mln::archetypes::Value>;
+    // traits
+    typename image_indexable_t<I>;
+    typename image_accessible_t<I>;
+    typename image_extension_category_t<I>;
+    typename image_category_t<I>;
+    typename image_view_t<I>;
+  } &&
+  Pixel<image_pixel_t<I>> &&
+  Point<image_point_t<I>> &&
+  Value<image_value_t<I>> &&
+  Domain<image_domain_t<I>> &&
+  std::convertible_to<pixel_point_t<image_pixel_t<I>>, image_point_t<I>> &&
+  std::convertible_to<pixel_reference_t<image_pixel_t<I>>, image_reference_t<I>> &&
+  // Here we don't want a convertible constraint as value_type is the decayed type and should really be the same
+  std::same_as<pixel_value_t<image_pixel_t<I>>, image_value_t<I>> &&
+  std::common_reference_with<image_reference_t<I>&&, image_value_t<I>&> &&
+  std::common_reference_with<image_reference_t<I>&&, image_value_t<I>&&> &&
+  std::common_reference_with<image_value_t<I>&&, const image_value_t<I>&> &&
+  requires(I ima, const I cima, image_domain_t<I> d, image_point_t<I> p) {
+    { cima.template ch_value<mln::archetypes::Value>() }
+        -> std::convertible_to<image_ch_value_t<I, mln::archetypes::Value>>;
+    { cima.concretize() } -> std::convertible_to<image_concrete_t<I>>;
+    { cima.domain() }     -> std::convertible_to<image_domain_t<I>>;
+    { ima.pixels() }  -> mln::ranges::mdrange;
+    { ima.values() }  -> mln::ranges::mdrange;
+    requires std::convertible_to<mln::ranges::mdrange_value_t<decltype(ima.pixels())>, image_pixel_t<I>>;
+    requires std::convertible_to<mln::ranges::mdrange_value_t<decltype(ima.values())>, image_value_t<I>>;
+  };
+
+namespace detail
+{
+  // WritableImage
+  template <typename I>
+  concept WritableImage =
+    Image<I> &&
+    OutputPixel<image_pixel_t<I>> &&
+    requires(I ima) {
+    { ima.values() }  -> mln::ranges::output_mdrange<image_value_t<I>>;
+      // Check Writability of each pixel of the range
+      requires OutputPixel<
+                  std::common_type_t<
+                    mln::ranges::mdrange_value_t<decltype(ima.pixels())>,
+                    image_pixel_t<I>>>;
+    };
+} // namespace detail
+
+
+// InputImage
+template <typename I>
+concept InputImage = Image<I>;
+
+
+// ForwardImage
+template <typename I>
+concept ForwardImage = InputImage<I>;
+
+
+// IndexableImage
+template <typename I>
+concept IndexableImage =
+  Image<I> &&
+  requires {
+    typename image_index_t<I>;
+  } &&
+  image_indexable_v<I> &&
+  requires (I ima, image_index_t<I> k) {
+    { ima[k] }  -> std::same_as<image_reference_t<I>>; // For concrete image it returns a const_reference
+  };
+
+
+namespace detail
+{
+  // WritableIndexableImage
+  template <typename I>
+  concept WritableIndexableImage =
+    WritableImage<I> &&
+    IndexableImage<I> &&
+    requires(I ima, image_index_t<I> k, image_value_t<I> v) {
+      { ima[k] = v } -> std::same_as<image_reference_t<I>>;
+    };
+} // namespace detail
+
+// AccessibleImage
+template <typename I>
+concept AccessibleImage =
+  Image<I> &&
+  image_accessible_v<I> &&
+  requires (I ima, image_point_t<I> p) {
+    { ima(p) }              -> std::same_as<image_reference_t<I>>; // For concrete image it returns a const_reference
+    { ima.at(p) }           -> std::same_as<image_reference_t<I>>; // idem
+    { ima.pixel(p) }    -> std::same_as<image_pixel_t<I>>; // For concrete image pixel may propagate constness
+    { ima.pixel_at(p) } -> std::same_as<image_pixel_t<I>>; // idem
+  };
+
+
+namespace detail
+{
+  // WritableAccessibleImage
+  template <typename I>
+  concept WritableAccessibleImage =
+    detail::WritableImage<I> &&
+    AccessibleImage<I> &&
+    requires(I ima, image_point_t<I> p, image_value_t<I> v) {
+      { ima(p) = v };
+      { ima.at(p) = v };
+    };
+} // namespace detail
+
+// IndexableAndAccessibleImage
+template <typename I>
+concept IndexableAndAccessibleImage =
+  IndexableImage<I> &&
+  AccessibleImage<I> &&
+  requires (const I cima, image_index_t<I> k, image_point_t<I> p) {
+    { cima.point_at_index(k) }  -> std::same_as<image_point_t<I>>;
+    { cima.index_of_point(p) }  -> std::same_as<image_index_t<I>>;
+    { cima.delta_index(p) }     -> std::same_as<image_index_t<I>>;
+  };
+
+
+namespace detail
+{
+  // WritableIndexableAndAccessibleImage
+  template <typename I>
+  concept WritableIndexableAndAccessibleImage =
+    IndexableAndAccessibleImage<I> &&
+    detail::WritableImage<I> &&
+    detail::WritableIndexableImage<I>;
+} // namespace detail
+
+// BidirectionalImage (not in STL term)
+template <typename I>
+concept BidirectionalImage =
+  Image<I> &&
+  std::derived_from<image_category_t<I>, bidirectional_image_tag> &&
+  requires (I ima) {
+  { ima.pixels() }  -> mln::ranges::reversible_mdrange;
+  { ima.values() }  -> mln::ranges::reversible_mdrange;
+};
+
+
+namespace detail
+{
+  // WritableBidirectionalImage
+  template <typename I>
+  concept WritableBidirectionalImage =
+    WritableImage<I> &&
+    BidirectionalImage<I>;
+} // namespace detail
+
+// RawImage (not contiguous, stride = padding)
+template <typename I>
+concept RawImage =
+  IndexableAndAccessibleImage<I> &&
+  BidirectionalImage<I> &&
+  std::derived_from<image_category_t<I>, raw_image_tag> &&
+  requires (I ima, const I cima, int dim) {
+    { ima.data() }        -> std::convertible_to<const image_value_t<I>*>; // data() may be proxied by a view
+    { cima.stride(dim) } -> std::same_as<std::ptrdiff_t>;
+  };
+
+
+namespace detail
+{
+  // WritableRawImage
+  template <typename I>
+  concept WritableRawImage =
+    WritableImage<I> &&
+    WritableIndexableAndAccessibleImage<I> &&
+    WritableBidirectionalImage<I> &&
+    RawImage<I> &&
+    requires(I ima, image_value_t<I> v) {
+      { ima.data() }        -> std::convertible_to<image_value_t<I>*>;
+      { *(ima.data()) = v };
+    };
+} // namespace detail
+
+
+// OutputImage
+// Usage: RawImage<I> && OutputImage<I>
+template <typename I>
+concept OutputImage =
+  (not ForwardImage<I> || (detail::WritableImage<I>)) &&
+  (not IndexableImage<I> || (detail::WritableIndexableImage<I>)) &&
+  (not AccessibleImage<I> || (detail::WritableAccessibleImage<I>)) &&
+  (not IndexableAndAccessibleImage<I> ||
+    (detail::WritableIndexableAndAccessibleImage<I>)) &&
+  (not BidirectionalImage<I> || (detail::WritableBidirectionalImage<I>)) &&
+  (not RawImage<I> || (detail::WritableRawImage<I>));
+
+
+template <typename I>
+concept WithExtensionImage =
+  Image<I> &&
+  requires {
+    typename image_extension_t<I>;
+  } &&
+  Extension<image_extension_t<I>> &&
+  not ::std::same_as<mln::extension::none_extension_tag, image_extension_category_t<I>> &&
+  requires (I ima, image_point_t<I> p) {
+    { ima.extension() } -> ::std::convertible_to<image_extension_t<I>>;
+  };
+
+
+// ConcreteImage
+template <typename I>
+concept ConcreteImage =
+  Image<I> &&
+  std::semiregular<I> &&  // A concrete image is default constructible
+  not image_view_v<I>;
+
+
+// ViewImage
+template <typename I>
+concept ViewImage =
+  Image<I> &&
+  image_view_v<I>;
+\end{minted}
+
+
+\subsection{Structuring Element}
+
+\begin{minted}{c++}
+namespace details
+{
+  template <typename SE>
+  concept DynamicStructuringElement =
+    requires (SE se) {
+    { se.radial_extent() }  -> std::same_as<int>;
+    };
+
+
+  constexpr bool implies(bool a, bool b) { return !a || b; }
+}
+
+
+template <typename SE, typename P>
+concept StructuringElement =
+  std::convertible_to<SE, mln::details::StructuringElement<SE>> &&
+  std::ranges::regular_invocable<SE, P> &&
+  std::ranges::regular_invocable<SE, mln::archetypes::PixelT<P>> &&
+  requires {
+    typename SE::category;
+    typename SE::incremental;
+    typename SE::decomposable;
+    typename SE::separable;
+  } &&
+  std::convertible_to<typename SE::category, mln::adaptative_neighborhood_tag> &&
+  details::implies(std::convertible_to<typename SE::category, mln::dynamic_neighborhood_tag>,
+                    details::DynamicStructuringElement<SE>) &&
+  requires (SE se, const SE cse, P p, mln::archetypes::PixelT<P> px) {
+    { se(p) }         -> std::ranges::forward_range;
+    { se(px) }        -> std::ranges::forward_range;
+    { cse.offsets() } -> std::ranges::forward_range;
+
+    requires std::convertible_to<std::ranges::range_value_t<decltype(se(p))>, P>;
+    requires std::Pixel<std::ranges::range_value_t<decltype(se(px))>>;
+    requires std::convertible_to<std::ranges::range_value_t<decltype(cse.offsets())>, P>;
+  };
+
+namespace details
+{
+  template <typename R, typename P>
+  concept RangeOfStructuringElement =
+    StructuringElement<std::ranges::range_value_t<R>, P>;
+}
+
+
+
+template <typename SE, typename P>
+concept DecomposableStructuringElement =
+  StructuringElement<SE, P> &&
+  std::convertible_to<typename SE::decomposable, std::true_type> &&
+  requires(const SE se) {
+    { se.is_decomposable() }  -> std::same_as<bool>;
+    { se.decompose() }        -> std::ranges::forward_range;
+    requires details::RangeOfStructuringElement<decltype(se.decompose()), P>;
+  };
+
+
+template <typename SE, typename P>
+concept SeparableStructuringElement =
+  StructuringElement<SE, P> &&
+  std::convertible_to<typename SE::separable, std::true_type> &&
+  requires(const SE se) {
+    { se.is_separable() } -> std::same_as<bool>;
+    { se.separate() }     -> std::ranges::forward_range;
+    requires details::RangeOfStructuringElement<decltype(se.separate()), P>;
+  };
+
+
+template <typename SE, typename P>
+concept IncrementalStructuringElement =
+  StructuringElement<SE, P> &&
+  std::convertible_to<typename SE::incremental, std::true_type> &&
+  requires(const SE se) {
+    { se.inc() }  -> StructuringElement<P>;
+    { se.dec() }  -> StructuringElement<P>;
+  };
+\end{minted}
+
+\subsection{Neighborhood}
+
+\begin{minted}{c++}
+template <typename SE, typename P>
+concept Neighborhood =
+  StructuringElement<SE, P> &&
+  requires (SE se, P p, mln::archetypes::PixelT<P> px) {
+    { se.before(p) }  -> std::ranges::forward_range;
+    { se.after(p) }   -> std::ranges::forward_range;
+    { se.before(px) } -> std::ranges::forward_range;
+    { se.after(px) }  -> std::ranges::forward_range;
+
+    requires std::convertible_to<std::ranges::range_value_t<decltype(se.before(p))>, P>;
+    requires std::convertible_to<std::ranges::range_value_t<decltype(se.after(p))>, P>;
+    requires std::Pixel<std::ranges::range_value_t<decltype(se.before(px))>>;
+    requires std::Pixel<std::ranges::range_value_t<decltype(se.after(px))>>;
+  };
+\end{minted}
+
+
+\section{Archetypes}
+
+\subsection{Index}
+
+\begin{minted}{c++}
+using Index = int;
+
+static_assert(mln::concepts::Index<Index>, "Index archetype does not model the Index concept!");
+\end{minted}
+
+
+\subsection{Value}
+
+\begin{minted}{c++}
+struct Value
+{
+};
+
+struct ComparableValue
+{
+};
+bool operator==(const ComparableValue&, const ComparableValue&);
+bool operator!=(const ComparableValue&, const ComparableValue&);
+
+
+struct OrderedValue
+{
+};
+bool operator==(const OrderedValue&, const OrderedValue&);
+bool operator!=(const OrderedValue&, const OrderedValue&);
+bool operator<(const OrderedValue&, const OrderedValue&);
+bool operator>(const OrderedValue&, const OrderedValue&);
+bool operator<=(const OrderedValue&, const OrderedValue&);
+bool operator>=(const OrderedValue&, const OrderedValue&);
+
+static_assert(mln::concepts::Value<Value>, "Value archetype does not model the Value concept!");
+static_assert(mln::concepts::ComparableValue<ComparableValue>, "ComparableValue archetype does not model the ComparableValue concept!");
+static_assert(mln::concepts::OrderedValue<OrderedValue>, "OrderedValue archetype does not model the OrderedValue concept!");
+\end{minted}
+
+
+\subsection{Point}
+
+\begin{minted}{c++}
+struct Point final
+{
+};
+
+bool operator==(const Point&, const Point&);
+bool operator!=(const Point&, const Point&);
+bool operator<(const Point&, const Point&);
+bool operator>(const Point&, const Point&);
+bool operator<=(const Point&, const Point&);
+bool operator>=(const Point&, const Point&);
+
+static_assert(mln::concepts::Point<Point>, "Point archetype does not model the Point concept!");
+\end{minted}
+
+
+\subsection{Pixel}
+
+\begin{minted}{c++}
+namespace details
+{
+  template <class P, class V>
+  struct PixelT
+  {
+    using value_type = V;
+    using point_type = P;
+    using reference  = const value_type&;
+
+    PixelT()              = delete;
+    PixelT(const PixelT&) = default;
+    PixelT(PixelT&&)      = default;
+    PixelT& operator=(const PixelT&) = delete;
+    PixelT& operator=(PixelT&&) = delete;
+
+    point_type point() const;
+    reference  val() const;
+    void       shift(const P& dp);
+  };
+
+  struct OutputPixel : PixelT<Point, Value>
+  {
+    using reference = Value&;
+    reference val() const;
+  };
+
+
+  template <class Pix>
+  struct AsPixel : Pix, mln::details::Pixel<AsPixel<Pix>>
+  {
+  };
+} // namespace details
+
+template <class P, class V = Value>
+using PixelT      = details::AsPixel<details::PixelT<P, V>>;
+using Pixel       = PixelT<Point, Value>;
+using OutputPixel = details::AsPixel<details::OutputPixel>;
+
+static_assert(mln::concepts::Pixel<Pixel>, "Pixel archetype does not model the Pixel concept!");
+static_assert(mln::concepts::OutputPixel<OutputPixel>, "OutputPixel archetype does not model the OutputPixel concept!");
+\end{minted}
+
+
+\subsection{Ranges}
+
+\begin{minted}{c++}
+  // TODO
+\end{minted}
+
+
+\subsection{Domain}
+
+\begin{minted}{c++}
+struct Domain
+{
+  using value_type = Point;
+  using reference  = Point&;
+
+  value_type* begin();
+  value_type* end();
+
+  bool has(value_type) const;
+  bool empty() const;
+  int  dim() const;
+};
+
+static_assert(mln::concepts::Domain<Domain>, "Domain archetype does not model the Domain concept!");
+
+struct SizedDomain : Domain
+{
+  unsigned size() const;
+};
+
+static_assert(mln::concepts::SizedDomain<SizedDomain>,
+                          "SizedDomain archetype does not model the SizedDomain concept!");
+
+struct ShapedDomain final : SizedDomain
+{
+  static constexpr std::size_t  ndim = 1;
+  value_type                    shape() const;
+  std::array<std::size_t, ndim> extents() const;
+};
+
+static_assert(mln::concepts::ShapedDomain<ShapedDomain>,
+                          "ShapedDomain archetype does not model the ShapedDomain concept!");
+\end{minted}
+
+
+\subsection{Extension}
+
+\begin{minted}{c++}
+  // TODO
+\end{minted}
+
+
+\subsection{Image}
+
+\begin{minted}{c++}
+namespace details
+{
+  template <class I>
+  struct AsImage : I, mln::details::Image<AsImage<I>>
+  {
+    using I::I;
+
+    using concrete_type = AsImage<typename I::concrete_type>;
+    concrete_type concretize() const;
+
+
+    template <typename V>
+    using ch_value_type = AsImage<typename I::template ch_value_type<V>>;
+
+    template <typename V>
+    ch_value_type<V> ch_value() const;
+  };
+
+
+  struct ConcreteImage
+  {
+    using pixel_type = archetypes::Pixel;
+    using value_type     = pixel_value_t<mln::archetypes::Pixel>;
+    using reference      = pixel_reference_t<mln::archetypes::Pixel>;
+    using point_type     =  std::ranges::range_value_t<Domain>;
+    using domain_type    = Domain;
+    using category_type  = forward_image_tag;
+    using concrete_type  = ConcreteImage;
+
+    template <class V>
+    using ch_value_type = ConcreteImage;
+
+    // additional traits
+    using extension_category = mln::extension::none_extension_tag;
+    using indexable          = std::false_type;
+    using accessible         = std::false_type;
+    using view               = std::false_type;
+
+    ConcreteImage()                     = default;
+    ConcreteImage(const ConcreteImage&) = default;
+    ConcreteImage(ConcreteImage&&)      = default;
+    ConcreteImage& operator=(const ConcreteImage&) = default;
+    ConcreteImage& operator=(ConcreteImage&&) = default;
+
+    domain_type domain() const;
+
+
+    struct pixel_range
+    {
+      const pixel_type* begin();
+      const pixel_type* end();
+    };
+    pixel_range pixels();
+
+
+    struct value_range
+    {
+      const value_type* begin();
+      const value_type* end();
+    };
+
+    value_range values();
+  };
+
+
+  struct ViewImage : ConcreteImage
+  {
+    using view = std::true_type;
+
+    ViewImage()                 = delete;
+    ViewImage(const ViewImage&) = default;
+    ViewImage(ViewImage&&)      = default;
+    ViewImage& operator=(const ViewImage&) = delete;
+    ViewImage& operator=(ViewImage&&) = delete;
+  };
+
+  using Image = ViewImage;
+
+
+  struct OutputImage : Image
+  {
+    using pixel_type = archetypes::OutputPixel;
+    using reference      = pixel_reference_t<mln::archetypes::OutputPixel>;
+
+    struct pixel_range
+    {
+      const pixel_type* begin();
+      const pixel_type* end();
+    };
+
+    pixel_range pixels();
+
+    struct value_range
+    {
+      value_type* begin();
+      value_type* end();
+    };
+
+    value_range values();
+  };
+
+
+  struct OutputIndexableImage : OutputImage
+  {
+    using index_type = int;
+    using indexable  = std::true_type;
+
+    using concrete_type = OutputIndexableImage;
+
+    template <class V>
+    using ch_value_type = OutputIndexableImage;
+
+    reference operator[](index_type);
+  };
+
+
+  struct IndexableImage : Image
+  {
+    using index_type = int;
+    using indexable  = std::true_type;
+
+    using concrete_type = OutputIndexableImage;
+
+    template <class V>
+    using ch_value_type = OutputIndexableImage;
+
+
+    reference operator[](index_type);
+  };
+
+  struct OutputAccessibleImage : OutputImage
+  {
+    using accessible    = std::true_type;
+    using concrete_type = OutputAccessibleImage;
+
+    template <class V>
+    using ch_value_type = OutputAccessibleImage;
+
+
+    reference      operator()(point_type);
+    reference      at(point_type);
+    pixel_type pixel(point_type);
+    pixel_type pixel_at(point_type);
+  };
+
+
+  struct AccessibleImage : Image
+  {
+    using accessible    = std::true_type;
+    using concrete_type = OutputAccessibleImage;
+
+    template <class V>
+    using ch_value_type = OutputAccessibleImage;
+
+    reference      operator()(point_type);
+    reference      at(point_type);
+    pixel_type pixel(point_type);
+    pixel_type pixel_at(point_type);
+  };
+
+
+  struct OutputIndexableAndAccessibleImage : OutputAccessibleImage
+  {
+    using index_type = int;
+    using indexable  = std::true_type;
+
+    using concrete_type = OutputIndexableAndAccessibleImage;
+
+    template <class V>
+    using ch_value_type = OutputIndexableAndAccessibleImage;
+
+
+    reference  operator[](index_type);
+    point_type point_at_index(index_type) const;
+    index_type index_of_point(point_type) const;
+    index_type delta_index(point_type) const;
+  };
+
+
+  struct IndexableAndAccessibleImage : AccessibleImage
+  {
+    using index_type = int;
+    using indexable  = std::true_type;
+
+    using concrete_type = OutputIndexableAndAccessibleImage;
+
+    template <class V>
+    using ch_value_type = OutputIndexableAndAccessibleImage;
+
+    reference  operator[](index_type);
+    point_type point_at_index(index_type) const;
+    index_type index_of_point(point_type) const;
+    index_type delta_index(point_type) const;
+  };
+
+
+  struct BidirectionalImage : Image
+  {
+    using category_type = bidirectional_image_tag;
+
+    struct pixel_range
+    {
+      const pixel_type* begin();
+      const pixel_type* end();
+      pixel_range           reversed();
+    };
+
+    pixel_range pixels();
+
+    struct value_range
+    {
+      const value_type* begin();
+      const value_type* end();
+      value_range       reversed();
+    };
+
+    value_range values();
+  };
+
+
+  struct OutputBidirectionalImage : BidirectionalImage
+  {
+    using pixel_type = archetypes::OutputPixel;
+    using reference      = pixel_reference_t<mln::archetypes::OutputPixel>;
+
+    struct value_range
+    {
+      value_type* begin();
+      value_type* end();
+      value_range reversed();
+    };
+    value_range values();
+
+
+    struct pixel_range
+    {
+      const pixel_type* begin();
+      const pixel_type* end();
+      pixel_range           reversed();
+    };
+
+    pixel_range pixels();
+  };
+
+
+  struct RawImage : IndexableAndAccessibleImage
+  {
+    using category_type = raw_image_tag;
+    using pixel_range   = BidirectionalImage::pixel_range;
+    using value_range   = BidirectionalImage::value_range;
+
+    pixel_range pixels();
+    value_range values();
+
+
+    const value_type* data() const;
+    std::ptrdiff_t    strides(int) const;
+  };
+
+
+  struct OutputRawImage : OutputIndexableAndAccessibleImage
+  {
+    using category_type = raw_image_tag;
+    using pixel_range   = OutputBidirectionalImage::pixel_range;
+    using value_range   = OutputBidirectionalImage::value_range;
+
+    pixel_range pixels();
+    value_range values();
+
+    value_type*    data() const;
+    std::ptrdiff_t strides(int) const;
+  };
+
+
+  struct WithExtensionImage : Image
+  {
+    struct Extension
+    {
+      // FIXME
+    };
+
+    using extension_type = Extension;
+
+    using extension_category = mln::extension::custom_extension_tag;
+
+    extension_type extension() const;
+  };
+} // namespace details
+
+
+using Image         = details::AsImage<details::Image>;
+using ConcreteImage = details::AsImage<details::ConcreteImage>;
+using ViewImage     = details::AsImage<details::ViewImage>;
+
+using ForwardImage       = Image;
+using BidirectionalImage = details::AsImage<details::BidirectionalImage>;
+using RawImage           = details::AsImage<details::RawImage>;
+
+using InputImage                  = Image;
+using IndexableImage              = details::AsImage<details::IndexableImage>;
+using AccessibleImage             = details::AsImage<details::AccessibleImage>;
+using IndexableAndAccessibleImage = details::AsImage<details::IndexableAndAccessibleImage>;
+
+
+using OutputImage              = details::AsImage<details::OutputImage>;
+using OutputForwardImage       = OutputImage;
+using OutputBidirectionalImage = details::AsImage<details::OutputBidirectionalImage>;
+using OutputRawImage           = details::AsImage<details::OutputRawImage>;
+
+using OutputIndexableImage              = details::AsImage<details::OutputIndexableImage>;
+using OutputAccessibleImage             = details::AsImage<details::OutputAccessibleImage>;
+using OutputIndexableAndAccessibleImage = details::AsImage<details::OutputIndexableAndAccessibleImage>;
+
+using WithExtensionImage = details::AsImage<details::WithExtensionImage>;
+\end{minted}
+
+
+\subsection{Structuring Element}
+
+\begin{minted}{c++}
+namespace details
+{
+  template <class P, class Pix>
+  requires mln::concepts::Point<P>&& mln::concepts::Pixel<Pix>
+  struct StructuringElement
+  {
+    using category     = adaptative_neighborhood_tag;
+    using incremental  = std::false_type;
+    using decomposable = std::false_type;
+    using separable    = std::false_type;
+
+     std::ranges::subrange<P*> operator()(P p);
+
+     std::ranges::subrange<Pix*> operator()(Pix px);
+     std::ranges::subrange<P*>   offsets() const;
+  };
+
+
+  template <class SE>
+  struct AsSE : SE, mln::details::Neighborhood
+  helper<AsSE<SE>>
+  {
+  };
+} // namespace details
+
+template <class P = Point, class Pix = PixelT<P>>
+using StructuringElement = details::AsSE<details::StructuringElement<P, Pix>>;
+
+
+namespace details
+{
+  template <class P, class Pix>
+  struct DecomposableStructuringElement : StructuringElement<P, Pix>
+  {
+    using decomposable = std::true_type;
+
+    bool                                                                is_decomposable() const;
+    std::ranges::subrange<mln::archetypes::StructuringElement<P, Pix>*> decompose() const;
+  };
+
+  template <class P, class Pix>
+  struct SeparableStructuringElement : StructuringElement<P, Pix>
+  {
+    using separable = std::true_type;
+
+    bool                                                                is_separable() const;
+    std::ranges::subrange<mln::archetypes::StructuringElement<P, Pix>*> separate() const;
+  };
+
+  template <class P, class Pix>
+  struct IncrementalStructuringElement : StructuringElement<P, Pix>
+  {
+    using incremental = std::true_type;
+
+    archetypes::StructuringElement<P, Pix> inc() const;
+    archetypes::StructuringElement<P, Pix> dec() const;
+  };
+} // namespace details
+
+
+template <class P = Point, class Pix = PixelT<P>>
+using DecomposableStructuringElement = details::AsSE<details::DecomposableStructuringElement<P, Pix>>;
+
+template <class P = Point, class Pix = PixelT<P>>
+using SeparableStructuringElement = details::AsSE<details::SeparableStructuringElement<P, Pix>>;
+
+template <class P = Point, class Pix = PixelT<P>>
+using IncrementalStructuringElement = details::AsSE<details::IncrementalStructuringElement<P, Pix>>;
+\end{minted}
+
+
+\subsection{Neighborhood}
+
+\begin{minted}{c++}
+namespace details
+{
+  template <class P, class Pix>
+  requires mln::concepts::Point<P>&& mln::concepts::Pixel<Pix>
+  struct Neighborhood : StructuringElement<P, Pix>
+  {
+     std::ranges::iterator_range<P*>   before(P p);
+     std::ranges::iterator_range<P*>   after(P p);
+     std::ranges::iterator_range<Pix*> before(Pix px);
+     std::ranges::iterator_range<Pix*> after(Pix px);
+  };
+
+
+  template <class N>
+  struct AsNeighborhood : N, mln::details::Neighborhood<AsNeighborhood<N>>
+  {
+  };
+
+} // namespace details
+
+template <class P = Point, class Pix = PixelT<P>>
+using Neighborhood = details::AsSE<details::Neighborhood<P, Pix>>;
+\end{minted}
