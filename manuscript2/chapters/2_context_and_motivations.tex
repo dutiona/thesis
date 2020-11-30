@@ -1,4 +1,4 @@
-\chapter{Image processing and its needs}
+\chapter{Image processing, its users, its needs}
 \label{context_and_motivations.chap.image_processing_and_its_needs}
 
 Image processing nowadays is very diverse and cover a wide variety of purpose. Henceforth there are many tools for many
@@ -12,8 +12,6 @@ This paper later discusses the algorithm composability into pipeline (widely use
 C++, with views, provide the tools to naturally achieve this goal, being efficient by default. Furthermore, the methods
 discussed in this paper are not specific to image processing and can be reapplied to other scientific library aiming at
 solving different kind of problems.
-
-
 
 Image processing has evolved over time to become a field where a very wide array of problematic has arisen. The time
 when the 2-dimensional images whose colors were encoded within three 8-bits RGB channels, was a complex construct is
@@ -38,6 +36,49 @@ needs deep learning on large data set of images or simply the images themselves 
 over 5 million triangles, several hundred of Go for a satellite image), efficiency is pivotal and mandatory. However
 genericity and efficiency are often conflicting. Coming up with a solution allying those two aspects is a long time
 ongoing work, which is still of topicality nowadays.
+
+
+
+\section{The practitioner}
+
+When first approaching the image processing area, one becomes what we call a practitioner. A practitioner is the end
+user of image processing libraries. Its skills mainly revolve around applied mathematics for image processing,
+prototyping and algorithms. A practitioner aims at leveraging the features the libraries can offer to build his
+application. For instance, a practitioner can be a researcher in medical imaging, an engineer build a facial recognition
+application, a data scientist labeling its image set, etc. The needs of practitioner are mainly revolving around a fast
+feedback loop. The developing environment must be easily accessible and installable. This way a practitioner can judge
+quickly wether one library will answer his needs. The documentation of the library must be exhaustive and didactic with
+examples. When prototyping, the library must provide fast feedback loops, as in a python notebook for instance. Finally
+it must be easily integrated in a standard ecosystem such as being able to work with NumPy's array natively without
+imposing its own types. To sum up, practitioner's programmatic skills do not need to be high as his main goal is to
+focus on algorithms and mathematics formulas.
+
+
+\section{The contributer}
+
+
+
+Contributer : utilisateur avancé de la bibliothèque. Il comprend la philosophie avec laquelle la bibliothèque a été
+pensée, son but, ses avantages et ses inconvenients. De ce fait il est capable de rajouter des fonctionnalités
+spécifiques dans la bibliothèque pour combler un manque pour qu'un practitioner puisse terminer son application. Un
+contributeur pourra proposer ses features en pull request sur le repo central, un maintainer jugera de la pertinence
+d'accepter ou non la/les PR. Exemple : practioner qui a beaucoup d'expérience d'utilisation avec une bibliothèque et une
+bonne connaissance dans le langage de programmation et le code source de celle-ci. Besoins : même que pour le
+practitioner, documentation de la bibliothèque pour contribuer au code, tests, bootstrapping de la bibliothèque doit
+être simplifié (dépendances, compilation, ...)
+
+\section{The maintainer}
+
+Maintainer : concepteur/fondateur de la bibliothèque ou alors la personne qui se charge de la maintenir en vie si le
+fondateur s'est retiré. Le mainteneur fait évoluer la bibliothèque en fonction des besoins du marché, de sa philosophie
+et de son temps disponible. En effet, certains projets sont maintenues par des bénévoles qui le font sur leur temps
+libre. Il est aussi chargé d'intégrer (review/accepter/refuser/modifier) toutes les contributions proposées par les
+contributeurs. En effet, il doit garder en tête que toute contribution devra être maintenue par lui-même par la suite et
+donc doit jauger de leur pérennité. Il est aussi chargé de la correction de bugs.
+Exemple : développeur chargé de l'évolution d'une bibliothèque. Tout projet open source est maintenue par des mainteneur.
+Besoins : environnement de développement classique de développeur, exemple de workflow
+
+
 
 \chapter{User profile}
 
