@@ -56,27 +56,36 @@ focus on algorithms and mathematics formulas.
 
 \section{The contributer}
 
-
-
-Contributer : utilisateur avancé de la bibliothèque. Il comprend la philosophie avec laquelle la bibliothèque a été
-pensée, son but, ses avantages et ses inconvenients. De ce fait il est capable de rajouter des fonctionnalités
-spécifiques dans la bibliothèque pour combler un manque pour qu'un practitioner puisse terminer son application. Un
-contributeur pourra proposer ses features en pull request sur le repo central, un maintainer jugera de la pertinence
-d'accepter ou non la/les PR. Exemple : practioner qui a beaucoup d'expérience d'utilisation avec une bibliothèque et une
-bonne connaissance dans le langage de programmation et le code source de celle-ci. Besoins : même que pour le
-practitioner, documentation de la bibliothèque pour contribuer au code, tests, bootstrapping de la bibliothèque doit
-être simplifié (dépendances, compilation, ...)
+A contributer is an advanced user of a library who is very comfortable with its inner working, philosophy, aims,
+strengths and potential shortcomings. As such, he is able to add new specific features to library, fix some shortcomings
+or bugs. Usually a contributer is able to add a feature needed for a practitioner to finish his application. Furthermore
+he can then contribute back his features to the main project via pull requests if it is relevant. This way, a maintainer
+will assess the pull request and review it. The two main points of a contributer are his deep knowledge of a library and
+his ability to write code in the same language as the source code of it. Also, a contributer must have knowledge of
+coding best practices such as writing unit tests which are mandatory when adding a feature to an existing library. To
+facilitate contribution, a library must provide clear guidelines about the way to contribute, be easy to bootstrap and
+compile without having heavy requirements on dependencies. The best case would be that the library is handled by
+standard packages managers such as system apt or python conan.
 
 \section{The maintainer}
 
-Maintainer : concepteur/fondateur de la bibliothèque ou alors la personne qui se charge de la maintenir en vie si le
-fondateur s'est retiré. Le mainteneur fait évoluer la bibliothèque en fonction des besoins du marché, de sa philosophie
-et de son temps disponible. En effet, certains projets sont maintenues par des bénévoles qui le font sur leur temps
-libre. Il est aussi chargé d'intégrer (review/accepter/refuser/modifier) toutes les contributions proposées par les
-contributeurs. En effet, il doit garder en tête que toute contribution devra être maintenue par lui-même par la suite et
-donc doit jauger de leur pérennité. Il est aussi chargé de la correction de bugs.
-Exemple : développeur chargé de l'évolution d'une bibliothèque. Tout projet open source est maintenue par des mainteneur.
-Besoins : environnement de développement classique de développeur, exemple de workflow
+The maintainer is usually the creator, founder of the library or someone that took over the project when the founder
+stepped back. Also, when a library grows, it is not rare that regular contributers end up being maintainer as well to
+help the project. The maintainer is in charge of keeping alive the project by fulfilling several aspects: upgrade and
+release new features according to the user (practitioner) needs and the library philosophy. Also, a library may not
+evolve as fast as the user may want it because of lack of time from maintainers. A lot of open source projects are
+maintained by volunteers and lack of time is usually the main aspect slowing development progress. The maintainer is
+also in charge of reviewing all the contributers pull requests. He must check if they are relevant and completed enough,
+(for instance, presence of tests and documentation) to be integrated in the project. Indeed, merging a pull requests
+equals to accepting to take care of this code in the future too. It means that further upgrade, bug fix, refactoring of
+the project will consider this new code too. If the maintainer is not able to take care of this code then it should
+propably not be integrated in the project in the first place. Any project and library has its maintainers. A maintainer
+is someone very familiar with the inner working and architectural of the project. He is also someone that has some
+history in the project to understand why some decisions has been made, what choices has been made at some points and
+what the philosophy of the project is. It is important to be able to refuse a contribution that would go contrary to the
+philosophy of the project, even a very interesting one. Finally the profile of a maintainer is one of a developer that
+is used to the standard workflow in open source based on: forks, branches, merge/pull requests and continuous
+integration.
 
 
 
