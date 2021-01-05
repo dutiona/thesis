@@ -149,9 +149,9 @@ concept Domain =
   mln::ranges::mdrange<Dom> &&
   Point<mln::ranges::mdrange_value_t<Dom>> &&
   requires(const Dom cdom, mln::ranges::mdrange_value_t<Dom> p) {
-  { cdom.has(p) }   -> std::same_as<bool>;
-  { cdom.empty() }  -> std::same_as<bool>;
-  { cdom.dim() }    -> std::same_as<int>;
+    { cdom.has(p) }   -> std::same_as<bool>;
+    { cdom.empty() }  -> std::same_as<bool>;
+    { cdom.dim() }    -> std::same_as<int>;
   };
 
 
@@ -160,7 +160,7 @@ template <typename Dom>
 concept SizedDomain =
   Domain<Dom> &&
   requires(const Dom cdom) {
-  { cdom.size() } -> std::unsigned_integral;
+    { cdom.size() } -> std::unsigned_integral;
   };
 
 // ShapedDomain
