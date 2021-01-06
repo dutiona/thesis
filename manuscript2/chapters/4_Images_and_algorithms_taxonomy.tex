@@ -732,7 +732,7 @@ Easy monoids:
 
 \section{Index}
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
   \begin{scriptsize}
     \texttt{Let \emph{Idx} be a type that models the concept \emph{Index}. Let \emph{idx} and \emph{idy} be an instance of \emph{Idx}.
       Then we have the following valid expressions:}
@@ -757,7 +757,7 @@ Easy monoids:
 
 \section{Value}
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
   \begin{scriptsize}
     \texttt{Let \emph{Val}, \emph{CmpVal} and \emph{OrdVal} be types that models the concepts resp. \emph{Value},
       \emph{ComparableValue} and \emph{OrderedValue}. Let \emph{val}, \emph{cmp\_val} and \emph{ord\_val} be instances
@@ -794,7 +794,7 @@ Easy monoids:
 
 \section{Point}
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
   \begin{scriptsize}
     \texttt{Let \emph{Pnt} be a type that models the concept \emph{Point}. Let \emph{pnt} be an instance of type
       \emph{Pnt}. Then we have the following valid expressions:}
@@ -826,7 +826,7 @@ Easy monoids:
 
 \section{Pixel}
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 
   \begin{scriptsize}
     \texttt{Let \emph{Pix} and \emph{OPix} be types that model the concepts resp. \emph{Pixel} and \emph{OutputPixel}.
@@ -839,9 +839,9 @@ Easy monoids:
       \cline{1-4}
       \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \scriptsize{\texttt{value\_type}}                                                  & \makecell{Type of the value contained in the pixel.                                   \\ Cannot be constant or reference.}       & Models the concept \emph{Value}. \\
       %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \scriptsize{\texttt{reference\_type}}                                              & \makecell{Type used to mutate the pixel's value.                                      \\ Can be a proxy.}       & models the concept \emph{Pixel}   \\
+      \multicolumn{1}{c|}{}                       & \scriptsize{\texttt{reference\_type}}                                              & \makecell{Type used to mutate the pixel's value.                                      \\ Can be a proxy.}       & Models the concept \emph{Pixel}   \\
       %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \scriptsize{\texttt{point\_type}}                                                  & Type of the pixel's point.                          & models the concept \emph{Point} \\
+      \multicolumn{1}{c|}{}                       & \scriptsize{\texttt{point\_type}}                                                  & Type of the pixel's point.                          & Models the concept \emph{Point} \\
       \cline{1-4}
       \multicolumn{1}{c|}{OutputPixel}            & \multicolumn{3}{|c}{Inherit \emph{Pixel}'s definitions. No additional definition.}                                                                                         \\
       \cline{1-4}
@@ -853,7 +853,7 @@ Easy monoids:
   \label{concept.tables.pixel.definitions}
 \end{table}
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
   \begin{scriptsize}
     \texttt{Let \emph{pix}, \emph{opix}, \emph{pnt}, \emph{val} be instances of types resp. \emph{Pix}, \emph{OPix},
       \emph{Pix::point\_type} and \emph{Pix::value\_type}. Then we have the following valid expressions:}
@@ -882,28 +882,52 @@ Easy monoids:
 
 \section{Ranges}
 
-TODO MDRange, OutputMDRange, ReversibleMDRange
+\begin{table}[!htbp]
 
-\begin{table}[htbp]
   \begin{scriptsize}
     \texttt{Let \emph{MDRng}, \emph{OMDRng} and \emph{RMDRng} be types that model the concepts resp. \emph{MDRange},
-      \emph{OutputMDRange} and \emph{ReversibleMDRange}. Let \emph{mdrng}, \emph{omdrng}, \emph{rmdrng} and \emph{val} be
+      \emph{OutputMDRange} and \emph{ReversibleMDRange}. Then we can define:}
+
+    \smallskip
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                               & \thead{Definition}                                                                   & \thead{Description}                                 & \thead{Requirement} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}} & \texttt{value\_type}                                                                 & \makecell{Type of the value contained in the range.                       \\ Cannot be constant or reference.} &  Models the concept \emph{Value}.   \\
+      %\cline{2-4}
+      \multicolumn{1}{c|}{}                         & \texttt{reference\_type}                                                             & \makecell{Type used to mutate the pixel's value.                          \\ Can be a proxy.}    & Models the concept \texttt{std::indirectly\_writable}                                 \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{OutputMDRange}            & \multicolumn{3}{|c}{Inherit \emph{MDRange}'s definitions. No additional definition.}                                                                             \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{ReversibleMDRange}        & \multicolumn{3}{|c}{Inherit \emph{MDRange}'s definitions. No additional definition.}                                                                             \\
+      \cline{1-4}
+    \end{tabular}
+  \end{scriptsize}
+  \smallskip
+
+  \caption{Concepts Ranges: definitions}
+  \label{concept.tables.ranges.definitions}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \texttt{Let \emph{mdrng}, \emph{omdrng}, \emph{rmdrng} and \emph{val} be
       instances of types resp. \emph{MDRng}, \emph{OMDRng}, \emph{RMDRng} and \emph{std::ranges::range\_value\_t<MDRng>}.
       Then we have the following valid expressions:}
 
     \smallskip
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                                         & \thead{Expression}                          & \thead{Return Type}           & \thead{Description}                                                \\
+      \thead{Concept}                                         & \thead{Expression}                          & \thead{Return Type}  & \thead{Description}                          \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}}           & \texttt{mdrng.begin()}                      & \texttt{Pix::reference\_type} & \makecell{Access the pixel's value for read and/or write purpose.} \\
+      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}}           & \texttt{mdrng.begin()}                      & \texttt{unspecified} & \makecell{Return a forward iterator allowing \\ a traversing of the range.} \\
       %\cline{2-4}
-      \multicolumn{1}{c|}{}                                   & \texttt{mdrng.end()}                        & \texttt{Pix::point\_type}     & \makecell{Read the pixel's point.}                                 \\
+      \multicolumn{1}{c|}{}                                   & \texttt{mdrng.end()}                        & \texttt{unspecified} & \makecell{Return a sentinel allowing to      \\know when the end is reached.}                                 \\
       \cline{1-4}
-      \multicolumn{1}{c|}{OutputMDRange}                      & \makecell{\texttt{auto it = omdrng.begin()}                                                                                                      \\ \texttt{*it++ = val}}        & \texttt{void}                 & Shift pixel's point coordinate base on \emph{pnt}'s coordinates.   \\
+      \multicolumn{1}{c|}{OutputMDRange}                      & \makecell{\texttt{auto it = omdrng.begin()}                                                                       \\ \texttt{*it++ = val}}        & \texttt{void}                 & \makecell{Mutate a value inside the range \\ then increment the iterator's position}   \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{ReversibleMDRange}} & \texttt{rmdrng.rbegin()}                    & \texttt{void}                 & Mutate pixel's value.                                              \\
-      \multicolumn{1}{c|}{}                                   & \texttt{rmdrng.rend()}                      & \texttt{Pix::point\_type}     & \makecell{Read the pixel's point.}                                 \\
+      \multicolumn{1}{c|}{\multirow{2}{*}{ReversibleMDRange}} & \texttt{rmdrng.rbegin()}                    & \texttt{unspecified} & \makecell{Return a forward iterator allowing \\ a traversing of the range \\ starting from the end.}                                              \\
+      \multicolumn{1}{c|}{}                                   & \texttt{rmdrng.rend()}                      & \texttt{unspecified} & \makecell{Return a sentinel allowing to      \\ know when the end is reached.}                               \\
       \cline{1-4}
     \end{tabular}
     \smallskip
@@ -915,25 +939,24 @@ TODO MDRange, OutputMDRange, ReversibleMDRange
 
 \section{Domain}
 
-TODO
-\begin{table}[htbp]
+\begin{table}[!htbp]
 
   \begin{scriptsize}
-    \texttt{Let \emph{Pix} and \emph{OPix} be types that model the concepts resp. \emph{Pixel} and \emph{OutputPixel}.
-      Then \emph{OutputPixel} inherits all types defined for \emph{Pixel}. Then we can define:}
+    \texttt{Let \emph{Dom}, \emph{SDom}, \emph{ShDom} be types that model the concepts resp. \emph{Domain},
+      \emph{SizedDomain} and \emph{ShapedDomain}. Then \emph{Domain} inherits all types defined for \emph{MDRange}. Then
+      \emph{SizedDomain} inherits all types defined for \emph{Domain} and \emph{ShapedDomain} inherits all types defined
+      for \emph{SizedDomain}. Then we can define:}
 
     \smallskip
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                             & \thead{Definition}                                                                 & \thead{Description}                                 & \thead{Requirement}             \\
+      \thead{Concept}                   & \thead{Definition}                                                                       & \thead{Description} & \thead{Requirement} \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \scriptsize{\texttt{value\_type}}                                                  & \makecell{Type of the value contained in the pixel.                                   \\ Cannot be constant or reference.}       & Models the concept \emph{Value}. \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \scriptsize{\texttt{reference\_type}}                                              & \makecell{Type used to mutate the pixel's value.                                      \\ Can be a proxy.}       & models the concept \emph{Pixel}   \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \scriptsize{\texttt{point\_type}}                                                  & Type of the pixel's point.                          & models the concept \emph{Point} \\
+      \multicolumn{1}{c|}{Domain}       & \multicolumn{3}{|c}{Inherit \emph{MDRange}'s definitions. No additional definition.}                                                 \\
       \cline{1-4}
-      \multicolumn{1}{c|}{OutputPixel}            & \multicolumn{3}{|c}{Inherit \emph{Pixel}'s definitions. No additional definition.}                                                                                         \\
+      \multicolumn{1}{c|}{SizedDomain}  & \multicolumn{3}{|c}{Inherit \emph{Domain}'s definitions. No additional definition.}                                                  \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{ShapedDomain} & \multicolumn{3}{|c}{Inherit \emph{SizedDomain}'s definitions. No additional definition.}                                             \\
       \cline{1-4}
     \end{tabular}
   \end{scriptsize}
@@ -943,23 +966,27 @@ TODO
   \label{concept.tables.domain.definitions}
 \end{table}
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
   \begin{scriptsize}
-    \texttt{Let \emph{pix}, \emph{opix}, \emph{pnt} and \emph{val} be instances of types resp. \emph{Pix}, \emph{OPix},
-      \emph{Pix::point\_type} and \emph{Pix::value\_type}. Then we have the following valid expressions:}
+    \texttt{Let \emph{dom}, \emph{sdom}, \emph{shdom} and \emph{pnt} be instances of types resp. \emph{Dom}, \emph{SDom},
+      \emph{ShDom} and \emph{Dom::value\_type}. Then we have the following valid expressions:}
 
     \smallskip
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                             & \thead{Expression}        & \thead{Return Type}           & \thead{Description}                                                \\
+      \thead{Concept}                              & \thead{Expression}               & \thead{Return Type}          & \thead{Description}                                       \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \texttt{pix.val()}        & \texttt{Pix::reference\_type} & \makecell{Access the pixel's value for read and/or write purpose.} \\
+      \multicolumn{1}{c|}{\multirow{4}{*}{Domain}} & \texttt{Point<Dom::value\_type>} & \texttt{std::true\_type}     & \makecell{Domain's value models the \emph{Point} concept} \\
       %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \texttt{pix.point()}      & \texttt{Pix::point\_type}     & \makecell{Read the pixel's point.}                                 \\
+      \multicolumn{1}{c|}{}                        & \texttt{dom.has(pnt)}            & \texttt{bool}                & \makecell{Check if a points is included in the domain.}   \\
       %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \texttt{pix.shift(pnt)}   & \texttt{void}                 & Shift pixel's point coordinate base on \emph{pnt}'s coordinates.   \\
+      \multicolumn{1}{c|}{}                        & \texttt{dom.empty()}             & \texttt{void}                & \makecell{Read the pixel's point.}                        \\
+      %\cline{2-4}
+      \multicolumn{1}{c|}{}                        & \texttt{dom.dim()}               & \texttt{void}                & Returns the domain's dimension.                           \\
       \cline{1-4}
-      \multicolumn{1}{c|}{OutputPixel}            & \texttt{opix.val() = val} & \texttt{void}                 & Mutate pixel's value.                                              \\
+      \multicolumn{1}{c|}{SizedDomain}             & \texttt{sdom.size()}             & \texttt{unsigned int}        & Returns the number of points inside the domain.           \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{ShapedDomain}            & \texttt{shdom.extends()}         & \texttt{std::forward\_range} & \makecell{Return a range that yields the number           \\ of elements for each dimension.}                                              \\
       \cline{1-4}
     \end{tabular}
     \smallskip
