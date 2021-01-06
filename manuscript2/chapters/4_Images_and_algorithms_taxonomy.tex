@@ -436,6 +436,13 @@ Those details are not mandatory for the overall comprehension of this paper, hen
 \chapter{Algorithm genericity: canvas}
 \label{sec.algo}
 
+FIXME : modèles de programmation pour traiter une image :
+* modèle type kernel/tuile (CUDA, Halide) sur GPU
+* modèle type pipeline pour traitement complex
+* modèle type deep learning (conv conv conv = filtres) + fonction de réduction dans des réseaux
+parrallèle entre canvas et modèles programmatic
+dissociation du parcours et du traitement
+
 In image processing there are a lot of common patterns when looking at algorithms, the most famous being \emph{for all
   pixel of image, do something to pixel}. But there are other more high-level similarities that we can leverage to have
 more generic algorithm. First let us study two basic algorithm: dilation and erosion. The python code of such algorithm
