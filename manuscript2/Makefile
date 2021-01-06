@@ -1,7 +1,7 @@
 TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
 SRC = $(filter-out trash.tex main.old.tex, $(wildcard *.tex))
 PDF = $(SRC:.tex=.pdf)
-SUBDIRS = # figures
+SUBDIRS = figs
 
 all : $(SUBDIRS) $(PDF)
 
