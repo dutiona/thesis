@@ -89,133 +89,43 @@ integration.
 
 
 
-% \chapter{User profile}
-
-Nous avons identifiés quatre catégories distinctes d'acteurs liés à une bibliothèque de traitements
-d'images :
-\begin{itemize}
-  \item les assembliers;
-  \item les créateurs-concepteurs;
-  \item les fournisseurs;
-  \item les architectes.
-\end{itemize}
-\paragraph{ASSEMBLIERS}. Un assemblier se contente de manipuler les briques de base offertes par la
-bibliothèque pour composer une application. Il ne réalise que de l'assemblage de composants. Mis
-bout à bout ces derniers forment une solution. L'outil idéal pour un assemblier est un environnement
-de programmation visuelle. Sa tâche consiste à dessiner des diagrammes de flux de données.
-Chaque boîte d'un tel diagramme matérialise un traitement et les liens entre les boîtes matérialise
-le flux des données. Si un diagramme ressemble à une séquence d'appels à des fonctions et
-comporte des structures de contrôle, le résultat n'est pas, à proprement parlé, un algorithme mais
-une "chaîne de traitements". Grâce à l'interface graphique d'un environnement de programmation
-visuelle, l'assemblier n'a besoin d'aucune compétence particulière en informatique et, a fortiori, en
-"véritable" programmation. En l'absence d'un environnement, les enchaînements de traitements
-sont décrits à l'aide d'un langage de programmation textuel, le C par exemple. Mais, pour ce type de
-tâche, les connaissances requises en programmation restent d'un niveau relativement bas puisqu'il
-s'agit de ne réaliser que des appels aux fonctions.
-\paragraph{CRÉATEURS} . Un créateur cherche à concevoir un nouvel algorithme ou une nouvelle méthode
-de traitement d'images. Il ne peut pas se contenter d'assembler des fonctions existantes pour obtenir
-ce qu'il veut. Son but est de créer une nouvelle fonction, quelle soit plutôt élémentaire, comme un
-"simple" opérateur de traitement d'images, soit de plus haut niveau, comme une tâche applicative
-"complexe". Il a un réel besoin de programmation; d'ailleurs, un environnement de programmation
-visuelle ne peut pas lui rendre le service qu'il attend. Les connaissances requises en programmation
-pour un créateur sont d'un niveau déjà supérieur à celui d'un assemblier, sans toutefois atteindre un
-niveau très élevé. La plupart des traiteurs d'images programmant se situent dans cette catégorie
-d'utilisateurs. Cette catégorie est le sujet de la discussion du préambule, page 5 et suivantes : le
-traiteur d'images créateur est véritablement un concepteur de programmes. Pour cela, il doit être
-aidé par son outil, la bibliothèque, surtout si son niveau d'informatique reste relativement modeste.
-C'est à cette personne au comportement dual, créateur de traitements et concepteur de programmes,
-que s'adresse le travail décrit dans ce rapport.
-\paragraph{FOURNISSEURS} . Un fournisseur se distingue d'un créateur car il n'apporte pas des fonctions
-mais de la matière première. Cette matière se divide en deux catégories : les types de données et les
-utilitaires. Parmi les types de données se trouvent les structures de données servant à définir des
-images, par exemple, un type pour gérer une image bi-dimensionnelle en niveaux de gris, et des
-types destinés aux valeurs des pixels, par exemple le type de couleur correspondant à un espace
-colorimétrique donné comme RGB (Red-Green-Blue). Les types de données représentent la matière
-manipulée par les fonctions, cette matière formant le flux de données d'un programme de traitement.
-Définir des types de données nécessite des compétences déjà avancées en informatique. En effet il
-s'agit d'abord de comprendre comment ces types doivent être formés pour être compatibles, donc
-utilisables sans problème, avec la bibliothèque. Il en va de même pour les "petits" objets utilitaires
-qui doivent se marier parfaitement avec les types de données et les algorithmes. Contrairement
-aux deux catégories précédentes, assemblier et créateur, un fournisseur doit avoir l'âme d'un
-informaticien.
-\paragraph{ARCHITECTES} . Un architecte ne fait clairement pas de traitement d'images; son travail est
-centré sur la bibliothèque en tant que logiciel. Il effectue de la maintenance : des mises à jour,
-des correctifs, des améliorations; et peut-être même de la conception, du re-modelage de logiciel
-(refactoring), du génie informatique, de l'architecture logicielle. Pour cette dernière catégorie, le
-niveau informatique attendu est supérieur, voire nettement supérieur,à celui des autres catégories.En
-effet, un architecte doit pouvoir saisir les différentes problématiques liées à l'organisation complexe
-que peut être celle d'une bibliothèque et, pour cela, doit bien maîtriser l'outil informatique.
-
-insert figure here
-
-Pour se fixer les idées quant aux compétences requises par ces différents utilisateurs, on peut
-observer les artefacts suivants : un assembleur, s'il programme, écrit essentiellement des appels à
-des fonctions; un créateur doit savoir écrire des boucles telles que "pour chaque point de l'image";
-un fournisseur connaît les mots-clefs struct et/ou class et les notions associées; un architecte a déjà
-ouvert la norme du langage qu'il utilise. Pour donner une répartition de la population d'utilisateurs
-dans ces différentes catégories, il faut tenir compte qu'une même personne a souvent un rôle
-double. Le cas manifeste est celui du créateur qui, pour son travail, utilise des fonctions déjà toutes
-14 UNE BIBLIOTHÈQUE GÉNÉRIQUE
-faites et, par cela, est également partiellement un assembleur. Au final, une tentative de répartition
-approximativement est dans la table 1.
-Cette répartition se comprend par temps passé dans une des catégories. Elle est statistique par
-personne, par temps passé et corrigée par le poids de code considéré. Un créateur, par exemple,
-lorsqu'il appelle une fonction existante ne passe que peu de temps à écrire cet appel, pourtant le
-poids, en nombre de lignes de code dépliées, appelées en cascade par cette fonction, est important;
-le poids en tant qu'assemblier devient fort car la quantité de matière utilisée (et non créée) est très
-significative.
-Une telle répartition peut aussi être rapportée à la fréquence des tâches : utiliser l'existant
-(assembler) est courant, créer l'est moins, et fournir un nouveau type de données ou un nouvel
-utilitaire est déjà très rare.
-
-insert figure here
-
-Une bibliothèque n'est pas toujours un outil isolé; elle peut être partie intégrante d'un environ-
-nement logiciel plus large. Une architecture possible pour ce dernier est donnée en figure 1.
-Du côté de l'utilisateur, cet environnement peut comprendre des outils indépendants qui lui
-permettent de travailler sans pour autant devoir coder dans le langage de programmation de la
-bibliothèque. Citons par exemple :
-\begin{itemize}
-  \item un jeu de commandes en ligne pour lancer des traitements à partir d'un invite de commandes
-        (shell), ou pour pouvoir écrire des scripts
-  \item un outil de programmation visuelle, comme C ANTATA de K HOROS ;
-  \item un logiciel de traitement d'images avec interface graphique, comme T HE GIMP, dans lequel
-  \item une interface écrite dans un langage de programmation tiers afin de pouvoir appeler les
-        fonctions de la bibliothèque à partir d'un autre environnement, par exemple, en Java lorsque la
-        bibliothèque est écrite en C++;
-  \item etc.
-\end{itemize}
-Au final, ces outils utilisent les fonctionnalités offertes par la bibliothèque, même si l'utilisateur
-ne voit pas explicitement que celle-ci est utilisée, asservie, en interne. Les fonctions de traitement
-d'images qui sont appelées de tous les outils satellites imaginables sont véritablement celles de la
-bibliothèque. Autant dire qu'elle est donc finalement le cœur de l'environnement.
-L'ensemble des fonctions de traitement d'images disponibles pour l'utilisateur correspond à
-celui que fournit la bibliothèque, ou à un sous-ensemble si toutes les fonctionnalités ne sont pas
-"traduites" vers les outils satellites, rendues accessibles à ces outils. Pour que l'utilisateur puisse
-profiter de tout ce qu'offre une bibliothèque, cette transmission de fonctionnalités vers les outils
-satellites doit est réalisée soit complètement automatiquement, soit sans effort supplémentaire.
-Pour cela, nous avons inclus dans l'architecture une description des fonctionnalités sous la forme
-de composants. Cette description, qui doit rester en phase avec le contenu de la bibliothèque, est
-exploitée comme donnée brute pour générer les ponts entre la bibliothèque et tous ses périphériques.
-Ainsi, l'accès aux fonctionnalités peut être garanti.
-Les fonctionnalités des outils de l'environnement provenant de la bibliothèque, il faut bien
-comprendre que les services sont donc finalement rendus à l'utilisateur par la bibliothèque. Les
-outils satellites sont en fait des sur-couches, côté utilisateur, du cœur central qu'est la bibliothèque.
-Le périmètre des fonctionnalités de l'environnement est clairement défini par le contenu de la
-bibliothèque. Ces fonctionnalités sont internes, bien encloses dans la bibliothèque. En corollaire,
-une remarque cruciale émerge lorsque l'on considère l'extérieur de ce périmètre : tout se qui est
-impossible pour la bibliothèque restera obligatoirement impossible pour l'utilisateur final, quelque
-soit l'outil périphérique qu'il emploie. Avec la notion de périmètre vient celle de limite. Si la
-bibliothèque possède des limitations, celles-ci sont automatiquement transmises à l'environnement.
-Le périmètre d'utilisation d'une bibliothèque a donc tout intérêt à être le plus large possible. Cette
-conclusion semble assez évidente; ce qui ne l'est pas, en revanche, est de considérer qu'obtenir le
-plus large périmètre d'utilisation possible doit être une des priorités principales de la conception
-d'une bibliothèque.
-
-
-\chapter{Image processing at Epita's Research and Development Laboratory (LRDE)}
-
 \chapter{Library's perimeter and goals}
+
+
+\section{Image processing at Epita's Research and Development Laboratory (LRDE)}
+
+Expériences de Olena \& spécialisation en Morph. Math, Topo. Discrète), définitions de nos
+besoins spécifiques (outils pour l'expérimentation, outils pour l'éducation, outils pour le logiciel de production)
+
+The Research \& Development Laboratory of EPITA (LRDE)
+
+diversity of use case
+we have a diversity of users :
+maintainers of libraries
+researchers that use the library to
+
+
+
+
+olena.2000.www
+geraud.2000.icpr
+duretlutz.2000.olena
+burrus.2003.mpool
+darbon.2002.ismm
+burrus.2003.mpool
+darbon.2004.ecoopphd
+geraud.2006.scoop-pres
+geraud.2008.mpool
+levillain.2009.ismm
+levillain.2010.icip
+levillain.2010.wadgmm
+levillain.2011.gretsi
+levillain.2011.phd
+geraud.2012.hdr
+levillain.2012.wadgmm-lncs
+levillain.2014.ciarp
+
+
 
 In the same way libraries are collections of reusable code, it is
 possible to create generic libraries made of reusable generic code.

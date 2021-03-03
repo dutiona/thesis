@@ -7,16 +7,12 @@ several purposes. For instance, the gcc compiler can compile several programming
 Objective-C++, Fortran, Ada, D, Go, and BRIG (HSAIL)) as well as target several architectures (IA-32 (x86), x86-64, ARM,
 SPARC, etc.). Henceforth we can say that gcc is a generic compiler. At this point it is important to note that even
 though a tool is deemed generic, there is a scope on what the tool can do and what the tool cannot do. A compiler
-despite supporting many languages and architectures, will not be able to make a phone call.
+despite supporting many languages and architectures, will not be able to make a phone call or a coffee.
 
-Projecting the notion of genericity to Image Processing, we can deduce that we need two important aspects to be generic.
-First, the data structures whose topology and underlying data must be decorelated from the algorithms: we want our
-algorithms to support as much data structures as possible. Second, many algorithms share the same computational shape
-and can be factorized together.
-
-
-
-
+Projecting the notion of genericity to Image Processing, we can deduce that we need two important aspects in order to be
+generic. First, we need to decorelate the data structures and its topology and underlying data from the algorithms.
+Indeed, we want our algorithms to support as much data structures as possible. Second, many algorithms share the same
+computational shape and can be factorized together.
 
 Genericity can have two different meanings depending on the people you ask. For instance, some will argue that
 genericity is high level and qualifies a tool which is "generic enough" to handle all of his use-cases. Others will
@@ -368,7 +364,7 @@ element start to be of a certain size.
 \end{figure}
 
 Most of the algorithms are \emph{generic} by nature. What limits their genericity is the way they are implemented. This
-statement is justified by the work achieved in the Standard Template Library (STL)~\citep{dehnert.1998.fundamentals} in
+statement is justified by the work achieved in the Standard Template Library (STL)~\parencite{dehnert.1998.fundamentals} in
 C++ whose algorithms are implemented and designed in a way where they work with all the built-in collections (linked
 list, vector, etc.). Let us take the example of the algorithm \texttt{fill(Collection c, Value v)} which set the same
 value for all the element of a collection (see~\cref{fig.gen.fill}). There are three main requirements here that are not
@@ -381,7 +377,7 @@ on-the-fly. This allows us to deduce what is called a \emph{concept}: a breakdow
 behavior of our collection. When writing down what a \emph{concept} should require, one should always respect this rule:
 "It is not the types that define the concepts: it is the algorithms". Concepts in C++ are not new and there have been a
 long work to introduce them that goes back from
-2003~\citep{seymour.2009.concepts,stroustrup.2003.concepts,sutton.2017.concepts} to finally appear in the 2020
+2003~\parencite{seymour.2009.concepts,stroustrup.2003.concepts,sutton.2017.concepts} to finally appear in the 2020
 standard~\cite{voutilainen.2017.concepts} (referred as C++20). This allows us, as of today, to write code leveraging
 this facility.
 
@@ -399,7 +395,7 @@ this facility.
   restrict its input image types to the ones whose value type provides the \emph{comparison operator ==}.
 
   In spite of the history behind the \emph{concept checking} facilities being very
-  turbulent~\citep{seymour.2009.concepts,stroustrup.2003.concepts,sutton.2017.concepts}, it will finally appear in the
+  turbulent~\parencite{seymour.2009.concepts,stroustrup.2003.concepts,sutton.2017.concepts}, it will finally appear in the
   next standard~\cite{voutilainen.2017.concepts} (C++20).
 
 }
@@ -528,6 +524,12 @@ behave properly into an algorithm, without needing to rewrite that algorithm.
 \end{itemize}
 
 \chapter{La généricité en C++ pre-11}
+
+geraud.2006.scoop-pres
+geraud.2008.mpool
+burrus.2003.mpool
+levillain.2011.phd
+
 
 \begin{itemize}
   \item explications techniques bas niveau, SFINAE

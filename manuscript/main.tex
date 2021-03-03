@@ -1,7 +1,7 @@
 \documentclass[11pt]{book}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[numbers]{natbib}
+% \usepackage[numbers]{natbib}
 \usepackage[mode=buildmissing]{standalone}
 \usepackage{tikz}
 \usepackage{graphicx}
@@ -24,6 +24,8 @@
 \usepackage{amssymb}
 \usepackage{svg}
 \usepackage{lettrine}
+\usepackage[backend=biber,style=alphabetic,sorting=ynt]{biblatex}
+\addbibresource{bibliography.bib}
 
 \usepackage[section]{placeins}
 
@@ -157,8 +159,9 @@ TODO FR
 \chapter{Bibliography}
 \label{chap.bibliography}
 
-\bibliographystyle{abbrv}
-\bibliography{bibliography}
+%\bibliographystyle{abbrv}
+%\bibliography{bibliography}
+\printbibliography
 
 \chapter{Dynamic dispatch vs. Static dispatch in C++}
 \label{appendix.dispatch.dyn.static}

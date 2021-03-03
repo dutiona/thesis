@@ -19,9 +19,11 @@ even be executed in its entirety on one's device (smartphone, tablet, \ldots). I
 computing ressources and would not meet the time requirement desired by the user if the entire pipeline was executed on
 the device. Furthermore, for the final part which is "recognize the person on the photo", one needs to feed the
 pre-processed photo to a neural network trained beforehand through deep learning techniques in order to give an accurate
-response. These neural network system usually are abstracted away in cloud technologies making them available only via
-Internet. When uploading his image, the user does not imagine the amount of technologies and computing power that will
-be used to find who is on the photo.
+response. There exists technologies able to embed neural network into mobile phone such as
+MobileNets~\parencite{howard.2017.mobilenets} but it is still limited. It can detect a human being inside a photo but
+not give the answer about who this human being is for instance. That is why, accurate neural network system usually are
+abstracted away in cloud technologies making them available only via Internet. When uploading his image, the user does
+not imagine the amount of technologies and computing power that will be used to find who is on the photo.
 
 We now understand that in order to build applications that interact with photos or videos nowadays, we need to be able
 to do accurate, fast and scalable image processing on a multitude of devices (smartphone, tablet, \ldots). In order to
@@ -34,25 +36,29 @@ the practitioner can easily build upon them and be fast enough in order not to k
 many prototypes. On the other hand, the production environment must be stable, resilient, fast and scalable.
 
 When looking at standards in the industry nowadays, we notice that Python is the main choice for prototyping. Also,
-Python may be enough so that a viable prototype can be pushed in production with minimal changes afterwards. We find it
-non-ideal that the practitioner cannot take advantages of many optimisation opportunities, both in term of algorithm
+Python may not be enough so that a viable prototype can be pushed in production with minimal changes afterwards. We find
+it non-ideal that the practitioner cannot take advantages of many optimisation opportunities, both in term of algorithm
 efficiency and better hardware usage, when proceeding this way. It would be much more efficient to have basic low level
 building blocks that can be adapted to fit as mush use cases as possible. This way, the practitioner can easily build
-upon them when designing its application. Then, if those building blocks can be intelligent enough to take advantage of
-many optimization opportunities, the practitioner would have a huge performance improvement, by default, without
-specifically tweaking its application. As such, the concept of genericity was introduced. It aims at providing a common
-ground about how an image should behave when passed to basic algorithms needed for complex applications. This way, in
-theory, one only needs to write the algorithm once for it to work with any given kind of image.
+upon them when designing its application. We distinguishes two kind of use cases. The first one is about the
+multiplicity of types or algorithms the practitioner is facing. The second one is about the diversity of hardware the
+practitioner may want to run his program. The goal is to have building blocks that can be intelligent enough to take
+advantage of many optimization opportunities, with regard to both input data types/algorithms and target hardware. Then
+the practitioner would have a huge performance improvement, by default, without specifically tweaking its application.
+As such, the concept of genericity was introduced. It aims at providing a common ground about how an image should behave
+when passed to basic algorithms needed for complex applications. This way, in theory, one only needs to write the
+algorithm once for it to work with any given kind of image.
 
-Finally, it is often known that there is a rule of three about genericity, efficiency and ease of use. The rule states
-that one can only have two of those items by sacrificing the third one. If one wants to be generic and efficient, then
-the naive solution will be very complex to use with lot of parameters. If one wants a solution to be generic and easy to
-use, then it will be not very efficient by default. If one wants a solution to be easy to use and efficient then it will
-not be very generic. Through continuing work onto the image processing library Pylene~\cite{carlinet.2018.pylena}, we
-demonstrate how a library can be generic, efficient and easy to use all at the same time. This thesis leverages the
-modern C++ language and its many new features related to genericity and performance to break this rule in the image
-processing area. This thesis finally attempts, through a static/dynamic bridge, to bring low level tools and concepts
-from the static world to the high level and dynamic prototyping world for a better ease of use.
+Finally, \FIXME{(find the quote)} it is often known that there is a rule of three about genericity, efficiency and ease
+of use. The rule states that one can only have two of those items by sacrificing the third one. If one wants to be
+generic and efficient, then the naive solution will be very complex to use with lot of parameters. If one wants a
+solution to be generic and easy to use, then it will be not very efficient by default. If one wants a solution to be
+easy to use and efficient then it will not be very generic. Through continuing work onto the image processing library
+Pylene~\cite{carlinet.2018.pylena}, we demonstrate how a library can be generic, efficient and easy to use all at the
+same time. This thesis leverages the modern C++ language and its many new features related to genericity and performance
+to break this rule in the image processing area. This thesis finally attempts, through a static/dynamic bridge, to bring
+low level tools and concepts from the static world to the high level and dynamic prototyping world for a better ease of
+use.
 
 With this philosophy in mind, this manuscript aims at presenting our thesis work related to the C++ language applied to
 the Image Processing domain. It is organized as followed:

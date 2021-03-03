@@ -118,8 +118,8 @@ the multidimensional outer range.
 
 Let us introduce another key point enabled by genericity and concepts: the \emph{Views}. A \emph{View} is defined by a
 non-owning lightweight image, inspired by the design introduced in \emph{Ranges for the Standard
-  Library}~\citep{niebler.2014.ranges} proposal for \emph{non-owning collections}. A similar design is also called
-\emph{Morphers} in \textsc{Milena}~\citep{levillain.2009.ismm, geraud.2012.hdr}. \emph{Views} feature the following
+  Library}~\parencite{niebler.2014.ranges} proposal for \emph{non-owning collections}. A similar design is also called
+\emph{Morphers} in \textsc{Milena}~\parencite{levillain.2009.ismm, geraud.2012.hdr}. \emph{Views} feature the following
 properties: \emph{cheap to copy}, \emph{non-owner} (does not \emph{own} any data buffer), \emph{lazy evaluation}
 (accessing the value of a pixel may require computations) and \emph{composition}. When chained, the compiler builds a
 \emph{tree of expressions} (or \emph{expression template} as used in many scientific computing libraries such as
@@ -385,7 +385,7 @@ auto MyComplexImage = subquantize16to8b(togray(A));
 meaning that in~\cref{fig.view.highorder}, the creation of the views does not incur any computation. The computation is
 delayed until the invocation of the \texttt{v(p)} expression. Also, the computation can be delayed quite far thanks to
 the composition capability of views. In fact, a view is an image adaptor which actually is a \emph{template
-  expression}~\citep{veldhuizen.1995.expression, veldhuizen.2000.blitz}. Indeed, the \emph{expression} used to generate
+  expression}~\parencite{veldhuizen.1995.expression, veldhuizen.2000.blitz}. Indeed, the \emph{expression} used to generate
 the image is recorded as a template parameter. A view is represented by an \emph{expression tree}, as shown
 in~\cref{fig.view.ast}.
 
@@ -543,7 +543,7 @@ policy). To use the policy \texttt{native}, one would write \texttt{extension::b
 
 \FIXME{this can be intro of chapter}
 Our work on bringing genericity to image processing through C++ template metaprogramming and concepts is presented
-in~\citep{roynard.2019.rrpr}. Continuing this previous work, we focused on the main goals of the library. First is the
+in~\parencite{roynard.2019.rrpr}. Continuing this previous work, we focused on the main goals of the library. First is the
 zero-cost of traversing an image, overhauling the existing system which is macro-based. The new system presented in
 section~\ref{part.image_views} is based on
 range-v3~\cite{niebler.2014.ranges,niebler.2018.deepranges,niebler.2018.mergingranges}. Following, we will show in
