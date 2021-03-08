@@ -1,6 +1,8 @@
 \chapter*{Introduction}
 \label{introduction.chap.introduction}
 
+\section*{Outline}
+
 \lettrine[lines=2]{N}{owadays} \emph{Computer Vision} and \emph{Image Processing (IP)} are omnipresent in the day to day
 life of the people. It is present each time we pass by a CCTV camera, each time we go to the hospital do an MRI, each
 time we drive our car and pass in front of a speed camera and each time we use our computer, smartphone or tablet. We
@@ -49,6 +51,128 @@ As such, the concept of genericity was introduced. It aims at providing a common
 when passed to basic algorithms needed for complex applications. This way, in theory, one only needs to write the
 algorithm once for it to work with any given kind of image.
 
+
+\section*{Different data types and algorithms}
+
+In Image Processing, there exists a multitude of image types whose caracteristics can be vastly different from one
+another. This large specter is also resulting from the large domain of application of IP. For instance, when considering
+photography we have 2D image whose values can vary from 8 bits grayscale to multiple band 32-bits color scheme storing
+informations about the non-visible specter of human eye. If we consider another domain of application, such as medical
+imaging, we now can consider sequence of images such as sequence of 3D image for an MRI for instance. More broadly there
+are two orthogonal constituent of an image: its topology (or structure) and its values. However, there are two more
+aspectes to consider here. Firstly, image processing provide plenty of algorithms that can or cannot operate over
+specific data types. There are also different kind of algorithms. Some will extract informations,(e.g. histogram) other
+will transform the image point-wise (e.g. thresholding), and some other will even combine several image to render a
+different kind of informations (e.g. background substraction). There are many simple algorithms and also many complex
+algorithms out there. Secondly, there are orbitting data around image types and algorithms that are also very diverse
+and necessary for their smooth operation. Indeed, a dilation algorithm will also need an additional information: the
+dilation disc. A thresholding algorithm may be given a threshold. A convolution filter requires a convolution matrix to
+operate. That is why, when considering both image types and algorithms, we need a 3D-chart (illustrated
+in~\cref{fig.int.possibility_space}) to enumerate all possibilities, where one axis is the image topology, one axis is
+the color scheme and one axis enumerate the additional data that can be associated to an image.
+
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics{figs/possibility_space}
+  \caption{Illustration of the specter of the multitude of possibilities in the image processing world.}
+  \label{fig.int.possibility_space}
+\end{figure}
+
+
+\section*{Different user profiles and their use cases}
+
+\paragraph{The end user} is a non programmer user who wants to occasionally use IP software through UI-rich interface,
+such as Adobe Photoshop~\parencite{adobe.2019.photoshop} or The GIMP~\parencite{gimp.2019}. Its skills are non-relevant
+as the end user is using the software to get work done even though he does not fully understand the underlying
+principles. For instance, the end user will want to correct the bightness of an image, of remove some impurities from a
+face or a building. The end user does not want to build an application but wants to save time. The needs of the end user
+mainly revolves around a clean and intuitive software UI as well as a well as support for mainstream image types and
+operation a photograph may need to do.
+
+\paragraph{The practitioner} is what we are called when we first approach the image processing area. A practitioner is
+the end user of image processing libraries. Its skills mainly revolve around applied mathematics for image processing,
+prototyping and algorithms. A practitioner aims at leveraging the features the libraries can offer to build his
+application. For instance, a practitioner can be a researcher in medical imaging, an engineer build a facial recognition
+application, a data scientist labeling its image set, etc. The needs of practitioner are mainly revolving around a fast
+feedback loop. The developing environment must be easily accessible and installable. This way a practitioner can judge
+quickly wether one library will answer his needs. The documentation of the library must be exhaustive and didactic with
+examples. When prototyping, the library must provide fast feedback loops, as in a python notebook for instance. Finally
+it must be easily integrated in a standard ecosystem such as being able to work with NumPy's array natively without
+imposing its own types. To sum up, practitioner's programmatic skills do not need to be high as his main goal is to
+focus on algorithms and mathematics formulas.
+
+\paragraph{The contributer} is an advanced user of a library who is very comfortable with its inner working, philosophy,
+aims, strengths and potential shortcomings. As such, he is able to add new specific features to library, fix some
+shortcomings or bugs. Usually a contributer is able to add a feature needed for a practitioner to finish his
+application. Furthermore he can then contribute back his features to the main project via pull requests if it is
+relevant. This way, a maintainer will assess the pull request and review it. The two main points of a contributer are
+his deep knowledge of a library and his ability to write code in the same language as the source code of it. Also, a
+contributer must have knowledge of coding best practices such as writing unit tests which are mandatory when adding a
+feature to an existing library. To facilitate contribution, a library must provide clear guidelines about the way to
+contribute, be easy to bootstrap and compile without having heavy requirements on dependencies. The best case would be
+that the library is handled by standard packages managers such as system apt or python conan.
+
+\paragraph{The maintainer} is usually the creator, founder of the library or someone that took over the project when the
+founder stepped back. Also, when a library grows, it is not rare that regular contributers end up being maintainer as
+well to help the project. The maintainer is in charge of keeping alive the project by fulfilling several aspects:
+upgrade and release new features according to the user (practitioner) needs and the library philosophy. Also, a library
+may not evolve as fast as the user may want it because of lack of time from maintainers. A lot of open source projects
+are maintained by volunteers and lack of time is usually the main aspect slowing development progress. The maintainer is
+also in charge of reviewing all the contributers pull requests. He must check if they are relevant and completed enough,
+(for instance, presence of tests and documentation) to be integrated in the project. Indeed, merging a pull requests
+equals to accepting to take care of this code in the future too. It means that further upgrade, bug fix, refactoring of
+the project will consider this new code too. If the maintainer is not able to take care of this code then it should
+propably not be integrated in the project in the first place. Any project and library has its maintainers. A maintainer
+is someone very familiar with the inner working and architectural of the project. He is also someone that has some
+history in the project to understand why some decisions has been made, what choices has been made at some points and
+what the philosophy of the project is. It is important to be able to refuse a contribution that would go contrary to the
+philosophy of the project, even a very interesting one. Finally the profile of a maintainer is one of a developer that
+is used to the standard workflow in open source based on: forks, branches, merge/pull requests and continuous
+integration.
+
+\section*{Different tools}
+
+Before stating the topic of the thesis, it is important to enumerate the different kind of tools the current market has
+to offer to know where we will be positioning ourself.
+
+\paragraph{Graphic editors} are what neophyte thinks about when they imagine what image processing is. Those are tools
+that allow a non expert user to apply a wide array of operation on an image from an intuitive GUI in a way the user does
+not have to understand the underlying logic behind each and every operation he is applying. Such tools are usually large
+complex software such as The GIMP~\parencite{gimp.2019} or Photoshop~\parencite{adobe.2019.photoshop}. Their aim is to
+be usuable by end users while supporting a large set of popular image format.
+
+\paragraph{Command line utilities} are binaries that perform one operation or more invocable from a console interface or
+from a shell script through a command line interface (CLI). This CLI usually offers several options to pass data and/or
+information to the programs in order to have an processing happening. The informations can be, for instance, the input
+image path, the ouput image name and the name of a mathematical morphology algorithm to apply. Usually command line
+utilities come as projects such as ImageMagick~\parencite{imagemagick.2021},
+GraphicsMagick~\parencite{graphicsmagick.2021} or MegaWave~\parencite{froment.2012.megawave}.
+
+
+\paragraph{Visual programming environment} are software that allow the user to graphically and intuitively link one or
+several IP operations while interactively displaying the result. The processing can easily be modified and the results
+are updated accordingly. Those software are usually aimed at engineer or researchers doing prototyping work not
+exclusive to image processing. Mathcad~\parencite{mathcad.2019} is a good example of such a software.
+
+Integrated environment
+Package for dynamic language
+Programming libraries
+Domain specific languages
+\FIXME{TODO}
+
+
+\section*{Topic of thesis}
+
+%Définitions du périmètre de la bibliothèque et de ses objectifs:
+%\begin{itemize}
+%  \item Performance
+%  \item Facile d'utilisation (UX client)
+%  \item Facile de développement (Core developer xp)
+%  \item Versatilité des types d'images
+%  \item Utilisable depuis Python, Orientée MM
+%\end{itemize}
+
 Finally, \FIXME{(find the quote)} it is often known that there is a rule of three about genericity, efficiency and ease
 of use. The rule states that one can only have two of those items by sacrificing the third one. If one wants to be
 generic and efficient, then the naive solution will be very complex to use with lot of parameters. If one wants a
@@ -84,109 +208,3 @@ ease the gap between the prototyping phase and the production phase. Indeed, why
 access to production-ready fast algorithm by default? In this part, we discuss some ways of achieving this and offer our
 take in the shape of an hybrid solution.
 
-
-context
-outline
-diversity of image types and algorithms, and surrounding data
-diversity of users
-diversity of use cases
-diversity of tools
-Définitions du périmètre de la bibliothèque et de ses objectifs:
-\begin{itemize}
-  \item Performance
-  \item Facile d'utilisation (UX client)
-  \item Facile de développement (Core developer xp)
-  \item Versatilité des types d'images
-  \item Utilisable depuis Python, Orientée MM
-\end{itemize}
-topic of thesis
-
-
-
---------------
-
-Image processing nowadays is very diverse and cover a wide variety of purpose. Henceforth there are many tools for many
-different usages, from prototyping to production or from 2D image to graph \& complex images. All the complex image
-processing applications relies on the same building blocks that are used and reused to get the wanted applicative
-result. Following this assessment, it makes a lot of sense to provide a user-friendly toolbox of basic building blocks
-that can be used to solve as many problem as possible, and with greet efficiency so that it does not need to be fully
-rewritten when switching from prototyping to production. This paper discusses how we can achieve this goal with
-genericity and how modern C++ (standard 2020) allows the implementation of generic, simple and efficient algorithms.
-This paper later discusses the algorithm composability into pipeline (widely used in image processing) and how modern
-C++, with views, provide the tools to naturally achieve this goal, being efficient by default. Furthermore, the methods
-discussed in this paper are not specific to image processing and can be reapplied to other scientific library aiming at
-solving different kind of problems.
-
-Image processing has evolved over time to become a field where a very wide array of problematic has arisen. The time
-when the 2-dimensional images whose colors were encoded within three 8-bits RGB channels, was a complex construct is
-long gone. Instead, and in the last 20 years, there are many new kind of image being brought by the need in new
-application domains, be they: medical (3D images from MRI), video games (real time 3D rendering, meshes, visual
-effects), astronomy (hyperspectral images with thousands of bands), trees (tree of shapes), graphs (for segmentation,
-maps), and so on.
-
-However, despite those kinds of images may originates from different technology domains, they still are being processed
-through common, more simple algorithms (such as mathematical morphology) which are the basis of more complex
-computations. Thus, it makes sense to have a common base of algorithms to build upon, later, for more complex field
-specific applications.
-
-As such, the concept of genericity was introduced. It aims at providing a common ground about how an image should behave
-when passed to basic algorithms needed for complex applications. This way, in theory, one only needs to write the
-algorithm once for it to work with any given kind of image. In practice, it is also possible to provide a specific
-version of a specific algorithm taking advantage of specific properties when available, to for instance, increase
-execution speed or decrease memory consumption.
-
-Another aspect that Image processing is in a dire need nowadays is efficiency. Be it with Artificial Intelligence that
-needs deep learning on large data set of images or simply the images themselves that are very larges (e.g. 3D mesh with
-over 5 million triangles, several hundred of Go for a satellite image), efficiency is pivotal and mandatory. However
-genericity and efficiency are often conflicting. Coming up with a solution allying those two aspects is a long time
-ongoing work, which is still of topicality nowadays.
-
-
-
-\section{The practitioner}
-
-When first approaching the image processing area, one becomes what we call a practitioner. A practitioner is the end
-user of image processing libraries. Its skills mainly revolve around applied mathematics for image processing,
-prototyping and algorithms. A practitioner aims at leveraging the features the libraries can offer to build his
-application. For instance, a practitioner can be a researcher in medical imaging, an engineer build a facial recognition
-application, a data scientist labeling its image set, etc. The needs of practitioner are mainly revolving around a fast
-feedback loop. The developing environment must be easily accessible and installable. This way a practitioner can judge
-quickly wether one library will answer his needs. The documentation of the library must be exhaustive and didactic with
-examples. When prototyping, the library must provide fast feedback loops, as in a python notebook for instance. Finally
-it must be easily integrated in a standard ecosystem such as being able to work with NumPy's array natively without
-imposing its own types. To sum up, practitioner's programmatic skills do not need to be high as his main goal is to
-focus on algorithms and mathematics formulas.
-
-
-\section{The contributer}
-
-A contributer is an advanced user of a library who is very comfortable with its inner working, philosophy, aims,
-strengths and potential shortcomings. As such, he is able to add new specific features to library, fix some shortcomings
-or bugs. Usually a contributer is able to add a feature needed for a practitioner to finish his application. Furthermore
-he can then contribute back his features to the main project via pull requests if it is relevant. This way, a maintainer
-will assess the pull request and review it. The two main points of a contributer are his deep knowledge of a library and
-his ability to write code in the same language as the source code of it. Also, a contributer must have knowledge of
-coding best practices such as writing unit tests which are mandatory when adding a feature to an existing library. To
-facilitate contribution, a library must provide clear guidelines about the way to contribute, be easy to bootstrap and
-compile without having heavy requirements on dependencies. The best case would be that the library is handled by
-standard packages managers such as system apt or python conan.
-
-\section{The maintainer}
-
-The maintainer is usually the creator, founder of the library or someone that took over the project when the founder
-stepped back. Also, when a library grows, it is not rare that regular contributers end up being maintainer as well to
-help the project. The maintainer is in charge of keeping alive the project by fulfilling several aspects: upgrade and
-release new features according to the user (practitioner) needs and the library philosophy. Also, a library may not
-evolve as fast as the user may want it because of lack of time from maintainers. A lot of open source projects are
-maintained by volunteers and lack of time is usually the main aspect slowing development progress. The maintainer is
-also in charge of reviewing all the contributers pull requests. He must check if they are relevant and completed enough,
-(for instance, presence of tests and documentation) to be integrated in the project. Indeed, merging a pull requests
-equals to accepting to take care of this code in the future too. It means that further upgrade, bug fix, refactoring of
-the project will consider this new code too. If the maintainer is not able to take care of this code then it should
-propably not be integrated in the project in the first place. Any project and library has its maintainers. A maintainer
-is someone very familiar with the inner working and architectural of the project. He is also someone that has some
-history in the project to understand why some decisions has been made, what choices has been made at some points and
-what the philosophy of the project is. It is important to be able to refuse a contribution that would go contrary to the
-philosophy of the project, even a very interesting one. Finally the profile of a maintainer is one of a developer that
-is used to the standard workflow in open source based on: forks, branches, merge/pull requests and continuous
-integration.
