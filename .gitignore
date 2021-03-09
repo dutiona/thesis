@@ -25,4 +25,5 @@
 *.run.xml
 *.synctex.gz
 *.fdb_latexmk
+*.synctex(busy)
 /**/_minted-*/
