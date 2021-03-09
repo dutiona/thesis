@@ -147,7 +147,7 @@ from a shell script through a command line interface (CLI). This CLI usually off
 information to the programs in order to have an processing happening. The informations can be, for instance, the input
 image path, the ouput image name and the name of a mathematical morphology algorithm to apply. Usually command line
 utilities come as projects such as ImageMagick~\parencite{imagemagick.2021},
-GraphicsMagick~\parencite{graphicsmagick.2021} or MegaWave~\parencite{froment.2012.megawave}.
+GraphicsMagick~\parencite{graphicsmagick.2021} or MegaWave~\parencite{froment.2012.megawave,froment.2004.megawave2}.
 
 \paragraph{Visual programming environment} are software that allow the user to graphically and intuitively link one or
 several IP operations while interactively displaying the result. The processing can easily be modified and the results
@@ -164,20 +164,30 @@ Mathematica~\parencite{wolfram.2020.mathematica} and Jupyter~\parencite{kluyver.
 libraries has been brought to dynamic languages this way. For instance, let us consider the python programming language.
 There are two main package provider: PyPi~\parencite{pypi.2021} and Conda~\parencite{anaconda.2020}. Both allow to
 install packages to enable the user to program his prototypes in Python very quickly. In image processing, there are
-packages such as Scipi~\parentcite{jones.2006.scipy}, NumPy~\parentcite{oliphant.2006.numpy},
+packages such as Scipi~\parencite{jones.2006.scipy}, NumPy~\parencite{oliphant.2006.numpy},
 scikit-image~\parencite{vanderWalts.2014.scikit-image}, Pillow~\parencite{clark.2021.pillow} as well as binding for
 OpenCV~\parencite{bradski.2000.opencv}.
 
+\paragraph{Programming libraries} is the most common tool available out there. They are a collection of routines,
+functions and structures providing features through a documentation and binaries. They require the user to be proficient
+with a certain programming language and also to be able to integrate a library into his project. For IP we have:
+IPP~\parencite{taylor.2004.intel}, ITK~\parencite{johnson.2013.ITKSoftwareGuideThirdEdition},
+Boost.GIL~\parencite{bourdev.2006.bgil}, Vigra~\parencite{kothe.2011.generic}, GrAL~\parencite{berti.2006.gral},
+DGTal~\parencite{coeurjolly.2016.dgtal}, OpenCV~\parencite{bradski.2000.opencv}, CImg~\parencite{tschumperle.2012.cimg},
+Video++~\parencite{garrigues.2014.video++}, Generic Graphic Library~\parencite{kolas.2000.gegl}
+Milena~\parencite{levillain.2009.ismm,levillain.2010.icip} and
+Olena~\parencite{olena.2000.www,levillain.2011.phd,geraud.2012.hdr,levillain.2014.ciarp}.
 
-Programming libraries
-
-
-
-Domain specific languages
-
-ragankelley.2013.halide
-
-\FIXME{TODO}
+\paragraph{Domain Specific Languages (DSL)} are tools developed when a library developer deem he is unable to express
+the concepts and abstraction layers he wants to express through publishing a library. In this case, the barrier is often
+the programming language itself and so the developer does think that another layer of abstraction above the programming
+language would be a good thing. It leads to the genesis of a new programming language in some cases like
+Halide~\parencite{ragankelley.2013.halide} and SYCL~\parencite{brown.2019.heterogeneous,wong.2019.heterogeneous} but can
+also be a case of having the current programming language be "upgraded" to include another subset of features that are
+not natively included. This is often the case in C++ where we have in-language DSL like
+Eigen~\cite{guennebaud.2010.eigen}, Blaze~\cite{iglberger.2012.blaze,iglberger.2012_1.blaze},
+Blitz++~\cite{veldhuizen.2000.blitz} or Armadillo~\cite{sanderson.2016.armadillo}. They leverage a possibility of the
+C++ programming language (\emph{expression templates}~\cite{veldhuizen.1995.expression}) to achieve it.
 
 
 \section*{Topic of thesis}
@@ -191,7 +201,7 @@ ragankelley.2013.halide
 %  \item Utilisable depuis Python, Orientée MM
 %\end{itemize}
 
-Finally, \FIXME{(find the quote)} it is often known that there is a rule of three about genericity, efficiency and ease
+In the end, \FIXME{(find the quote)} it is often known that there is a rule of three about genericity, efficiency and ease
 of use. The rule states that one can only have two of those items by sacrificing the third one. If one wants to be
 generic and efficient, then the naive solution will be very complex to use with lot of parameters. If one wants a
 solution to be generic and easy to use, then it will be not very efficient by default. If one wants a solution to be
