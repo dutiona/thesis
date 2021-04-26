@@ -1,7 +1,5 @@
 \chapter{Genericity}
 
-\section{Different ways to reach genericity}
-
 In natural language we say that something is generic when it can fit several purpose at once while being decently
 efficient. For instance, a computer is generic tool that allows one to write documents, access emails, browse Internet,
 play video games, watch movies, read e-books etc. In programming, we will say that a tool is generic when it can fit
@@ -32,127 +30,12 @@ many ways to achieve genericity which is dependent of the language intrinsic spe
 native or emulated, etc.
 
 
-
-\section{Genericity in pre C++11}
-
-Before C++11~\parencite{iso.2011.cpp} came out
-%olena.2000.www
-%geraud.2000.icpr
-%duretlutz.2000.olena
-%burrus.2003.mpool
-%darbon.2002.ismm
-%burrus.2003.mpool
-%darbon.2004.ecoopphd
-%geraud.2006.scoop-pres
-%geraud.2008.mpool
-%levillain.2009.ismm
-%levillain.2010.icip
-%levillain.2010.wadgmm
-%levillain.2011.gretsi
-%levillain.2011.phd
-%geraud.2012.hdr
-%levillain.2012.wadgmm-lncs
-%levillain.2014.ciarp
-
-
-\begin{itemize}
-  \item explications techniques bas niveau, SFINAE
-  \item aboutissement à SCOOP -> synthèse et explication des travaux précédents sur SCOOP
-\end{itemize}
-
-
-
-\section{Genericity in post C++11 (C++20 and Concepts)}
-
-\begin{itemize}
-  \item post C++11 :
-        \begin{itemize}
-          \item simplification d'écriture du SFINAE (variadic, traits)
-          \item if constexpr (c++14), lambda auto
-          \item apports du C++17 pour simplifier encore : folds, template deduction guides, visit/overload for variant, any, template <auto V> struct S
-          \item apports du C++20 : concepts, ranges
-        \end{itemize}
-  \item montrer des exemples de simplification de code
-  \item faire des bench de temps de compilation (flagrant quand passage du SFINAE aux concepts)
-\end{itemize}
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=4.2in]{figs/compile_time_benches/gcc10/chart.concept.png}
-  \caption{Benchmark GCC-10: Benchmarking compilation speed of template instanciation constrained by Concepts (vanilla) vs. Concepts (improved) vs. SFINAE.}
-  \label{fig.gen.bench.gcc10.1.concept.sfinae}
-\end{figure}
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=4.2in]{figs/compile_time_benches/gcc10/chart.concept2.png}
-  \caption{Benchmark GCC-10: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
-  \label{fig.gen.bench.gcc10.2.concept.sfinae}
-\end{figure}
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=4.2in]{figs/compile_time_benches/clang10/chart.concept.png}
-  \caption{Benchmark Clang-10: Benchmarking compilation speed of template instanciation constrained by Concepts (vanilla) vs. Concepts (improved) vs. SFINAE.}
-  \label{fig.gen.bench.clang10.1.concept.sfinae}
-\end{figure}
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=4.2in]{figs/compile_time_benches/clang10/chart.concept2.png}
-  \caption{Benchmark Clang-10: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
-  \label{fig.gen.bench.clang10.2.concept.sfinae}
-\end{figure}
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=4.2in]{figs/compile_time_benches/clang11/chart.concept.png}
-  \caption{Benchmark Clang-11: Benchmarking compilation speed of template instanciation constrained by Concepts (vanilla) vs. Concepts (improved) vs. SFINAE.}
-  \label{fig.gen.bench.clang11.1.concept.sfinae}
-\end{figure}
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=4.2in]{figs/compile_time_benches/clang11/chart.concept2.png}
-  \caption{Benchmark Clang-11: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
-  \label{fig.gen.bench.clang11.2.concept.sfinae}
-\end{figure}
-
-
-\section{C++ templates in a dynamic world}
-
-\begin{itemize}
-  \item rapide rappel pros./cons. language compilés vs. languages interprétés
-  \item rappel template C++ -> pas de binaire
-  \item faire un topo sur la problématique de distribution de binaire et/ou de compilation chez le client pour un code générique
-  \item passer en revue les solutions existantes :
-        \begin{itemize}
-          \item SWILENA
-          \item VCSN
-          \item VIGRA
-          \item Cython
-          \item cppyy
-          \item autowig
-          \item xeus-cling (\FIXME{trouver une citation})
-        \end{itemize}
-\end{itemize}
-
-
-\clearpage
-
-
-
-
-
-
-\section*{Material about genericity}
-
+\section{Genericity within libraries}
 
 Projecting the notion of genericity to Image Processing, we can deduce that we need two important aspects in order to be
 generic. First, we need to decorelate the data structures and its topology and underlying data from the algorithms.
 Indeed, we want our algorithms to support as much data structures as possible. Second, many algorithms share the same
 computational shape and can be factorized together.
-
 
 Genericity can have two different meanings depending on the people you ask. For instance, some will argue that
 genericity is high level and qualifies a tool which is "generic enough" to handle all of his use-cases. Others will
@@ -223,7 +106,7 @@ generic algorithms. This approach is implemented in a library~\cite{carlinet.201
 proof of concept over the feasibility of having generic image processing operators running on multiple image types with
 near-native performances. Let us first explain briefly how we achieved this.
 
-\subsection*{Different approaches to get genericity}
+\subsection{Different approaches to get genericity}
 
 First, let us consider the morphological \emph{dilation} that takes two inputs: an image and a flat structuring element
 (SE). Then the set of some possible inputs is depicted in~\ref{fig.gen.espaceSAV}. Without genericity, with $s$ the
@@ -293,6 +176,7 @@ image being processed into video ($3D+t$) algorithm. Widely use libraries such a
 OpenCV~\cite{bradski.2000.opencv}, scikit-image~\cite{vanderwalt.2014.skimage} use this technique to handle as many
 image types as possible. There are other libraries, for instance CImg~\cite{tschumperle.2012.cimg},
 MegaWave~\cite{froment.2012.megawave}, that also use this approach however this paper will not address them.
+
 \begin{figure}[tbh]
   \centering
   \begin{minted}[gobble=2]{cpp}
@@ -309,6 +193,7 @@ MegaWave~\cite{froment.2012.megawave}, that also use this approach however this 
   \caption{Fill algorithm for a generalized supertype.}
   \label{fig.gen.generalized}
 \end{figure}
+
 \paragraph{Inclusion \& Parametric polymorphism approach} consists in extracting behavior patterns from algorithms to
 group them into logical brick called \emph{concepts} (for static parametric polymorphism), or \emph{interface} (for
 dynamic inclusion polymorphism). Each algorithm will require a set of behavior pattern that the inputs need to satisfy.
@@ -387,7 +272,7 @@ in~\cref{table.gen.approaches}.
 \end{table}
 
 
-\subsection*{Unjustified limitations}
+\subsection{Unjustified limitations}
 
 Image processing community operates mostly with either Python or Matlab~\cite{etter.2002.introduction}. As such this
 paper will focus on those two technologies. Python offers access to two major libraries for image processing: OpenCV and
@@ -485,8 +370,49 @@ a little bit slower for smaller structuring elements whereas it is much more reg
 element start to be of a certain size.
 
 
-\subsection*{Genericity \& concepts}
-\label{subsec.gen.concept}
+\section{Genericity in pre C++11}
+
+Before C++11~\parencite{iso.2011.cpp} came out the genericity facilities offered by the C++ programming language were
+already turing complete~\parencite{veldhuizen.2003.c++templates}. However, it was lacking a certain amount of features
+the language now have that made writing generic code a real challenge at that time. For instance, when writing code
+with a variable number of type (nowadays designed as variadic templates) one had to write the generic code for each and
+every number of type supported. This meant that to implement \texttt{std::tuple}, one had to copy the implementation for
+every number of type supported by \texttt{std::tuple}. This limitation defeated the very first principle and motivation
+of generic programming which is to write \emph{less}. To compensate, library implementers used tricks with macro not to
+have to rewrite code which made the initial code even harder to understand for outsiders.
+
+In spite of all those limitations at the time, generic programming was well supported by the language and allowed the
+programmer to already design generic libraries.
+
+\FIXME{TODO}
+
+%olena.2000.www
+%geraud.2000.icpr
+%duretlutz.2000.olena
+%burrus.2003.mpool
+%darbon.2002.ismm
+%burrus.2003.mpool
+%darbon.2004.ecoopphd
+%geraud.2006.scoop-pres
+%geraud.2008.mpool
+%levillain.2009.ismm
+%levillain.2010.icip
+%levillain.2010.wadgmm
+%levillain.2011.gretsi
+%levillain.2011.phd
+%geraud.2012.hdr
+%levillain.2012.wadgmm-lncs
+%levillain.2014.ciarp
+
+
+\begin{itemize}
+  \item explications techniques bas niveau, SFINAE
+  \item aboutissement à SCOOP -> synthèse et explication des travaux précédents sur SCOOP
+\end{itemize}
+
+
+
+\section{Genericity in post C++11 (C++20 and Concepts)}
 
 \begin{figure}[tbh]
   \centering
@@ -504,8 +430,8 @@ element start to be of a certain size.
 \end{figure}
 
 Most of the algorithms are \emph{generic} by nature. What limits their genericity is the way they are implemented. This
-statement is justified by the work achieved in the Standard Template Library (STL)~\parencite{dehnert.1998.fundamentals} in
-C++ whose algorithms are implemented and designed in a way where they work with all the built-in collections (linked
+statement is justified by the work achieved in the Standard Template Library (STL)~\parencite{dehnert.1998.fundamentals}
+in C++ whose algorithms are implemented and designed in a way where they work with all the built-in collections (linked
 list, vector, etc.). Let us take the example of the algorithm \texttt{fill(Collection c, Value v)} which set the same
 value for all the element of a collection (see~\cref{fig.gen.fill}). There are three main requirements here that are not
 related to the underlying type of \emph{Collection}. First, we check (l.2~\ref{fig.gen.fill}) that we are actually
@@ -521,51 +447,35 @@ long work to introduce them that goes back from
 standard~\cite{voutilainen.2017.concepts} (referred as C++20). This allows us, as of today, to write code leveraging
 this facility.
 
+C++ is a multi-paradigm language that enables the developer to write code that can be \emph{object oriented},
+\emph{procedural}, \emph{functional} and \emph{generic}. However, there were limitations that were mostly due to the
+backward compatibility constraint as well as the zero-cost abstraction principle. In particular the \emph{generic
+  programming} paradigm is provided by the \emph{template metaprogramming} machinery which can be rather obscure and
+error-prone. Furthermore, when the code is incorrect, due to the nature of templates (and the way they are specified) it
+is extremely difficult for a compiler to provide a clear and useful error message. To solve this issue, a new facility
+named \emph{concepts} was brought to the language. It enables the developer to constraint types: we say that the type
+\emph{models} the \emph{concept(s)}. For instance, to compare two images, a function \emph{compare} would restrict its
+input image types to the ones whose value type provides the \emph{comparison operator ==}. In spite of the history
+behind the \emph{concept checking} facilities being very
+turbulent~\parencite{seymour.2009.concepts,stroustrup.2003.concepts,sutton.2017.concepts}, it will finally appear in the
+next standard~\cite{voutilainen.2017.concepts} (C++20).
 
-\PLAGIAT{
-
-  C++ is a multi-paradigm language that enables the developer to write code that can be \emph{object oriented},
-  \emph{procedural}, \emph{functional} and \emph{generic}. However, there were limitations that were mostly due to the
-  backward compatibility constraint as well as the zero-cost abstraction principle. In particular the \emph{generic
-    programming} paradigm is provided by the \emph{template metaprogramming} machinery which can be rather obscure and
-  error-prone. Furthermore, when the code is incorrect, due to the nature of templates (and the way they are specified)
-  it is extremely difficult for a compiler to provide a clear and useful error message. To solve this issue, a new
-  facility named \emph{concepts} was brought to the language. It enables the developer to constraint types: we say that
-  the type \emph{models} the \emph{concept(s)}. For instance, to compare two images, a function \emph{compare} would
-  restrict its input image types to the ones whose value type provides the \emph{comparison operator ==}.
-
-  In spite of the history behind the \emph{concept checking} facilities being very
-  turbulent~\parencite{seymour.2009.concepts,stroustrup.2003.concepts,sutton.2017.concepts}, it will finally appear in the
-  next standard~\cite{voutilainen.2017.concepts} (C++20).
-
-}
-
-
-\PLAGIAT{
-
-  The C++ \emph{Standard Template Library} (STL) is a collection of algorithms and data structures that allow the
-  developer to code with generic facilities. For instance, there is a standard way to \emph{reduce} a collection of
-  elements: \texttt{std:: accumulate} that is agnostic to the underlying collection type. The collection just needs to
-  provide a facility so that it can work. This facility is called \emph{iterator}. All STL algorithms behave this way:
-  the type is a template parameter so it can be anything. What is important is how this type behaves. Some collection
-  requires you to define a \texttt{hash} functions (\texttt{std::map}), some requires you to set an \emph{order} on your
-  elements (\texttt{std::set}) etc. This emphasis the power of genericity. The most important point to remember here
-  (and explained very early in 1988~\cite{musser.1988.generic}) is the answer to: \blockquote{\emph{What is a generic
-      algorithm?}}. The answer is: \blockquote{\emph{An algorithm is generic when it is expressed in the most abstract way
-      possible}}.
-
-  Later, in his book~\cite{stepanov.2009.elements}, Stepanov explained the design decision behind those algorithms as
-  well as an important notion born in the early 2000s: the concepts. The most important point about concepts is that it
-  constraints the behavior. Henceforth: \blockquote{\emph{It is not the types that define the concepts: it is the
-      algorithms}}.
-
-  The \emph{Image Processing} and \emph{Computer Vision} fields are facing this issue because there are a lot of
-  algorithms, a lot of different kind of images and a lot of different kind of requirements/properties for those
-  algorithms to work. In fact, when analyzing the algorithms, you can always extract those requirements in the form of
-  one or several \emph{concepts}.
-
-}
-
+The C++ \emph{Standard Template Library} (STL) is a collection of algorithms and data structures that allow the
+developer to code with generic facilities. For instance, there is a standard way to \emph{reduce} a collection of
+elements: \texttt{std:: accumulate} that is agnostic to the underlying collection type. The collection just needs to
+provide a facility so that it can work. This facility is called \emph{iterator}. All STL algorithms behave this way: the
+type is a template parameter so it can be anything. What is important is how this type behaves. Some collection requires
+you to define a \texttt{hash} functions (\texttt{std::map}), some requires you to set an \emph{order} on your elements
+(\texttt{std::set}) etc. This emphasis the power of genericity. The most important point to remember here (and explained
+very early in 1988~\cite{musser.1988.generic}) is the answer to: \blockquote{\emph{What is a generic algorithm?}}. The
+answer is: \blockquote{\emph{An algorithm is generic when it is expressed in the most abstract way possible}}. Later, in
+his book~\cite{stepanov.2009.elements}, Stepanov explained the design decision behind those algorithms as well as an
+important notion born in the early 2000s: the concepts. The most important point about concepts is that it constraints
+the behavior. Henceforth: \blockquote{\emph{It is not the types that define the concepts: it is the algorithms}}. The
+\emph{Image Processing} and \emph{Computer Vision} fields are facing this issue because there are a lot of algorithms, a
+lot of different kind of images and a lot of different kind of requirements/properties for those algorithms to work. In
+fact, when analyzing the algorithms, you can always extract those requirements in the form of one or several
+\emph{concepts}.
 
 Image processing algorithms, similarly, are \emph{generic} by
 nature~\cite{ritter.1990.cvgi,geraud.2000.icpr,darbon.2002.ismm,levillain.2010.icip,levillain.2014.ciarp}. When writing
@@ -643,3 +553,79 @@ This new notion of concept is very important because it decorrelate the requirem
 algorithms from the way the data structures are designed. One wan always wrap a specific data structure so that it can
 behave properly into an algorithm, without needing to rewrite that algorithm.
 
+\FIXME{TODO}
+
+\begin{itemize}
+  \item post C++11 :
+        \begin{itemize}
+          \item simplification d'écriture du SFINAE (variadic, traits)
+          \item if constexpr (c++14), lambda auto
+          \item apports du C++17 pour simplifier encore : folds, template deduction guides, visit/overload for variant, any, template <auto V> struct S
+          \item apports du C++20 : concepts, ranges
+        \end{itemize}
+  \item montrer des exemples de simplification de code
+  \item faire des bench de temps de compilation (flagrant quand passage du SFINAE aux concepts)
+\end{itemize}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=4.2in]{figs/compile_time_benches/gcc10/chart.concept.png}
+  \caption{Benchmark GCC-10: Benchmarking compilation speed of template instanciation constrained by Concepts (vanilla) vs. Concepts (improved) vs. SFINAE.}
+  \label{fig.gen.bench.gcc10.1.concept.sfinae}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=4.2in]{figs/compile_time_benches/gcc10/chart.concept2.png}
+  \caption{Benchmark GCC-10: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
+  \label{fig.gen.bench.gcc10.2.concept.sfinae}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=4.2in]{figs/compile_time_benches/clang10/chart.concept.png}
+  \caption{Benchmark Clang-10: Benchmarking compilation speed of template instanciation constrained by Concepts (vanilla) vs. Concepts (improved) vs. SFINAE.}
+  \label{fig.gen.bench.clang10.1.concept.sfinae}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=4.2in]{figs/compile_time_benches/clang10/chart.concept2.png}
+  \caption{Benchmark Clang-10: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
+  \label{fig.gen.bench.clang10.2.concept.sfinae}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=4.2in]{figs/compile_time_benches/clang11/chart.concept.png}
+  \caption{Benchmark Clang-11: Benchmarking compilation speed of template instanciation constrained by Concepts (vanilla) vs. Concepts (improved) vs. SFINAE.}
+  \label{fig.gen.bench.clang11.1.concept.sfinae}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=4.2in]{figs/compile_time_benches/clang11/chart.concept2.png}
+  \caption{Benchmark Clang-11: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
+  \label{fig.gen.bench.clang11.2.concept.sfinae}
+\end{figure}
+
+
+\section{C++ templates in a dynamic world}
+
+\FIXME{TODO}
+
+\begin{itemize}
+  \item rapide rappel pros./cons. language compilés vs. languages interprétés
+  \item rappel template C++ -> pas de binaire
+  \item faire un topo sur la problématique de distribution de binaire et/ou de compilation chez le client pour un code générique
+  \item passer en revue les solutions existantes :
+        \begin{itemize}
+          \item SWILENA
+          \item VCSN
+          \item VIGRA
+          \item Cython
+          \item cppyy
+          \item autowig
+          \item xeus-cling (\FIXME{trouver une citation})
+        \end{itemize}
+\end{itemize}
