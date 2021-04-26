@@ -43,9 +43,9 @@
 \newcommand{\PLAGIAT}[1]{{\color{magenta}#1}}
 
 % Reset chapter number after each part
-\makeatletter
-\@addtoreset{chapter}{part}
-\makeatother  
+% \makeatletter
+% \@addtoreset{chapter}{part}
+% \makeatother  
 
 %\renewcommand{\baselinestretch}{1} 
 
@@ -95,48 +95,36 @@ TODO FR
 \cleardoublepage
 
 
-\part{Introduction}
-\label{part.introduction}
+\part{Context}
+\label{part.context}
 
 \input{chapters/1_introduction.tex}
 
 \cleardoublepage
-
-
-\part{Genericity}
-\label{part.genericity}
 
 \input{chapters/2_genericity.tex}
 
 \cleardoublepage
 
 
-\part{Images and algorithms taxonomy}
-\label{part.image_and_algorithms_taxonomy}
+\part{Contribution}
+\label{part.contribution}
 
 \input{chapters/3_Images_and_algorithms_taxonomy.tex}
 
 \cleardoublepage
 
-
-\part{Images views}
-\label{part.image_views}
-
 \input{chapters/4_images_views.tex}
 
 \cleardoublepage
 
-
-\part{Static-dynamic bridge}
-\label{part.static_dynamic_bridge}
-
 \input{chapters/5_static-dynamic_bridge.tex}
 
+
+\part{Continuation}
+\label{part.continuation}
+
 \cleardoublepage
-
-
-\part{Conclusion and perspectives}
-\label{part.conclusion_and_perspecitves}
 
 \input{chapters/6_conclusion_and_perspectives.tex}
 
@@ -155,13 +143,9 @@ TODO FR
 %\bibliography{bibliography}
 \printbibliography
 
-\chapter{Dynamic dispatch vs. Static dispatch in C++}
-\label{appendix.dispatch.dyn.static}
-
 \input{chapters/7_appendix_dynamic_dispatch_vs_static_dispatch.tex}
 
-\chapter{Concepts \& archetypes}
-\label{appendix.concepts.and.archetypes}
+\cleardoublepage
 
 \input{chapters/8_appendix_concepts_and_archetypes.tex}
 

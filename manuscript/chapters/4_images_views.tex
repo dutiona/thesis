@@ -1,21 +1,25 @@
-\chapter{The Genesis of a new asbtraction layers: Views}
+\chapter{Image views}
 
-\chapter{Upgrading the way to design IP algorithms}
+\section{The Genesis of a new asbtraction layers: Views}
 
-\section{Keeping properties}
+\section{Upgrading the way to design IP algorithms}
 
-\section{Lazy evaluation}
+\subsection{Keeping properties}
 
-\section{Composability and piping}
+\subsection{Lazy evaluation}
 
-\chapter{A practical example: border management}
+\subsection{Composability and piping}
 
-\chapter{Performance discussion}
+\section{A practical example: border management}
 
+\section{Performance discussion}
+
+
+\cleardoublepage
 
 \chapter*{Material about views}
 
-\section{Introducing range-based image traversing}
+\section*{Introducing range-based image traversing}
 \label{sec.range.traversing}
 
 Previously in Milena~\cite{levillain.2009.ismm} we had a very customized way of traversing images: macro-based. It aimed
@@ -110,10 +114,10 @@ The highlight of this code is the usage a new tool: \texttt{ranges::rows} to bri
 the multidimensional outer range.
 
 
-\section{Introducing Views}
+\section*{Introducing Views}
 \label{sec.views}
 
-\subsection{Practical genericity for efficiency: the Views}
+\subsection*{Practical genericity for efficiency: the Views}
 \label{subsec.views}
 
 Let us introduce another key point enabled by genericity and concepts: the \emph{Views}. A \emph{View} is defined by a
@@ -446,7 +450,7 @@ Image out = subquantize16to8b(
 \end{figure}
 
 
-\section{From local algorithm to border management}
+\section*{From local algorithm to border management}
 \label{sec.localgo.bm}
 
 In image processing there are three main families of algorithms:

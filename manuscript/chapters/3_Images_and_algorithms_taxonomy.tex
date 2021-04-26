@@ -1,7 +1,9 @@
-\chapter{Definition of images and algorithms}
+\chapter{Taxonomy of Images and Algorithms}
+
+% \section{Definition of images and algorithms} (introduction)
 
 
-\chapter{Rewriting an algorithm to extract a concept}
+\section{Rewriting an algorithm to extract a concept}
 
 
 
@@ -52,7 +54,7 @@ First, we get rid of the 8bits color range (0-255) RGB format requirement. The l
 \noindent By lifting this constraint, we now require the type Image to define a nested type \texttt{Image::value\_type}
 (returned by \texttt{ima(x, y)}) on which \texttt{std::numeric\_limits} and \texttt{std::pow} are defined. This way the
 compiler will be able to check the types at compile-time and emit warning and/or errors in case it detects
-incompatibilities. We are also able to detect it beforehand using a \texttt{static\_assert} for instance.
+incompatibilities. We are also able to detect it beforehand using a \texttt{static\_assert} for instance.1
 
 
 
@@ -336,7 +338,7 @@ concept Decomposable =
 
 
 
-\chapter{Set vision of images types: version \& specialization}
+\section{Images types viewed as Sets: version \& specialization}
 
 Achieving true genericity in a satisfactory way is a complex problem that has components of different levels. The first
 goal is to natively support as many sets of image type as possible. Natively means that there is no need for a
@@ -433,7 +435,7 @@ compile time dispatch (static) that the interested reader can consult in appendi
 Those details are not mandatory for the overall comprehension of this paper, hence why they are omitted here.
 
 
-\chapter{Algorithm genericity: canvas}
+\section{Generic aspect of algorithm: canvas}
 \label{sec.algo}
 
 FIXME : modèles de programmation pour traiter une image :
@@ -560,7 +562,7 @@ it can becomes very messy when several passes are happening (closing, opening, h
 \vspace{1cm}
 
 
-\section{Heterogeneous computing: a partial solution, canvas}
+\subsection{Heterogeneous computing: a partial solution, canvas}
 \label{sec.hc.canvas}
 
 One of the key aspect driving genericity is performance. We have the following mantra: "write once, work for every
@@ -735,9 +737,9 @@ Easy monoids:
 ```
 \end{verbatim}
 
-\chapter{Library concepts: listing and explanation}
+\section{Library concepts: listing and explanation}
 
-\section{Index}
+\subsection{Index}
 
 \begin{table}[!htbp]
   \begin{scriptsize}
@@ -762,7 +764,7 @@ Easy monoids:
 \end{table}
 
 
-\section{Value}
+\subsection{Value}
 
 \begin{table}[!htbp]
   \begin{scriptsize}
@@ -799,7 +801,7 @@ Easy monoids:
 \end{table}
 
 
-\section{Point}
+\subsection{Point}
 
 \begin{table}[!htbp]
   \begin{scriptsize}
@@ -831,7 +833,7 @@ Easy monoids:
 \end{table}
 
 
-\section{Pixel}
+\subsection{Pixel}
 
 \begin{table}[!htbp]
 
@@ -887,7 +889,7 @@ Easy monoids:
 \end{table}
 
 
-\section{Ranges}
+\subsection{Ranges}
 
 \begin{table}[!htbp]
 
@@ -944,7 +946,7 @@ Easy monoids:
   \label{concept.tables.ranges.expressions}
 \end{table}
 
-\section{Domain}
+\subsection{Domain}
 
 \begin{table}[!htbp]
 
