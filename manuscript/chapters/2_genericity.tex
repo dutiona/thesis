@@ -555,6 +555,129 @@ behave properly into an algorithm, without needing to rewrite that algorithm.
 
 \FIXME{TODO}
 
+The main advantage brought by using C++ as the implementation language for an image processing library is to be able to
+leverage what is called metaprogramming. Metaprogramming is a way to tell the compiler to make decision about which
+type, which code to generate. These decisions, made at compile time, and then absent from the resulting binary: only the
+fast and optimised code remains. This bring a new distinction between the static world (what is decided at compile time)
+and the dynamic world (what is decided at runtime). The more is decided at compile time the smaller, faster the binary
+will because there is work less to do at runtime. By following this principle, one can think of some properties that are
+known ahead of time (at compilation) when writing one's image processing algorithm. For instance, when considering the
+example of the dilation whose code is shown in~\ref{fig.decomp.dilate}, we can see that the property about the
+decomposability if the structuring element is linked to the type. This means that when the structuring element's type is
+of a disc, or a square, the compiler will know at compile time that it is decomposable. To tell the compiler to take
+advantage of a property at compile time, C++ has a language construct named if-constexpr. The resulting code then
+becomes:
+
+\begin{minted}[highlightlines=3]{c++}
+  template <Image Img, StructuringElement SE>
+  auto dilate(Img img, SE se) {
+    if constexpr (se.is_decomposable()) {
+      lst_small_se = se.decompose();
+      for (auto small_se : lst_small_se)
+        img = dilate(img, small_se) // Recursive call
+      return img;
+    } else if (is_pediodic_line(se))
+      return fast_dilate1d(img, se) // Van Herk's algorithm;
+    else
+      return dilate_normal(img, se) // Classic algorithm;
+  }
+\end{minted}
+
+There are other ways to achieve the same result with different language constructs in C++. There are two "legacy"
+language construct which are tag dispatching (or overload) and SFINAE. With the release of C++17 came a new language
+construct presented above: if-constexpr. Finally, with C++20, it will be possible to use concepts to achieve the same
+result. To achieve the same result as above with tag dispatching, one would need to write the following code:
+
+\begin{minted}[highlightlines={1-2,7,14}]{c++}
+  struct SE_decomp {};
+  struct SE_no_decomp {};
+
+  template <Image Img, StructuringElement SE>
+  auto dilate(Img img, SE se) {
+    // either SE_decompo or SE_no_decomp
+    return dilate_(img, se, typename SE::decomposable());
+  }
+
+  auto dilate_(Img img, SE se, SE_decomp) {
+    lst_small_se = se.decompose();
+    for (auto small_se : lst_small_se)
+      // Recursive call
+      img = dilate(img, small_se, SE_no_decomp)
+    return img;
+  }
+  auto dilate_(Img img, SE se, SE_no_decomp) {
+    if (is_pediodic_line(se))
+      return fast_dilate1d(img, se) // Van Herk's algorithm;
+    else
+      return dilate_normal(img, se) // Classic algorithm;
+  }
+\end{minted}
+
+To achieve the same result with SFINAE, one would need to write the following code:
+
+\begin{minted}[highlightlines={5-6,14,23}]{c++}
+  // SFINAE helper
+  template <typename SE, typename = void>
+  struct is_decomposable : std::false_type {};
+  template <typename SE>
+  struct is_decomposable<SE,
+    // Check wether the type provides the decompose() method
+    std::void_t<decltype(std::declval<SE>().decompose())>
+  > : std::true_type {};
+  template <typename SE>
+  constexpr bool is_decomposable_v =
+                  is_decomposable<SE>::value;
+
+  template <Image Img, StructuringElement SE,
+    typename = std::enable_if_t<is_decomposable_v<SE>>>
+  auto dilate(Img img, SE se) {
+    lst_small_se = se.decompose();
+    for (auto small_se : lst_small_se)
+      img = dilate(img, small_se) // Recursive call
+    return img;
+  }
+
+  template <Image Img, StructuringElement SE,
+    typename = std::enable_if_t<not is_decomposable_v<SE>>>
+  auto dilate(Img img, SE se) {
+    if (is_pediodic_line(se))
+      return fast_dilate1d(img, se) // Van Herk's algorithm;
+    else
+      return dilate_normal(img, se) // Classic algorithm;
+  }
+\end{minted}
+
+Comparing those two last ways of writing static code to the first one comes to an obvious conclusion: the if-constexpr
+facility is much more readable and maintainable than the two legacy ways of doing it. Finally, there is still another way
+to handle the issue and it is with C++20's concepts. The following code demonstrates how to leverage this language
+construct:
+
+\begin{minted}[highlightlines={1-4,15}]{c++}
+  template <typename SE>
+  concept SE_decomposable = requires (SE se) {
+    se.decompose(); // this method must exist
+  };
+
+  template <typename Img, typename SE>
+  auto dilate(Img img, SE se) {
+   if (is_pediodic_line(se))
+      return fast_dilate1d(img, se) // Van Herk's algorithm;
+    else
+      return dilate_normal(img, se) // Classic algorithm;
+  }
+
+  template <typename Img, typename SE>
+    requires SE_decomposable<SE>
+  auto dilate(Img img, SE se) {
+    lst_small_se = se.decompose();
+    for (auto small_se : lst_small_se)
+      img = dilate(img, small_se) // Recursive call
+    return img;
+  }
+\end{minted}
+A best-match mechanic operates under the hood to select the function overload whose concept is the most specialized when
+possible.
+
 \begin{itemize}
   \item post C++11 :
         \begin{itemize}

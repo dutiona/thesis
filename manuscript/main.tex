@@ -29,6 +29,10 @@
 
 \usepackage[section]{placeins}
 
+\usepackage{epstopdf}
+\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{convert #1 \OutputFile}
+\AppendGraphicsExtensions{.tif}
+
 \usepackage{pifont}
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
@@ -143,10 +147,8 @@ TODO FR
 %\bibliography{bibliography}
 \printbibliography
 
-\input{chapters/7_appendix_dynamic_dispatch_vs_static_dispatch.tex}
-
 \cleardoublepage
 
-\input{chapters/8_appendix_concepts_and_archetypes.tex}
+\input{chapters/7_appendix_concepts_and_archetypes.tex}
 
 \end{document}
