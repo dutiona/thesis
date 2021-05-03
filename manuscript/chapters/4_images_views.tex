@@ -1,4 +1,5 @@
 \chapter{Image views}
+\label{chap.image_views}
 
 \section{The Genesis of a new asbtraction layers: Views}
 
@@ -219,7 +220,7 @@ data.
 
 \vspace{1cm}
 
-In~\cref{subsec.gen.concept}, we saw that what is truly important is the behavior: an algorithm will require its input
+In (subsec.gen.concept), we saw that what is truly important is the behavior: an algorithm will require its input
 to be able to behave a certain way, and if those requirements are fulfilled, then the algorithm can be used with this
 set of inputs. This enables non-standard type of image to be input in algorithms, providing they still behave correctly.
 The way how we can check if the required behavior is satisfied is a new C++20 feature called \emph{concept} (the authors
@@ -549,13 +550,13 @@ policy). To use the policy \texttt{native}, one would write \texttt{extension::b
 Our work on bringing genericity to image processing through C++ template metaprogramming and concepts is presented
 in~\parencite{roynard.2019.rrpr}. Continuing this previous work, we focused on the main goals of the library. First is the
 zero-cost of traversing an image, overhauling the existing system which is macro-based. The new system presented in
-section~\ref{part.image_views} is based on
+section (X) is based on
 range-v3~\cite{niebler.2014.ranges,niebler.2018.deepranges,niebler.2018.mergingranges}. Following, we will show in
-section~\ref{part.image_views} a design around image's domain definition, extension and structuring element: how those
+section (X) a design around image's domain definition, extension and structuring element: how those
 concepts link with each other when used to write local algorithms. Another objective of the library is the ease of use
 and the binding with existing ecosystem, such as Python and NumPy. So we will present in
-section~\ref{part.static_dynamic_bridge} our work about binding a generic C++ library to python. Finally, we will
-discuss in section~\ref{part.image_and_algorithms_taxonomy} the issue of heterogeneous computing. We offer an avenue
+section (X) our work about binding a generic C++ library to python. Finally, we will
+discuss in section (X) the issue of heterogeneous computing. We offer an avenue
 around the idea of canvas algorithm that can be exploited to bring performance without being intrusive for the user.
 Though it comes with its lot of disadvantage, such as a paradigm switch to event-driven programming.
 

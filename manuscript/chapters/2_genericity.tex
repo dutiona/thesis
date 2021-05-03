@@ -1,4 +1,5 @@
 \chapter{Genericity}
+\label{chap.genericity}
 
 In natural language we say that something is generic when it can fit several purpose at once while being decently
 efficient. For instance, a computer is generic tool that allows one to write documents, access emails, browse Internet,
@@ -339,9 +340,9 @@ currently not possible to dilate a 3D image with a 3D ball (as stated above).
 
 Another point to note with OpenCV is the requirement to do temporary copies (to extract data or to have working copy)
 when writing an algorithm. For instance, it is currently not possible to write a blurring algorithm operating only on
-the green channel of an RGB image. One must first extract the green channel into a single channel temporary image,
-blur that image, to finally put the result back into the original image. Generally, in-place computation is poorly
-handled in OpenCV.
+the green channel of an RGB image. One must first extract the green channel into a single channel temporary image, blur
+that image, to finally put the result back into the original image. Generally, in-place computation is poorly handled in
+OpenCV.
 
 \paragraph{Benchmark} When comparing performances of the simple dilation between Matlab and OpenCV, which is done
 in~\cite{matuska.2012.bench}, shows that Matlab is very oriented toward prototyping and not toward production. The
@@ -374,42 +375,253 @@ element start to be of a certain size.
 
 Before C++11~\parencite{iso.2011.cpp} came out the genericity facilities offered by the C++ programming language were
 already turing complete~\parencite{veldhuizen.2003.c++templates}. However, it was lacking a certain amount of features
-the language now have that made writing generic code a real challenge at that time. For instance, when writing code
-with a variable number of type (nowadays designed as variadic templates) one had to write the generic code for each and
-every number of type supported. This meant that to implement \texttt{std::tuple}, one had to copy the implementation for
-every number of type supported by \texttt{std::tuple}. This limitation defeated the very first principle and motivation
-of generic programming which is to write \emph{less}. To compensate, library implementers used tricks with macro not to
-have to rewrite code which made the initial code even harder to understand for outsiders.
+the language now have that made writing generic code a real challenge at that time. For instance, when writing code with
+a variable number of type (nowadays designed as variadic templates) one had to write the generic code for each and every
+number of type supported. This meant that to implement \texttt{std::tuple}, one had to copy the implementation for every
+number of type supported by \texttt{std::tuple}. This limitation defeated the very first principle and motivation of
+generic programming which is to write \emph{less} Code. To compensate, library implementers used tricks with macro not
+to have to rewrite code which made the initial code even harder to understand for outsiders.
 
 In spite of all those limitations at the time, generic programming was well supported by the language and allowed the
-programmer to already design generic libraries.
+programmer to already design generic libraries, in particular thanks to the SFINAE~\parencite{vandevoorde.2002.c++}
+(substitution-failure-is-not-an-error) technique that leads to the popularisation of the usage of the
+\texttt{std::enable\_if} meta-programming facility. The SFINAE technique relies on a feature of the C++ programming
+language. Indeed, when standardizing how the compiler should resolve and select function overloads, in a templated
+context, the standard committee chose to have the following behavior. When substituting the explicitly specified or
+deduced type for the template parameter fails, the specialization (function overload candidate) is discarded from the
+overload set (of matching functions) instead of causing an error.
 
-\FIXME{TODO}
+This feature allows to write code that seem to be ill-formed, for instance in a function, trying to access to a class
+member type, variable or function that does not exist should be ill-formed. However, because it happens in the templated
+world, when the compiler tries to compile the function code with a given type, the compiler will just discard the
+function from the overload resolution at call-site instead of throwing a hard error. An error can occur only when the
+compiler tried all the overload it knows and still could not find an overload that was not ill-formed. If this happen,
+the compiler will then proceed to list all the overloads it tried, to list all the template substitution it tried and
+finally to list why it failed. This mechanism is the very reason of the unpopularity of this technique because it leads
+to situation where the compiler can output \emph{several Mos} of error message for one single file. Error messages
+becomes incomprehensible very fast and programs are hard to debug. But still, it was the only technique we had to
+perform detections on types at compile time and process some kind of contraints on them. For instance, a code that
+detects wether a class provide a subtype named \texttt{custom\_type} at that time is shown
+in~\cref{fig.gen.sfinae.nested}.
 
-%olena.2000.www
-%geraud.2000.icpr
-%duretlutz.2000.olena
-%burrus.2003.mpool
-%darbon.2002.ismm
-%burrus.2003.mpool
-%darbon.2004.ecoopphd
-%geraud.2006.scoop-pres
-%geraud.2008.mpool
-%levillain.2009.ismm
-%levillain.2010.icip
-%levillain.2010.wadgmm
-%levillain.2011.gretsi
-%levillain.2011.phd
-%geraud.2012.hdr
-%levillain.2012.wadgmm-lncs
-%levillain.2014.ciarp
+\begin{figure}[tbh]
+  \centering
+  \begin{minted}[]{C++}
+    // Step 1: write the detector using partial specialization
+    template <class TestedType, class Void = void>
+    struct has_nested_sub_type {
+      typedef bool type;
+      static const type value = false; // default value: not detected
+    };
+    // This class template specialization has value set as true
+    // when it detects that the nested type exists
+    template <class TestedType>
+    struct has_nested_sub_type<TestedType, typename TestedType::custom_type> {
+      typedef bool type;
+      static const type value = true;
+    };
 
+    // Step 2: declare the well- and ill-formed classes
+    class well_formed {
+      typedef int custom_type;
+    };
+    class ill_formed {
+      typedef int another_type;
+    };
 
-\begin{itemize}
-  \item explications techniques bas niveau, SFINAE
-  \item aboutissement à SCOOP -> synthèse et explication des travaux précédents sur SCOOP
-\end{itemize}
+    // Step 3: implement the enable_if facility that will use our
+    // detector written at step 1
+    template<bool B, class T = void>
+    struct enable_if {
+    };
+    template<class T>
+    struct enable_if<true, T> {
+      typedef T type;
+    };
 
+    // Step 4: write overloads the compiler will use
+    // overload #1
+    template <typename UserType>
+    void my_procedure(const UserType& ut) {}; // accept everything
+
+    // overload #2
+    template <typename UserType>
+    void my_procedure(const UserType& ut, // accept only constrained types
+    typename enable_if<has_nested_sub_type<UserType>::value>::type* = 0) {};
+
+    int main() {
+      well_formed wlf;
+      ill_formed ilf;
+
+      my_procedure(wlf); // will call overload #1
+      my_procedure(ilf); // no hard error, will call opverload #2
+
+      // A hard error would occur only if overload #1 did not exist.
+    }
+  \end{minted}
+  \caption{C++0x SFINAE detection of nested sub-type.}
+  \label{fig.gen.sfinae.nested}
+\end{figure}
+
+Another features that precede C++11 and was available in C++98~\parencite{iso.1998.cpp} and
+C++03~\parencite{iso.2003.cpp} is the curiously recurring template pattern (CRTP). This programming technique allowed a
+base class (in its specific code) to be aware of its derived class at compile type. This pattern is extremely useful to
+solve issues revolving around covariant return type polymorphism in C++ with pointers. Indeed, before smart pointers
+were standardized, they existed in libraries such as boost~\parencite{boost.2021} and were used to solve memory leak
+issues. However, when implementing cloning facilities where lots of derived class were involved, one could not just
+return a smart pointer of the base class since no derived class derived from the capsule smart pointer class itself.
+This broke the covariant return type feature. CRTP is a tool that brings a solution: we were now able to construct a
+smart pointer capsule of the derived class inside the base class: there are now only one function in the base class and
+no ambiguities is detected by the compiler.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{minted}[]{C++}
+    #include <string>
+
+    class AbstractBase {
+    public:
+        virtual ~AbstractBase()                      = default;
+        virtual AbstractBase*       clone() const    = 0; // covariant return type
+        virtual const std::string&  get_name() const = 0;
+    };
+
+    class Derived : public AbstractBase {
+        std::string name_;
+    public:
+        Derived(const std::string& name) : name_(name) {}
+        Derived* clone() const /* override */ {
+        return new Derived(name_);             // works thanks to covariance
+        }
+        const std::string& get_name() const {
+        return name_;
+        }
+    };
+
+    int main() {
+        AbstractBase* objptr = new Derived("John");     // works
+        AbstractBase* cloned_objptr = objptr->clone();  // also works
+        objptr->get_name();        // "John"
+        cloned_objptr->get_name(); // also "John"
+        // Do not forget to delete to avoid memory leaks
+        delete cloned_objptr;
+        delete objptr;
+    }
+  \end{minted}
+  \caption{C++0x cloning example with covariant return type.}
+  \label{fig.gen.crtp.work}
+\end{figure}
+
+For instance, a cloning facility with no smart pointers was implemented with covariant return type in the code shown
+in~\cref{fig.gen.crtp.work}. The obvious disadvantage was to have to deal with naked pointers, \texttt{new},
+\texttt{delete} and all the consequences that comes with the manual memory handling. When the programmer wants to switch
+to an implementation that uses smart pointers, he would naively write the code shown in~\cref{fig.gen.crtp.dontwork}.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{minted}[]{C++}
+    #include <string>
+    #include <smart_pointers>
+
+    class AbstractBase {
+    public:
+      virtual ~AbstractBase()                           = default;
+      virtual unique_ptr<AbstractBase> clone() const    = 0; // covariance is lost
+      virtual const std::string&       get_name() const = 0;
+    };
+
+    class Derived : public AbstractBase {
+      std::string name_;
+    public:
+      Derived(const std::string& name) : name_(name) {}
+      unique_ptr<Derived> clone() const /* override */ { // No covariance
+        // does not work because Derived does not derive from unique_ptr
+        return unique_ptr<Derived>(new Derived(name_)); 
+      }
+      const std::string& get_name() const{
+        return name_;
+      }
+    };
+
+    int main() {
+      unique_ptr<AbstractBase> objptr =
+          unique_ptr<AbstractBase>(new Derived("John"));        // works
+      unique_ptr<AbstractBase> cloned_objptr = objptr->clone(); // does not work
+      objptr->get_name();        // "John"
+      cloned_objptr->get_name(); // also "John"
+      // No delete needed
+    }
+  \end{minted}
+  \caption{C++0x not-working cloning example with smart pointers.}
+  \label{fig.gen.crtp.dontwork}
+\end{figure}
+
+The solution is then found with the CRTP technique where we do all the creation inside the base class instead of forcing
+the derive class to implement its own cloning facility. The code in~\cref{fig.gen.crtp.final} shows how it is done. In
+order for the user not to have to write \texttt{AbstractClass<Devived>} in his code, we have adopted another abstraction
+layer to hide this implementation detail in the form of a intermediary class \texttt{Base} that hides the CRTP
+complexity.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{minted}[]{C++}
+    #include <string>
+    #include <smart_pointers>
+    
+    class AbstractBase {
+    public:
+        virtual ~AbstractBase()                           = default;
+        virtual unique_ptr<AbstractBase> clone()    const = 0;
+        virtual const std::string&       get_name() const = 0;
+    };
+    
+    template <class Derived>
+    class Base : public AbstractBase{
+    public:
+        virtual unique_ptr<AbstractBase> clone() const /* override */ {
+            // Covariance is kept by converting here
+            return unique_ptr<Derived>(new Derived(get_name()));
+        }
+    };
+    
+    class Derived : public Base<Derived> {
+        std::string name_;
+    public:
+        Derived(const std::string& name) : name_(name) {}
+        const std::string& get_name() const {
+            return name_;
+        }
+    };
+    
+    int main() {
+        unique_ptr<AbstractBase> objptr =
+            unique_ptr<AbstractBase>(new Derived("John"));        // works
+        unique_ptr<AbstractBase> cloned_objptr = objptr->clone(); // does work
+        objptr->get_name();       // "John"
+        cloned_objptr->get_name(); // also "John"
+        // No delete needed
+    }
+  \end{minted}
+  \caption{C++0x working cloning example with smart pointers.}
+  \label{fig.gen.crtp.final}
+\end{figure}
+
+Thanks to these two techniques (SFINAE and CRTP), past work was done to achieve a design:
+SCOOP~\parencite{burrus.2003.mpool,geraud.2006.scoop-pres,geraud.2008.mpool}. These design combined CRTP and SFINAE to
+build a machinery where it is possible to apply constraints via concepts (in the sense described
+in~\citetitle{stepanov.2009.elements} by~\citeauthor{stepanov.2009.elements}). The library
+Olena~\parencite{olena.2000.www,geraud.2012.hdr} was born and carried the work around this field of research applied to
+Image processing in~\parencite{geraud.2000.icpr,duretlutz.2000.olena,darbon.2002.ismm,darbon.2004.ecoopphd}. This design
+is described in details by~\citeauthor{levillain.2011.phd} among his
+work~\parencite{levillain.2009.ismm,levillain.2010.icip,levillain.2010.wadgmm,levillain.2011.gretsi,levillain.2011.phd,levillain.2012.wadgmm-lncs,levillain.2014.ciarp}.
+Finally, with the release of new C++ standards in 2011~\parencite{iso.2011.cpp}, then 2014~\parencite{iso.2014.cpp},
+2017~\parencite{iso.2017.cpp} where template metaprogramming facilities were greatly improved, it was necessary to
+review once more this design to improve the design in order to achieve genericity, performance and ease of use. This is
+the birth of a new library, Pylene~\parencite{carlinet.2018.pylena}. In the end, it was C++20~\parencite{iso.2011.cpp}
+that marked the shift wanted by
+Stepanov~\parencite{musser.1988.generic,musser.1994.algorithm,dehnert.1998.fundamentals,stepanov.2009.elements} and
+Stroustrup~\cref{stroustrup.1995.design,stroustrup.1999.hot,stroustrup.2003.concepts,stroustrup.2007.hopl} for years
+with the coming of Concepts, and all the new possibilities it brings to the programmer.
 
 
 \section{Genericity in post C++11 (C++20 and Concepts)}
@@ -444,8 +656,10 @@ behavior of our collection. When writing down what a \emph{concept} should requi
 "It is not the types that define the concepts: it is the algorithms". Concepts in C++ are not new and there have been a
 long work to introduce them that goes back from
 2003~\parencite{seymour.2009.concepts,stroustrup.2003.concepts,sutton.2017.concepts} to finally appear in the 2020
-standard~\cite{voutilainen.2017.concepts} (referred as C++20). This allows us, as of today, to write code leveraging
-this facility.
+standard~\cite{voutilainen.2017.concepts} (referred as C++20~\parencite{iso.2011.cpp}). This allows us, as of today, to
+write code leveraging this facility.
+
+\subsection{Conceptification}
 
 C++ is a multi-paradigm language that enables the developer to write code that can be \emph{object oriented},
 \emph{procedural}, \emph{functional} and \emph{generic}. However, there were limitations that were mostly due to the
@@ -553,20 +767,20 @@ This new notion of concept is very important because it decorrelate the requirem
 algorithms from the way the data structures are designed. One wan always wrap a specific data structure so that it can
 behave properly into an algorithm, without needing to rewrite that algorithm.
 
-\FIXME{TODO}
+\subsection{Simplifying code}
 
-The main advantage brought by using C++ as the implementation language for an image processing library is to be able to
-leverage what is called metaprogramming. Metaprogramming is a way to tell the compiler to make decision about which
-type, which code to generate. These decisions, made at compile time, and then absent from the resulting binary: only the
-fast and optimised code remains. This bring a new distinction between the static world (what is decided at compile time)
-and the dynamic world (what is decided at runtime). The more is decided at compile time the smaller, faster the binary
-will because there is work less to do at runtime. By following this principle, one can think of some properties that are
-known ahead of time (at compilation) when writing one's image processing algorithm. For instance, when considering the
-example of the dilation whose code is shown in~\ref{fig.decomp.dilate}, we can see that the property about the
-decomposability if the structuring element is linked to the type. This means that when the structuring element's type is
-of a disc, or a square, the compiler will know at compile time that it is decomposable. To tell the compiler to take
-advantage of a property at compile time, C++ has a language construct named if-constexpr. The resulting code then
-becomes:
+The main advantage brought by using modern C++ as the implementation language for an image processing library is to be
+able to leverage what is called metaprogramming. Metaprogramming is a way to tell the compiler to make decision about
+which type, which code to generate. These decisions, made at compile time, and then absent from the resulting binary:
+only the fast and optimised code remains. This bring a new distinction between the static world (what is decided at
+compile time) and the dynamic world (what is decided at runtime). The more is decided at compile time the smaller,
+faster the binary will because there is work less to do at runtime. By following this principle, one can think of some
+properties that are known ahead of time (at compilation) when writing one's image processing algorithm. For instance,
+when considering the example of the dilation whose code is shown in~\ref{fig.decomp.dilate}, we can see that the
+property about the decomposability if the structuring element is linked to the type. This means that when the
+structuring element's type is of a disc, or a square, the compiler will know at compile time that it is decomposable. To
+tell the compiler to take advantage of a property at compile time, C++ has a language construct named if-constexpr. The
+resulting code then becomes:
 
 \begin{minted}[highlightlines=3]{c++}
   template <Image Img, StructuringElement SE>
@@ -648,8 +862,8 @@ To achieve the same result with SFINAE, one would need to write the following co
 \end{minted}
 
 Comparing those two last ways of writing static code to the first one comes to an obvious conclusion: the if-constexpr
-facility is much more readable and maintainable than the two legacy ways of doing it. Finally, there is still another way
-to handle the issue and it is with C++20's concepts. The following code demonstrates how to leverage this language
+facility is much more readable and maintainable than the two legacy ways of doing it. Finally, there is still another
+way to handle the issue and it is with C++20's concepts. The following code demonstrates how to leverage this language
 construct:
 
 \begin{minted}[highlightlines={1-4,15}]{c++}
@@ -678,17 +892,21 @@ construct:
 A best-match mechanic operates under the hood to select the function overload whose concept is the most specialized when
 possible.
 
-\begin{itemize}
-  \item post C++11 :
-        \begin{itemize}
-          \item simplification d'écriture du SFINAE (variadic, traits)
-          \item if constexpr (c++14), lambda auto
-          \item apports du C++17 pour simplifier encore : folds, template deduction guides, visit/overload for variant, any, template <auto V> struct S
-          \item apports du C++20 : concepts, ranges
-        \end{itemize}
-  \item montrer des exemples de simplification de code
-  \item faire des bench de temps de compilation (flagrant quand passage du SFINAE aux concepts)
-\end{itemize}
+\subsection{Benchmarks}
+
+\FIXME{TODO: clean figures (titres, gradution, 2 par 2, labèles \& axes)}
+
+In order to get a real feeling on how fast would the compile time of programs would be impacted, we wanted to do
+benchmarks. The aim is to mesure how much faster concepts will be in production code. To do so we used
+Metabench~\parencite{dionne.2021.metabench}, a benchmarking facility to benchmark compilation time of C++ programs. We
+wrote programs (given in~\cref{appendix.benchmark_compilation_time}) to benchmark compilation time with three compilers
+Gcc-10, Clang-10 and Clang-11.
+
+For Gcc-10, we can see the results in~\cref{fig.gen.bench.gcc10.1.concept.sfinae}. Those results show that the concept
+implementation is still very much slower than the SFINAE implementation. However, we were able to pinpoint the slowness
+of this implementation which is the implementation of the library trait \texttt{std::movable}. Indeed, when lightening
+this trait into some builtin intrinsic (that are almost equivalent), we can see the curve \emph{concept\_fast}
+in~\cref{fig.gen.bench.gcc10.2.concept.sfinae} being faster than the SFINAE implementation.
 
 \begin{figure}[htb]
   \centering
@@ -704,6 +922,10 @@ possible.
   \label{fig.gen.bench.gcc10.2.concept.sfinae}
 \end{figure}
 
+For Clang-10, the concept implementation is globally slower than the SFINAE implementation (seen
+in~\cref{fig.gen.bench.clang10.1.concept.sfinae}). Even not using the slow \texttt{std::movable} library trait does not
+do the trick as seen in~\cref{fig.gen.bench.clang10.2.concept.sfinae}
+
 \begin{figure}[htb]
   \centering
   \includegraphics[width=4.2in]{figs/compile_time_benches/clang10/chart.concept.png}
@@ -717,6 +939,11 @@ possible.
   \caption{Benchmark Clang-10: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
   \label{fig.gen.bench.clang10.2.concept.sfinae}
 \end{figure}
+
+Finally, for Clang-11, we can see that the builtin implementation of concepts has improved very much from its previous
+version (see~\cref{fig.gen.bench.clang11.1.concept.sfinae}). However, we see that the library trait
+\texttt{std::movable} is still the source of a massive slowness (see~\cref{fig.gen.bench.clang11.2.concept.sfinae}) that
+needs to be addressed in future versions of both Gcc and Clang.
 
 \begin{figure}[htb]
   \centering
@@ -732,7 +959,6 @@ possible.
   \label{fig.gen.bench.clang11.2.concept.sfinae}
 \end{figure}
 
-
 \section{C++ templates in a dynamic world}
 
 \FIXME{TODO}
@@ -743,12 +969,12 @@ possible.
   \item faire un topo sur la problématique de distribution de binaire et/ou de compilation chez le client pour un code générique
   \item passer en revue les solutions existantes :
         \begin{itemize}
-          \item SWILENA
-          \item VCSN
-          \item VIGRA
-          \item Cython
-          \item cppyy
-          \item autowig
-          \item xeus-cling (\FIXME{trouver une citation})
+          \item SWILENA~\parencite{beazley.1996.swig,olena.2000.www}
+          \item VCSN~\parencite{demaille.2013.vcsn}
+          \item VIGRA~\parencite{kothe.2011.generic}
+          \item Cython~\parencite{behnel.2010.cython}
+          \item cppyy~\parencite{wimtlplavrijsen.2016.cppyy}
+          \item autowig~\parencite{fernique.2018.autowig}
+          \item xeus-cling~\parencite{quantstack.2021.xeus-cling}
         \end{itemize}
 \end{itemize}
