@@ -1,9 +1,9 @@
 \chapter{Concepts \& archetypes}
 \label{appendix.concepts.and.archetypes}
 
-\section{Concepts}
+\subsection{Concepts}
 
-\subsection{Index}
+\paragraph{Index}
 
 \begin{minted}{c++}
 // Index
@@ -12,7 +12,7 @@ concept Index = std::signed_integral<Idx>;
 \end{minted}
 
 
-\subsection{Value}
+\paragraph{Value}
 
 \begin{minted}{c++}
 // Value
@@ -32,7 +32,7 @@ concept OrderedValue =
 \end{minted}
 
 
-\subsection{Point}
+\paragraph{Point}
 
 \begin{minted}{c++}
 // Point
@@ -43,7 +43,7 @@ concept Point =
 \end{minted}
 
 
-\subsection{Pixel}
+\paragraph{Pixel}
 
 \begin{minted}{c++}
 // Pixel
@@ -83,7 +83,7 @@ concept OutputPixel = detail::WritablePixel<Pix>;
 \end{minted}
 
 
-\subsection{Ranges}
+\paragraph{Ranges}
 
 \begin{minted}{c++}
 template <class C>
@@ -143,7 +143,7 @@ concept reversible_mdrange = MDBidirectionalRange<R> || std::ranges::bidirection
 \end{minted}
 
 
-\subsection{Domain}
+\paragraph{Domain}
 
 \begin{minted}{c++}
 // Domain
@@ -176,7 +176,7 @@ concept ShapedDomain =
 \end{minted}
 
 
-\subsection{Extension}
+\paragraph{Extension}
 
 \begin{minted}{c++}
 template <typename Ext, typename Pnt>
@@ -256,7 +256,7 @@ concept ExtendWithExtension =
 \end{minted}
 
 
-\subsection{Image}
+\paragraph{Image}
 
 \begin{minted}{c++}
 template <typename I>
@@ -495,7 +495,7 @@ concept ViewImage =
 \end{minted}
 
 
-\subsection{Structuring Element}
+\paragraph{Structuring Element}
 
 \begin{minted}{c++}
 namespace details
@@ -576,7 +576,7 @@ concept IncrementalStructuringElement =
   };
 \end{minted}
 
-\subsection{Neighborhood}
+\paragraph{Neighborhood}
 
 \begin{minted}{c++}
 template <typename SE, typename P>
@@ -596,9 +596,9 @@ concept Neighborhood =
 \end{minted}
 
 
-\section{Archetypes}
+\subsection{Archetypes}
 
-\subsection{Index}
+\paragraph{Index}
 
 \begin{minted}{c++}
 using Index = int;
@@ -607,7 +607,7 @@ static_assert(mln::concepts::Index<Index>, "Index archetype does not model the I
 \end{minted}
 
 
-\subsection{Value}
+\paragraph{Value}
 
 \begin{minted}{c++}
 struct Value
@@ -637,7 +637,7 @@ static_assert(mln::concepts::OrderedValue<OrderedValue>, "OrderedValue archetype
 \end{minted}
 
 
-\subsection{Point}
+\paragraph{Point}
 
 \begin{minted}{c++}
 struct Point final
@@ -655,7 +655,7 @@ static_assert(mln::concepts::Point<Point>, "Point archetype does not model the P
 \end{minted}
 
 
-\subsection{Pixel}
+\paragraph{Pixel}
 
 \begin{minted}{c++}
 namespace details
@@ -701,14 +701,14 @@ static_assert(mln::concepts::OutputPixel<OutputPixel>, "OutputPixel archetype do
 \end{minted}
 
 
-\subsection{Ranges}
+\paragraph{Ranges}
 
 \begin{minted}{c++}
   // TODO
 \end{minted}
 
 
-\subsection{Domain}
+\paragraph{Domain}
 
 \begin{minted}{c++}
 struct Domain
@@ -746,14 +746,14 @@ static_assert(mln::concepts::ShapedDomain<ShapedDomain>,
 \end{minted}
 
 
-\subsection{Extension}
+\paragraph{Extension}
 
 \begin{minted}{c++}
   // TODO
 \end{minted}
 
 
-\subsection{Image}
+\paragraph{Image}
 
 \begin{minted}{c++}
 namespace details
@@ -1073,7 +1073,7 @@ using WithExtensionImage = details::AsImage<details::WithExtensionImage>;
 \end{minted}
 
 
-\subsection{Structuring Element}
+\paragraph{Structuring Element}
 
 \begin{minted}{c++}
 namespace details
@@ -1147,7 +1147,7 @@ using IncrementalStructuringElement = details::AsSE<details::IncrementalStructur
 \end{minted}
 
 
-\subsection{Neighborhood}
+\paragraph{Neighborhood}
 
 \begin{minted}{c++}
 namespace details

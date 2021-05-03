@@ -382,6 +382,8 @@ number of type supported by \texttt{std::tuple}. This limitation defeated the ve
 generic programming which is to write \emph{less} Code. To compensate, library implementers used tricks with macro not
 to have to rewrite code which made the initial code even harder to understand for outsiders.
 
+\subsection{SFINAE: Substitution-Failure-Is-Not-An-Error}
+
 In spite of all those limitations at the time, generic programming was well supported by the language and allowed the
 programmer to already design generic libraries, in particular thanks to the SFINAE~\parencite{vandevoorde.2002.c++}
 (substitution-failure-is-not-an-error) technique that leads to the popularisation of the usage of the
@@ -462,6 +464,8 @@ in~\cref{fig.gen.sfinae.nested}.
   \caption{C++0x SFINAE detection of nested sub-type.}
   \label{fig.gen.sfinae.nested}
 \end{figure}
+
+\subsection{CRTP: Curiously Recurring Template Pattern}
 
 Another features that precede C++11 and was available in C++98~\parencite{iso.1998.cpp} and
 C++03~\parencite{iso.2003.cpp} is the curiously recurring template pattern (CRTP). This programming technique allowed a
@@ -959,22 +963,87 @@ needs to be addressed in future versions of both Gcc and Clang.
   \label{fig.gen.bench.clang11.2.concept.sfinae}
 \end{figure}
 
+
 \section{C++ templates in a dynamic world}
 
-\FIXME{TODO}
+There are two main categories of programming languages. First are the \emph{compiled} programming languages which
+requires to feed the source code to a program (a compiler) that will output a binary. This binary will then produce the
+desired output once the user execute it. Some well known languages of this category are C, C++, Ada, Fortran. Secondly
+there are the interpreted programming language which requires to feed the source code to a program (an interpreter) that
+will directly produce the output as is a binary was executed. Some well known languages of this category are Javascript,
+Python, Matlab, Common Lisp. There is a third category that tries to combine the best of both world by compiling into
+bytecode which is an optimized intermediate language that will then be interpreted into a virtual machine. The most
+famous are indubitably Java and C\#. Both categories have advantages as well as drawbacks.
 
-\begin{itemize}
-  \item rapide rappel pros./cons. language compilés vs. languages interprétés
-  \item rappel template C++ -> pas de binaire
-  \item faire un topo sur la problématique de distribution de binaire et/ou de compilation chez le client pour un code générique
-  \item passer en revue les solutions existantes :
-        \begin{itemize}
-          \item SWILENA~\parencite{beazley.1996.swig,olena.2000.www}
-          \item VCSN~\parencite{demaille.2013.vcsn}
-          \item VIGRA~\parencite{kothe.2011.generic}
-          \item Cython~\parencite{behnel.2010.cython}
-          \item cppyy~\parencite{wimtlplavrijsen.2016.cppyy}
-          \item autowig~\parencite{fernique.2018.autowig}
-          \item xeus-cling~\parencite{quantstack.2021.xeus-cling}
-        \end{itemize}
-\end{itemize}
+\paragraph{Compiled languages} are still widely spread and used as of today. They present a working pipeline which is
+very classic. First the programmer will write code, then the compiler will build a binary optimized for the target
+machine and finally the programmer can execute his binary to produce a result. Usually the compilation step is slow
+whereas executing the binary is fast. There is no additional step when it comes to the binary execution. This, however,
+has the effect of having a poor portability. Indeed, my binary optimized to use fast and recent SIMD AVX-512
+instructions will not work on an old x86 machine that does not support those instructions. When distributing our
+program, multiple binaries must be produced for each supported CPU architectures. Furthermore, usually compiled
+languages have very poor support of dynamic language features such as reflection, code evaluation or dynamic typing. It
+tends to improve with time but solutions are limited to compile-time informations or need to ship a JIT-compiler into
+the final binary (such as cling~\parencite{vassilev.2012.cling} for C++) to generate new binary on-the-fly to be
+executed right after. This has two drawbacks: slowness when the case of needing compilation is presented and increase in
+the binary size.
+
+\paragraph{Interpreted languages} are also widely used, especially in the research area where a fast feedback loop
+between prototyping and getting results is needed. The compilation time is very fast and allows a program to be almost
+instantly executed. In fact, the compilation can be done just ahead of program execution not to compile unnecessary
+code. However the execution time will generally be slow. To the user it is invisible because both compilation step and
+execution step are blurred together. Furthermore, most of the time a same interpreted program is executed once. Then the
+programmer will modify it and continue its prototyping process. The real advantage of an interpreted language is the
+portability. As it is the responsibility of the client to install the correct language interpreter (for the correct
+version) before running the program from the source code, as long as an interpreter can be installed on a machine, the
+program can then be run. This also drastically slow distributed package for programs as only source code must be
+distributed instead of compiled binary. However, the source code is leaked with all the security implication this can
+have. Finally, interpreted language usually have better memory management (builtin garbage collectors), are easier to
+debug, have very rich support of dynamic typing, dynamic scoping, reflections facilities, on-the-fly evaluation from the
+source code or even more like modifying the Abstract Syntax Tree (AST) resulting from the first compilation pass on
+source code by the interpreter. This last one is implemented in Common Lisp in the name of macros. There are more to say
+about interpreted languages, especially about those that are compiled into bytecode and tend to get the best of both
+worlds without the drawbacks but this thesis will not discuss this matter any further.
+
+The main point to understand here is that our main interest is set on C++, a compiled language with slow compilation
+time and very fast execution time. In C++ there are template metaprogramming to achieve genericity but \emph{templates
+  do not generate any binary code}. Why? Because when the compiler meet a templated type or a templated routine, it does
+not know which type it will be instantiated with when it is used. Therefore, it can not calculate stuff like type size,
+alignement, can not select which assembly instruction to select to do an addition or a division (fixed vs. floating
+point arithmetic). This is why the compiler does not generate any binary code when it first meet templates. The code is
+generated only it is used with a concrete and known type. This is a huge problem. Now, if a library implementer wants to
+distribute his generic library, he must distribute source code and have  the user compile it. For a language like C++,
+with no standard dependency management, it can be a massive turn off. Furthermore, it may not be reasonable for the user
+to have C++ compiling facilities when the target client is embedded devices with limited storage space. Indeed, C++
+intermediary compilation artefacts tend to use a lot of disk space before it is linked into a smaller binary. What
+solution do we have then?
+
+\paragraph{SWILENA~\parencite{beazley.1996.swig,olena.2000.www}} is a Python bindings wrapper using Swig for the Olena
+C++ generic library. This wrapper will enumerate all the common use cases and implement a binding for them. The compiler
+will then generate binary code from the templated generic code for each use case enumerated in the wrapper. This way, we
+have given access into the dynamic world (Python) to generic code (C++ template). But it is still limited to the
+supported types. Each type a new combinaison of type needs to be supported from Python, it needs to be explicitly
+declared and compiled in the wrapper. Other image processing libraries, such as VIGRA~\parencite{kothe.2011.generic},
+chose this solution.
+
+\paragraph{VCSN~\parencite{demaille.2013.vcsn}} is a novel solution that essentially take the same base as SWILENA but
+goes beyond the boundary to implement a handmade facility that do system compiler calls to compile and link needed code
+on-the-fly when the binding does not exist. It then leverage the code hotloading feature to plug new dynamic libraries
+(.dll on windows and .so on linux) into the wrapper to provide the user its needed bindings.
+
+\paragraph{Cython~\parencite{behnel.2010.cython}} attempt to solve the issue of the Python inherent language slowness
+due to its interpreted nature by providing a facility able to transpile a Python program into a C program so that a
+genuine C compiler (with extensions) is able to compile it and to link it against the Python/C API in order to achieve a
+huge performance gain at the cost of near zero knowledge of the complex Python/C API for the user. This novel solution
+essentialy bypass the work of a JIT compiler (that would be used by a programming using bytecode such as Java or C\#)
+and just offload it onto well known/proven solution: the machine's C compiler.
+
+\paragraph{Autowig~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy} and
+  Xeus-cling~\parencite{quantstack.2021.xeus-cling}} are all solutions aiming to generate automaticaly Python bindings
+on-the-fly using different solutions. Autowig has in-house code based on LLVM/Clang to parse C++ code in order to
+generate and compile a Swig Python binding using the Mako templating engine. Cppyy will generate Python bindings but can
+also directly interpret C++ code from Python code thanks to being base on LLVM/Cling, a Clang-base C++ interpreter.
+Finally, Xeus-cling is a Jupyter~\parencite{kluyver.2016.jupyter} kernel allowing to directly interpret C++ into a
+Jupyter notebook. Like Cppyy, it is based on LLVM/Cling. Those three projects are very promising and improve greatly the
+scope of possibilities for the future.
+
