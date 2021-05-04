@@ -176,82 +176,104 @@ concept ShapedDomain =
 \end{minted}
 
 
-\paragraph{Extension}
+\paragraph{Structuring Element}
 
 \begin{minted}{c++}
-template <typename Ext, typename Pnt>
-concept Extension =
-  std::is_base_of_v<mln::Extension<Ext>, Ext> &&
+namespace details
+{
+  template <typename SE>
+  concept DynamicStructuringElement =
+    requires (SE se) {
+    { se.radial_extent() }  -> std::same_as<int>;
+    };
+
+
+  constexpr bool implies(bool a, bool b) { return !a || b; }
+}
+
+
+template <typename SE, typename P>
+concept StructuringElement =
+  std::convertible_to<SE, mln::details::StructuringElement<SE>> &&
+  std::ranges::regular_invocable<SE, P> &&
+  std::ranges::regular_invocable<SE, mln::archetypes::PixelT<P>> &&
   requires {
-    typename Ext::support_fill;
-    typename Ext::support_mirror;
-    typename Ext::support_periodize;
-    typename Ext::support_clamp;
-    typename Ext::support_extend_with;
+    typename SE::category;
+    typename SE::incremental;
+    typename SE::decomposable;
+    typename SE::separable;
   } &&
-  Value<typename Ext::value_type> &&
-  requires (const Ext cext,
-      mln::archetypes::StructuringElement<
-        Pnt,
-        mln::archetypes::Pixel> se, const Pnt pnt) {
-    { cext.fit(se) }      -> bool;
-    { cext.extent() }     -> int;
+  std::convertible_to<typename SE::category, mln::adaptative_neighborhood_tag> &&
+  details::implies(std::convertible_to<typename SE::category, mln::dynamic_neighborhood_tag>,
+                    details::DynamicStructuringElement<SE>) &&
+  requires (SE se, const SE cse, P p, mln::archetypes::PixelT<P> px) {
+    { se(p) }         -> std::ranges::forward_range;
+    { se(px) }        -> std::ranges::forward_range;
+    { cse.offsets() } -> std::ranges::forward_range;
+
+    requires std::convertible_to<std::ranges::range_value_t<decltype(se(p))>, P>;
+    requires std::Pixel<std::ranges::range_value_t<decltype(se(px))>>;
+    requires std::convertible_to<std::ranges::range_value_t<decltype(cse.offsets())>, P>;
   };
 
-template <typename Ext>
-concept FillableExtension =
-  Extension<Ext> &&
-  std::convertible_to<typename Ext::support_fill, std::true_type> &&
-  requires {
-    typename Ext::value_type;
-  } &&
-  requires (Ext ext, const Ext cext, const typename Ext::value_type& v) {
-    { ext.fill(v) };
-    { cext.is_fill_supported() }  -> bool;
+namespace details
+{
+  template <typename R, typename P>
+  concept RangeOfStructuringElement =
+    StructuringElement<std::ranges::range_value_t<R>, P>;
+}
+
+
+
+template <typename SE, typename P>
+concept DecomposableStructuringElement =
+  StructuringElement<SE, P> &&
+  std::convertible_to<typename SE::decomposable, std::true_type> &&
+  requires(const SE se) {
+    { se.is_decomposable() }  -> std::same_as<bool>;
+    { se.decompose() }        -> std::ranges::forward_range;
+    requires details::RangeOfStructuringElement<decltype(se.decompose()), P>;
   };
 
-template <typename Ext>
-concept MirrorableExtension =
-  Extension<Ext> &&
-  std::convertible_to<typename Ext::support_mirror, std::true_type> &&
-  requires (Ext ext, const Ext cext, std::size_t padding) {
-    { ext.mirror() };
-    { ext.mirror(padding) };
-    { cext.is_mirror_supported() }  -> bool;
+
+template <typename SE, typename P>
+concept SeparableStructuringElement =
+  StructuringElement<SE, P> &&
+  std::convertible_to<typename SE::separable, std::true_type> &&
+  requires(const SE se) {
+    { se.is_separable() } -> std::same_as<bool>;
+    { se.separate() }     -> std::ranges::forward_range;
+    requires details::RangeOfStructuringElement<decltype(se.separate()), P>;
   };
 
-template <typename Ext>
-concept PeriodizableExtension =
-  Extension<Ext> &&
-  std::convertible_to<typename Ext::support_periodize, std::true_type> &&
-  requires (Ext ext, const Ext cext) {
-    { ext.periodize() };
-    { cext.is_periodize_supported() }  -> bool;
-  };
 
-template <typename Ext>
-concept ClampableExtension =
-  Extension<Ext> &&
-  std::convertible_to<typename Ext::support_clamp, std::true_type> &&
-  requires (Ext ext, const Ext cext) {
-    { ext.clamp() };
-    { cext.is_clamp_supported() }  -> bool;
+template <typename SE, typename P>
+concept IncrementalStructuringElement =
+  StructuringElement<SE, P> &&
+  std::convertible_to<typename SE::incremental, std::true_type> &&
+  requires(const SE se) {
+    { se.is_incremental() } -> std::same_as<bool>;
+    { se.inc() }  -> StructuringElement<SE, P>;
+    { se.dec() }  -> StructuringElement<SE, P>;
   };
+\end{minted}
 
-template <typename Ext, typename U>
-concept ExtendWithExtension =
-  Extension<Ext> &&
-  std::convertible_to<typename Ext::support_extend_with, std::true_type> &&
-  InputImage<U> &&
-  requires {
-    typename Ext::value_type;
-    typename Ext::point_type;
-  } &&
-  std::convertible_to<typename U::value_type, typename Ext::value_type> &&
-  std::convertible_to<typename Ext::point_type, typename U::point_type> &&
-  requires (Ext ext, const Ext cext, U u, typename Ext::point_type offset) {
-    { ext.extend_with(u, offset) };
-    { cext.is_extend_with_supported() }  -> bool;
+\paragraph{Neighborhood}
+
+\begin{minted}{c++}
+template <typename SE, typename P>
+concept Neighborhood =
+  StructuringElement<SE, P> &&
+  requires (SE se, P p, mln::archetypes::PixelT<P> px) {
+    { se.before(p) }  -> std::ranges::forward_range;
+    { se.after(p) }   -> std::ranges::forward_range;
+    { se.before(px) } -> std::ranges::forward_range;
+    { se.after(px) }  -> std::ranges::forward_range;
+
+    requires std::convertible_to<std::ranges::range_value_t<decltype(se.before(p))>, P>;
+    requires std::convertible_to<std::ranges::range_value_t<decltype(se.after(p))>, P>;
+    requires std::Pixel<std::ranges::range_value_t<decltype(se.before(px))>>;
+    requires std::Pixel<std::ranges::range_value_t<decltype(se.after(px))>>;
   };
 \end{minted}
 
@@ -472,10 +494,10 @@ concept WithExtensionImage =
   requires {
     typename image_extension_t<I>;
   } &&
-  Extension<image_extension_t<I>> &&
-  not ::std::same_as<mln::extension::none_extension_tag, image_extension_category_t<I>> &&
+  Extension<image_extension_t<I>, image_point_t<I>> &&
+  not std::same_as<mln::extension::none_extension_tag, image_extension_category_t<I>> &&
   requires (I ima, image_point_t<I> p) {
-    { ima.extension() } -> ::std::convertible_to<image_extension_t<I>>;
+    { ima.extension() } -> std::convertible_to<image_extension_t<I>>;
   };
 
 
@@ -495,105 +517,83 @@ concept ViewImage =
 \end{minted}
 
 
-\paragraph{Structuring Element}
+\paragraph{Extension}
 
 \begin{minted}{c++}
-namespace details
-{
-  template <typename SE>
-  concept DynamicStructuringElement =
-    requires (SE se) {
-    { se.radial_extent() }  -> std::same_as<int>;
+  template <typename Ext, typename Pnt>
+  concept Extension =
+    std::is_base_of_v<mln::Extension<Ext>, Ext> &&
+    requires {
+      typename Ext::support_fill;
+      typename Ext::support_mirror;
+      typename Ext::support_periodize;
+      typename Ext::support_clamp;
+      typename Ext::support_extend_with;
+    } &&
+    Value<typename Ext::value_type> &&
+    requires (const Ext cext,
+        mln::archetypes::StructuringElement<
+          Pnt,
+          mln::archetypes::Pixel> se) {
+      { cext.fit(se) }      -> std::same_as<bool>;
+      { cext.extent() }     -> std::same_as<int>;
     };
 
+  template <typename Ext, typename Pnt>
+  concept FillableExtension =
+    Extension<Ext, Pnt> &&
+    std::convertible_to<typename Ext::support_fill, std::true_type> &&
+    requires {
+      typename Ext::value_type;
+    } &&
+    requires (Ext ext, const Ext cext, const typename Ext::value_type& v) {
+      { ext.fill(v) };
+      { cext.is_fill_supported() }  -> std::same_as<bool>;
+    };
 
-  constexpr bool implies(bool a, bool b) { return !a || b; }
-}
+  template <typename Ext, typename Pnt>
+  concept MirrorableExtension =
+    Extension<Ext, Pnt> &&
+    std::convertible_to<typename Ext::support_mirror, std::true_type> &&
+    requires (Ext ext, const Ext cext, std::size_t padding) {
+      { ext.mirror() };
+      { cext.is_mirror_supported() }  -> std::same_as<bool>;
+    };
 
+  template <typename Ext, typename Pnt>
+  concept PeriodizableExtension =
+    Extension<Ext, Pnt> &&
+    std::convertible_to<typename Ext::support_periodize, std::true_type> &&
+    requires (Ext ext, const Ext cext) {
+      { ext.periodize() };
+      { cext.is_periodize_supported() }  -> std::same_as<bool>;
+    };
 
-template <typename SE, typename P>
-concept StructuringElement =
-  std::convertible_to<SE, mln::details::StructuringElement<SE>> &&
-  std::ranges::regular_invocable<SE, P> &&
-  std::ranges::regular_invocable<SE, mln::archetypes::PixelT<P>> &&
-  requires {
-    typename SE::category;
-    typename SE::incremental;
-    typename SE::decomposable;
-    typename SE::separable;
-  } &&
-  std::convertible_to<typename SE::category, mln::adaptative_neighborhood_tag> &&
-  details::implies(std::convertible_to<typename SE::category, mln::dynamic_neighborhood_tag>,
-                    details::DynamicStructuringElement<SE>) &&
-  requires (SE se, const SE cse, P p, mln::archetypes::PixelT<P> px) {
-    { se(p) }         -> std::ranges::forward_range;
-    { se(px) }        -> std::ranges::forward_range;
-    { cse.offsets() } -> std::ranges::forward_range;
+  template <typename Ext, typename Pnt>
+  concept ClampableExtension =
+    Extension<Ext, Pnt> &&
+    std::convertible_to<typename Ext::support_clamp, std::true_type> &&
+    requires (Ext ext, const Ext cext) {
+      { ext.clamp() };
+      { cext.is_clamp_supported() }  -> std::same_as<bool>;
+    };
 
-    requires std::convertible_to<std::ranges::range_value_t<decltype(se(p))>, P>;
-    requires std::Pixel<std::ranges::range_value_t<decltype(se(px))>>;
-    requires std::convertible_to<std::ranges::range_value_t<decltype(cse.offsets())>, P>;
-  };
-
-namespace details
-{
-  template <typename R, typename P>
-  concept RangeOfStructuringElement =
-    StructuringElement<std::ranges::range_value_t<R>, P>;
-}
-
-
-
-template <typename SE, typename P>
-concept DecomposableStructuringElement =
-  StructuringElement<SE, P> &&
-  std::convertible_to<typename SE::decomposable, std::true_type> &&
-  requires(const SE se) {
-    { se.is_decomposable() }  -> std::same_as<bool>;
-    { se.decompose() }        -> std::ranges::forward_range;
-    requires details::RangeOfStructuringElement<decltype(se.decompose()), P>;
-  };
-
-
-template <typename SE, typename P>
-concept SeparableStructuringElement =
-  StructuringElement<SE, P> &&
-  std::convertible_to<typename SE::separable, std::true_type> &&
-  requires(const SE se) {
-    { se.is_separable() } -> std::same_as<bool>;
-    { se.separate() }     -> std::ranges::forward_range;
-    requires details::RangeOfStructuringElement<decltype(se.separate()), P>;
-  };
-
-
-template <typename SE, typename P>
-concept IncrementalStructuringElement =
-  StructuringElement<SE, P> &&
-  std::convertible_to<typename SE::incremental, std::true_type> &&
-  requires(const SE se) {
-    { se.inc() }  -> StructuringElement<P>;
-    { se.dec() }  -> StructuringElement<P>;
-  };
+  template <typename Ext, typename Pnt, typename U>
+  concept ExtendWithExtension =
+    Extension<Ext, Pnt> &&
+    std::convertible_to<typename Ext::support_extend_with, std::true_type> &&
+    InputImage<U> &&
+    requires {
+      typename Ext::point_type;
+    } &&
+    std::convertible_to<typename U::value_type, typename Ext::value_type> &&
+    std::convertible_to<typename Ext::point_type, typename U::point_type> &&
+    requires (Ext ext, const Ext cext, U u, typename Ext::point_type offset) {
+      { ext.extend_with(u, offset) };
+      { cext.is_extend_with_supported() }  -> std::same_as<bool>;
+    };
 \end{minted}
 
-\paragraph{Neighborhood}
-
-\begin{minted}{c++}
-template <typename SE, typename P>
-concept Neighborhood =
-  StructuringElement<SE, P> &&
-  requires (SE se, P p, mln::archetypes::PixelT<P> px) {
-    { se.before(p) }  -> std::ranges::forward_range;
-    { se.after(p) }   -> std::ranges::forward_range;
-    { se.before(px) } -> std::ranges::forward_range;
-    { se.after(px) }  -> std::ranges::forward_range;
-
-    requires std::convertible_to<std::ranges::range_value_t<decltype(se.before(p))>, P>;
-    requires std::convertible_to<std::ranges::range_value_t<decltype(se.after(p))>, P>;
-    requires std::Pixel<std::ranges::range_value_t<decltype(se.before(px))>>;
-    requires std::Pixel<std::ranges::range_value_t<decltype(se.after(px))>>;
-  };
-\end{minted}
 
 
 \subsection{Archetypes}
@@ -746,10 +746,105 @@ static_assert(mln::concepts::ShapedDomain<ShapedDomain>,
 \end{minted}
 
 
-\paragraph{Extension}
+\paragraph{Structuring Element}
 
 \begin{minted}{c++}
-  // TODO
+namespace details
+{
+  template <class P, class Pix>
+  requires mln::concepts::Point<P>&& mln::concepts::Pixel<Pix>
+  struct StructuringElement
+  {
+    using category     = adaptative_neighborhood_tag;
+    using incremental  = std::false_type;
+    using decomposable = std::false_type;
+    using separable    = std::false_type;
+
+     std::ranges::subrange<P*> operator()(P p);
+
+     std::ranges::subrange<Pix*> operator()(Pix px);
+     std::ranges::subrange<P*>   offsets() const;
+  };
+
+
+  template <class SE>
+  struct AsSE : SE, mln::details::Neighborhood
+  helper<AsSE<SE>>
+  {
+  };
+} // namespace details
+
+template <class P = Point, class Pix = PixelT<P>>
+using StructuringElement = details::AsSE<details::StructuringElement<P, Pix>>;
+
+
+namespace details
+{
+  template <class P, class Pix>
+  struct DecomposableStructuringElement : StructuringElement<P, Pix>
+  {
+    using decomposable = std::true_type;
+
+    bool                                                                is_decomposable() const;
+    std::ranges::subrange<mln::archetypes::StructuringElement<P, Pix>*> decompose() const;
+  };
+
+  template <class P, class Pix>
+  struct SeparableStructuringElement : StructuringElement<P, Pix>
+  {
+    using separable = std::true_type;
+
+    bool                                                                is_separable() const;
+    std::ranges::subrange<mln::archetypes::StructuringElement<P, Pix>*> separate() const;
+  };
+
+  template <class P, class Pix>
+  struct IncrementalStructuringElement : StructuringElement<P, Pix>
+  {
+    using incremental = std::true_type;
+
+    bool                                   is_incremental() const;
+    archetypes::StructuringElement<P, Pix> inc()          const;
+    archetypes::StructuringElement<P, Pix> dec()          const;
+  };
+} // namespace details
+
+
+template <class P = Point, class Pix = PixelT<P>>
+using DecomposableStructuringElement = details::AsSE<details::DecomposableStructuringElement<P, Pix>>;
+
+template <class P = Point, class Pix = PixelT<P>>
+using SeparableStructuringElement = details::AsSE<details::SeparableStructuringElement<P, Pix>>;
+
+template <class P = Point, class Pix = PixelT<P>>
+using IncrementalStructuringElement = details::AsSE<details::IncrementalStructuringElement<P, Pix>>;
+\end{minted}
+
+
+\paragraph{Neighborhood}
+
+\begin{minted}{c++}
+namespace details
+{
+  template <class P, class Pix>
+  requires mln::concepts::Point<P>&& mln::concepts::Pixel<Pix>
+  struct Neighborhood : StructuringElement<P, Pix>
+  {
+     std::ranges::iterator_range<P*>   before(P p);
+     std::ranges::iterator_range<P*>   after(P p);
+     std::ranges::iterator_range<Pix*> before(Pix px);
+     std::ranges::iterator_range<Pix*> after(Pix px);
+  };
+
+  template <class N>
+  struct AsNeighborhood : N, mln::details::Neighborhood<AsNeighborhood<N>>
+  {
+  };
+
+} // namespace details
+
+template <class P = Point, class Pix = PixelT<P>>
+using Neighborhood = details::AsSE<details::Neighborhood<P, Pix>>;
 \end{minted}
 
 
@@ -1032,9 +1127,16 @@ namespace details
 
   struct WithExtensionImage : Image
   {
-    struct Extension
+    struct Extension : ::mln::Extension<Extension>
     {
-      // FIXME
+      using support_fill = std::false_type;
+      using support_mirror = std::false_type;
+      using support_periodize = std::false_type;
+      using support_clamp = std::false_type;
+      using support_extend_with = std::false_type;
+      using value_type = image_value_t<Image>;
+      bool fit(mln::archetypes::StructuringElement<image_point_t<Image>, mln::archetypes::Pixel> se) const;
+      int extent() const;
     };
 
     using extension_type = Extension;
@@ -1073,103 +1175,8 @@ using WithExtensionImage = details::AsImage<details::WithExtensionImage>;
 \end{minted}
 
 
-\paragraph{Structuring Element}
+\paragraph{Extension}
 
 \begin{minted}{c++}
-namespace details
-{
-  template <class P, class Pix>
-  requires mln::concepts::Point<P>&& mln::concepts::Pixel<Pix>
-  struct StructuringElement
-  {
-    using category     = adaptative_neighborhood_tag;
-    using incremental  = std::false_type;
-    using decomposable = std::false_type;
-    using separable    = std::false_type;
-
-     std::ranges::subrange<P*> operator()(P p);
-
-     std::ranges::subrange<Pix*> operator()(Pix px);
-     std::ranges::subrange<P*>   offsets() const;
-  };
-
-
-  template <class SE>
-  struct AsSE : SE, mln::details::Neighborhood
-  helper<AsSE<SE>>
-  {
-  };
-} // namespace details
-
-template <class P = Point, class Pix = PixelT<P>>
-using StructuringElement = details::AsSE<details::StructuringElement<P, Pix>>;
-
-
-namespace details
-{
-  template <class P, class Pix>
-  struct DecomposableStructuringElement : StructuringElement<P, Pix>
-  {
-    using decomposable = std::true_type;
-
-    bool                                                                is_decomposable() const;
-    std::ranges::subrange<mln::archetypes::StructuringElement<P, Pix>*> decompose() const;
-  };
-
-  template <class P, class Pix>
-  struct SeparableStructuringElement : StructuringElement<P, Pix>
-  {
-    using separable = std::true_type;
-
-    bool                                                                is_separable() const;
-    std::ranges::subrange<mln::archetypes::StructuringElement<P, Pix>*> separate() const;
-  };
-
-  template <class P, class Pix>
-  struct IncrementalStructuringElement : StructuringElement<P, Pix>
-  {
-    using incremental = std::true_type;
-
-    archetypes::StructuringElement<P, Pix> inc() const;
-    archetypes::StructuringElement<P, Pix> dec() const;
-  };
-} // namespace details
-
-
-template <class P = Point, class Pix = PixelT<P>>
-using DecomposableStructuringElement = details::AsSE<details::DecomposableStructuringElement<P, Pix>>;
-
-template <class P = Point, class Pix = PixelT<P>>
-using SeparableStructuringElement = details::AsSE<details::SeparableStructuringElement<P, Pix>>;
-
-template <class P = Point, class Pix = PixelT<P>>
-using IncrementalStructuringElement = details::AsSE<details::IncrementalStructuringElement<P, Pix>>;
-\end{minted}
-
-
-\paragraph{Neighborhood}
-
-\begin{minted}{c++}
-namespace details
-{
-  template <class P, class Pix>
-  requires mln::concepts::Point<P>&& mln::concepts::Pixel<Pix>
-  struct Neighborhood : StructuringElement<P, Pix>
-  {
-     std::ranges::iterator_range<P*>   before(P p);
-     std::ranges::iterator_range<P*>   after(P p);
-     std::ranges::iterator_range<Pix*> before(Pix px);
-     std::ranges::iterator_range<Pix*> after(Pix px);
-  };
-
-
-  template <class N>
-  struct AsNeighborhood : N, mln::details::Neighborhood<AsNeighborhood<N>>
-  {
-  };
-
-} // namespace details
-
-template <class P = Point, class Pix = PixelT<P>>
-using Neighborhood = details::AsSE<details::Neighborhood<P, Pix>>;
+  // TODO
 \end{minted}

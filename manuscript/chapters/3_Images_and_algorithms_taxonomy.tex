@@ -1,14 +1,23 @@
 \chapter{Taxonomy of Images and Algorithms}
 \label{chap.image_and_algorithms_taxonomy}
 
-\FIXME{TODO : Definition of images and algorithms (introduction)}
-
+In this thesis, we researched how to apply all those new generic facilities from the C++ language into the Image
+processing area. This allows us to test them in a practical way on our predilection area while remembering our past
+work, both success and failures in this matter. However, as we saw in the previous chapter~\ref{chap.genericity},
+birthing concepts from code is something that is done in an emerging way. Henceforth, the first work will be to do an
+inventory of all existing image algorithms as well as an inventory of all image processing algorithms (both basic and
+more complex) we can think of. This way, we will notice behavior patterns emerging from similar image types or similar
+algorithms. First we will study how to extract behavioral pattern from an algorithm in order to refine it into one or
+multiple concepts. We will then study the set theory behind images types, their conjunctions, disjunctions and the
+implications. We will then study behavioral pattern related to algorithms, as well as their specific problematics
+related to heterogeneous computation. Finally, we will propose show the result of this emerging inventory in the form of
+a taxonomy indexing a framework of concepts about image processing.
 
 \section{Rewriting an algorithm to extract a concept}
-
-
+\label{image_and_algorithms_taxonomy.sec.rewriting}
 
 \subsection{Gamma correction}
+\label{image_and_algorithms_taxonomy.rewriting.subsec.gamma}
 
 Let us take the gamma correction algorithm as an example. The naive way to write this algorithm can be:
 
@@ -117,6 +126,8 @@ to deduce what our \emph{concepts} needs to be. The real question for a \emph{co
 
 
 \subsection{Dilation algorithm}
+\label{image_and_algorithms_taxonomy.rewriting.subsec.dilation}
+
 To show the versatility of this approach, we will now attempt to deduces the requirements necessary to write a classical
 \emph{dilate} algorithm. First let us start with a naive implementation:
 
@@ -172,10 +183,9 @@ iterate over two ranges at the same time. Finally, this way of writing the algor
 about the border handling to the neighborhood machinery. Henceforth, we will not address this specific point deeper in
 this paper.
 
-
-
-
 \subsection{Concept definition}
+\label{image_and_algorithms_taxonomy.rewriting.subsec.concept}
+
 The more algorithms we analyze to extract their requirements, the clearer the \emph{concepts} become. They are slowly
 appearing. Let us now attempt to formalize them. The formalization of the \emph{concept Image} from the information and
 requirements we have now is shown in~\cref{concept.tables.definitions} for the required type definitions and
@@ -193,28 +203,31 @@ in~\cref{concept.tables.expressions} for the required valid expressions.
     \smallskip
     \begin{tabular}{l|l|l|l|}
       \cline{2-4}
-                                                   & \thead{Definition }                            & \thead{Description}   & \thead{Requirement}               \\
+                                                   & \thead{Definition }               &
+      \thead{Description}                          & \thead{Requirement}                                      \\
       % Image
       \cline{1-4}
-      \multicolumn{1}{|c|}{\multirow{3}{*}{Image}} & \scriptsize{\texttt{Ima::const\_pixel\_range}} & \makecell{type of the
-      range to iterate over                                                                                                                                     \\ all the constant pixels} & \makecell{models the concept \\
-      \emph{ForwardRange}}                                                                                                                                      \\
-      \cline{2-4}
-      \multicolumn{1}{|c|}{}                       & \scriptsize{\texttt{Ima::pixel\_type}}         & type of a pixel       & models the concept \emph{Pixel}   \\
-      \cline{2-4}
-      \multicolumn{1}{|c|}{}                       & \scriptsize{\texttt{Ima::value\_type}}         & type of a value       & models the concept \emph{Regular}
+      \multicolumn{1}{|c|}{\multirow{3}{*}{Image}} & \texttt{Ima::const\_pixel\_range} & \makecell[l]{type of
+        the range to iterate over
+      \\ all the constant pixels} & \makecell[l]{models the concept \\
+        \emph{ForwardRange}}
       \\
+      \cline{2-4}
+      \multicolumn{1}{|c|}{}                       & \texttt{Ima::pixel\_type}         & type of a pixel
+                                                   & models the concept \emph{Pixel}                          \\
+      \cline{2-4}
+      \multicolumn{1}{|c|}{}                       & \texttt{Ima::value\_type}         & type of a value
+                                                   & models the concept \emph{Regular}                        \\
       \cline{1-4}
       % Writable Image
-      \multicolumn{1}{|c|}{\makecell{Writable                                                                                                                   \\ Image}} & \scriptsize{\texttt{WIma::pixel\_range}} & \makecell{type of the
-      range to iterate over                                                                                                                                     \\ all the non-constant pixels} & \makecell{models the concept \\
-      \emph{ForwardRange}}                                                                                                                                      \\
+      \multicolumn{1}{|c|}{\makecell[l]{Writable
+      \\ Image}} & \texttt{WIma::pixel\_range} & \makecell[l]{type of the range to iterate over
+      \\ all the non-constant pixels} & \makecell[l]{models the concept \\
+        \emph{ForwardRange}}
+      \\
       \cline{1-4}
-      % StructuringElement
-      %  \multicolumn{1}{|c|}{StructuringElement} &  &  & \\
-      %  \cline{1-4}
-      % Decomposable
-      %  \multicolumn{1}{|c|}{Decomposable} &  &  & \\
+      % StructuringElement \multicolumn{1}{|c|}{StructuringElement} &  &  & \\
+      %  \cline{1-4} Decomposable \multicolumn{1}{|c|}{Decomposable} &  &  & \\
       %  \cline{1-4}
     \end{tabular}
   \end{scriptsize}
@@ -228,36 +241,38 @@ in~\cref{concept.tables.expressions} for the required valid expressions.
 \begin{table}[htbp]
 
   \begin{scriptsize}
-    \texttt{Let \emph{cima} be an instance of \emph{const Ima}. Let \emph{wima} be an instance of \emph{WIma}. Then all the
-      valid expressions defined for \emph{Image} are valid for \emph{WIma}. Let \emph{cse} be an instance of \emph{const SE}.
-      Let \emph{cdse} be an instance of \emph{const DSE}. Then all the valid expressions defined for \emph{StructuringElement}
-      are valid for \emph{const DSE} Let \emph{cpix} be an instance of \emph{const Pix}. Then we have the following valid
-      expressions:}
+    \texttt{Let \emph{cima} be an instance of \emph{const Ima}. Let \emph{wima} be an instance of \emph{WIma}. Then all
+      the valid expressions defined for \emph{Image} are valid for \emph{WIma}. Let \emph{cse} be an instance of
+      \emph{const SE}. Let \emph{cdse} be an instance of \emph{const DSE}. Then all the valid expressions defined for
+      \emph{StructuringElement} are valid for \emph{const DSE} Let \emph{cpix} be an instance of \emph{const Pix}. Then
+      we have the following valid expressions:}
 
     \smallskip
     \begin{tabular}{l|l|l|l|}
       \cline{2-4}
-                                                     & \thead{Expression}                  & \thead{Return Type} & \thead{Description} \\
+                                         & \thead{Expression}                              & \thead{Return Type} &
+      \thead{Description}                                                                                          \\
       \cline{1-4}
       % Image
-      \multicolumn{1}{|c|}{Image}                    & \texttt{cima.pixels()}              &
-      \scriptsize{\texttt{Ima::const\_pixel\_range}} & \makecell{returns a range of
-      constant pixels                                                                                                                  \\ to iterate over it} \\
-      \cline{1-4}
-      % Writable Image
-      \multicolumn{1}{|c|}{\makecell{Writable                                                                                          \\ Image}} &\texttt{wima.pixels()} &
-      \scriptsize{\texttt{WIma::pixel\_range}}       & \makecell{returns a range of pixels
+      \multicolumn{1}{|c|}{Image}        & \texttt{cima.pixels()}                          &
+      \texttt{Ima::const\_pixel\_range}  & \makecell[l]{returns a range of constant pixels
       \\ to iterate over it} \\
       \cline{1-4}
+      % Writable Image
+      \multicolumn{1}{|c|}{\makecell[l]{Writable
+      \\ Image}} &\texttt{wima.pixels()} & \texttt{WIma::pixel\_range}       & \makecell[l]{returns a range of
+      pixels                                                                                                       \\ to iterate over it} \\
+      \cline{1-4}
       % StructuringElement
-      \multicolumn{1}{|c|}{\makecell{Structuring                                                                                       \\ Element}} &\texttt{cse(cpix)} &
-      \scriptsize{\texttt{WIma::pixel\_range}}       & \makecell{returns a range of the
-      neighboring                                                                                                                      \\ pixels to iterate over it} \\
+      \multicolumn{1}{|c|}{\makecell[l]{Structuring
+      \\ Element}} &\texttt{cse(cpix)} & \texttt{WIma::pixel\_range}       & \makecell[l]{returns a range of
+        the neighboring
+      \\ pixels to iterate over it} \\
       \cline{1-4}
       % Decomposable
-      \multicolumn{1}{|c|}{Decomposable}             & \texttt{cdse.decompose()}           &
-      \scriptsize{\texttt{implementation defined}}   & \makecell{ returns a range of
-      structuring                                                                                                                      \\ elements to iterate over it} \\
+      \multicolumn{1}{|c|}{Decomposable} & \texttt{cdse.decompose()}                       &
+      \texttt{implementation defined}    & \makecell[l]{ returns a range of structuring
+      \\ elements to iterate over it} \\
       \cline{1-4}
     \end{tabular}
   \end{scriptsize}
@@ -337,9 +352,8 @@ concept Decomposable =
 \end{figure}
 
 
-
-
 \section{Images types viewed as Sets: version \& specialization}
+\label{image_and_algorithms_taxonomy.sec.image.set}
 
 Achieving true genericity in a satisfactory way is a complex problem that has components of different levels. The first
 goal is to natively support as many sets of image type as possible. Natively means that there is no need for a
@@ -368,7 +382,6 @@ in~\cref{traverse.vs.LUT}:
 
 \begin{figure}[tbh]
   \centering
-  \scriptsize
   \subfloat[Writable image fill algorithm]{
     $fill(I, v)\colon \forall{p}\in\mathcal{D}, I(p) = v$
   }
@@ -432,24 +445,51 @@ implemented using low level and fast primitives such as \texttt{memset} to incre
 \end{figure}
 
 There are more details that go in depth when considering the distinction between runtime dispatch (dynamic) and
-compile time dispatch (static) that the interested reader can consult in appendix (appendix.dispatch.dyn.static).
-Those details are not mandatory for the overall comprehension of this paper, hence why they are omitted here.
+compile time dispatch (static) that we saw earlier in this manuscript in~\cref{genericity.postcpp11.subsec.simplifying}.
 
 
 \section{Generic aspect of algorithm: canvas}
-\label{sec.algo}
+\label{image_and_algorithms_taxonomy.sec.canvas}
 
-\FIXME{modèles de programmation pour traiter une image :
-  * modèle type kernel/tuile (CUDA, Halide) sur GPU
-  * modèle type pipeline pour traitement complex
-  * modèle type deep learning (conv conv conv = filtres) + fonction de réduction dans des réseaux
-  parrallèle entre canvas et modèles programmatic
-  dissociation du parcours et du traitement}
+Genericity is always referred to with this sentence \blockquote{write once, work for every types, run everywhere}.
+However, very quickly we learned that the \emph{run} aspect can be a combination of:
+\begin{itemize}
+  \item as fast as possible on a single CPU unit;
+  \item as fast as possible on thanks to using many CPU units;
+  \item as fast as possible on thanks to using many GPU units;
+  \item as fast as possible on thanks to using many computers (cloud) and their CPU/GPU units.
+\end{itemize}
+How do we decide what is the most efficient way to do? There is no simple answer to this question but we can start by
+studying the morphology of algorithms with two goals in mind: (i) find what can be parallelized/distributed and (ii)
+find one or several algorithms abstraction. Indeed, in image processing there are a lot of common patterns when looking
+at algorithms, the most famous being \emph{for all pixel of image, do something to pixel}. But there are other more
+high-level similarities that we can leverage to have more generic algorithm. Let us first study the different
+programmatic model there are to process an image.
 
-In image processing there are a lot of common patterns when looking at algorithms, the most famous being \emph{for all
-  pixel of image, do something to pixel}. But there are other more high-level similarities that we can leverage to have
-more generic algorithm. First let us study two basic algorithm: dilation and erosion. The python code of such algorithm
-is naively be given in figure~\ref{fig.erode.dilate}.
+\paragraph{The pipeline} is the classic way of doing the work. It consists of an imbrication of different operators
+(algorithms) taking as input one or several image, maybe additional data as well (such as labels, adjacency map, etc.)
+in order to process the data \blockquote{from left to right}. The result will show at the end of the pipeline and the
+optimization opportunities are located inside the smaller operators and in the form of correctly managing data (no
+useless copies, locality, etc.)
+
+\paragraph{Kernels and tiling} is the trendy way of the last decade. It consists in breaking the original image into
+small tiles in order to feed those tiles into a massively multicore GPU (via CUDA,
+Halide~\parencite{ragankelley.2013.halide}). Processing will happen concurrently on those core, but it is costly to swap
+concents inside those GPU from the RAM memory. It's then preferred to design pipeline on those tiles directly to
+minimize the number of back and forth copies from the RAM.
+
+\paragraph{Deep learning} is a huge deal in image processing these last years as well. As deep neural networks are just
+a combinations of successive MapReduce~\parencite{dean.2008.mapreduce}, it can be offloaded onto onto executions units
+that can be cluster of computers through network (cloud), or local available computers, or directly localy available GPU
+hardware.
+
+In every case there is a notion of pipeline where the user pipe algorithms into each others in order to achieve a
+result. Those algorithms can leverage all the heterogenous ressources (cloud, GPU, CPU) they can to \emph{map} the input
+data. Algorithms will then finally aggregate the results (\emph{reduce}) to output them into another algorithm, or save
+them, or display them. It is important to dissociate the route the data will go through and the processing pipeline
+logic. Both have their own specificities. In this thesis, we make a parallel, at small scale, between processing
+pipeline logic and image processing algorithms. First let us study two basic algorithm: dilation and erosion. The python
+code of such algorithm is naively be given in figure~\ref{fig.erode.dilate}.
 
 \begin{figure}[tbh]
   \centering
@@ -487,6 +527,7 @@ The algorithms can then be rewritten as shown in figure~\ref{fig.erode.dilate.fa
 \end{figure}
 
 \subsection{Taxonomy and canvas}
+\label{image_and_algorithms_taxonomy.canvas.subsec.taxonomy}
 
 This approach leads to question a way to classify algorithm in families where this factorization can be possible, more
 broadly. In essence there are three big families of algorithm when looking at the state of the art of image processing
@@ -503,6 +544,7 @@ For the first family of algorithm, one can write them all with views so that fac
 second family of algorithm may be abstracted behind an algorithm canvas where the user provides the work to do at each
 point of the algorithm. For instance, a single pass local algorithm will always have shape given
 in~\ref{fig.local.algorithm.canvas}:
+
 \begin{figure}[tbh]
   \centering
   \begin{minted}[linenos,xleftmargin=17pt,gobble=2]{python}
@@ -564,14 +606,14 @@ it can becomes very messy when several passes are happening (closing, opening, h
 
 
 \subsection{Heterogeneous computing: a partial solution, canvas}
-\label{sec.hc.canvas}
+\label{image_and_algorithms_taxonomy.canvas.subsec.heterogeneous}
 
-One of the key aspect driving genericity is performance. We have the following mantra: "write once, work for every
-types, run everywhere". However when considering the "run" aspect, one has a lot to do. Indeed, nowadays, exploiting the
-available resources to their maximum is long standing issue. There are many ongoing work on the subject, such as
-SyCL~\cite{brown.2019.heterogeneous,wong.2019.heterogeneous}, Boost.SIMD~\cite{esterie.2014.boostsimd} or even
-VCL~\cite{fog.2013.vcl}. After taking some distance to study the subject, we can infer that there are three main aspects
-to consider when optimizing performance.
+One of the key aspect driving genericity is performance. We still have the following mantra: \blockquote{write once,
+  work for every types, run everywhere}. However when considering the \emph{run} aspect, one has a lot to do. Indeed,
+nowadays, exploiting the available resources to their maximum is long standing issue. There are many ongoing work on the
+subject, such as SyCL~\cite{brown.2019.heterogeneous,wong.2019.heterogeneous}, Boost.SIMD~\cite{esterie.2014.boostsimd}
+or even VCL~\cite{fog.2013.vcl}. After taking some distance to study the subject, we can infer that there are three main
+aspects to consider when optimizing performance.
 
 The first one, the most important one is the algorithm to use in function of certain set of data. This aspect is covered
 by the C++ language and its builtin genericity tool: template metaprogramming. Indeed, we select the most optimized
@@ -640,121 +682,128 @@ integer/min/global max set.
 This theory is extremely benefic to image processing as the most commonly used algorithms, the local algorithms, can all
 be written in the form of an accumulation over the pixels of an image. The fact that finding an identity for the
 operation processed by the algorithm is often quite trivial led us to the idea of canvas. A canvas is a standard way to
-write an iteration over an image which abstract the underlying data structure. A canvas is a tool for the user to
-provide its computation model based on events such as: "entering inner loop" or "exiting inner loop". The user can then
-provide its operations as if he was writing his algorithm himself (restricted to the accumulation model). As the
-maintainer of the library provides the canvas of execution, he can know also make change to take advantage of it. For
-instance, computing a CUDA kernel at one point and dispatching it on GPU units is totally within scope and transparent
-for the user of the library. Although there is a caveat: rewriting our algorithm in an accumulate form and chunking it
-in fragments to feed to the canvas is definitely not intuitive. Indeed, we require our user to change his way of
-thinking from the procedural paradigm to the event-driven paradigm. This approach is not new and is used in other
-libraries such as Boost.Graph~\cite{siek.2001.boostgraph} for similar purposes.
+write an iteration over an image which abstracts the underlying data structure. A canvas is a tool for the user to
+provide its computation model based on events such as: \blockquote{entering inner loop} or \blockquote{exiting inner
+  loop}. The user can then provide its operations as if he was writing his algorithm himself (restricted to the
+accumulation model). As the maintainer of the library provides the canvas of execution, he can know also make change to
+take advantage of it. For instance, computing a CUDA kernel at one point and dispatching it on GPU units is totally
+within scope and transparent for the user of the library. Although there is a caveat: rewriting our algorithm in an
+accumulate form and chunking it in fragments to feed to the canvas is definitely not intuitive. Indeed, we require our
+user to change his way of thinking from the procedural paradigm to the event-driven paradigm. This approach is not new
+and is used in other libraries such as Boost.Graph~\cite{siek.2001.boostgraph} for similar purposes.
+\citeauthor{dean.2019.monoids} talks about this recurring monoid pattern more in-depth in his
+talk~\parencite{dean.2019.monoids}.
 
-\FIXME{quote C++Now 2019: Ben Deane “Identifying Monoids: Exploiting Compositional Structure in Code”}
-
-\vspace{1cm}
-\begin{verbatim}
-
-## Issue: wide subject, a lot to consider
-
-Genericity: "write once, work for every types, run everywhere"
-
-The 'run' aspect can be a combination of:
-
-* as fast as possible on a single CPU unit
-* as fast as possible on thanks to using many CPU units
-* as fast as possible on thanks to using many GPU units
-* as fast as possible on thanks to using many computers (cloud) and their
-  CPU/GPU units.
-
-There is no simple answer to this question.
-
-## Challenge: find the customization point
-
-* Find what can be parallelized/distributed.
-* Find an algorithm abstraction.
-
-For us it is the local algorithms. They all have an accumulation pattern:
-
-```cpp
-  template <class In, class Out, class SE, class T, class Op>
-  auto local_accumulate(In input, Out output, SE se, T init, Op op)
-  {
-    for(auto&& row : ranges::rows(input.pixels()))
-      for(auto p : row)
-      {
-        auto v = init;
-        for(auto nb : se(p))
-          v = op(init, nb.val());
-        init += v;
+In image processing, we quickly come to identify \emph{local} algorithms, that reason about a group of pixel around a
+given of coordinate. All those algorithms can be abstracted behind an accumulation of some sort and they all have the
+same morphology. Thus leading to the following abstraction:
+\begin{minted}{C++}
+template <class In, class Out, class SE, class T, class Op>
+auto local_accumulate(In input, Out output, SE se, T init, Op op)
+{
+    auto zipped_imgs = ranges::view::zip(input.pixels(), output.pixels())
+                                                  // (1)
+    for(auto&& rows : ranges::rows(zipped_imgs))
+    for(auto [px_in, px_out] : rows)
+    {
+        auto v = op(init, px_in.val());           // (2)
+        for(auto nb : se(px_in))
+        v = op(v, nb.val());                      // (3)
+        px_out.val() = v;                         // (4)
       }
-    return init;
+                                                  // (5)
   }
-```
+\end{minted}
+From this code we can deduce some very useful and easy monoids by the following triplets:
+\begin{itemize}
+  \item $(type = boolean, operator = and, neutral = true)$ is a binary erosion
+  \item $(type = boolean, operator = or, neutral = false)$ is a binary dilation
+  \item $(type = unsigned integer, operator = max, neutral = 0)$ is a dilation
+  \item $(type = signed integer, operator = min, neutral = global max)$ is an erosion
+\end{itemize}
 
-## Data structure requirement: monoid
-
-\small
-Monoid, definition:
-
-1. operates over a set of values, finite or infinite
-2. provides a binary operation which is closed and associative
-3. provide a neutral element, the identity
-
-Easy monoids:
-
-* boolean, *and*, "true" -> binary erosion
-* boolean, *or*, "false" -> binary dilation
-* unsigned integer, *max", "0" -> dilation
-* signed integer, *min", "global max" -> erosion
-
-## Solution: algorithms canvas
-
-\scriptsize
-
-* Algorithm canvas: standard way to iterate over an image to perform a
-  computation
-* Structure similar to accumulation for local algorithms
-* Friendly for factorizing code
-* Decoupling image traversing from actual computation
-* Change of paradigm: procedural -> event-driven
-* Non intuitive way to decompose an algorithm for the user
-* Allow customization points by maintainer without restraining the user.
-
-```cpp
-  Image img_in = ..., img_out = ... ;
-  StructuringElement se = ... ;
-  auto z = ranges::view::zip(img_in.pixels(), img_out.pixels());
-  for (auto rows : ranges::rows(z)) {
-    user_callbacks->ExecuteAtLineStart();
-    for (auto [px_in, px_out] : rows) {
-      user_callbacks->EvalBeforeLocalLoop(px_in.val(), px_out.val());
-      for (auto nbhs_in : se(px_in))
-        user_callbacks->EvalInLocalLoop(nbhs_in.val(), px_in.val(),
-                                        px_out.val());
-      user_callbacks->EvalAfterLocalLoop(px_in.val(), px_out.val());
+Now if we want to rewrite the \texttt{local\_accumulate} in an event driven paradigme, we need to identify the different
+callbacks to expose our user on the call site. Especially, what will be of the callback parameters. There are five
+callback event we have identified:
+\begin{enumerate}
+  \item before entering outer loop (no work is done)
+  \item before entering inner loop (iteration over the pixel's neighbor)
+  \item inner loop (actual operation to perform, result is accumulated)
+  \item after exiting inner loop (iteration over the neighbor is over, what to do with the accumulated result?)
+  \item after exiting outer loop (iteration over the image is over)
+\end{enumerate}
+\begin{minted}{C++}
+template <class In, class Out, class SE, class T, class BeforeOuterLoopCB, 
+          class BeforeInnerLoopCB, class InnerLoopCB class AfterInnerLoopCB,
+          class AfterOuterLoopCB>
+auto local_accumulate(In input, Out output, SE se, T init, 
+                      BeforeOuterLoopCB bolCB, BeforeInnerLoopCB bilCB,
+                      InnerLoopCB ilCB, AfterInnerLoopCB ailCB,
+                      AfterOuterLoopCB aolCB)
+{
+  auto zipped_imgs = ranges::view::zip(input.pixels(), output.pixels()
+  bolCB(input, output);                             // (1)
+  for(auto&& row : ranges::rows(zipped_imgs))
+    for(auto [px_in, px_out] : rows)
+    {
+      bilCB(px_out.val(), init, px_in.val())        // (2)
+      for(auto nb : se(px_in))
+        ilCB(px_out.val(), px_out.val(), nb.val())  // (3)
+      ailCB(px_out.val(), init, px_in.val())        // (4)
     }
-  }
-```
-\end{verbatim}
+  aolCB(input, output)                              // (5)
+}
+\end{minted}
+In this code, we can see that all the callbacks do not take the same type and/or number of parameters. Here is what the
+call site would like if the user wants to perform a dilation:
+\begin{minted}{C++}
+local_accumulation(
+  input,                                    // input image
+  output,                                   // output image
+  se,                                       // structuring element
+  0,                                        // monoid's neutral element
+  [](auto I, auto& O) { /* do nothing */ }, // (1) entering outer loop callback
+  [](auto& o, auto init, auto in){          // (2) entering inner loop callback:
+    o = std::max(init, in);                 // initialize with neutral element
+  },
+  [](auto& o, auto cur, auto nbh) {         // (3) inner loop callback:
+    o = std::max(cur, nbh);                 // keep the local maximum
+  },
+  [](auto& o, auto init, auto in) {         // (4) exiting inner loop callback
+    /* do nothing */
+  },
+  [](auto I, auto& O) { /* do nothing */ }  // (5) exiting outer loop callback
+);
+\end{minted}
+It is very verbose and non-intuitive but hopefully, once the compiler optimize out the empty callbacks, the generated
+code is as fast as a non-generic handwritten dilation.
 
 \section{Library concepts: listing and explanation}
+\label{image_and_algorithms_taxonomy.sec.concepts}
 
 \subsection{Index}
+\label{image_and_algorithms_taxonomy.concepts.subsec.index}
 
 \begin{table}[!htbp]
   \begin{scriptsize}
-    \texttt{Let \emph{Idx} be a type that models the concept \emph{Index}. Let \emph{idx} and \emph{idy} be an instance of \emph{Idx}.
-      Then we have the following valid expressions:}
-
-    \smallskip
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                             & \thead{Expression}                   & \thead{Return Type}      & \thead{Description}                          \\
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{Index}} & \texttt{std::signed\_integral<Idx>}  & \texttt{std::true\_type} & Idx is a signed integral arithmetic type     \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \texttt{idx + idy, idx - idy, \dots} & \texttt{Idx}             & supports all trivial arithmetical operations \\
+      Index           & \texttt{Idx}          & $\emptyset$                   & \texttt{idx, idy}        \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                             & \thead{Expression}                   & \thead{Return Type}      &
+      \thead{Description}                                                                                             \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{Index}} & \texttt{std::signed\_integral<Idx>}  & \texttt{std::true\_type} &
+      Idx is a signed integral arithmetic type                                                                        \\
+      \multicolumn{1}{c|}{}                       & \texttt{idx + idy, idx - idy, \dots} & \texttt{Idx}             &
+      Supports all trivial arithmetical operations                                                                    \\
       \cline{1-4}
     \end{tabular}
     \smallskip
@@ -766,32 +815,43 @@ Easy monoids:
 
 
 \subsection{Value}
+\label{image_and_algorithms_taxonomy.concepts.subsec.value}
 
 \begin{table}[!htbp]
   \begin{scriptsize}
-    \texttt{Let \emph{Val}, \emph{CmpVal} and \emph{OrdVal} be types that models the concepts resp. \emph{Value},
-      \emph{ComparableValue} and \emph{OrderedValue}. Let \emph{val}, \emph{cmp\_val} and \emph{ord\_val} be instances
-      of types resp. \emph{Val}, \emph{CmpVal} and \emph{OrdVal}. Then we have the following valid expressions:}
-
-    \smallskip
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                                       & \thead{Expression}                     & \thead{Return Type}      & \thead{Description}                                                     \\
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type}      \\
       \cline{1-4}
-      \multicolumn{1}{c|}{Value}                            & \texttt{std::semiregular<Val>}         & \texttt{std::true\_type} & \makecell{\emph{Val} is a semiregular type. It can be:                  \\
-      copied, moved, swapped, and default constructed.}                                                                                                                                                   \\
+      Value           & \texttt{Val}          & $\emptyset$                   & \texttt{val}                  \\
+      ComparableValue & \texttt{CmpVal}       & Value                         & \texttt{cmp\_val1, cmp\_val2} \\
+      OrderedValue    & \texttt{OrdVal}       & ComparableValue               & \texttt{ord\_val1, ord\_val2} \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{ComparableValue}} & \texttt{std::regular<CmpVal>}          & \texttt{std::true\_type} & \makecell{\emph{CmpVal} is a regular type. It is a semiregular          \\
-      type that is equality comparable.}                                                                                                                                                                  \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                                 & \texttt{cmp\_val1 == cmp\_val2}        & \texttt{boolean}         & supports equality comparison                                            \\
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{OrderedValue}}    & \texttt{std::totally\_ordered<OrdVal>} & \texttt{std::true\_type} & \makecell{\emph{CmpVal} is a totally ordered as well as a regular type. \\
-      Additionally the expressions must be equality preserving.}                                                                                                                                          \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                                 & \texttt{ord\_val1 < ord\_val2}         & \texttt{boolean}         & \multicolumn{1}{l}{\multirow{2}{*}{supports inequality comparisons}}    \\
-      %\cline{2-3}
-      \multicolumn{1}{c|}{}                                 & \texttt{ord\_val1 <= ord\_val2, \dots} & \texttt{boolean}         & \multicolumn{1}{l}{}                                                    \\
+      \thead{Concept}                                       & \thead{Expression}                                                   & \thead{Return
+      Type}                                                 & \thead{Description}                                                                     \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{Value}                            & \texttt{std::semiregular<Val>}                                       &
+      \texttt{std::true\_type}                              & \makecell[l]{\texttt{Val} is a semiregular type. It can be:                             \\
+      copied, moved, swapped,                                                                                                                         \\ and default constructed.}                                                                                                    \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{ComparableValue}} & \texttt{std::regular<CmpVal>}                                        &
+      \texttt{std::true\_type}                              & \makecell[l]{\texttt{CmpVal} is a regular type. It is a semiregular                     \\
+      type that is equality comparable.}                                                                                                              \\
+      \multicolumn{1}{c|}{}                                 & \texttt{cmp\_val1 == cmp\_val2}                                      & \texttt{boolean}
+                                                            & Supports equality comparison                                                            \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{OrderedValue}}    & \texttt{std::totally\_ordered<OrdVal>}                               &
+      \texttt{std::true\_type}                              & \makecell[l]{\texttt{CmpVal} is a totally ordered as well as                            \\
+      a regular type. Additionally the expressions                                                                                                    \\ must be equality preserving.}                                                                                           \\
+      \multicolumn{1}{c|}{}                                 & \texttt{ord\_val1 < ord\_val2}                                       & \texttt{boolean}
+                                                            & \multicolumn{1}{l}{\multirow{2}{*}{Supports inequality comparisons}}                    \\
+      \multicolumn{1}{c|}{}                                 & \texttt{ord\_val1 <= ord\_val2, \dots}                               & \texttt{boolean}
+                                                            & \multicolumn{1}{l}{}                                                                    \\
       \cline{1-4}
     \end{tabular}
     \smallskip
@@ -803,27 +863,34 @@ Easy monoids:
 
 
 \subsection{Point}
+\label{image_and_algorithms_taxonomy.concepts.subsec.point}
 
 \begin{table}[!htbp]
   \begin{scriptsize}
-    \texttt{Let \emph{Pnt} be a type that models the concept \emph{Point}. Let \emph{pnt} be an instance of type
-      \emph{Pnt}. Then we have the following valid expressions:}
-
-    \smallskip
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                             & \thead{Expression}                     & \thead{Return Type}      & \thead{Description}                                                  \\
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{Point}} & \texttt{std::regular<Pnt>}             & \texttt{std::true\_type} & \makecell{\emph{Pnt} is a regular type. It can be:                   \\
-      copied, moved, swapped, and default constructed.                                                                                                                                       \\
-      It also is equality comparable.}                                                                                                                                                       \\                                                                                                                                                               \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \texttt{std::totally\_ordered<OrdVal>} & \texttt{std::true\_type} & \makecell{\emph{Pnt} is a totally ordered as well as a regular type. \\
-      Additionally the expressions must be equality preserving.}                                                                                                                             \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \texttt{pnt1 < pnt2}                   & \texttt{boolean}         & \multicolumn{1}{l}{\multirow{2}{*}{supports inequality comparisons}} \\
-      %\cline{2-3}
-      \multicolumn{1}{c|}{}                       & \texttt{pnt1 <= pnt2, \dots}           & \texttt{boolean}         & \multicolumn{1}{l}{}                                                 \\
+      Point           & \texttt{Pnt}          & $\emptyset$                   & \texttt{pnt1, pnt2}      \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                             & \thead{Expression}                     & \thead{Return Type}      &
+      \thead{Description}                                                                                               \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{Point}} & \texttt{std::regular<Pnt>}             & \texttt{std::true\_type} &
+      \makecell[l]{\texttt{Pnt} is a regular type. It can be:                                                           \\ copied, moved, swapped, and default
+      constructed.                                                                                                      \\ It also is equality comparable.} \\
+      \multicolumn{1}{c|}{}                       & \texttt{std::totally\_ordered<OrdVal>} & \texttt{std::true\_type} &
+      \makecell[l]{\texttt{Pnt} is a totally ordered as well as a regular type.                                         \\ Additionally the expressions must be \\
+      equality preserving.}                                                                                             \\
+      \multicolumn{1}{c|}{}                       & \texttt{pnt1 < pnt2}                   & \texttt{boolean}         &
+      \multicolumn{1}{l}{\multirow{2}{*}{supports inequality comparisons}}                                              \\
+      \multicolumn{1}{c|}{}                       & \texttt{pnt1 <= pnt2, \dots}           & \texttt{boolean}         &
+      \multicolumn{1}{l}{}                                                                                              \\
       \cline{1-4}
     \end{tabular}
     \smallskip
@@ -835,51 +902,69 @@ Easy monoids:
 
 
 \subsection{Pixel}
+\label{image_and_algorithms_taxonomy.concepts.subsec.pixel}
 
 \begin{table}[!htbp]
 
   \begin{scriptsize}
-    \texttt{Let \emph{Pix} and \emph{OPix} be types that model the concepts resp. \emph{Pixel} and \emph{OutputPixel}.
-      Then \emph{OutputPixel} inherits all types defined for \emph{Pixel}. Then we can define:}
-
-    \smallskip
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                             & \thead{Definition}                                                                 & \thead{Description}                                 & \thead{Requirement}             \\
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \scriptsize{\texttt{value\_type}}                                                  & \makecell{Type of the value contained in the pixel.                                   \\ Cannot be constant or reference.}       & Models the concept \emph{Value}. \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \scriptsize{\texttt{reference\_type}}                                              & \makecell{Type used to mutate the pixel's value.                                      \\ Can be a proxy.}       & Models the concept \emph{Pixel}   \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \scriptsize{\texttt{point\_type}}                                                  & Type of the pixel's point.                          & Models the concept \emph{Point} \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{OutputPixel}            & \multicolumn{3}{|c}{Inherit \emph{Pixel}'s definitions. No additional definition.}                                                                                         \\
+      Pixel           & \texttt{Pix}          & $\emptyset$                   & \texttt{pix}             \\
+      OutputPixel     & \texttt{OPix}         & Pixel                         & \texttt{opix}            \\
       \cline{1-4}
     \end{tabular}
-  \end{scriptsize}
-  \smallskip
+    \smallskip
 
-  \caption{Concepts Pixel: definitions}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                             & \thead{Definition}       & \thead{Description}            &
+      \thead{Requirement}                                                                                       \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \texttt{value\_type}     & \makecell[l]{Type of the value
+      contained in the pixel.                                                                                   \\ Cannot be constant or reference.}       & Models
+      the concept \texttt{Value}.                                                                               \\
+      \multicolumn{1}{c|}{}                       & \texttt{reference\_type} & \makecell[l]{Type used to
+      mutate the pixel's value.                                                                                 \\ Can be a proxy.}       & Models the concept
+      \texttt{Pixel}                                                                                            \\
+      \multicolumn{1}{c|}{}                       & \texttt{point\_type}     & Type of the pixel's point.     &
+      Models the concept \texttt{Point}                                                                         \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Pixel: definitions}
+  \end{scriptsize}
   \label{concept.tables.pixel.definitions}
 \end{table}
 
 \begin{table}[!htbp]
   \begin{scriptsize}
-    \texttt{Let \emph{pix}, \emph{opix}, \emph{pnt}, \emph{val} be instances of types resp. \emph{Pix}, \emph{OPix},
-      \emph{Pix::point\_type} and \emph{Pix::value\_type}. Then we have the following valid expressions:}
-
+    \begin{tabular}{ll}
+      \cline{1-2}
+      \thead{Type}              & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{Pix::value\_type} & \texttt{val}             \\
+      \texttt{Pix::point\_type} & \texttt{pnt}             \\
+      \cline{1-2}
+    \end{tabular}
     \smallskip
+
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                             & \thead{Expression}        & \thead{Return Type}           & \thead{Description}                                                \\
+      \thead{Concept}                             & \thead{Expression}        & \thead{Return Type}           &
+      \thead{Description}                                                                                              \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \texttt{pix.val()}        & \texttt{Pix::reference\_type} & \makecell{Access the pixel's value for read and/or write purpose.} \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \texttt{pix.point()}      & \texttt{Pix::point\_type}     & \makecell{Read the pixel's point.}                                 \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                       & \texttt{pix.shift(pnt)}   & \texttt{void}                 & Shift pixel's point coordinate base on \emph{pnt}'s coordinates.   \\
+      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \texttt{pix.val()}        & \texttt{Pix::reference\_type} &
+      \makecell[l]{Access the pixel's value for read and/or write purpose.}                                            \\
+      \multicolumn{1}{c|}{}                       & \texttt{pix.point()}      & \texttt{Pix::point\_type}     &
+      \makecell[l]{Read the pixel's point.}                                                                            \\
+      \multicolumn{1}{c|}{}                       & \texttt{pix.shift(pnt)}   & \texttt{void}                 & Shift
+      pixel's point coordinate base on \texttt{pnt}'s coordinates.                                                     \\
       \cline{1-4}
-      \multicolumn{1}{c|}{OutputPixel}            & \texttt{opix.val() = val} & \texttt{void}                 & Mutate pixel's value.                                              \\
+      \multicolumn{1}{c|}{OutputPixel}            & \texttt{opix.val() = val} & \texttt{void}                 & Mutate
+      pixel's value.                                                                                                   \\
       \cline{1-4}
     \end{tabular}
     \smallskip
@@ -891,53 +976,72 @@ Easy monoids:
 
 
 \subsection{Ranges}
+\label{image_and_algorithms_taxonomy.concepts.subsec.ranges}
 
 \begin{table}[!htbp]
 
   \begin{scriptsize}
-    \texttt{Let \emph{MDRng}, \emph{OMDRng} and \emph{RMDRng} be types that model the concepts resp. \emph{MDRange},
-      \emph{OutputMDRange} and \emph{ReversibleMDRange}. Then we can define:}
-
-    \smallskip
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                               & \thead{Definition}                                                                   & \thead{Description}                                 & \thead{Requirement} \\
+      \thead{Concept}   & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}} & \texttt{value\_type}                                                                 & \makecell{Type of the value contained in the range.                       \\ Cannot be constant or reference.} &  Models the concept \emph{Value}.   \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                         & \texttt{reference\_type}                                                             & \makecell{Type used to mutate the pixel's value.                          \\ Can be a proxy.}    & Models the concept \texttt{std::indirectly\_writable}                                 \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{OutputMDRange}            & \multicolumn{3}{|c}{Inherit \emph{MDRange}'s definitions. No additional definition.}                                                                             \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{ReversibleMDRange}        & \multicolumn{3}{|c}{Inherit \emph{MDRange}'s definitions. No additional definition.}                                                                             \\
+      MDRange           & \texttt{MDRng}        & $\emptyset$                   & \texttt{mdrng}           \\
+      OutputMDRange     & \texttt{OMDRng}       & MDRange                       & \texttt{omdrng}          \\
+      ReversibleMDRange & \texttt{RMDRng}       & MDRange                       & \texttt{rmdrng}          \\
       \cline{1-4}
     \end{tabular}
-  \end{scriptsize}
-  \smallskip
+    \smallskip
 
-  \caption{Concepts Ranges: definitions}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                               & \thead{Definition}       & \thead{Description}                      &
+      \thead{Requirement}                                                                                                   \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}} & \texttt{value\_type}     & \makecell[l]{Type of the value contained
+      in the range.                                                                                                         \\ Cannot be constant or reference.} &  Models the concept \texttt{Value}. \\
+      \multicolumn{1}{c|}{}                         & \texttt{reference\_type} & \makecell[l]{Type used to mutate the
+      pixel's value.                                                                                                        \\ Can be a proxy.}    & Models the concept
+      \texttt{std::indirectly\_writable}                                                                                    \\
+      \cline{1-4}
+    \end{tabular}
+
+    \smallskip
+
+    \caption{Concepts Ranges: definitions}
+  \end{scriptsize}
   \label{concept.tables.ranges.definitions}
 \end{table}
 
 \begin{table}[!htbp]
   \begin{scriptsize}
-    \texttt{Let \emph{mdrng}, \emph{omdrng}, \emph{rmdrng} and \emph{val} be
-      instances of types resp. \emph{MDRng}, \emph{OMDRng}, \emph{RMDRng} and \emph{std::ranges::range\_value\_t<MDRng>}.
-      Then we have the following valid expressions:}
-
+    \begin{tabular}{ll}
+      \cline{1-2}
+      \thead{Type}                                 & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{std::ranges::range\_value\_t<MDRng>} & \texttt{val}             \\
+      \cline{1-2}
+    \end{tabular}
     \smallskip
+
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                                         & \thead{Expression}                          & \thead{Return Type}  & \thead{Description}                          \\
+      \thead{Concept}                                         & \thead{Expression}                              &
+      \thead{Return Type}                                     & \thead{Description}                                                                            \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}}           & \texttt{mdrng.begin()}                      & \texttt{unspecified} & \makecell{Return a forward iterator allowing \\ a traversing of the range.} \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                                   & \texttt{mdrng.end()}                        & \texttt{unspecified} & \makecell{Return a sentinel allowing to      \\know when the end is reached.}                                 \\
+      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}}           & \texttt{mdrng.begin()}                          &
+      \texttt{unspecified}                                    & \makecell[l]{Return a forward iterator allowing                                                \\ a traversing of the range.} \\
+      \multicolumn{1}{c|}{}                                   & \texttt{mdrng.end()}                            &
+      \texttt{unspecified}                                    & \makecell[l]{Return a sentinel allowing to                                                     \\know when the end is reached.} \\
       \cline{1-4}
-      \multicolumn{1}{c|}{OutputMDRange}                      & \makecell{\texttt{auto it = omdrng.begin()}                                                                       \\ \texttt{*it++ = val}}        & \texttt{void}                 & \makecell{Mutate a value inside the range \\ then increment the iterator's position}   \\
+      \multicolumn{1}{c|}{OutputMDRange}                      & \makecell[l]{\texttt{auto it = omdrng.begin()}                                                 \\
+      \texttt{*it++ = val}}                                   & \texttt{void}                                   & \makecell[l]{Mutate a value inside the range \\
+      then increment the iterator's position}                                                                                                                  \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{ReversibleMDRange}} & \texttt{rmdrng.rbegin()}                    & \texttt{unspecified} & \makecell{Return a forward iterator allowing \\ a traversing of the range \\ starting from the end.}                                              \\
-      \multicolumn{1}{c|}{}                                   & \texttt{rmdrng.rend()}                      & \texttt{unspecified} & \makecell{Return a sentinel allowing to      \\ know when the end is reached.}                               \\
+      \multicolumn{1}{c|}{\multirow{2}{*}{ReversibleMDRange}} & \texttt{rmdrng.rbegin()}                        &
+      \texttt{unspecified}                                    & \makecell[l]{Return a forward iterator allowing                                                \\ a traversing of the range \\ starting from
+      the end.}                                                                                                                                                \\
+      \multicolumn{1}{c|}{}                                   & \texttt{rmdrng.rend()}                          &
+      \texttt{unspecified}                                    & \makecell[l]{Return a sentinel allowing to                                                     \\ know when the end is reached.} \\
       \cline{1-4}
     \end{tabular}
     \smallskip
@@ -948,55 +1052,57 @@ Easy monoids:
 \end{table}
 
 \subsection{Domain}
+\label{image_and_algorithms_taxonomy.concepts.subsec.domain}
 
 \begin{table}[!htbp]
-
   \begin{scriptsize}
-    \texttt{Let \emph{Dom}, \emph{SDom}, \emph{ShDom} be types that model the concepts resp. \emph{Domain},
-      \emph{SizedDomain} and \emph{ShapedDomain}. Then \emph{Domain} inherits all types defined for \emph{MDRange}. Then
-      \emph{SizedDomain} inherits all types defined for \emph{Domain} and \emph{ShapedDomain} inherits all types defined
-      for \emph{SizedDomain}. Then we can define:}
-
-    \smallskip
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                   & \thead{Definition}                                                                       & \thead{Description} & \thead{Requirement} \\
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
       \cline{1-4}
-      \multicolumn{1}{c|}{Domain}       & \multicolumn{3}{|c}{Inherit \emph{MDRange}'s definitions. No additional definition.}                                                 \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{SizedDomain}  & \multicolumn{3}{|c}{Inherit \emph{Domain}'s definitions. No additional definition.}                                                  \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{ShapedDomain} & \multicolumn{3}{|c}{Inherit \emph{SizedDomain}'s definitions. No additional definition.}                                             \\
+      Domain          & \texttt{MDRng}        & MDRange                       & \texttt{dom}             \\
+      SizedDomain     & \texttt{OMDRng}       & Domain                        & \texttt{sdom}            \\
+      ShapedDomain    & \texttt{RMDRng}       & SizedDomain                   & \texttt{shdom}           \\
       \cline{1-4}
     \end{tabular}
-  \end{scriptsize}
-  \smallskip
+    \smallskip
 
-  \caption{Concepts Domain: definitions}
-  \label{concept.tables.domain.definitions}
+    \caption{Concepts Domain: definitions}
+    \label{concept.tables.domain.definitions}
+  \end{scriptsize}
 \end{table}
 
 \begin{table}[!htbp]
   \begin{scriptsize}
-    \texttt{Let \emph{dom}, \emph{sdom}, \emph{shdom} and \emph{pnt} be instances of types resp. \emph{Dom}, \emph{SDom},
-      \emph{ShDom} and \emph{Dom::value\_type}. Then we have the following valid expressions:}
-
+    \begin{tabular}{ll}
+      \cline{1-2}
+      \thead{Type}              & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{Dom::value\_type} & \texttt{pnt}             \\
+      \cline{1-2}
+    \end{tabular}
     \smallskip
+
     \begin{tabular}{llll}
       \cline{1-4}
-      \thead{Concept}                              & \thead{Expression}               & \thead{Return Type}          & \thead{Description}                                       \\
+      \thead{Concept}                              & \thead{Expression}               & \thead{Return Type}          &
+      \thead{Description}                                                                                              \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{Domain}} & \texttt{Point<Dom::value\_type>} & \texttt{std::true\_type}     & \makecell{Domain's value models the \emph{Point} concept} \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                        & \texttt{dom.has(pnt)}            & \texttt{bool}                & \makecell{Check if a points is included in the domain.}   \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                        & \texttt{dom.empty()}             & \texttt{void}                & \makecell{Read the pixel's point.}                        \\
-      %\cline{2-4}
-      \multicolumn{1}{c|}{}                        & \texttt{dom.dim()}               & \texttt{void}                & Returns the domain's dimension.                           \\
+      \multicolumn{1}{c|}{\multirow{4}{*}{Domain}} & \texttt{Point<Dom::value\_type>} & \texttt{std::true\_type}     &
+      \makecell[l]{Domain's value models the \texttt{Point} concept}                                                   \\
+      \multicolumn{1}{c|}{}                        & \texttt{dom.has(pnt)}            & \texttt{bool}                &
+      \makecell[l]{Check if a points is included in the domain.}                                                       \\
+      \multicolumn{1}{c|}{}                        & \texttt{dom.empty()}             & \texttt{void}                &
+      \makecell[l]{Read the pixel's point.}                                                                            \\
+      \multicolumn{1}{c|}{}                        & \texttt{dom.dim()}               & \texttt{void}                &
+      Returns the domain's dimension.                                                                                  \\
       \cline{1-4}
-      \multicolumn{1}{c|}{SizedDomain}             & \texttt{sdom.size()}             & \texttt{unsigned int}        & Returns the number of points inside the domain.           \\
+      \multicolumn{1}{c|}{SizedDomain}             & \texttt{sdom.size()}             & \texttt{unsigned int}        &
+      Returns the number of points inside the domain.                                                                  \\
       \cline{1-4}
-      \multicolumn{1}{c|}{ShapedDomain}            & \texttt{shdom.extends()}         & \texttt{std::forward\_range} & \makecell{Return a range that yields the number           \\ of elements for each dimension.}                                              \\
+      \multicolumn{1}{c|}{ShapedDomain}            & \texttt{shdom.extends()}         & \texttt{std::forward\_range} &
+      \makecell[l]{Return a range that yields the number                                                               \\ of elements for each dimension.}
+      \\
       \cline{1-4}
     \end{tabular}
     \smallskip
@@ -1007,6 +1113,274 @@ Easy monoids:
 \end{table}
 
 
+\subsection{Structuring Elements}
+\label{image_and_algorithms_taxonomy.concepts.subsec.se}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      StructuringElement             & \texttt{SE, Pnt}      & $\emptyset$, Point            & \texttt{se, pnt}         \\
+      DecomposableStructuringElement & \texttt{DSE, Pnt}     & StructuringElement, Point     & \texttt{dse}             \\
+      SeparableStructuringElement    & \texttt{SSE, Pnt}     & StructuringElement, Point     & \texttt{sse}             \\
+      IncrementalStructuringElement  & \texttt{ISE, Pnt}     & StructuringElement, Point     & \texttt{ise}             \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                          & \thead{Definition}    & \thead{Description}                           &
+      \thead{Requirement}                                                                                                                                                                         \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{3}{*}{StructuringElement}} & \texttt{incremental}  & \multirow{3}{*}{\texttt{std::bool\_constant}} & \multirow{3}{*}{\makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{decomposable} &                                               &                                                          \\
+      \multicolumn{1}{c|}{}                                    & \texttt{separable}    &                                               &                                                          \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Structuring Elements: definitions}
+    \label{concept.tables.se.definitions}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{lll}
+      \cline{1-3}
+      \thead{Type} & \thead{Instance of type} & \thead{Requirement}                           \\
+      \cline{1-3}
+      \texttt{Pix} & \texttt{pix}             & \texttt{std::same\_as<Pix::point\_type, Pnt>} \\
+      \texttt{Pnt} & \texttt{pnt}             &                                               \\
+      \cline{1-3}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                           & \thead{Expression}                                    & \thead{Return Type}                       &
+      \thead{Description}                                                                                                                                                                                     \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{11}{*}{StructuringElement}} & \multirow{2}{*}{\texttt{std::regular\_invocable<SE,
+      Pnt>}}                                                    & \multirow{4}{*}{\texttt{std::true\_type}}             &
+      \multirow{4}{*}{\makecell[l]{\texttt{se} can called using \text{std::invoke},                                                                                                                           \\ is equality preserving and \\
+      does not modify function object                                                                                                                                                                         \\ nor arguments.}} \\
+      \multicolumn{1}{c|}{}                                     &                                                       &
+                                                                &                                                                                                                                             \\
+      \multicolumn{1}{c|}{}                                     & \multirow{2}{*}{\texttt{std::regular\_invocable<SE,
+      Pix>}}                                                    &                                                       &
+      \\
+      \multicolumn{1}{c|}{}                                     &                                                       &                                           &                                         \\
+      \multicolumn{1}{c|}{}                                     & \texttt{se(pnt)}                                      & \texttt{std::forward\_range}              &
+      \makecell[l]{Return a range that yeilds the                                                                                                                                                             \\
+      neighboring points of \texttt{pnt}.}                                                                                                                                                                    \\
+      \multicolumn{1}{c|}{}                                     & \texttt{se.offsets()}                                 & \texttt{std::forward\_range}              &
+      \makecell[l]{Return a range that yeilds the                                                                                                                                                             \\
+      neighboring points,                                                                                                                                                                                     \\in relative coordinates.}                                                                                                                                                          \\
+      \multicolumn{1}{c|}{}                                     & \texttt{se(pix)}                                      & \texttt{std::forward\_range}              &
+      \makecell[l]{Return a range that yeilds the                                                                                                                                                             \\
+      neighboring pixels of \texttt{pix}.}                                                                                                                                                                    \\
+      \multicolumn{1}{c|}{}                                     & \texttt{se.radial\_extent()}                          & \texttt{int}                              &
+      \makecell[l]{Returns the radial extent                                                                                                                                                                  \\of the SE,
+      the radius                                                                                                                                                                                              \\of the disc (square).}                                                                                                                                                                      \\
+      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                 \\
+      \texttt{std::ranges::range\_value\_t<}                                                                                                                                                                  \\ \texttt{decltype(se(pnt))>, Pnt>}}      &
+      \multirow{3}{*}{\texttt{std::true\_type}}                 & \multirow{3}{*}{\makecell[l]{Converts to a compatible                                                                                       \\ point type}}
+      \\
+      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                 \\
+      \texttt{std::ranges::range\_value\_t<}                                                                                                                                                                  \\ \texttt{decltype(se.offsets())>, Pnt>}} & & \\
+      \multicolumn{1}{c|}{}                                     &
+      \makecell[l]{\texttt{Pixel<std::ranges::range\_value\_t<}
+      \\ \texttt{decltype(se(pix))> >}}                          &                                           & \makecell[l]{Is a range of compatible \\pixel type}                                                                                                                                                                \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Decomposable                                                                                                                                           \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{dse.decompose()}                              & \texttt{std::forward\_range}              & \makecell[l]{Return a range that yeilds \\ simpler structuring elements.}\\
+      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{StructuringElement<}                                                                                                   \\ \texttt{std::ranges::range\_value\_t<} \\ \texttt{decltype(dse.decompose())> >}}                            & \texttt{std::true\_type} & \makecell[l]{Is a range of compatible \\structuring elements types.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{dse.is\_decomposable()}                       & \texttt{bool}                             & \makecell[l]{Wether the decompose       \\ facility is supported}\\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Separable                                                                                                                                              \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{sse.separate()}                               & \texttt{std::forward\_range}              & \makecell[l]{Return a range that yeilds \\ simpler structuring elements.}\\
+      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{StructuringElement<}                                                                                                   \\ \texttt{std::ranges::range\_value\_t<} \\ \texttt{decltype(sse.separate())> >}}                            & \texttt{std::true\_type} & \makecell[l]{Is a range of compatible \\structuring elements types.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{sse.is\_separable()}                          & \texttt{bool}                             & \makecell[l]{Wether the separate        \\ facility is supported}\\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Incremental                                                                                                                                            \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{ise.inc()}                                    & \makecell[l]{\texttt{StructuringElement<}                                           \\\texttt{SE, Pnt>}} & \makecell[l]{Return the next            \\ simpler structuring elements.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{ise.dec()}                                    & \makecell[l]{\texttt{StructuringElement<}                                           \\\texttt{SE, Pnt>}} & \makecell[l]{Return the previous        \\ simpler structuring elements.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{ise.is\_incremental()}                        & \texttt{bool}                             & \makecell[l]{Wether the incremental     \\ facility is supported}\\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Structuring Elements: expressions}
+  \end{scriptsize}
+  \label{concept.tables.se.expressions}
+\end{table}
+
+\subsection{Neighborhood}
+\label{image_and_algorithms_taxonomy.concepts.subsec.neighborhood}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      Neighborhood    & \texttt{SE, Pnt}      & StructuringElement, Point     & \texttt{se, pnt}         \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Neighborhood: definitions}
+    \label{concept.tables.nbh.definitions}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{lll}
+      \cline{1-3}
+      \thead{Type} & \thead{Instance of type} & \thead{Requirement}                           \\
+      \cline{1-3}
+      \texttt{Pix} & \texttt{pix}             & \texttt{std::same\_as<Pix::point\_type, Pnt>} \\
+      \texttt{Pnt} & \texttt{pnt}             &                                               \\
+      \cline{1-3}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                    & \thead{Expression}                          & \thead{Return Type}                           &
+      \thead{Description}                                                                                                                                                                                           \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{8}{*}{Neighborhood}} & \texttt{se.before(pnt)}                     & \multirow{4}{*}{\texttt{std::forward\_range}} & Return a range that yields the points before \texttt{pnt}. \\
+      \multicolumn{1}{c|}{}                              & \texttt{se.after(pnt)}                      &                                               & Return a range that yields the points after \texttt{pnt}.  \\
+      \multicolumn{1}{c|}{}                              & \texttt{se.before(pix)}                     &                                               & Return a range that yields the pixels before \texttt{pix}. \\
+      \multicolumn{1}{c|}{}                              & \texttt{se.after(pix)}                      &                                               & Return a range that yields the pixels after \texttt{pnt}.  \\
+      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.before(pnt))>, Pnt>}} & \multirow{4}{*}{\texttt{std::true\_type}}     & \multirow{2}{*}{Ranges that converts to compatible element types.} \\
+      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.after(pnt))>, Pnt>}}  &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{Pixel<}                                                                                                                             \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.before(pix))>, Pix>}}                 &                                               & \multirow{2}{*}{Ranges that are of compatible element types.}      \\
+      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{Pixel<}                                                                                                                             \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.after(pix))>, Pix>}}                  &                                               &                                                                    \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Neighborhood: expressions}
+  \end{scriptsize}
+  \label{concept.tables.nbh.expressions}
+\end{table}
+
+\subsection{Image}
+\label{image_and_algorithms_taxonomy.concepts.subsec.image}
+
+
+\subsection{Extensions}
+\label{image_and_algorithms_taxonomy.concepts.subsec.ext}
+
+\begin{table}[!htbp]
+
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}       & \thead{Modeling type}  & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      Extension             & \texttt{Ext, Pnt}      & $\emptyset$, Point            & \texttt{ext, pnt}        \\
+      FillableExtension     & \texttt{FExt, Pnt}     & Extension, Point              & \texttt{fext}            \\
+      MirrorableExtension   & \texttt{MExt, Pnt}     & Extension, Point              & \texttt{mext}            \\
+      PeriodizableExtension & \texttt{PExt, Pnt}     & Extension, Point              & \texttt{pext}            \\
+      ClampableExtension    & \texttt{CExt, Pnt}     & Extension, Point              & \texttt{cext}            \\
+      ExtendWithExtension   & \texttt{EwExt, Pnt, U} & Extension, Point, Image       & \texttt{ewext, u}        \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                 & \thead{Definition}                     & \thead{Description}                           &
+      \thead{Requirement}                                                                                                                                                                                 \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{6}{*}{Extension}} & \texttt{value\_type}                   & \makecell[l]{Type of value
+      contained                                                                                                                                                                                           \\ in the range.                                                                                                                                                                             Cannot be \\ constant
+      or reference.}                                  & Models the concept \texttt{Value}.                                                                                                                \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_fill}                 & \multirow{5}{*}{\texttt{std::bool\_constant}} & \multirow{5}{*}{\makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}} \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_mirror}               &                                               &                                                          \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_periodize}            &                                               &                                                          \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_clamp}                &                                               &                                                          \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_extend\_with}         &                                               &                                                          \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{ExtendWithExtension}        & \texttt{point\_type}                   & \makecell[l]{Type of point in                                                                            \\ the
+      extended image.}                                & \makecell[l]{Converts to the sub-image                                                                                                            \\ points type.}                                                                                                            \\
+      \cline{1-4}
+    \end{tabular}
+  \end{scriptsize}
+  \smallskip
+
+  \caption{Concepts Extensions: definitions}
+  \label{concept.tables.extensions.definitions}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{ll}
+      \cline{1-2}
+      \thead{Type}              & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{SE<Pnt, Pix>}     & \texttt{se}              \\
+      \texttt{Ext::value\_type} & \texttt{val}             \\
+      \texttt{Ext::point\_type} & \texttt{offset}          \\
+      \cline{1-2}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                              & \thead{Expression}                            & \thead{Return Type} &
+      \thead{Description}                                                                                                                                      \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{Extension}}              & \texttt{ext.fit(se)}                          & \texttt{bool}       & \makecell[l]{Wether
+      the extension fit                                                                                                                                        \\ the structuring element.}                                                                                                   \\
+      \multicolumn{1}{c|}{}                                        & \texttt{ext.extent()}                         & \texttt{int}        &
+      \makecell[l]{Extension's border width.                                                                                                                   \\
+      std::numeric\_limits<int>::max()                                                                                                                         \\ for infinite size.}                                                                                         \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{FillableExtension}}      & \texttt{fext.fill(val)}                       & \texttt{void}       &
+      \makecell[l]{Fill the extension with                                                                                                                     \\the value \texttt{val}.}                                                                                              \\
+      \multicolumn{1}{c|}{}                                        & \texttt{fext.is\_fill\_supported}             & \texttt{bool}       &
+      \makecell[l]{Wether the fill facility                                                                                                                    \\is supported.}                                                                                                                            \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{MirrorableExtension}}    & \texttt{mext.mirror()}                        & \texttt{void}       & \makecell[l]{Fill
+      the extension with                                                                                                                                       \\mirrored image's values.}                                                                                                  \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_mirror\_supported()}         &
+      \texttt{bool}                                                & \makecell[l]{Wether the mirror facility                                                   \\ is supported.}                                             \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{PeriodizeableExtension}} & \texttt{mext.periodize()}                     & \texttt{void}       &
+      \makecell[l]{Fill the extension with                                                                                                                     \\periodic copies of image's values.}                                                                                   \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_periodize\_supported()}      &
+      \texttt{bool}                                                & \makecell[l]{Wether the mirror facility                                                   \\is supported.}                                      \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{ClampableExtension}}     & \texttt{mext.clamp()}                         & \texttt{void}       & \makecell[l]{Fill
+      the extension by                                                                                                                                         \\extending image's values \\at extremities.}                                                                                    \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_clamp\_supported()}          &
+      \texttt{bool}                                                & \makecell[l]{Wether the clamp facility                                                    \\is supported.}                                       \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{3}{*}{ExtendWithExtension}}    &
+      \makecell[l]{\texttt{std::convertible\_to<point\_type,}                                                                                                  \\\texttt{U::point\_type>}} & \texttt{std::true\_type} &
+      \makecell[l]{Converts to the sub-image                                                                                                                   \\ points type.}                                                                                                       \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.extend\_with(u, offset)}         &
+      \texttt{void}                                                & \makecell[l]{Fill the extension with                                                      \\sub-image      \texttt{u}'s values  starting \\ from \texttt{offset}.} \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_extent\_with\_supported()}   &
+      \texttt{bool}                                                & \makecell[l]{Wether the extend-with-sub-image                                             \\ facility is
+      supported.}                                                                                                                                              \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Extensions: expressions}
+  \end{scriptsize}
+  \label{concept.tables.extensions.expressions}
+\end{table}
 
 
 \clearpage
@@ -1031,3 +1405,4 @@ Easy monoids:
         \end{itemize}
   \item listing et explications des concepts de la bibliothèque (images, élément structurant)
 \end{itemize}
+

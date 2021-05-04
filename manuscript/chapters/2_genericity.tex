@@ -32,6 +32,7 @@ native or emulated, etc.
 
 
 \section{Genericity within libraries}
+\label{genericity.sec.libraries}
 
 Projecting the notion of genericity to Image Processing, we can deduce that we need two important aspects in order to be
 generic. First, we need to decorelate the data structures and its topology and underlying data from the algorithms.
@@ -108,6 +109,7 @@ proof of concept over the feasibility of having generic image processing operato
 near-native performances. Let us first explain briefly how we achieved this.
 
 \subsection{Different approaches to get genericity}
+\label{genericity.libraries.subsec.approaches}
 
 First, let us consider the morphological \emph{dilation} that takes two inputs: an image and a flat structuring element
 (SE). Then the set of some possible inputs is depicted in~\ref{fig.gen.espaceSAV}. Without genericity, with $s$ the
@@ -274,6 +276,7 @@ in~\cref{table.gen.approaches}.
 
 
 \subsection{Unjustified limitations}
+\label{genericity.libraries.subsec.limitations}
 
 Image processing community operates mostly with either Python or Matlab~\cite{etter.2002.introduction}. As such this
 paper will focus on those two technologies. Python offers access to two major libraries for image processing: OpenCV and
@@ -372,6 +375,7 @@ element start to be of a certain size.
 
 
 \section{Genericity in pre C++11}
+\label{genericity.sec.language.precpp11}
 
 Before C++11~\parencite{iso.2011.cpp} came out the genericity facilities offered by the C++ programming language were
 already turing complete~\parencite{veldhuizen.2003.c++templates}. However, it was lacking a certain amount of features
@@ -383,6 +387,7 @@ generic programming which is to write \emph{less} Code. To compensate, library i
 to have to rewrite code which made the initial code even harder to understand for outsiders.
 
 \subsection{SFINAE: Substitution-Failure-Is-Not-An-Error}
+\label{genericity.language.precpp11.sebsec.sfinae}
 
 In spite of all those limitations at the time, generic programming was well supported by the language and allowed the
 programmer to already design generic libraries, in particular thanks to the SFINAE~\parencite{vandevoorde.2002.c++}
@@ -466,6 +471,7 @@ in~\cref{fig.gen.sfinae.nested}.
 \end{figure}
 
 \subsection{CRTP: Curiously Recurring Template Pattern}
+\label{genericity.language.precpp11.sebsec.crtp}
 
 Another features that precede C++11 and was available in C++98~\parencite{iso.1998.cpp} and
 C++03~\parencite{iso.2003.cpp} is the curiously recurring template pattern (CRTP). This programming technique allowed a
@@ -624,11 +630,12 @@ review once more this design to improve the design in order to achieve genericit
 the birth of a new library, Pylene~\parencite{carlinet.2018.pylena}. In the end, it was C++20~\parencite{iso.2011.cpp}
 that marked the shift wanted by
 Stepanov~\parencite{musser.1988.generic,musser.1994.algorithm,dehnert.1998.fundamentals,stepanov.2009.elements} and
-Stroustrup~\cref{stroustrup.1995.design,stroustrup.1999.hot,stroustrup.2003.concepts,stroustrup.2007.hopl} for years
-with the coming of Concepts, and all the new possibilities it brings to the programmer.
+Stroustrup~\parencite{stroustrup.1995.design,stroustrup.1999.hot,stroustrup.2003.concepts,stroustrup.2007.hopl} for
+years with the coming of Concepts, and all the new possibilities it brings to the programmer.
 
 
 \section{Genericity in post C++11 (C++20 and Concepts)}
+\label{genericity.sec.language.postcpp11}
 
 \begin{figure}[tbh]
   \centering
@@ -657,13 +664,14 @@ collection (l.4~\ref{fig.gen.fill}). Finally, we need to be able to write a valu
 (l.5~\ref{fig.gen.fill}). This requires the collection not to be read-only, or the collection's values not to be yielded
 on-the-fly. This allows us to deduce what is called a \emph{concept}: a breakdown of all the requirement about the
 behavior of our collection. When writing down what a \emph{concept} should require, one should always respect this rule:
-"It is not the types that define the concepts: it is the algorithms". Concepts in C++ are not new and there have been a
-long work to introduce them that goes back from
+\blockquote{\emph{It is not the types that define the concepts: it is the algorithms}}. Concepts in C++ are not new and
+there have been a long work to introduce them that goes back from
 2003~\parencite{seymour.2009.concepts,stroustrup.2003.concepts,sutton.2017.concepts} to finally appear in the 2020
 standard~\cite{voutilainen.2017.concepts} (referred as C++20~\parencite{iso.2011.cpp}). This allows us, as of today, to
 write code leveraging this facility.
 
 \subsection{Conceptification}
+\label{genericity.postcpp11.subsec.conceptification}
 
 C++ is a multi-paradigm language that enables the developer to write code that can be \emph{object oriented},
 \emph{procedural}, \emph{functional} and \emph{generic}. However, there were limitations that were mostly due to the
@@ -772,6 +780,7 @@ algorithms from the way the data structures are designed. One wan always wrap a 
 behave properly into an algorithm, without needing to rewrite that algorithm.
 
 \subsection{Simplifying code}
+\label{genericity.postcpp11.subsec.simplifying}
 
 The main advantage brought by using modern C++ as the implementation language for an image processing library is to be
 able to leverage what is called metaprogramming. Metaprogramming is a way to tell the compiler to make decision about
@@ -802,7 +811,7 @@ resulting code then becomes:
 \end{minted}
 
 There are other ways to achieve the same result with different language constructs in C++. There are two "legacy"
-language construct which are tag dispatching (or overload) and SFINAE. With the release of C++17 came a new language
+language constructs which are tag dispatching (or overload) and SFINAE. With the release of C++17 came a new language
 construct presented above: if-constexpr. Finally, with C++20, it will be possible to use concepts to achieve the same
 result. To achieve the same result as above with tag dispatching, one would need to write the following code:
 
@@ -897,6 +906,7 @@ A best-match mechanic operates under the hood to select the function overload wh
 possible.
 
 \subsection{Benchmarks}
+\label{genericity.postcpp11.subsec.benchmarks}
 
 \FIXME{TODO: clean figures (titres, gradution, 2 par 2, labèles \& axes)}
 
@@ -965,6 +975,7 @@ needs to be addressed in future versions of both Gcc and Clang.
 
 
 \section{C++ templates in a dynamic world}
+\label{genericity.sec.template.dynworld}
 
 There are two main categories of programming languages. First are the \emph{compiled} programming languages which
 requires to feed the source code to a program (a compiler) that will output a binary. This binary will then produce the
@@ -1046,4 +1057,3 @@ also directly interpret C++ code from Python code thanks to being base on LLVM/C
 Finally, Xeus-cling is a Jupyter~\parencite{kluyver.2016.jupyter} kernel allowing to directly interpret C++ into a
 Jupyter notebook. Like Cppyy, it is based on LLVM/Cling. Those three projects are very promising and improve greatly the
 scope of possibilities for the future.
-

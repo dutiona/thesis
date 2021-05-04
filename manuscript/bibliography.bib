@@ -1809,9 +1809,6 @@
   publisher = {CRC Press}
 }
 
-# https://peerj.com/articles/cs-149.pdf
-# https://hal.inria.fr/hal-01756458/document
-
 @article{fernique.2018.autowig,
   title     = {AutoWIG: automatic generation of python bindings for C++ libraries},
   author    = {Fernique, Pierre and Pradal, Christophe},
@@ -1819,7 +1816,8 @@
   volume    = {4},
   pages     = {e149},
   year      = {2018},
-  publisher = {PeerJ Inc.}
+  publisher = {PeerJ Inc.},
+  url       = {https://peerj.com/articles/cs-149.pdf}
 }
 
 @misc{opencv.bg_sub,
@@ -2097,7 +2095,7 @@
   number   = {2},
   pages    = {31-39},
   keywords = {Cython language; Fortran code; Python language extension; numerical loops; programming language;
-  Clanguage; numerical analysis},
+             Clanguage; numerical analysis},
   doi      = {10.1109/MCSE.2010.118},
   issn     = {1521-9615}
 }
@@ -2130,4 +2128,42 @@
   doi       = {10.1088/1742-6596/396/5/052071},
   url       = {https://iopscience.iop.org/article/10.1088/1742-6596/396/5/052071/pdf},
   publisher = {{IOP} Publishing}
+}
+
+@article{dean.2008.mapreduce,
+  author     = {Dean, Jeffrey and Ghemawat, Sanjay},
+  title      = {MapReduce: Simplified Data Processing on Large Clusters},
+  year       = {2008},
+  issue_date = {January 2008},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {51},
+  number     = {1},
+  issn       = {0001-0782},
+  url        = {https://doi.org/10.1145/1327452.1327492},
+  doi        = {10.1145/1327452.1327492},
+  abstract   = {MapReduce is a programming model and an associated implementation for processing and generating large
+                datasets that is amenable to a broad variety of real-world tasks. Users specify the computation in terms
+                of a map and a reduce function, and the underlying runtime system automatically parallelizes the
+                computation across large-scale clusters of machines, handles machine failures, and schedules
+                inter-machine communication to make efficient use of the network and disks. Programmers find the system
+                easy to use: more than ten thousand distinct MapReduce programs have been implemented internally at
+                Google over the past four years, and an average of one hundred thousand MapReduce jobs are executed on
+                Google's clusters every day, processing a total of more than twenty petabytes of data per day.},
+  journal    = {Commun. ACM},
+  month      = {01},
+  pages      = {107–113},
+  numpages   = {7}
+}
+
+@misc{dean.2019.monoids,
+  author    = {Ben Dean},
+  title     = {Identifying Monoids: Exploiting Compositional Structure in Code},
+  url       = {https://cppnow2019.sched.com/event/b60160aa659270370279c5acb6196fb6},
+  month     = {06},
+  year      = {2019},
+  publisher = {{C++Now} 2019},
+  note      = {Slides available at
+                  \url{https://github.com/boostcon/cppnow_presentations_2019/blob/master/05-09-2019_thursday/Identifying_Monoids_Exploiting_Compositional_Structure_in_Code__Ben_Deane_cppnow_05092019.pdf},
+                  Talk available on youtube at \url{https://youtu.be/INnattuluiM}}
 }
