@@ -47,8 +47,9 @@ concept Point =
 
 \begin{minted}{c++}
 // Pixel
-template <class Pix> concept Pixel =
-std::is_base_of_v<mln::details::Pixel<Pix>, Pix> &&
+template <class Pix>
+concept Pixel =
+  std::is_base_of_v<mln::details::Pixel<Pix>, Pix> &&
   std::copy_constructible<Pix> &&
   std::move_constructible<Pix> &&
   requires {
@@ -402,6 +403,9 @@ namespace detail
     requires(I ima, image_point_t<I> p, image_value_t<I> v) {
       { ima(p) = v };
       { ima.at(p) = v };
+
+      requires OutputPixel<decltype(ima.pixel(p))>;
+      requires OutputPixel<decltype(ima.pixel_at(p))>;
     };
 } // namespace detail
 
@@ -464,7 +468,6 @@ namespace detail
   // WritableRawImage
   template <typename I>
   concept WritableRawImage =
-    WritableImage<I> &&
     WritableIndexableAndAccessibleImage<I> &&
     WritableBidirectionalImage<I> &&
     RawImage<I> &&
@@ -479,7 +482,7 @@ namespace detail
 // Usage: RawImage<I> && OutputImage<I>
 template <typename I>
 concept OutputImage =
-  (not ForwardImage<I> || (detail::WritableImage<I>)) &&
+  (not Image<I> || (detail::WritableImage<I>)) &&
   (not IndexableImage<I> || (detail::WritableIndexableImage<I>)) &&
   (not AccessibleImage<I> || (detail::WritableAccessibleImage<I>)) &&
   (not IndexableAndAccessibleImage<I> ||
@@ -555,7 +558,7 @@ concept ViewImage =
   concept MirrorableExtension =
     Extension<Ext, Pnt> &&
     std::convertible_to<typename Ext::support_mirror, std::true_type> &&
-    requires (Ext ext, const Ext cext, std::size_t padding) {
+    requires (Ext ext, const Ext cext) {
       { ext.mirror() };
       { cext.is_mirror_supported() }  -> std::same_as<bool>;
     };
