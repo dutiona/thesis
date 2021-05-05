@@ -926,8 +926,8 @@ code is as fast as a non-generic handwritten dilation.
       contained in the pixel.                                                                                   \\ Cannot be constant or reference.}       & Models
       the concept \texttt{Value}.                                                                               \\
       \multicolumn{1}{c|}{}                       & \texttt{reference\_type} & \makecell[l]{Type used to
-      mutate the pixel's value.                                                                                 \\ Can be a proxy.}       & Models the concept
-      \texttt{Pixel}                                                                                            \\
+      mutate the pixel's value                                                                                  \\ if non-const. Can be a proxy.}       & \makecell[l]{Models the concept \\
+      \texttt{std::indirectly\_writable} if non-const.}                                                         \\
       \multicolumn{1}{c|}{}                       & \texttt{point\_type}     & Type of the pixel's point.     &
       Models the concept \texttt{Point}                                                                         \\
       \cline{1-4}
@@ -1000,8 +1000,8 @@ code is as fast as a non-generic handwritten dilation.
       \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}} & \texttt{value\_type}     & \makecell[l]{Type of the value contained
       in the range.                                                                                                         \\ Cannot be constant or reference.} &  Models the concept \texttt{Value}. \\
       \multicolumn{1}{c|}{}                         & \texttt{reference\_type} & \makecell[l]{Type used to mutate the
-      pixel's value.                                                                                                        \\ Can be a proxy.}    & Models the concept
-      \texttt{std::indirectly\_writable}                                                                                    \\
+      pixel's value                                                                                                         \\if non-const.                                                                                            Can be a proxy.}    & \makecell[l]{Models the concept \\
+      \texttt{std::indirectly\_writable} if non-const.}                                                                     \\
       \cline{1-4}
     \end{tabular}
 
@@ -1133,11 +1133,11 @@ code is as fast as a non-generic handwritten dilation.
     \begin{tabular}{llll}
       \cline{1-4}
       \thead{Concept}                                          & \thead{Definition}    & \thead{Description}                           &
-      \thead{Requirement}                                                                                                                                                                         \\
+      \thead{Requirement}                                                                                                                                                                                   \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{StructuringElement}} & \texttt{incremental}  & \multirow{3}{*}{\texttt{std::bool\_constant}} & \multirow{3}{*}{\makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}} \\
-      \multicolumn{1}{c|}{}                                    & \texttt{decomposable} &                                               &                                                          \\
-      \multicolumn{1}{c|}{}                                    & \texttt{separable}    &                                               &                                                          \\
+      \multicolumn{1}{c|}{\multirow{3}{*}{StructuringElement}} & \texttt{incremental}  & \multirow{3}{*}{\texttt{std::bool\_constant}} & \multirow{3}{*}{\makecell[l]{\texttt{std::true\_type} if supported \\ \texttt{std::false\_false} otherwise.}} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{decomposable} &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                                    & \texttt{separable}    &                                               &                                                                    \\
       \cline{1-4}
     \end{tabular}
     \smallskip
@@ -1196,17 +1196,17 @@ code is as fast as a non-generic handwritten dilation.
       \makecell[l]{\texttt{Pixel<std::ranges::range\_value\_t<}
       \\ \texttt{decltype(se(pix))> >}}                          &                                           & \makecell[l]{Is a range of compatible \\pixel type}                                                                                                                                                                \\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Decomposable                                                                                                                                           \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}\\
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Decomposable                                                                                                                                           \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if supported\\ \texttt{std::false\_false} otherwise.}\\
       \multicolumn{1}{c|}{}                                     & \texttt{dse.decompose()}                              & \texttt{std::forward\_range}              & \makecell[l]{Return a range that yeilds \\ simpler structuring elements.}\\
       \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{StructuringElement<}                                                                                                   \\ \texttt{std::ranges::range\_value\_t<} \\ \texttt{decltype(dse.decompose())> >}}                            & \texttt{std::true\_type} & \makecell[l]{Is a range of compatible \\structuring elements types.}\\
       \multicolumn{1}{c|}{}                                     & \texttt{dse.is\_decomposable()}                       & \texttt{bool}                             & \makecell[l]{Wether the decompose       \\ facility is supported}\\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Separable                                                                                                                                              \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}\\
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Separable                                                                                                                                              \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if supported\\ \texttt{std::false\_false} otherwise.}\\
       \multicolumn{1}{c|}{}                                     & \texttt{sse.separate()}                               & \texttt{std::forward\_range}              & \makecell[l]{Return a range that yeilds \\ simpler structuring elements.}\\
       \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{StructuringElement<}                                                                                                   \\ \texttt{std::ranges::range\_value\_t<} \\ \texttt{decltype(sse.separate())> >}}                            & \texttt{std::true\_type} & \makecell[l]{Is a range of compatible \\structuring elements types.}\\
       \multicolumn{1}{c|}{}                                     & \texttt{sse.is\_separable()}                          & \texttt{bool}                             & \makecell[l]{Wether the separate        \\ facility is supported}\\
       \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Incremental                                                                                                                                            \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}\\
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Incremental                                                                                                                                            \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if supported\\ \texttt{std::false\_false} otherwise.}\\
       \multicolumn{1}{c|}{}                                     & \texttt{ise.inc()}                                    & \makecell[l]{\texttt{StructuringElement<}                                           \\\texttt{SE, Pnt>}} & \makecell[l]{Return the next            \\ simpler structuring elements.}\\
       \multicolumn{1}{c|}{}                                     & \texttt{ise.dec()}                                    & \makecell[l]{\texttt{StructuringElement<}                                           \\\texttt{SE, Pnt>}} & \makecell[l]{Return the previous        \\ simpler structuring elements.}\\
       \multicolumn{1}{c|}{}                                     & \texttt{ise.is\_incremental()}                        & \texttt{bool}                             & \makecell[l]{Wether the incremental     \\ facility is supported}\\
@@ -1259,7 +1259,7 @@ code is as fast as a non-generic handwritten dilation.
       \multicolumn{1}{c|}{}                              & \texttt{se.after(pnt)}                      &                                               & Return a range that yields the points after \texttt{pnt}.  \\
       \multicolumn{1}{c|}{}                              & \texttt{se.before(pix)}                     &                                               & Return a range that yields the pixels before \texttt{pix}. \\
       \multicolumn{1}{c|}{}                              & \texttt{se.after(pix)}                      &                                               & Return a range that yields the pixels after \texttt{pnt}.  \\
-      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.before(pnt))>, Pnt>}} & \multirow{4}{*}{\texttt{std::true\_type}}     & \multirow{2}{*}{Ranges that converts to compatible element types.} \\
+      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.before(pnt))>, Pnt>}} & \multirow{4}{*}{\texttt{std::true\_type}}     & \multirow{2}{*}{Ranges converts to compatible element types.} \\
       \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.after(pnt))>, Pnt>}}  &                                               &                                                                    \\
       \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{Pixel<}                                                                                                                             \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.before(pix))>, Pix>}}                 &                                               & \multirow{2}{*}{Ranges that are of compatible element types.}      \\
       \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{Pixel<}                                                                                                                             \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.after(pix))>, Pix>}}                  &                                               &                                                                    \\
@@ -1275,6 +1275,140 @@ code is as fast as a non-generic handwritten dilation.
 \subsection{Image}
 \label{image_and_algorithms_taxonomy.concepts.subsec.image}
 
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}            & \thead{Modeling type} & \thead{Inherit behavior from}                  & \thead{Instance of type} \\
+      \cline{1-4}
+      \makecell[l]{Image (InputImage,                                                                                                \\ ForwardImage)}    & \texttt{Img}          & $\emptyset$                                                                  & \texttt{img}             \\
+      WritableImage              & \texttt{WImg}         & Image                                          & \texttt{wimg}            \\
+      IndexableImage             & \texttt{IdxImg}       & Image                                          & \texttt{idximg}          \\
+      WritableIndexableImage     & \texttt{WIdxImg}      & IndexableImage, WritableImage                  & \texttt{widximg}         \\
+      AccessibleImage            & \texttt{AccImg}       & Image                                          & \texttt{accimg}          \\
+      WritableAccessibleImage    & \texttt{WAccImg}      & AccessibleImage, WritableImage                 & \texttt{waccimg}         \\
+      \makecell[l]{IndexableAnd                                                                                                      \\ AccessibleImage}         & \texttt{IdxAccImg}    & IndexableImage, AccessibleImage                                              & \texttt{idxaccimg}       \\
+      \makecell[l]{ WritableIndexable                                                                                                \\ AndAccessibleImage} & \texttt{WIdxAccImg}   & \makecell[l]{IndexableAndAccessibleImage, \\ WritableIndexableImage, \\WritableAccessibleImage} & \texttt{widxaccimg}      \\
+      BidirectionalImage         & \texttt{BidirImg}     & Image                                          & \texttt{bidirimg}        \\
+      WritableBidirectionalImage & \texttt{WBidirImg}    & BidirectionalImage, WritableImage              & \texttt{wbidirimg}       \\
+      RawImage                   & \texttt{RawImg}       & \makecell[l]{IndexableAndAccessibleImage,                                 \\BidirectionalImage}                              & \texttt{rawimg}          \\
+      WritableRawImage           & \texttt{WRawImg}      & \makecell[l]{RawImage, WritableIndexableImage,                            \\WritableBidirectionalImage}                 & \texttt{wrawimg}         \\
+      WithExtensionImage         & \texttt{WExtImg}      & Image                                          & \texttt{wextimg}         \\
+      ConcreteImage              & \texttt{CImg}         & Image                                          & \texttt{cimg}            \\
+      ViewImage                  & \texttt{VImg}         & Image                                          & \texttt{vimg}            \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    The helper concept OutputImage is defined as a conjunction of implications as follow:
+    \begin{equation}
+      \begin{aligned}
+        OutputImage ={} & (Image \implies WritableImage) \wedge                                             \\
+                        & (IndexableImage \implies WritableIndexableImage) \wedge                           \\
+                        & (AccessibleImage \implies WritableAccessibleImage) \wedge                         \\
+                        & (IndexableAndAccessibleImage \implies WritableIndexableAndAccessibleImage) \wedge \\
+                        & (BidirectionalImage \implies WritableBidirectionalImage) \wedge                   \\
+                        & (RawImage \implies WritableRawImage)
+      \end{aligned}
+    \end{equation}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                              & \thead{Definition}          & \thead{Description}                            & \thead{Requirement}                                                 \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{11}{*}{Image}} & \texttt{pixel\_type}        & Type of the image's pixel.                     & Models the concept \texttt{Pixel}.                                  \\
+      \multicolumn{1}{c|}{}                        & \texttt{point\_type}        & Type of the image's point.                     & Models the concept \texttt{Point}.                                  \\
+      \multicolumn{1}{c|}{}                        & \texttt{value\_type}        & \makecell[l]{Type of the image's value.                                                                              \\ Cannot be constant or reference} & Models the concept \texttt{Value}. \\
+      \multicolumn{1}{c|}{}                        & \texttt{domain\_type}       & Type of the image's domain.                    & Models the concept \texttt{Domain}.                                 \\
+      \multicolumn{1}{c|}{}                        & \texttt{reference}          & \makecell[l]{Type used to mutate an image                                                                            \\ pixel's value if non-const} & \makecell[l]{Models the concept \\ \texttt{std::indirectly\_writable} \\ if non-const.}                                   \\
+      \multicolumn{1}{c|}{}                        & \texttt{concrete\_type}     & Image concrete type (that holds data).         & Models the concept \texttt{Image}.                                  \\
+      \multicolumn{1}{c|}{}                        & \texttt{ch\_value\_type<V>} & \makecell{Facility to return a new image type.                                                                       \\ that casts the underlying \texttt{value\_type} \\into \texttt{V}} & Models the concept \texttt{Image}. \\
+      \multicolumn{1}{c|}{}                        & \texttt{indexable}          & \multirow{3}{*}{\texttt{std::bool\_constant}}  & \multirow{2}{*}{\makecell[l]{\texttt{std::true\_type} if supported, \\ \texttt{std::false\_false} otherwise.}} \\
+      \multicolumn{1}{c|}{}                        & \texttt{accessible}         &                                                &                                                                     \\
+      \multicolumn{1}{c|}{}                        & \texttt{view}               &                                                & \makecell[l]{\texttt{std::true\_type} if it is a view,              \\ \texttt{std::false\_false} otherwise.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{IndexableImage}          & \texttt{index\_type}        & Type of the image's buffer index.              & Models the concept \texttt{Index}.                                  \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{WithExtensionImage}      & \texttt{extension\_type}    & Type of the image's extension.                 & Models the concept \texttt{Extension}.                              \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: definitions}
+    \label{concept.tables.image.definitions}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{lll}
+      \cline{1-2}
+      \thead{Type}                 & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{Img::point\_type}    & \texttt{pnt}             \\
+      \texttt{Img::value\_type}    & \texttt{val}             \\
+      \texttt{Img::pixel\_type}    & \texttt{pix}             \\
+      \texttt{WImg::pixel\_type}   & \texttt{opix}            \\
+      \texttt{WImg::pixel\_type}   & \texttt{oval}            \\
+      \texttt{IdxImg::index\_type} & \texttt{k}               \\
+      \texttt{int}                 & \texttt{dim}             \\
+      \cline{1-2}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                          & \thead{Expression}                          & \thead{Return Type}                         &
+      \thead{Description}                                                                                                                                                                                        \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{7}{*}{Image}}              & \texttt{img.concretize()}                   & \makecell[l]{\texttt{std::convertible\_to<}                                                       \\\texttt{concrete\_type>}} & \makecell[l]{Return a concrete image \\ that holds data.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{img.ch\_value<V>()}                 & \makecell[l]{\texttt{std::convertible\_to<}                                                       \\\texttt{ch\_value\_type<V> >}} & \makecell[l]{Return an image whose values \\ are casted to \texttt{V}.}  \\
+      \multicolumn{1}{c|}{}                                    & \texttt{img.domain()}                       & \makecell[l]{\texttt{std::convertible\_to<}                                                       \\\texttt{domain\_type>}} & Return the image's domain.  \\
+      \multicolumn{1}{c|}{}                                    & \texttt{img.pixels()}                       & \multirow{2}{*}{\texttt{MDRange}}           & \makecell[l]{Return a range that yields             \\ all the image pixels.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{img.values()}                       &                                             & \makecell[l]{Return a range that yields             \\ all the image values.} \\
+      \multicolumn{1}{c|}{}                                    & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                     \\\texttt{std::ranges::ranges\_value\_t<} \\\texttt{decltype(img.pixels())>, pixel\_type>}} & \multirow{2}{*}{\texttt{std::true\_type}}     & \multirow{2}{*}{\makecell[l]{Ranges converts to compatible\\ element types.}} \\
+      \multicolumn{1}{c|}{}                                    & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                     \\\texttt{std::ranges::ranges\_value\_t<} \\\texttt{decltype(img.points())>, pixel\_type>}} &      &  \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{WritableImage}}      & \texttt{wimg.values()}                      & \texttt{OutputMDRange}                      & \makecell[l]{Return a range that yields all         \\ the image values (mutable).} \\
+      \multicolumn{1}{c|}{}                                    & \makecell[l]{\texttt{OutputPixel<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<} \\\texttt{decltype(wimg.pixels())> >}} & \texttt{std::true\_type}     & \multirow{2}{*}{Ranges whose elements are mutable.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{IndexableImage}                      & \texttt{idximg.[k]}                         & \texttt{std::same\_as<reference>}           & \makecell[l]{Access a value at a given index.}      \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\makecell[l]{Writable                                                                                                                                                                  \\IndexableImage}} & \texttt{widximg.[k] = val}                            & \texttt{void}                      & \makecell[l]{Mutate a value at a given index.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{AccessibleImage}}    & \texttt{accimg(pnt)}                        & \texttt{std::same\_as<reference>}           & \makecell[l]{Access a value for a given point.}     \\
+      \multicolumn{1}{c|}{}                                    & \texttt{accimg.at(pnt)}                     & \texttt{std::same\_as<reference>}           & \makecell[l]{Access a value for a given point.      \\ No bound checking.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{accimg.pixel(pnt)}                  & \texttt{std::same\_as<pixel\_type>}         & \makecell[l]{Access a pixel for a given point.}     \\
+      \multicolumn{1}{c|}{}                                    & \texttt{accimg.pixel\_at(pnt)}              & \texttt{std::same\_as<pixel\_type>}         & \makecell[l]{Access a pixel for a given point.      \\ No bound checking.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Writable                                                                                                                                                  \\AccessibleImage}}} & \texttt{img(pnt) = val}                            & \texttt{void}                      & \makecell[l]{Mutate a value at a given point.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{waccimg.at(pnt) = val}              & \texttt{void}                               & \makecell[l]{Mutate a value at a given point.       \\ No bound checking.} \\
+      \multicolumn{1}{c|}{}                                    & \makecell[l]{\texttt{OutputPixel<decltype(}                                                                                                     \\\texttt{waccimg.pixel(pnt))>}}                            & \texttt{std::true\_type}                      & \makecell[l]{The returned pixel \\ models \texttt{OutputPixel}.} \\
+      \multicolumn{1}{c|}{}                                    & \makecell[l]{\texttt{OutputPixel<decltype(}                                                                                                     \\\texttt{waccimg.pixel\_at(pnt))>}}                            & \texttt{std::true\_type}                      & \makecell[l]{The returned pixel \\ models \texttt{OutputPixel}. \\ No bound checking.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{3}{*}{\makecell[l]{IndexableAnd                                                                                                                                              \\AccessibleImage}}} & \texttt{img.point\_at\_index(k)}                            & \texttt{point\_type}                      & \makecell[l]{Get the point corresponding\\ to the given index.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{idxaccimg.index\_of\_point(pnt)}    & \texttt{index\_type}                        & \makecell[l]{Get the linear index (offset in        \\ the buffer) of multi-dimensional point.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{idxaccimg.delta\_index(pnt)}        & \texttt{index\_type}                        & \makecell[l]{Get the linear index offset            \\ for the given point.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{BidirectionalImage}} & \texttt{bidirimg.pixels()}                  & \multirow{2}{*}{\texttt{ReversibleMDRange}} & \makecell[l]{Return a reversible range that yields  \\ all the image pixels.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{bidirimg.values()}                  &                                             & \makecell[l]{Return a reversible range that yields  \\ all the image values.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{RawImage}}           & \texttt{rawimg.data()}                      & \makecell[l]{\texttt{std::convertible\_to<}                                                       \\\texttt{const value\_type*>}} & \makecell[l]{Get a constant pointer to \\ the first element of the domain.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{rawimg.stride(dim)}                 & \texttt{std::ptrdiff\_t}                    & \makecell[l]{Get the stride (in number of elements) \\ between two consecutive elements \\in the given dim.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{\makecell[l]{Writable                                                                                                                                                  \\RawImage}}}           & \texttt{img.data()}                         & \makecell[l]{\texttt{std::convertible\_to<}\\\texttt{value\_type*>}} & \makecell[l]{Get a pointer to the first\\ element of the domain.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{*(wrawimg.data() + k) = val}        & \texttt{void}                               & \makecell[l]{Access an element from the data        \\buffer at index \texttt{k} and mutate it \\ to \texttt{val}.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\makecell[l]{WithExtension                                                                                                                                                             \\Image}}           & \texttt{wextimg.extension()}                         & \makecell[l]{\texttt{std::convertible\_to<}\\\texttt{extension\_type>}} & \makecell[l]{Get the extension of the image.} \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: expressions}
+  \end{scriptsize}
+  \label{concept.tables.image.expressions}
+\end{table}
 
 \subsection{Extensions}
 \label{image_and_algorithms_taxonomy.concepts.subsec.ext}
@@ -1299,19 +1433,19 @@ code is as fast as a non-generic handwritten dilation.
     \begin{tabular}{llll}
       \cline{1-4}
       \thead{Concept}                                 & \thead{Definition}                     & \thead{Description}                           &
-      \thead{Requirement}                                                                                                                                                                                 \\
+      \thead{Requirement}                                                                                                                                                                                           \\
       \cline{1-4}
       \multicolumn{1}{c|}{\multirow{6}{*}{Extension}} & \texttt{value\_type}                   & \makecell[l]{Type of value
-      contained                                                                                                                                                                                           \\ in the range.                                                                                                                                                                             Cannot be \\ constant
-      or reference.}                                  & Models the concept \texttt{Value}.                                                                                                                \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_fill}                 & \multirow{5}{*}{\texttt{std::bool\_constant}} & \multirow{5}{*}{\makecell[l]{\texttt{std::true\_type} if \\ \texttt{std::false\_false} otherwise.}} \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_mirror}               &                                               &                                                          \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_periodize}            &                                               &                                                          \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_clamp}                &                                               &                                                          \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_extend\_with}         &                                               &                                                          \\
+      contained                                                                                                                                                                                                     \\ in the range.                                                                                                                                                                             Cannot be \\ constant
+      or reference.}                                  & Models the concept \texttt{Value}.                                                                                                                          \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_fill}                 & \multirow{5}{*}{\texttt{std::bool\_constant}} & \multirow{5}{*}{\makecell[l]{\texttt{std::true\_type} if supported \\ \texttt{std::false\_false} otherwise.}} \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_mirror}               &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_periodize}            &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_clamp}                &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_extend\_with}         &                                               &                                                                    \\
       \cline{1-4}
-      \multicolumn{1}{c|}{ExtendWithExtension}        & \texttt{point\_type}                   & \makecell[l]{Type of point in                                                                            \\ the
-      extended image.}                                & \makecell[l]{Converts to the sub-image                                                                                                            \\ points type.}                                                                                                            \\
+      \multicolumn{1}{c|}{ExtendWithExtension}        & \texttt{point\_type}                   & \makecell[l]{Type of point in                                                                                      \\ the
+      extended image.}                                & \makecell[l]{Converts to the sub-image                                                                                                                      \\ points type.}                                                                                                            \\
       \cline{1-4}
     \end{tabular}
   \end{scriptsize}
