@@ -1,5 +1,5 @@
 \chapter{Concepts \& archetypes}
-\label{appendix.concepts.and.archetypes}
+\label{appendix:concepts.and.archetypes}
 
 \subsection{Concepts}
 
@@ -376,7 +376,7 @@ namespace detail
     WritableImage<I> &&
     IndexableImage<I> &&
     requires(I ima, image_index_t<I> k, image_value_t<I> v) {
-      { ima[k] = v } -> std::same_as<image_reference_t<I>>;
+      { ima[k] = v }
     };
 } // namespace detail
 
@@ -471,9 +471,9 @@ namespace detail
     WritableIndexableAndAccessibleImage<I> &&
     WritableBidirectionalImage<I> &&
     RawImage<I> &&
-    requires(I ima, image_value_t<I> v) {
-      { ima.data() }        -> std::convertible_to<image_value_t<I>*>;
-      { *(ima.data()) = v };
+    requires(I ima, image_value_t<I> v, image_index_t<I> k) {
+      { ima.data() }        -> ::concepts::convertible_to<image_value_t<I>*>;
+      { *(ima.data() + k) = v };
     };
 } // namespace detail
 

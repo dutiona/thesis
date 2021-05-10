@@ -1,5 +1,5 @@
 \chapter{Genericity}
-\label{chap.genericity}
+\label{chap:genericity}
 
 In natural language we say that something is generic when it can fit several purpose at once while being decently
 efficient. For instance, a computer is generic tool that allows one to write documents, access emails, browse Internet,
@@ -32,7 +32,7 @@ native or emulated, etc.
 
 
 \section{Genericity within libraries}
-\label{genericity.sec.libraries}
+\label{sec:gen.within.libraries}
 
 Projecting the notion of genericity to Image Processing, we can deduce that we need two important aspects in order to be
 generic. First, we need to decorelate the data structures and its topology and underlying data from the algorithms.
@@ -45,7 +45,7 @@ argue that genericity is about how the code is written: generic enough to handle
 wrong. However, for the sake of comprehension we will use different words for each of these cases. A tool generic enough
 to handle a lot of use-case will be called \emph{versatile}. Finally, for a tool whose aim is to provide a programming
 framework to handle code of any use-case we will use \emph{generic}. In this paper, genericity will be about code. The
-figure~\ref{fig.type.vs.algo} illustrates this result of the same generic watershed implementation applied on an image
+figure~\ref{fig:type.vs.algo} illustrates this result of the same generic watershed implementation applied on an image
 2D, a graph as well as a mesh.
 
 \begin{figure}[tbh]
@@ -70,7 +70,7 @@ figure~\ref{fig.type.vs.algo} illustrates this result of the same generic waters
   \text{The same code run on all these input.}
 
   \caption{Watershed algorithm applied to three different image types.}
-  \label{fig.type.vs.algo}
+  \label{fig:type.vs.algo}
 \end{figure}
 
 In image processing, there are 3 main axes around which genericity is working. The first axis is about the data type:
@@ -78,7 +78,7 @@ grey level or RGB color (8-bits, 10-bits), decimal (double) and so on. The secon
 image: a contiguous buffer (2D or 3D), a graph, a look-up table and so on. Finally, the third axis is about additional
 data that can be fed to image processing algorithms: structuring element (disc, ball, square, cube), labels
 (classification), maps, border information and so on. In the end, an image is just a point within this space of
-possibilities, illustrated in~\ref{fig.gen.espaceSAV}. Nowadays, it is not reasonable to have specific code for every
+possibilities, illustrated in~\ref{fig:gen.espaceSAV}. Nowadays, it is not reasonable to have specific code for every
 existing possibility within this space. It is all the more true when one wants efficiency.
 
 \begin{figure}[tbh]
@@ -88,7 +88,7 @@ existing possibility within this space. It is all the more true when one wants e
   \subfloat[]{\includestandalone[width=1.7in]{figs/espaceSAV}}
   \caption{The space of possible implementation of the \emph{dilation(image, se)} routine. The image axis shown in (a)
     is in-fact multidimensional and should be considered 2D as in (b).}
-  \label{fig.gen.espaceSAV}
+  \label{fig:gen.espaceSAV}
 \end{figure}
 
 Genericity is not new and was first introduced in 1988 by Musser et al.~\cite{musser.1988.generic} in 1988. The main
@@ -109,10 +109,10 @@ proof of concept over the feasibility of having generic image processing operato
 near-native performances. Let us first explain briefly how we achieved this.
 
 \subsection{Different approaches to get genericity}
-\label{genericity.libraries.subsec.approaches}
+\label{subsec:different.approaches}
 
 First, let us consider the morphological \emph{dilation} that takes two inputs: an image and a flat structuring element
-(SE). Then the set of some possible inputs is depicted in~\ref{fig.gen.espaceSAV}. Without genericity, with $s$ the
+(SE). Then the set of some possible inputs is depicted in~\ref{fig:gen.espaceSAV}. Without genericity, with $s$ the
 number of image type, $v$ the number of value type and $k$ the number of structuring elements, one would have to write
 $s * v * k$ different \emph{dilation} routine.
 
@@ -127,7 +127,7 @@ Then, each time a new type is introduced, all the algorithm must be rewritten fo
 time a new algorithm is introduced, it must support all the existing types and thus be written multiple times. This
 approach does not scale well when the complexity of algorithms grows, and the number of data types increases. Neither it
 does allow the implementer to easily make use of optimization opportunities that can be offered by different data types
-having a common property. This translates into heavy switch/case statement in the code as show in~\ref{fig.gen.exhau}
+having a common property. This translates into heavy switch/case statement in the code as show in~\ref{code:gen.exhau}
 that illustrate how the \emph{fill} algorithm needs to dispatch according to the input data type.
 
 \begin{figure}[tbh]
@@ -153,7 +153,7 @@ that illustrate how the \emph{fill} algorithm needs to dispatch according to the
   }
   \end{minted}
   \caption{Fill algorithm skeleton with a switch/case dispatcher to ensure exhaustivity.}
-  \label{fig.gen.exhau}
+  \label{code:gen.exhau}
 \end{figure}
 
 In addition, it is important to note that the exhaustivity aspect is only illustrated regarding the data structure types
@@ -171,7 +171,7 @@ supertype, second process the supertype into the algorithm pipeline requested by
 resulting image into the specific image type the user is expecting. This approach offers the advantage of being
 maintainable. Adding a new image type is just a matter of providing the two conversions facilities: to and from the
 supertype. Adding an algorithm is also just a matter of writing it once for the supertype. This mechanism is shown
-in~\ref{fig.gen.generalized}. However, one must keep in mind that the conversion can be costly. Also, processing the
+in~\ref{code:gen.generalized}. However, one must keep in mind that the conversion can be costly. Also, processing the
 supertype may induce a significant performance trade-off while processing the original type would be much faster.
 Furthermore, it is not always possible to find this common denominator when enumerating through some esoteric data
 types. Finally, the provided interface (from the supertype) may allow the image to be used incorrectly, such as a $2D$
@@ -194,14 +194,14 @@ MegaWave~\cite{froment.2012.megawave}, that also use this approach however this 
   }
   \end{minted}
   \caption{Fill algorithm for a generalized supertype.}
-  \label{fig.gen.generalized}
+  \label{code:gen.generalized}
 \end{figure}
 
 \paragraph{Inclusion \& Parametric polymorphism approach} consists in extracting behavior patterns from algorithms to
 group them into logical brick called \emph{concepts} (for static parametric polymorphism), or \emph{interface} (for
 dynamic inclusion polymorphism). Each algorithm will require a set of behavior pattern that the inputs need to satisfy.
 In C++, it can be done either by using inclusion polymorphism, or by using parametric polymorphism, as shown
-in~\ref{fig.gen.inclupoly}. In~\cite{roynard.2019.rrpr}, the authors leverage a new C++20 feature (the concept) to show
+in~\ref{code:gen.inclupoly}. In~\cite{roynard.2019.rrpr}, the authors leverage a new C++20 feature (the concept) to show
 how it is possible to turn an algorithm, specific to an image type, into a more abstract, generic one that does not
 induce any performance loss.
 
@@ -223,7 +223,7 @@ induce any performance loss.
     \includegraphics[width=1.64in]{figs/parapoly_code}
   }
   \caption{Dynamic, object-oriented polymorphism (a) vs. static, parametric polymorphism (b).}
-  \label{fig.gen.inclupoly}
+  \label{code:gen.inclupoly}
 \end{figure}
 
 Multiple libraries exist and leverage this approach to try to achieve a high genericity degree as well as high
@@ -249,7 +249,7 @@ still need to have embed generic facilities. This paper address genericity at th
 architecture level, henceforth, we will not broach this topic in this paper.
 
 The table comparing all the pros. and cons. from the aforementioned approaches is presented
-in~\cref{table.gen.approaches}.
+in~\cref{table:gen.approaches}.
 
 \begin{table}[tbh]
   \centering
@@ -270,13 +270,13 @@ in~\cref{table.gen.approaches}.
       \item TC: type checking; CS: code simplicity; E: efficiency
       \item 1IA: one implementation per algorithm; EA: explicit abstractions / constrained genericity
     \end{tablenotes}
-    \label{table.gen.approaches}
+    \label{table:gen.approaches}
   \end{threeparttable}
 \end{table}
 
 
 \subsection{Unjustified limitations}
-\label{genericity.libraries.subsec.limitations}
+\label{subsec:limitations}
 
 Image processing community operates mostly with either Python or Matlab~\cite{etter.2002.introduction}. As such this
 paper will focus on those two technologies. Python offers access to two major libraries for image processing: OpenCV and
@@ -353,7 +353,7 @@ performance gap between the two libraries shows that performances may not a majo
 Opposite to this, OpenCV and scikit-image both have a C/C++ core to provide fast basic algorithms such as the dilation
 and erosion mathematical morphology.
 
-As such, when comparing the performances of OpenCV, Scikit-image and Pylene in~\cref{fig.gen.bench.square.disc}, we can
+As such, when comparing the performances of OpenCV, Scikit-image and Pylene in~\cref{fig:gen.bench.square.disc}, we can
 notice some interesting facts. Both scikit-image and Pylene have a very stable execution time even though the size of
 the structuring element grows by power of two. This corroborate the fact that the author did see code taking advantage
 of the structuring element's properties, such as the decomposability/separability. OpenCV has very good performances for
@@ -364,10 +364,10 @@ OpenCV decomposed its square into smaller sub square (and not periodic lines), i
   \centering
   \includegraphics[width=3.8in]{figs/bench_disc_rect_by_SE}
   \caption{Benchmark: dilation of a 2D image (3128x3128 \eqmark 10Mpix) with a 2D square and a 2D disc.}
-  \label{fig.gen.bench.square.disc}
+  \label{fig:gen.bench.square.disc}
 \end{figure}
 
-In the case of a structuring element shaped as a disc (also in~\cref{fig.gen.bench.square.disc}), we can observe that
+In the case of a structuring element shaped as a disc (also in~\cref{fig:gen.bench.square.disc}), we can observe that
 the execution time raises exponentially for both Scikit-image and OpenCV whereas Pylene remains regular and steady fast.
 These results show that Pylene's attempt to decompose each structuring element into periodic lines when possible may be
 a little bit slower for smaller structuring elements whereas it is much more regular and faster when the structuring
@@ -375,7 +375,7 @@ element start to be of a certain size.
 
 
 \section{Genericity in pre C++11}
-\label{genericity.sec.language.precpp11}
+\label{sec:precpp11}
 
 Before C++11~\parencite{iso.2011.cpp} came out the genericity facilities offered by the C++ programming language were
 already turing complete~\parencite{veldhuizen.2003.c++templates}. However, it was lacking a certain amount of features
@@ -387,7 +387,7 @@ generic programming which is to write \emph{less} Code. To compensate, library i
 to have to rewrite code which made the initial code even harder to understand for outsiders.
 
 \subsection{SFINAE: Substitution-Failure-Is-Not-An-Error}
-\label{genericity.language.precpp11.sebsec.sfinae}
+\label{subsec:sfinae}
 
 In spite of all those limitations at the time, generic programming was well supported by the language and allowed the
 programmer to already design generic libraries, in particular thanks to the SFINAE~\parencite{vandevoorde.2002.c++}
@@ -409,7 +409,7 @@ to situation where the compiler can output \emph{several Mos} of error message f
 becomes incomprehensible very fast and programs are hard to debug. But still, it was the only technique we had to
 perform detections on types at compile time and process some kind of contraints on them. For instance, a code that
 detects wether a class provide a subtype named \texttt{custom\_type} at that time is shown
-in~\cref{fig.gen.sfinae.nested}.
+in~\cref{code:gen.sfinae.nested}.
 
 \begin{figure}[tbh]
   \centering
@@ -467,11 +467,11 @@ in~\cref{fig.gen.sfinae.nested}.
     }
   \end{minted}
   \caption{C++0x SFINAE detection of nested sub-type.}
-  \label{fig.gen.sfinae.nested}
+  \label{code:gen.sfinae.nested}
 \end{figure}
 
 \subsection{CRTP: Curiously Recurring Template Pattern}
-\label{genericity.language.precpp11.sebsec.crtp}
+\label{subsec:crtp}
 
 Another features that precede C++11 and was available in C++98~\parencite{iso.1998.cpp} and
 C++03~\parencite{iso.2003.cpp} is the curiously recurring template pattern (CRTP). This programming technique allowed a
@@ -519,13 +519,13 @@ no ambiguities is detected by the compiler.
     }
   \end{minted}
   \caption{C++0x cloning example with covariant return type.}
-  \label{fig.gen.crtp.work}
+  \label{code:gen.crtp.work}
 \end{figure}
 
 For instance, a cloning facility with no smart pointers was implemented with covariant return type in the code shown
-in~\cref{fig.gen.crtp.work}. The obvious disadvantage was to have to deal with naked pointers, \texttt{new},
+in~\cref{code:gen.crtp.work}. The obvious disadvantage was to have to deal with naked pointers, \texttt{new},
 \texttt{delete} and all the consequences that comes with the manual memory handling. When the programmer wants to switch
-to an implementation that uses smart pointers, he would naively write the code shown in~\cref{fig.gen.crtp.dontwork}.
+to an implementation that uses smart pointers, he would naively write the code shown in~\cref{code:gen.crtp.dontwork}.
 
 \begin{figure}[tbh]
   \centering
@@ -563,11 +563,11 @@ to an implementation that uses smart pointers, he would naively write the code s
     }
   \end{minted}
   \caption{C++0x not-working cloning example with smart pointers.}
-  \label{fig.gen.crtp.dontwork}
+  \label{code:gen.crtp.dontwork}
 \end{figure}
 
 The solution is then found with the CRTP technique where we do all the creation inside the base class instead of forcing
-the derive class to implement its own cloning facility. The code in~\cref{fig.gen.crtp.final} shows how it is done. In
+the derive class to implement its own cloning facility. The code in~\cref{code:gen.crtp.final} shows how it is done. In
 order for the user not to have to write \texttt{AbstractClass<Devived>} in his code, we have adopted another abstraction
 layer to hide this implementation detail in the form of a intermediary class \texttt{Base} that hides the CRTP
 complexity.
@@ -613,7 +613,7 @@ complexity.
     }
   \end{minted}
   \caption{C++0x working cloning example with smart pointers.}
-  \label{fig.gen.crtp.final}
+  \label{code:gen.crtp.final}
 \end{figure}
 
 Thanks to these two techniques (SFINAE and CRTP), past work was done to achieve a design:
@@ -635,7 +635,7 @@ years with the coming of Concepts, and all the new possibilities it brings to th
 
 
 \section{Genericity in post C++11 (C++20 and Concepts)}
-\label{genericity.sec.language.postcpp11}
+\label{sec:postcpp11}
 
 \begin{figure}[tbh]
   \centering
@@ -649,19 +649,19 @@ years with the coming of Concepts, and all the new possibilities it brings to th
   \end{minted}
 
   \caption{Fill algorithm, generic implementation.}
-  \label{fig.gen.fill}
+  \label{code:gen.fill}
 \end{figure}
 
 Most of the algorithms are \emph{generic} by nature. What limits their genericity is the way they are implemented. This
 statement is justified by the work achieved in the Standard Template Library (STL)~\parencite{dehnert.1998.fundamentals}
 in C++ whose algorithms are implemented and designed in a way where they work with all the built-in collections (linked
 list, vector, etc.). Let us take the example of the algorithm \texttt{fill(Collection c, Value v)} which set the same
-value for all the element of a collection (see~\cref{fig.gen.fill}). There are three main requirements here that are not
-related to the underlying type of \emph{Collection}. First, we check (l.2~\ref{fig.gen.fill}) that we are actually
+value for all the element of a collection (see~\cref{code:gen.fill}). There are three main requirements here that are not
+related to the underlying type of \emph{Collection}. First, we check (l.2~\ref{code:gen.fill}) that we are actually
 filling the collection with the correct type of value. Indeed, it would not make sense, for instance, to assign an RGB
 triplet color into a pixel from a grayscale image. Secondly, we need to be able to iterate over all the element of the
-collection (l.4~\ref{fig.gen.fill}). Finally, we need to be able to write a value into the collection
-(l.5~\ref{fig.gen.fill}). This requires the collection not to be read-only, or the collection's values not to be yielded
+collection (l.4~\ref{code:gen.fill}). Finally, we need to be able to write a value into the collection
+(l.5~\ref{code:gen.fill}). This requires the collection not to be read-only, or the collection's values not to be yielded
 on-the-fly. This allows us to deduce what is called a \emph{concept}: a breakdown of all the requirement about the
 behavior of our collection. When writing down what a \emph{concept} should require, one should always respect this rule:
 \blockquote{\emph{It is not the types that define the concepts: it is the algorithms}}. Concepts in C++ are not new and
@@ -671,7 +671,7 @@ standard~\cite{voutilainen.2017.concepts} (referred as C++20~\parencite{iso.2011
 write code leveraging this facility.
 
 \subsection{Conceptification}
-\label{genericity.postcpp11.subsec.conceptification}
+\label{subsec:conceptification}
 
 C++ is a multi-paradigm language that enables the developer to write code that can be \emph{object oriented},
 \emph{procedural}, \emph{functional} and \emph{generic}. However, there were limitations that were mostly due to the
@@ -707,7 +707,7 @@ Image processing algorithms, similarly, are \emph{generic} by
 nature~\cite{ritter.1990.cvgi,geraud.2000.icpr,darbon.2002.ismm,levillain.2010.icip,levillain.2014.ciarp}. When writing
 an image processing algorithm, there is always a way to express it with a high level of genericity. For instance, if is
 possible to write a morphological dilation in a way that does not care about the underlying value type, the domain nor
-the structuring element specificities. The most abstract way to write a dilation is shown in~\ref{fig.gen.dilate}.
+the structuring element specificities. The most abstract way to write a dilation is shown in~\ref{code:gen.dilate}.
 
 \begin{figure}[tbh]
   \centering
@@ -724,7 +724,7 @@ the structuring element specificities. The most abstract way to write a dilation
   }
   \end{minted}
   \caption{Dilation algorithm, generic implementation.}
-  \label{fig.gen.dilate}
+  \label{code:gen.dilate}
 \end{figure}
 
 This implementation introduces three concepts at line 1: \emph{Image}, \emph{WritableImage} and
@@ -732,8 +732,8 @@ This implementation introduces three concepts at line 1: \emph{Image}, \emph{Wri
 requirements for each one of them.
 
 \paragraph{Image} is the most basic representation of what an image should be. An image should (a) provide a way to
-access its domain (l.3~\ref{fig.gen.dilate}) and (b) a way to iterate over its points (l.4~\ref{fig.gen.dilate}). This
-then allows us later to (c) access to the value returned by the image at this point (l.5~\ref{fig.gen.dilate}). To this
+access its domain (l.3~\ref{code:gen.dilate}) and (b) a way to iterate over its points (l.4~\ref{code:gen.dilate}). This
+then allows us later to (c) access to the value returned by the image at this point (l.5~\ref{code:gen.dilate}). To this
 point the value is only accessed in read-only. We can then write the following two concepts:
 \begin{minted}{C++}
   template <typename I>
@@ -754,7 +754,7 @@ omitted here.
 
 \paragraph{WritableImage} is a more specific concept based on the previous \emph{Image} concept. It requires that the
 image's value can be (d) accessed to be modified: the user should be able to write into the image's value accessed by a
-specific point (l.6~\ref{fig.gen.dilate}). We can then write the following two concepts:
+specific point (l.6~\ref{code:gen.dilate}). We can then write the following two concepts:
 \begin{minted}{C++}
   template <typename WI>
   concept WritableImage = Image<WI>
@@ -780,7 +780,7 @@ algorithms from the way the data structures are designed. One wan always wrap a 
 behave properly into an algorithm, without needing to rewrite that algorithm.
 
 \subsection{Simplifying code}
-\label{genericity.postcpp11.subsec.simplifying}
+\label{subsec:simplifying}
 
 The main advantage brought by using modern C++ as the implementation language for an image processing library is to be
 able to leverage what is called metaprogramming. Metaprogramming is a way to tell the compiler to make decision about
@@ -789,7 +789,7 @@ only the fast and optimised code remains. This bring a new distinction between t
 compile time) and the dynamic world (what is decided at runtime). The more is decided at compile time the smaller,
 faster the binary will because there is work less to do at runtime. By following this principle, one can think of some
 properties that are known ahead of time (at compilation) when writing one's image processing algorithm. For instance,
-when considering the example of the dilation whose code is shown in~\ref{fig.decomp.dilate}, we can see that the
+when considering the example of the dilation whose code is shown in~\ref{code:decomp.dilate}, we can see that the
 property about the decomposability if the structuring element is linked to the type. This means that when the
 structuring element's type is of a disc, or a square, the compiler will know at compile time that it is decomposable. To
 tell the compiler to take advantage of a property at compile time, C++ has a language construct named if-constexpr. The
@@ -906,76 +906,76 @@ A best-match mechanic operates under the hood to select the function overload wh
 possible.
 
 \subsection{Benchmarks}
-\label{genericity.postcpp11.subsec.benchmarks}
+\label{subsec:benchmarks}
 
 \FIXME{TODO: clean figures (titres, gradution, 2 par 2, labèles \& axes)}
 
 In order to get a real feeling on how fast would the compile time of programs would be impacted, we wanted to do
 benchmarks. The aim is to mesure how much faster concepts will be in production code. To do so we used
 Metabench~\parencite{dionne.2021.metabench}, a benchmarking facility to benchmark compilation time of C++ programs. We
-wrote programs (given in~\cref{appendix.benchmark_compilation_time}) to benchmark compilation time with three compilers
+wrote programs (given in~\cref{appendix:benchmark.compilation.time}) to benchmark compilation time with three compilers
 Gcc-10, Clang-10 and Clang-11.
 
-For Gcc-10, we can see the results in~\cref{fig.gen.bench.gcc10.1.concept.sfinae}. Those results show that the concept
+For Gcc-10, we can see the results in~\cref{fig:gen.bench.gcc10.1.concept.sfinae}. Those results show that the concept
 implementation is still very much slower than the SFINAE implementation. However, we were able to pinpoint the slowness
 of this implementation which is the implementation of the library trait \texttt{std::movable}. Indeed, when lightening
 this trait into some builtin intrinsic (that are almost equivalent), we can see the curve \emph{concept\_fast}
-in~\cref{fig.gen.bench.gcc10.2.concept.sfinae} being faster than the SFINAE implementation.
+in~\cref{fig:gen.bench.gcc10.2.concept.sfinae} being faster than the SFINAE implementation.
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=4.2in]{figs/compile_time_benches/gcc10/chart.concept.png}
   \caption{Benchmark GCC-10: Benchmarking compilation speed of template instanciation constrained by Concepts (vanilla) vs. Concepts (improved) vs. SFINAE.}
-  \label{fig.gen.bench.gcc10.1.concept.sfinae}
+  \label{fig:gen.bench.gcc10.1.concept.sfinae}
 \end{figure}
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=4.2in]{figs/compile_time_benches/gcc10/chart.concept2.png}
   \caption{Benchmark GCC-10: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
-  \label{fig.gen.bench.gcc10.2.concept.sfinae}
+  \label{fig:gen.bench.gcc10.2.concept.sfinae}
 \end{figure}
 
 For Clang-10, the concept implementation is globally slower than the SFINAE implementation (seen
-in~\cref{fig.gen.bench.clang10.1.concept.sfinae}). Even not using the slow \texttt{std::movable} library trait does not
-do the trick as seen in~\cref{fig.gen.bench.clang10.2.concept.sfinae}
+in~\cref{fig:gen.bench.clang10.1.concept.sfinae}). Even not using the slow \texttt{std::movable} library trait does not
+do the trick as seen in~\cref{fig:gen.bench.clang10.2.concept.sfinae}
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=4.2in]{figs/compile_time_benches/clang10/chart.concept.png}
   \caption{Benchmark Clang-10: Benchmarking compilation speed of template instanciation constrained by Concepts (vanilla) vs. Concepts (improved) vs. SFINAE.}
-  \label{fig.gen.bench.clang10.1.concept.sfinae}
+  \label{fig:gen.bench.clang10.1.concept.sfinae}
 \end{figure}
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=4.2in]{figs/compile_time_benches/clang10/chart.concept2.png}
   \caption{Benchmark Clang-10: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
-  \label{fig.gen.bench.clang10.2.concept.sfinae}
+  \label{fig:gen.bench.clang10.2.concept.sfinae}
 \end{figure}
 
 Finally, for Clang-11, we can see that the builtin implementation of concepts has improved very much from its previous
-version (see~\cref{fig.gen.bench.clang11.1.concept.sfinae}). However, we see that the library trait
-\texttt{std::movable} is still the source of a massive slowness (see~\cref{fig.gen.bench.clang11.2.concept.sfinae}) that
+version (see~\cref{fig:gen.bench.clang11.1.concept.sfinae}). However, we see that the library trait
+\texttt{std::movable} is still the source of a massive slowness (see~\cref{fig:gen.bench.clang11.2.concept.sfinae}) that
 needs to be addressed in future versions of both Gcc and Clang.
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=4.2in]{figs/compile_time_benches/clang11/chart.concept.png}
   \caption{Benchmark Clang-11: Benchmarking compilation speed of template instanciation constrained by Concepts (vanilla) vs. Concepts (improved) vs. SFINAE.}
-  \label{fig.gen.bench.clang11.1.concept.sfinae}
+  \label{fig:gen.bench.clang11.1.concept.sfinae}
 \end{figure}
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=4.2in]{figs/compile_time_benches/clang11/chart.concept2.png}
   \caption{Benchmark Clang-11: Benchmarking compilation speed of template instanciation constrained by Concepts vs. SFINAE.}
-  \label{fig.gen.bench.clang11.2.concept.sfinae}
+  \label{fig:gen.bench.clang11.2.concept.sfinae}
 \end{figure}
 
 
 \section{C++ templates in a dynamic world}
-\label{genericity.sec.template.dynworld}
+\label{sec:template.dynworld}
 
 There are two main categories of programming languages. First are the \emph{compiled} programming languages which
 requires to feed the source code to a program (a compiler) that will output a binary. This binary will then produce the
