@@ -21,7 +21,41 @@ There are four fundamental kind of views, inspired by functional programming par
 applies the transformation $f$ on each pixel of the image \emph{input}, \texttt{filter(input, pred)} keeps the pixels of
 \emph{input} that satisfy the predicate \emph{pred}, \texttt{clip(input, domain)} keeps the pixels of \emph{input}
 that are in the domain \emph{domain}, \texttt{zip($input_1$, $input_2$, \ldots, $input_n$)} allows to pack several pixel
-of several image to iterate on them all at the same time.
+of several image to iterate on them all at the same time. From those four fundamentals come out more very useful views
+such as \texttt{cast<T>(input)} or \texttt{mask(input, msk)} that are more specific to the image processing area.
+
+In Pylena, the fractionner can use a large array of views. Those views comes into different form and allow the
+practitioner to seamlessly use arithmetic or logic operators on images like he would using expression template.
+
+\paragraph{The transform view} is the most important view of all.
+
+\paragraph{The filter view}
+
+\paragraph{The clip view}
+
+\paragraph{The zip view}
+
+\paragraph{The channel/rgb views}
+
+\paragraph{The cast views}
+
+\paragraph{The cast views}
+
+\paragraph{The mathematical operators} are implemented in the form of views that operates point-wise.
+
+Supported: abs, pow, sqr, cbrt, sqrt, sum, prod, min, max, dot, cross, l0norm, l1norm, l2norm, l2norm\_sqr, linfnorm, lpnorm, l0dist, l1dist, l2dist, l2dist\_sqr, linfdist, lpdist
+
+\paragraph{The logical operators}
+
+$<, <=, ==, !=, >, >=$, ifelse(mask, ima1, ima2) | ifelse(mask, ima1, s\_else) / ifelse(mask, s\_if, ima2) / ifelse(mask, s\_if, s\_else)
+
+\paragraph{The arithmetical operators}
+
+$+, -, *, /, \%$
+
+
+
+
 
 \FIXME{TODO: Listing of the views with examples}
 
