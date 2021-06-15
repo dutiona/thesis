@@ -27,13 +27,74 @@ such as \texttt{cast<T>(input)} or \texttt{mask(input, msk)} that are more speci
 In Pylena, the fractionner can use a large array of views. Those views comes into different form and allow the
 practitioner to seamlessly use arithmetic or logic operators on images like he would using expression template.
 
-\paragraph{The transform view} is the most important view of all.
+\paragraph{The transform view} is the most important view of all. It consists in applying a function to each image's
+pixel. For instance, writing the grayscale algorithm with a transform view is as simple as the following code:
+\begin{minted}{C++}
+  auto grayscale_transform = [](mln::rgb8 val) -> uint8_t {
+    return 0.2126 * v[0]    // red
+           + 0.7152 * v[0]  // green
+           + 0.0722 * v[0]; // blue
+  };
+  mln::image2d<mln::rgb8> ima_rgb = /* ... */;
+  mln::image2d<uint8_t>   ima_grayscale = mln::view::transform(ima_rgb, grayscale_transform);
+\end{minted}
+There is no loop in this code, just the pixel-wise transformation function. Furthermore, the code will not compute the
+resulting image. The computation will happen on-the-fly each time a value from \texttt{ima\_grayscale} is yielded.
+This view allows the practitioner to quickly write and adapt any pixel-wise algorithm he needs for his more complex
+calculation in an efficient way.
 
-\paragraph{The filter view}
+\paragraph{The filter view} is also a fundamental view which consists in keeping only the values that satisfy a
+predicate. This is very useful when working with thresholds as shown in the following code:
+\begin{minted}{C++}
+auto my_threshold = 145;
+auto inferior_to [my_threshold](uint8_t val) { return val <= my_threshold; };
+auto superiorstrict_to = [](uint8_t val) { return not inferior_to(val); };
+mln::image2d<uint8_t> ima_grayscale = /* ... */;
+auto ima_inferior = mln::view::filter(ima_grayscale, inferior_to);
+auto ima_superiorstrict = mln::view::filter(ima_grayscale, superiorstrict_to);
+mln::fill(ima_inferior, 0u8);
+mln::fill(ima_superiorstrict, 255u8);
+\end{minted}
+This code shows a way to binarise \texttt{ima\_grayscale} with a custom threshold using the filter view. It is important
+to note that the resulting filtered image has its domain of definition changed. And the new domain of definition will
+most likely not be in a regular usual shape (such as a 2D rectangle). This implies that the usage of this view inside
+certain algorithms may be limited.
 
-\paragraph{The clip view}
+\paragraph{The clip view} is a convenient way to extract a sub-image from a base image. This view essentially redefine
+the domain of definition to restrict it into a smaller one. It does not change anything else which means it proxies
+every access to the image. For instance, we make use of this view to easily process tiles in an efficient way in the
+following code:
+\begin{minted}{C++}
+  mln::image2d<mln::rgb8> large_image = /* ... */;
+  point2d shape = large_image.domain().shape();
+  auto chunk_size = 1024;
+  auto nb_tile_x = shape.x() / chunks_size + 1;
+  auto nb_tile_y = shape.y() / chunks_size + 1;
+  for (int x = 0; x < nb_tile_x; ++x)
+    for(int y = 0; y < nb_tile_y; ++y) {
+      point2D tile_tl { large_image.domain().tl().x() + x*chunk_size,
+                        large_image.domain().tl().y() + y*chunk_size };
+      point2D tile_bl { large_image.domain().tl().x() + (x+1)*chunk_size,
+                        large_image.domain().tl().y() + (y+1)*chunk_size };
+      auto tile_domain = mln::box2d{tile_tl,
+            tile_bl <= large_image.domain().bl() ? tile_bl : large_image.domain().bl()};
+      auto tile = mln::view:clip(ima, tile_domain);
+      process_tile(tile);
+    }
+\end{minted}
 
-\paragraph{The zip view}
+\paragraph{The zip view} is one of the most useful view and allow the practitioner to iterate over a set of image at the
+same time. The basic use-case consists in iterating over a set of input image and the output image to be able to
+consistently assign output values to a resulting computation from input values. Its usage is shown in the following
+code:
+\begin{minted}{C++}
+  mln::image2d<uint8_t> input = /* ... */;
+  mln::image2d<uint8_t> output{input.domain()};
+  auto zipped_ima = mln::view::zip(input, output);
+  for (auto&& [v_in, v_out] : zipped_ima.values())
+    v_out = v_in < 145 ? 0 : 255; // binarisation
+\end{minted}
+This code is another example of how to compute a binary threshold image.
 
 \paragraph{The channel/rgb views}
 
@@ -97,16 +158,18 @@ pipe the correct operations to keep the properties he wants to keep.
 
 Image (traversal) category
 
-The image category describes how an image can be traversed. It can be forward, bidirectional (can be traversed backward and forward), or raw (buffer encoded image with contiguous line buffer)
-Image Accessibility
+The image category describes how an image can be traversed. It can be forward, bidirectional (can be traversed backward
+and forward), or raw (buffer encoded image with contiguous line buffer) Image Accessibility
 
-An image is said accessible whenever it allows to access the value associated to a point, i.e. it allows to write f(p). While it may seem trivial, not all image are accessible (for example image defined by a vector of pair (p, f(p)).
-Image Indexability
+An image is said accessible whenever it allows to access the value associated to a point, i.e. it allows to write f(p).
+While it may seem trivial, not all image are accessible (for example image defined by a vector of pair (p, f(p)). Image
+Indexability
 
-An image is indexable whenever it enables to access values with an index localisator. Usually, accessing through an index is faster than accessing by a point.
-Image Writability
+An image is indexable whenever it enables to access values with an index localisator. Usually, accessing through an
+index is faster than accessing by a point. Image Writability
 
-An image writable can be used as an output image to store the result of a processing. Some image are read-only as images that compute values on-the-fly and are not buffer-encoded.
+An image writable can be used as an output image to store the result of a processing. Some image are read-only as images
+that compute values on-the-fly and are not buffer-encoded.
 
 
 \begin{verbatim}
