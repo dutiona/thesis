@@ -96,29 +96,75 @@ code:
 \end{minted}
 This code is another example of how to compute a binary threshold image.
 
-\paragraph{The channel/rgb views}
+\paragraph{The channel/RGB views} is a projector to access a specific color channel of an image. There exists image with
+many more channels than just the standard red/green/blue ones, from the astrophysics or medical area for instances. This
+view is a tool to restrict an image and only access a specific channel. Its usage is shown in the following code:
+\begin{minted}{C++}
+  mln::image2d<mln::rgb8> ima = /* ... */;
+  mln::copy(mln::view::red(ima), mln::view::green(ima));
+\end{minted}
+This code copies the red component into the green component. It shows that the view can be used in both read and write
+access. Another more generic view exists; \mintinline{c++}{mln::view::channel(ima, k)}, that access the \texttt{k}-th
+channel in \texttt{ima}.
 
-\paragraph{The cast views}
+\paragraph{The cast views} is a way to convert an image's underlying type to another type, by performing a cast. As this
+does not modify the underlying value in itself, the access cannot be a write access. This view can be used as shown in
+the following code:
+\begin{minted}{C++}
+  mln::image2d<double> ima = /* ... */;
+  mln::image2d<uint8_t> ima_8bits = mln::view::cast<uint8_t>(ima);
+\end{minted}
 
-\paragraph{The cast views}
+\paragraph{The arithmetical operators} $+, -, *, /, \%$ are implemented in the form of transformation views that operate
+point-wise between two images whose size is identical. For instance, writing the following code:
+\begin{minted}{C++}
+  mln::image2d<uint8_t> ima1 = /* ... */;
+  mln::image2d<uint8_t> ima2 = /* ... */;
+  auto ret = ima1 + ima2;
+\end{minted}
+Is equivalent to writting the following code:
+\begin{minted}{C++}
+  auto ret = mln::view:transform(ima1, ima2, [](auto v1, auto v2){ return v1 + v2; });
+\end{minted}
+It is important to note that the \texttt{-} unary operator is also supported: \mintinline{C++}{-ima1}.
 
-\paragraph{The mathematical operators} are implemented in the form of views that operates point-wise.
+\paragraph{The logical operators} are implemented in the same way that arithmetical operators are. Both unary and binary
+operators are expressed as transform views such as writting the following code:
+\begin{minted}{C++}
+  auto ret = !ima1 && ima2;
+\end{minted}
+is equivalent to writting the following code:
+\begin{minted}{C++}
+  auto tmp = mln::view::transform(ima1, [](auto v){ return !v; });
+  auto ret = mln::view::transform(tmp, ima2, [](auto v1, auto v2){ return v1 && v2; });
+\end{minted}
+It is far more expressive and more comprehensible by the practitioner. Also, a new facility is introduced to express the
+logic behind a ternary expression (if C then A else B). The rationale is to be able to swap between values depending on
+a boolean mask. This way, a mathematical morphology algorithm such as \emph{hit or miss} can be implemented in the following simple manner:
+\begin{minted}{C++}
+  mln::image2d<uint8_t> ima = /* ... */;
+  auto ero = erode(ima);
+  auto dil = dilate(ima);
+  uint8_t zero = 0;
+  auto ret = mln::view::ifelse(dil < ero, ero - dil, zero);
+\end{minted}
+Everything is taken care of and the practitioner just has to write down his algorithm to get it done.
 
-Supported: abs, pow, sqr, cbrt, sqrt, sum, prod, min, max, dot, cross, l0norm, l1norm, l2norm, l2norm\_sqr, linfnorm, lpnorm, l0dist, l1dist, l2dist, l2dist\_sqr, linfdist, lpdist
+\paragraph{The mathematical operators} are implemented in the form of views that operates point-wise. The supported
+mathematical operators are the following: abs, pow, sqr, cbrt, sqrt, sum, prod, min, max, dot, cross, l0norm, l1norm,
+l2norm, l2norm\_sqr, linfnorm, lpnorm, l0dist, l1dist, l2dist, l2dist\_sqr, linfdist, lpdist.
+Calling an operator onto an image is equivalent to calling a transform view on each value of this image:
+\begin{minted}{C++}
+  auto ima = /* ... */;
+  auto ret = view::maths::abs(ima);
+\end{minted}
+Is equivalent to calling:
+\begin{minted}{C++}
+  auto ima = /* ... */;
+  auto ret = view::transform(ima, [](auto v){ return std::abs(v); });
+\end{minted}
 
-\paragraph{The logical operators}
 
-$<, <=, ==, !=, >, >=$, ifelse(mask, ima1, ima2) | ifelse(mask, ima1, s\_else) / ifelse(mask, s\_if, ima2) / ifelse(mask, s\_if, s\_else)
-
-\paragraph{The arithmetical operators}
-
-$+, -, *, /, \%$
-
-
-
-
-
-\FIXME{TODO: Listing of the views with examples}
 
 \section{Upgrading the way to design IP algorithms}
 
