@@ -785,7 +785,7 @@ behave properly into an algorithm, without needing to rewrite that algorithm.
 The main advantage brought by using modern C++ as the implementation language for an image processing library is to be
 able to leverage what is called metaprogramming. Metaprogramming is a way to tell the compiler to make decision about
 which type, which code to generate. These decisions, made at compile time, and then absent from the resulting binary:
-only the fast and optimised code remains. This bring a new distinction between the static world (what is decided at
+only the fast and optimized code remains. This bring a new distinction between the static world (what is decided at
 compile time) and the dynamic world (what is decided at runtime). The more is decided at compile time the smaller,
 faster the binary will because there is work less to do at runtime. By following this principle, one can think of some
 properties that are known ahead of time (at compilation) when writing one's image processing algorithm. For instance,
@@ -1050,7 +1050,7 @@ essentialy bypass the work of a JIT compiler (that would be used by a programmin
 and just offload it onto well known/proven solution: the machine's C compiler.
 
 \paragraph{Autowig~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy} and
-  Xeus-cling~\parencite{quantstack.2021.xeus-cling}} are all solutions aiming to generate automaticaly Python bindings
+  Xeus-cling~\parencite{quantstack.2021.xeus-cling}} are all solutions aiming to generate automatically Python bindings
 on-the-fly using different solutions. Autowig has in-house code based on LLVM/Clang to parse C++ code in order to
 generate and compile a Swig Python binding using the Mako templating engine. Cppyy will generate Python bindings but can
 also directly interpret C++ code from Python code thanks to being base on LLVM/Cling, a Clang-base C++ interpreter.
