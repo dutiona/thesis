@@ -96,6 +96,17 @@ code:
 \end{minted}
 This code is another example of how to compute a binary threshold image.
 
+\paragraph{The mask view} is very image-processing oriented as it allows the practitioner to provide a boolean image the
+same size as the original image to select only the pixels whose corresponding value in the mask is true. Its usage is
+shown in the following code:
+\begin{minted}{C++}
+  mln::image2d<mln::rgb8> ima = /* ... */;
+  auto mask = ima > 127;
+  mln::fill(mln::view::mask(ima, mask), 255);
+\end{minted}
+This code set all the values that are superior to 127 to the max value 255. It shows that it can both be used with read
+and write access.
+
 \paragraph{The channel/RGB views} is a projector to access a specific color channel of an image. There exists image with
 many more channels than just the standard red/green/blue ones, from the astrophysics or medical area for instances. This
 view is a tool to restrict an image and only access a specific channel. Its usage is shown in the following code:
@@ -122,25 +133,26 @@ point-wise between two images whose size is identical. For instance, writing the
   mln::image2d<uint8_t> ima2 = /* ... */;
   auto ret = ima1 + ima2;
 \end{minted}
-Is equivalent to writting the following code:
+Is equivalent to writing the following code:
 \begin{minted}{C++}
   auto ret = mln::view:transform(ima1, ima2, [](auto v1, auto v2){ return v1 + v2; });
 \end{minted}
 It is important to note that the \texttt{-} unary operator is also supported: \mintinline{C++}{-ima1}.
 
-\paragraph{The logical operators} are implemented in the same way that arithmetical operators are. Both unary and binary
-operators are expressed as transform views such as writting the following code:
+\paragraph{The logical operators} $<, <=, ==, !=, >, >=$ are implemented in the same way that arithmetical operators
+are. Both unary and binary operators are expressed as transform views such as writing the following code:
 \begin{minted}{C++}
   auto ret = !ima1 && ima2;
 \end{minted}
-is equivalent to writting the following code:
+is equivalent to writing the following code:
 \begin{minted}{C++}
   auto tmp = mln::view::transform(ima1, [](auto v){ return !v; });
   auto ret = mln::view::transform(tmp, ima2, [](auto v1, auto v2){ return v1 && v2; });
 \end{minted}
 It is far more expressive and more comprehensible by the practitioner. Also, a new facility is introduced to express the
-logic behind a ternary expression (if C then A else B). The rationale is to be able to swap between values depending on
-a boolean mask. This way, a mathematical morphology algorithm such as \emph{hit or miss} can be implemented in the following simple manner:
+logic behind a ternary expression (if C then A else B): the operator $ifelse(C, A, B)$. The rationale is to be able to
+swap between values depending on a boolean mask. This way, a mathematical morphology algorithm such as \emph{hit or
+  miss} can be implemented in the following simple manner:
 \begin{minted}{C++}
   mln::image2d<uint8_t> ima = /* ... */;
   auto ero = erode(ima);
@@ -152,8 +164,8 @@ Everything is taken care of and the practitioner just has to write down his algo
 
 \paragraph{The mathematical operators} are implemented in the form of views that operates point-wise. The supported
 mathematical operators are the following: abs, pow, sqr, cbrt, sqrt, sum, prod, min, max, dot, cross, l0norm, l1norm,
-l2norm, l2norm\_sqr, linfnorm, lpnorm, l0dist, l1dist, l2dist, l2dist\_sqr, linfdist, lpdist.
-Calling an operator onto an image is equivalent to calling a transform view on each value of this image:
+l2norm, l2norm\_sqr, linfnorm, lpnorm, l0dist, l1dist, l2dist, l2dist\_sqr, linfdist, lpdist. Calling an operator onto
+an image is equivalent to calling a transform view on each value of this image:
 \begin{minted}{C++}
   auto ima = /* ... */;
   auto ret = view::maths::abs(ima);
@@ -163,7 +175,6 @@ Is equivalent to calling:
   auto ima = /* ... */;
   auto ret = view::transform(ima, [](auto v){ return std::abs(v); });
 \end{minted}
-
 
 
 \section{Upgrading the way to design IP algorithms}
@@ -176,343 +187,85 @@ of the whole image. \emph{Views} introduce an abstraction layer that is able to 
 pixel-wise algorithm. Indeed, every pixel-wise loop can be rewritten using the four fundamental views. This is not the
 case for local and global algorithms though.
 
-The other key point to note is the lazy-evaluation. Indeed, often an IP practitioner will transform a whole image and
+Another key point to note is the lazy-evaluation. Indeed, often an IP practitioner will transform a whole image and
 only make use of a small subpart of it. Thanks to the lazy-evaluation property, only the exploited subimage will be
 transformed on-the-fly at the call site. However, if there are several call site browsing the view the same way, it can
 incur a performance loss as the same calculation is performed several time, each time the image is browsed. In this
 case, it is better to create a temporary concrete subimage (with a data buffer) that contains the values that will be
 asked several times.
 
-The last key part about \emph{views} is the composability. Image processing is an area in which a practitioner design
+The other key part about \emph{views} is the composability. Image processing is an area in which a practitioner design
 pipelines which, by nature compose several operations on top of each other. Views have the ability to be composable with
 each others to get the wanted result.
 
-\subsection{Keeping properties}
+Finally, a view is a \emph{non-owning} and \emph{cheap-to-copy} image, and that design has consequences on its usage.
 
-While is it tempting to use views everywhere, it is also important to note that you may converse or loose some
-properties from the base concrete image (the one holding the data buffer). To give a quick example, let us consider a
-classic RGB image and a views that calculate the grayscale on-the-fly. When only seeing the view, it is not possible to
-modify the base values which are RGB colors. Indeed, we cannot infer how a modification on the grayscale value will
-impact the base color of the image. Passing from a grayscale image to a colored image is a research area on its own and
-cannot be done on-the-fly in a fixed time. This induces that piping an image into this grayscale views turns the image
-\emph{read-only}. The image loose the ability to be written in this case. Another case would be  a view that performs a
-projections of one of the color channel. This way the resulting viewed image is not read-only and modifying it would
-only modify the color channel projected. It is not an easy subject and requires the attention of the practitioner to
-pipe the correct operations to keep the properties he wants to keep.
+\subsection{Data ownership}
 
+The concept of \emph{View} brought to us a fundamental issue when dealing with images: \blockquote{\emph{What is an
+    image?}}. More precisely: should an image always be the owner of its data buffer? Should we have a shared ownership of
+the data buffer between all the images using it? Then what happens when the data changes? The issue about the semantic
+of an image is crucial but also very similar to the issue there is to differentiate a \emph{container} (such as
+\texttt{std::vector}, that is to say the data buffer) and a \emph{view} on this container in the \emph{Ranges TS}.
 
+From here we have considered two approaches. The first one is to have \emph{shared ownership} of the data buffer for the
+image and its derived views. However this does not allow the differentiation between an already computed image and a
+lazy image. To be able to make this differentiation is crucial in an \emph{Image Processing library} as we want to make
+the most out of the data we already have and we do not want to compute data we do not need. Also, we cannot distinguish
+when the \emph{copyability} property is required. This is the main reason why we did not adopt this approach.
 
-Image (traversal) category
-
-The image category describes how an image can be traversed. It can be forward, bidirectional (can be traversed backward
-and forward), or raw (buffer encoded image with contiguous line buffer) Image Accessibility
-
-An image is said accessible whenever it allows to access the value associated to a point, i.e. it allows to write f(p).
-While it may seem trivial, not all image are accessible (for example image defined by a vector of pair (p, f(p)). Image
-Indexability
-
-An image is indexable whenever it enables to access values with an index localisator. Usually, accessing through an
-index is faster than accessing by a point. Image Writability
-
-An image writable can be used as an output image to store the result of a processing. Some image are read-only as images
-that compute values on-the-fly and are not buffer-encoded.
+The second one is to make the differentiation between a \emph{concrete image} which owns the data (like the standard
+containers) and the \emph{views} that are lightweight cheap-to-copy objects. Not all \emph{concrete image} may be
+\emph{copyable}, but all \emph{views} are. This is a very important property as it simplify greatly the reasoning when
+performance is needed. It also enables us to have a library design similar to the standard library which the user is
+familiar with and, why not, have standard algorithm and standard view work on our images types. All of these are the
+main reason why we decided to adopt this design. Henceforth from now on the \emph{Image} concept is similar to the
+\emph{View} concept from which we refines a \emph{ConcreteImage} concept that requires a specific behavior as it owns
+data.
 
 
-\begin{verbatim}
-+----------------+---------------+-------+----------------+
-|                |               | *ima* | *cast<T>(ima)* |
-+================+===============+=======+================+
-|                | Forward       | X     | X              |
-+                +---------------+-------+----------------+
-| **Category**   | Bidirectional | X     | X              |
-+                +---------------+-------+----------------+
-|                | Raw           | X     |                |
-+----------------+---------------+-------+----------------+
-|                | Writable      | X     |                |
-+                +---------------+-------+----------------+
-| **Properties** | Accessible    | X     | X              |
-+                +---------------+-------+----------------+
-|                | Indexable     | X     | X              |
-+----------------+---------------+-------+----------------+
+In (subsec.gen.concept), we saw that what is truly important is the behavior: an algorithm will require its input to be
+able to behave a certain way, and if those requirements are fulfilled, then the algorithm can be used with this set of
+inputs. This enables non-standard type of image to be input in algorithms, providing they still behave correctly. The
+way how we can check if the required behavior is satisfied is a new C++20 feature called \emph{concept} (the authors
+show how to leverage them in~\cite{roynard.2019.rrpr}) that will not be presented in this paper. Additionally to
+concepts, C++20 introduces a new library facility called
+\emph{ranges}~\cite{niebler.2018.deepranges,niebler.2018.mergingranges} which includes a non-owning lightweight
+container called \emph{views} whose design is very similar to that of \emph{morphers}, introduced in
+Milena~\cite{levillain.2009.ismm,geraud.2012.hdr}. Views are completely transferable to the image processing world.
+Also, views feature interesting properties that an image processing practitioner will find to his taste.
 
-+----------------+---------------+-------+-------------------+
-|                |               | *ima* | *channel(ima, k)* |
-+================+===============+=======+===================+
-|                | Forward       | X     | X                 |
-+                +---------------+-------+-------------------+
-| **Category**   | Bidirectional | X     | X                 |
-+                +---------------+-------+-------------------+
-|                | Raw           | X     |                   |
-+----------------+---------------+-------+-------------------+
-|                | Writable      | X     | X                 |
-+                +---------------+-------+-------------------+
-| **Properties** | Accessible    | X     | X                 |
-+                +---------------+-------+-------------------+
-|                | Indexable     | X     | X                 |
-+----------------+---------------+-------+-------------------+
+A view is a \emph{lightweight object} that behaves exactly the same as an image: let $V$ be a view of an image defined
+on $\mathcal{D}$ then we have $\forall{p}\in\mathcal{D}, v = V(p)$. It can be a random generator that yields a random
+number each time $V(p)$ is called; a proxy to the underlying image that records the number of times each pixel is
+accessed in order, for instance, to compare algorithm performance; a projection to a specific color channel; applying an
+automatic gamma correction; restricting the definition domain $\mathcal{D}$; and so on.
 
-+----------------+---------------+-------+------------------+
-|                |               | *ima* | *clip(ima, dom)* |
-+================+===============+=======+==================+
-|                | Forward       | X     | X                |
-+                +---------------+-------+------------------+
-| **Category**   | Bidirectional | X     | X                |
-+                +---------------+-------+------------------+
-|                | Raw           | X     |                  |
-+----------------+---------------+-------+------------------+
-|                | Writable      | X     | X                |
-+                +---------------+-------+------------------+
-| **Properties** | Accessible    | X     | X                |
-+                +---------------+-------+------------------+
-|                | Indexable     | X     | X                |
-+----------------+---------------+-------+------------------+
+A view is a \emph{non-owning}, \emph{cheap-to-copy} lightweight object that basically only \emph{records an
+  operation} and stores a pointer to an image. For instance, let us consider the view transform defined as follow $v =
+  transform(u_1, u_2, \cdots, u_n, f)$ where $u_i$ are input images and $h$ a n-ary function. $transform$ returns an image
+generated from the other image(s) as show in~\cref{fig.view.threshold}. Also, we can see that the view itself does not
+own any image but just stores pointers as well as the operation ($h$). This means that, for instance, modifying the
+original values of the image(s) will impact the values yield by the view. Finally, as the view is cheap-to-copy, it
+features a pointer semantic that help the practitioner passing around his images by copy to his algorithms without
+worrying about heavy buffer copies in the background.
 
-+----------------+---------------+-------+---------------------+
-|                |               | *ima* | *filter(ima, pred)* |
-+================+===============+=======+=====================+
-|                | Forward       | X     | X                   |
-+                +---------------+-------+---------------------+
-| **Category**   | Bidirectional | X     | X                   |
-+                +---------------+-------+---------------------+
-|                | Raw           | X     |                     |
-+----------------+---------------+-------+---------------------+
-|                | Writable      | X     |                     |
-+                +---------------+-------+---------------------+
-| **Properties** | Accessible    | X     | X                   |
-+                +---------------+-------+---------------------+
-|                | Indexable     | X     | X                   |
-+----------------+---------------+-------+---------------------+
-
-+----------------+---------------+-------+-------------------+
-|                |               | *ima* | *mask(ima, mask)* |
-+================+===============+=======+===================+
-|                | Forward       | X     | X                 |
-+                +---------------+-------+-------------------+
-| **Category**   | Bidirectional | X     | X                 |
-+                +---------------+-------+-------------------+
-|                | Raw           | X     |                   |
-+----------------+---------------+-------+-------------------+
-|                | Writable      | X     | X                 |
-+                +---------------+-------+-------------------+
-| **Properties** | Accessible    | X     | X                 |
-+                +---------------+-------+-------------------+
-|                | Indexable     | X     | X                 |
-+----------------+---------------+-------+-------------------+
-
-+----------------+---------------+-------------+---------------------+---------------------------+
-|                |               | *ima, ima2* | *transform(ima, f)* | *transform(ima, ima2, f)* |
-+================+===============+=============+=====================+===========================+
-|                | Forward       | X           | X                   | X                         |
-+                +---------------+-------------+---------------------+---------------------------+
-| **Category**   | Bidirectional | X           | X                   | X                         |
-+                +---------------+-------------+---------------------+---------------------------+
-|                | Raw           | X           |                     |                           |
-+----------------+---------------+-------------+---------------------+---------------------------+
-|                | Writable      | X           | X*                  | X*                        |
-+                +---------------+-------------+---------------------+---------------------------+
-| **Properties** | Accessible    | X           | X                   | X                         |
-+                +---------------+-------------+---------------------+---------------------------+
-|                | Indexable     | X           | X                   | X                         |
-+----------------+---------------+-------------+---------------------+---------------------------+
-
-(*): only if `f` is a projection.
-
-
-+----------------+---------------+----------+---------------+
-|                |               | *ima...* | *zip(ima...)* |
-+================+===============+==========+===============+
-|                | Forward       | X        | X             |
-+                +---------------+----------+---------------+
-| **Category**   | Bidirectional | X        | X             |
-+                +---------------+----------+---------------+
-|                | Raw           | X        |               |
-+----------------+---------------+----------+---------------+
-|                | Writable      | X        | X             |
-+                +---------------+----------+---------------+
-| **Properties** | Accessible    | X        | X             |
-+                +---------------+----------+---------------+
-|                | Indexable     | X        | X             |
-+----------------+---------------+----------+---------------+
-
-+----------------+---------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                |               | *ima, ima1, ima2* | *abs, pow, sqr, cbrt, sqrt, sum, prod, min, max, dot, cross, l0norm, l1norm, l2norm, l2norm_sqr, linfnorm, lpnorm, l0dist, l1dist, l2dist, l2dist_sqr, linfdist, lpdist* |
-+================+===============+===================+==========================================================================================================================================================================+
-|                | Forward       | X                 | X                                                                                                                                                                        |
-+                +---------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **Category**   | Bidirectional | X                 | X                                                                                                                                                                        |
-+                +---------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                | Raw           | X                 |                                                                                                                                                                          |
-+----------------+---------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                | Writable      | X                 |                                                                                                                                                                          |
-+                +---------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **Properties** | Accessible    | X                 | X                                                                                                                                                                        |
-+                +---------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                | Indexable     | X                 | X                                                                                                                                                                        |
-+----------------+---------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-
-+----------------+---------------+-------------------+----------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
-|                |               | *ima, ima1, ima2* | *+, -, \*, /, %, <, <=, ==, !=, >, >=* | *ifelse(ima, ima1, ima2)* | *ifelse(ima, ima1, s_else) / ifelse(ima, s_if, ima2) / ifelse(ima, s_if, s_else)*   |
-+================+===============+===================+========================================+===========================+=====================================================================================+
-|                | Forward       | X                 | X                                      | X                         | X                                                                                   |
-+                +---------------+-------------------+----------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
-| **Category**   | Bidirectional | X                 | X                                      | X                         | X                                                                                   |
-+                +---------------+-------------------+----------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
-|                | Raw           | X                 |                                        |                           |                                                                                     |
-+----------------+---------------+-------------------+----------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
-|                | Writable      | X                 |                                        | X                         |                                                                                     |
-+                +---------------+-------------------+----------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
-| **Properties** | Accessible    | X                 | X                                      | X                         | X                                                                                   |
-+                +---------------+-------------------+----------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
-|                | Indexable     | X                 | X                                      | X                         | X                                                                                   |
-+----------------+---------------+-------------------+----------------------------------------+---------------------------+-------------------------------------------------------------------------------------+
-
-+----------------+---------------+-------+-----------------------------------+
-|                |               | *ima* | *red(ima), green(ima), blue(ima)* |
-+================+===============+=======+===================================+
-|                | Forward       | X     | X                                 |
-+                +---------------+-------+-----------------------------------+
-| **Category**   | Bidirectional | X     | X                                 |
-+                +---------------+-------+-----------------------------------+
-|                | Raw           | X     |                                   |
-+----------------+---------------+-------+-----------------------------------+
-|                | Writable      | X     | X                                 |
-+                +---------------+-------+-----------------------------------+
-| **Properties** | Accessible    | X     | X                                 |
-+                +---------------+-------+-----------------------------------+
-|                | Indexable     | X     | X                                 |
-+----------------+---------------+-------+-----------------------------------+
-
-\end{verbatim}
-
-\subsection{Lazy evaluation}
-
-\subsection{Composability and piping}
-
-\section{A practical example: border management}
-
-\section{Performance discussion}
-
-
-\cleardoublepage
-
-\chapter*{Material about views}
-
-\section*{Introducing range-based image traversing}
-\label{sec.range.traversing}
-
-Previously in Milena~\cite{levillain.2009.ismm} we had a very customized way of traversing images: macro-based. It aimed
-at hiding the complexity of such a task while loosing as little performance as possible. For example, the dilation
-algorithm was written this way:
-
-\begin{minted}{c++}
-  template<class I, class SE>
-  mln_concrete(I) dilate(const I& f, const SE& se)
-  {
-    mln_concrete(I) g;
-    initialize(g, f);
-    mln_piter(I) p(f.domain());
-    mln_qiter(SE) q(se, p);
-    for_all(p) // for all p in f domain
-    {
-      mln_value(I) v = f(p);
-      for_all(q) // for all q in se(p)
-        if(f.has(q) and f(q) > v)
-          v = f(q);
-      g(p) = v;
-    }
-    return g;
-  }
-\end{minted}
-
-In this code \texttt{mln\_concrete}, \texttt{mln\_piter}, \texttt{mln\_qiter}, \texttt{for\_all} and \texttt{mln\_value}
-are all macros aiming at hiding the underlying complexity. Our goal is to replace those macros with existing C++ core
-language code to improve the user experience as well as ease the maintenance, contribution and further improvement of
-the library. Nowadays, a tool named range (and especially Eric Niebler's range-v3) allow seamless traversing of an
-image. For instance, we can rewrite the above algorithm this way:
-
-\begin{minted}{c++}
-  template<class I, class SE>
-  image_concrete_t<I> dilate(const I& f, const SE& se)
-  {
-    auto g = f.concretize();
-    auto supr = accu::supremum<image_value_t<I>>();
-    for(auto [f_px, g_px] : zip(f.pixels(), g.pixels()))
-    {
-      for(auto qx : se(f_px))
-        supr.take(qx.val());
-      g_px.val() = supr.result();
-    }
-    return g;
-  }
-\end{minted}
-
-Here we have a much more efficient code that, in theory, enables compiler optimizations such as vectorization or inner
-loops unrolling. But through benchmarking, we have learned that this solution doesn't mix well with the multidimensional
-nature of images. The issue originates from the fact that we have no way to explicitly say in the code that the
-multidimensional range is made of chunk of contiguous rows of memory. Indeed, for each element we have to compute an
-index originating from potentially $N$ dimensions. This disables critical optimizations such as vectorization.
-
-We solved this problem by augmenting range-v3's ranges with our own multidimensional ranges. Indeed, we only need to
-have contiguity on the last dimension to provide the compiler code it can optimize. Which means that each for-loop that
-traverses the whole n-dimensional image can be transformed into a double for-loop whose inner loop is guaranteed to be a
-contiguous row. This way we have now an outer range as well as an inner range, as illustrated in
-figure~\ref{fig.inner.outer.range}.
-
-\begin{figure}[htbp]
+\begin{figure}[tbh]
   \centering
-  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/linear_rng}}
-  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/segmented_rng}}
-  \caption{Range-v3's ranges (a) vs. multidimensional ranges (b).}
-  \label{fig.inner.outer.range}
+  \begin{minipage}{\linewidth}
+    \includestandalone[mode=image, width=.9\linewidth]{figs/transform_thresholding}
+  \end{minipage}
+  \caption{An image view performing a thresholding.}
+  \label{fig.view.threshold}
 \end{figure}
 
-Thanks to this new design we can now rewrite our algorithm with a double for-loop for the image traversing. Hopefully it
-stays really similar to what one would be used to when working with the classical two dimension image. As an example, we
-can rewrite the dilation algorithm this way:
+\subsection{Lazy evaluation, composability and piping}
 
-\begin{minted}{c++}
-  template<class I, class SE>
-  image_concrete_t<I> dilate(const I& f, const SE& se)
-  {
-    auto g = f.concretize();
-    auto supr = accu::supremum<image_value_t<I>>();
-    auto zipped_pixels = zip(f.pixels(), g.pixels());
-    for(auto&& row : ranges::rows(zipped_pixels))
-      for(auto [f_px, g_px] : row)
-      {
-        for(auto qx : se(f_px))
-          supr.take(qx.val());
-        g_px.val() = supr.result();
-      }
-    return g;
-  }
-\end{minted}
-
-The highlight of this code is the usage a new tool: \texttt{ranges::rows} to bring out an inner range (contiguous) from
-the multidimensional outer range.
-
-
-\section*{Introducing Views}
-\label{sec.views}
-
-\subsection*{Practical genericity for efficiency: the Views}
-\label{subsec.views}
-
-Let us introduce another key point enabled by genericity and concepts: the \emph{Views}. A \emph{View} is defined by a
-non-owning lightweight image, inspired by the design introduced in \emph{Ranges for the Standard
-  Library}~\parencite{niebler.2014.ranges} proposal for \emph{non-owning collections}. A similar design is also called
-\emph{Morphers} in \textsc{Milena}~\parencite{levillain.2009.ismm, geraud.2012.hdr}. \emph{Views} feature the following
-properties: \emph{cheap to copy}, \emph{non-owner} (does not \emph{own} any data buffer), \emph{lazy evaluation}
-(accessing the value of a pixel may require computations) and \emph{composition}. When chained, the compiler builds a
-\emph{tree of expressions} (or \emph{expression template} as used in many scientific computing libraries such as
-Eigen~\cite{guennebaud.2010.eigen}), thus it knows at compile-time the type of the composition and ensures a 0-overhead
-at evaluation.
-
-There are four fundamental kind of views, inspired by functional programming paradigm: \texttt{transform(input, f)}
-applies the transformation $f$ on each pixel of the image \emph{input}, \texttt{filter(input, pred)} keeps the pixels of
-\emph{input} that satisfy the predicate \emph{pred}, \texttt{subimage(input, domain)} keeps the pixels of \emph{input}
-that are in the domain \emph{domain}, \texttt{zip($input_1$, $input_2$, \ldots, $input_n$)} allows to pack several pixel
-of several image to iterate on them all at the same time.
+Another key point of views is the lazy evaluation. When an image is piped through a view, no computation is done. The
+computation happens when the practitioner requests a value by doing $val = V(p)$. The implications are multiples: an
+image can be piped into several computation-heavy views, some of which can be discarded later on, it won't impact the
+performance. Also, when processing large images, applying a transformation on a part of the image is as simple as
+restricting the domain with a view and applying the transformation to this resulting sub-image.
 
 \emph{Lazy-evaluation} combined with the view \emph{chaining} allows the user to write clear and very efficient code
 whose evaluation is delayed till very last moment as shown in~\cref{fig.lazy} (see \cite{geraud.2018.gtgdmm} for
@@ -572,70 +325,6 @@ auto i = view::transform(h,
   \caption{Abstract Syntax Tree of the types chained by the code above}
   \label{fig.viewAST}
 \end{figure}
-
-The concept of \emph{View} brought to us a fundamental issue when dealing with images: \blockquote{\emph{What is an
-    image?}}. More precisely: should an image always be the owner of its data buffer? Should we have a shared ownership of
-the data buffer between all the images using it? Then what happens when the data changes? The issue about the semantic
-of an image is crucial but also very similar to the issue there is to differentiate a \emph{container} (such as
-\texttt{std::vector}, that is to say the data buffer) and a \emph{view} on this container in the \emph{Ranges TS}.
-
-From here we have considered two approaches. The first one is to have \emph{shared ownership} of the data buffer for the
-image and its derived views. However this does not allow the differentiation between an already computed image and a
-lazy image. To be able to make this differentiation is crucial in an \emph{Image Processing library} as we want to make
-the most out of the data we already have and we do not want to compute data we do not need. Also, we cannot distinguish
-when the \emph{copyability} property is required. This is the main reason why we did not adopt this approach.
-
-The second one is to make the differentiation between a \emph{concrete image} which owns the data (like the standard
-containers) and the \emph{views} that are lightweight cheap-to-copy objects. Not all \emph{concrete image} may be
-\emph{copyable}, but all \emph{views} are. This is a very important property as it simplify greatly the reasoning when
-performance is needed. It also enables us to have a library design similar to the standard library which the user is
-familiar with and, why not, have standard algorithm and standard view work on our images types. All of these are the
-main reason why we decided to adopt this design. Henceforth from now on the \emph{Image} concept is similar to the
-\emph{View} concept from which we refines a \emph{ConcreteImage} concept that requires a specific behavior as it owns
-data.
-
-
-\vspace{1cm}
-
-In (subsec.gen.concept), we saw that what is truly important is the behavior: an algorithm will require its input
-to be able to behave a certain way, and if those requirements are fulfilled, then the algorithm can be used with this
-set of inputs. This enables non-standard type of image to be input in algorithms, providing they still behave correctly.
-The way how we can check if the required behavior is satisfied is a new C++20 feature called \emph{concept} (the authors
-show how to leverage them in~\cite{roynard.2019.rrpr}) that will not be presented in this paper. Additionally to
-concepts, C++20 introduces a new library facility called \emph{ranges}~\cite{niebler.2018.deepranges} which includes a
-non-owning lightweight container called \emph{views} whose design is very similar to that of \emph{morphers}, introduced
-in Milena~\cite{levillain.2009.ismm,geraud.2012.hdr}. Views are completely transferable to the image processing world.
-Also, views feature interesting properties that an image processing practitioner will find to his taste.
-
-A view is a \emph{lightweight object} that behaves exactly the same as an image: let $V$ be a view of an image defined
-on $\mathcal{D}$ then we have $\forall{p}\in\mathcal{D}, v = V(p)$. It can be a random generator that yields a random
-number each time $V(p)$ is called; a proxy to the underlying image that records the number of times each pixel is
-accessed in order, for instance, to compare algorithm performance; a projection to a specific color channel; applying an
-automatic gamma correction; restricting the definition domain $\mathcal{D}$; and so on.
-
-A view is a \emph{non-owning}, \emph{cheap-to-copy} lightweight object that basically only \emph{records an operation}
-and stores a pointer to an image. For instance, let us consider the view transform defined as follow $v = transform(u_1,
-  u_2, \cdots, u_n, f)$ where $u_i$ are input images and $h$ a n-ary function. $transform$ returns an image generated from
-the other image(s) as show in~\cref{fig.view.threshold}. Also, we can see that the view itself does not own any image
-but just stores pointers as well as the operation ($h$). This means that, for instance, modifying the original values of
-the image(s) will impact the values yield by the view. Finally, as the view is cheap-to-copy, it features a pointer
-semantic that help the practitioner passing around his images by copy to his algorithms without worrying about heavy
-buffer copies in the background.
-
-\begin{figure}[tbh]
-  \centering
-  \begin{minipage}{\linewidth}
-    \includestandalone[mode=image, width=.9\linewidth]{figs/transform_thresholding}
-  \end{minipage}
-  \caption{An image view performing a thresholding.}
-  \label{fig.view.threshold}
-\end{figure}
-
-Another key point of views is the lazy evaluation. When an image is piped through a view, no computation is done. The
-computation happens when the practitioner requests a value by doing $val = V(p)$. The implications are multiples: an
-image can be piped into several computation-heavy views, some of which can be discarded later on, it won't impact the
-performance. Also, when processing large images, applying a transformation on a part of the image is as simple as
-restricting the domain with a view and applying the transformation to this resulting sub-image.
 
 Views will also try to preserve properties of the original image when they can. That means that views can preserve the
 ability of the practitioner to, for instance, write into this image. This may be a trivial property to preserve when
@@ -708,6 +397,62 @@ the image (End) Save the resulting 2D 8-bit grayscale image; as described in~\cr
   \caption{Algorithm vs image view composition.}
   \label{fig.view.comp}
 \end{figure}
+
+\subsection{Keeping properties}
+
+While is it tempting to use views everywhere, it is also important to note that you may converse or loose some
+properties from the base concrete image (the one holding the data buffer). To give a quick example, let us consider a
+classic RGB image and a views that calculate the grayscale on-the-fly. When only seeing the view, it is not possible to
+modify the base values which are RGB colors. Indeed, we cannot infer how a modification on the grayscale value will
+impact the base color of the image. Passing from a grayscale image to a colored image is a research area on its own and
+cannot be done deterministically on-the-fly in a fixed time. This induces that piping an image into this grayscale views
+turns the image \emph{read-only}. in this case, The image loose the ability to be mutable. Another case would be a view
+that performs a projections of one of the color channel. This way the resulting viewed image is still mutable and
+modifying its values would only modify the color channel projected. Keeping properties is not an easy subject and
+requires the attention of the practitioner to pipe the correct operations to keep the properties he wants to keep.
+
+There are six properties one want to keep track when working with views: forward, bidirectional, raw, writable,
+accessible and indexable. Those properties echo to the concepts seen in~\cref{sec:library.concepts}. And image is
+\emph{forward} when it can be traversed in a forward way. It is \emph{bidirectional} when it can be traversed in both a
+forward and a backward way. It is \emph{raw} when its data buffer can is contiguous and can directly be accessed with
+informations about strides. It is \emph{writable} when the values are mutable. It is accessible whenever it allows to
+access the value associated to a point (i.e. it allows to write the expression $v = ima(p)$). Finally, an image is
+\emph{indexable} whenever its values can be accessed through an index localisator (i.e. it allows to write the
+expression $v = ima[idx]$). Usually, accessing through an index is faster than accessing by a point. The
+table~\cref{table:views.properties} present all the views and how they conserve the base properties of a concrete image.
+
+\begin{table}[tbh]
+  \begin{scriptsize}
+    \begin{threeparttable}
+      \caption{Views: property conservation}
+      \begin{tabular}{|l|l|cccccc|}
+        \hline
+        %\thead{View type}    & \backslashbox{\thead{Expression}}{\thead{Property}} & Forward & Bidirectional & Raw    & Writable   & Accessible & Indexable \\
+        \thead{View type}    & \thead{Expression | Properties:} & Forward & Bidirectional & Raw    & Writable   & Accessible & Indexable \\
+        \hline
+        \thead{Image}        & \texttt{ima1, ima2}              & \cmark  & \cmark        & \cmark & \cmark     & \cmark     & \cmark    \\
+        \thead{Cast}         & \texttt{cast<T>(ima)}            & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
+        \thead{Transform}    & \texttt{transform(ima, func)}    & \cmark  & \cmark        & \xmark & \cmark$^1$ & \cmark     & \cmark    \\
+        \thead{Filter}       & \texttt{filter(ima, pred)}       & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
+        \thead{Clip}         & \texttt{clip(ima, dom)}          & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
+        \thead{mask}         & \texttt{mask(ima, mask)}         & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
+        \thead{Zip}          & \texttt{zip(ima1, ima2)}         & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
+        \thead{Channel}      & \texttt{red(ima)}                & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
+        \thead{Arithmetic}   & \texttt{ima1 + ima2}             & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
+        \thead{Logical}      & \texttt{ima > 125}               & \cmark  & \cmark        & \xmark & \xmark$^2$ & \cmark     & \cmark    \\
+        \thead{Mathematical} & \texttt{abs(ima)}                & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
+        \hline
+      \end{tabular}
+      \begin{tablenotes}
+        \item $^1$: writability is preserved only if \texttt{func} is a projection.
+        \item $^2$: writability not preserved except for the expression \texttt{ifelse(ima, ima1, ima2)}.
+      \end{tablenotes}
+      \label{table:views.properties}
+    \end{threeparttable}
+  \end{scriptsize}
+\end{table}
+
+\subsection{Summary}
 
 \textbf{Views are composable.} Chaining operations has always been a very important feature in image processing as well
 as in software engineering in general (known object composition). Being able to weave simple blocks together into more
@@ -790,43 +535,7 @@ Image out = subquantize16to8b(
 \end{figure}
 
 
-
-\PLAGIAT{
-  \textbf{Views for performance.} Consider a classical design where each operation of the pipeline is implemented on
-  ``its own''. Each operation requires that memory be allocated for the output image, and also, each operation requires
-  that the image be traversed. This design is simple, flexible, composable, but is not memory efficient nor
-  computationally efficient. With the lazy evaluation approach, the image is traversed only once (when the dilation is
-  applied) that has two benefits. First, there are no intermediate images so this is memory effective. Second, it is
-  faster thanks to a better memory cache usage; processing a RGB16 pixel from the dilation algorithm directly converts
-  it in grayscale, then sub-quantized it to 8-bits, and finally make it available. It acts \emph{as if} we were writing
-  an optimal operator that would combine these operations.
-}
-
-\PLAGIAT{
-  As an experiment, we benchmarked both pipelines on a 20MPix image RGB16 (random generated values) on a desktop
-  computer i7-2600 CPU @ 3.40GHz, single-threaded\footnote{Experimentation code is available at
-    \url{https://gitlab.lrde.epita.fr/mroynard/roynard.icip.2020.snippets}}. The dilation is done with a small 3x3 square
-  structuring element using tiling for caching input values. The pipeline using views is about 20\% faster than the
-  regular one (133 vs 106 ms). Note that views are also compatible with optimizations such as parallelization and
-  vectorization.
-}
-
-\PLAGIAT{
-  Background Subtraction: The background subtraction pipeline is used to detect changes in image
-  sequences~\cite{opencv.bg_sub}. It is mainly used when regions of interest are foreground objects. The pipeline
-  components include: subtraction, Gaussian filtering, threshold, erode and dilate, as shown
-  in~\cref{fig.view.comp.sub_bg}.
-}
-
-\begin{figure}[tbh]
-  \begin{minipage}{\linewidth}
-    \includestandalone[mode=image, scale=0.59]{figs/pipeline_bg_sub_comp}
-  \end{minipage}
-  \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
-    \colorbox{thistle}{views}.}
-  \label{fig.view.comp.sub_bg}
-\end{figure}
-
+\section{A practical example: border management}
 
 \section*{From local algorithm to border management}
 \label{sec.localgo.bm}
@@ -923,24 +632,44 @@ policy). To use the policy \texttt{native}, one would write \texttt{extension::b
 
 \FIXME{put schemas showing different type of border management}
 
-\FIXME{this can be intro of chapter}
-Our work on bringing genericity to image processing through C++ template metaprogramming and concepts is presented
-in~\parencite{roynard.2019.rrpr}. Continuing this previous work, we focused on the main goals of the library. First is the
-zero-cost of traversing an image, overhauling the existing system which is macro-based. The new system presented in
-section (X) is based on
-range-v3~\cite{niebler.2014.ranges,niebler.2018.deepranges,niebler.2018.mergingranges}. Following, we will show in
-section (X) a design around image's domain definition, extension and structuring element: how those
-concepts link with each other when used to write local algorithms. Another objective of the library is the ease of use
-and the binding with existing ecosystem, such as Python and NumPy. So we will present in
-section (X) our work about binding a generic C++ library to python. Finally, we will
-discuss in section (X) the issue of heterogeneous computing. We offer an avenue
-around the idea of canvas algorithm that can be exploited to bring performance without being intrusive for the user.
-Though it comes with its lot of disadvantage, such as a paradigm switch to event-driven programming.
 
+\section{Performance discussion}
 
-\clearpage
+\PLAGIAT{
+  \textbf{Views for performance.} Consider a classical design where each operation of the pipeline is implemented on
+  ``its own''. Each operation requires that memory be allocated for the output image, and also, each operation requires
+  that the image be traversed. This design is simple, flexible, composable, but is not memory efficient nor
+  computationally efficient. With the lazy evaluation approach, the image is traversed only once (when the dilation is
+  applied) that has two benefits. First, there are no intermediate images so this is memory effective. Second, it is
+  faster thanks to a better memory cache usage; processing a RGB16 pixel from the dilation algorithm directly converts
+  it in grayscale, then sub-quantized it to 8-bits, and finally make it available. It acts \emph{as if} we were writing
+  an optimal operator that would combine these operations.
+}
 
-\section{Benchmark figures}
+\PLAGIAT{
+  As an experiment, we benchmarked both pipelines on a 20MPix image RGB16 (random generated values) on a desktop
+  computer i7-2600 CPU @ 3.40GHz, single-threaded\footnote{Experimentation code is available at
+    \url{https://gitlab.lrde.epita.fr/mroynard/roynard.icip.2020.snippets}}. The dilation is done with a small 3x3 square
+  structuring element using tiling for caching input values. The pipeline using views is about 20\% faster than the
+  regular one (133 vs 106 ms). Note that views are also compatible with optimizations such as parallelization and
+  vectorization.
+}
+
+\PLAGIAT{
+  Background Subtraction: The background subtraction pipeline is used to detect changes in image
+  sequences~\cite{opencv.bg_sub}. It is mainly used when regions of interest are foreground objects. The pipeline
+  components include: subtraction, Gaussian filtering, threshold, erode and dilate, as shown
+  in~\cref{fig.view.comp.sub_bg}.
+}
+
+\begin{figure}[tbh]
+  \begin{minipage}{\linewidth}
+    \includestandalone[mode=image, scale=0.59]{figs/pipeline_bg_sub_comp}
+  \end{minipage}
+  \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
+    \colorbox{thistle}{views}.}
+  \label{fig.view.comp.sub_bg}
+\end{figure}
 
 % TODO : convert tif to png
 
@@ -1069,6 +798,109 @@ Though it comes with its lot of disadvantage, such as a paradigm switch to event
 % \end{figure}
 
 % TODO ajouter courbes unes fois benchmarks terminés d'exécuter.
+
+
+
+\cleardoublepage
+
+\chapter*{Material about views}
+
+
+\section*{Introducing range-based image traversing}
+\label{sec.range.traversing}
+
+Previously in Milena~\cite{levillain.2009.ismm} we had a very customized way of traversing images: macro-based. It aimed
+at hiding the complexity of such a task while loosing as little performance as possible. For example, the dilation
+algorithm was written this way:
+
+\begin{minted}{c++}
+  template<class I, class SE>
+  mln_concrete(I) dilate(const I& f, const SE& se)
+  {
+    mln_concrete(I) g;
+    initialize(g, f);
+    mln_piter(I) p(f.domain());
+    mln_qiter(SE) q(se, p);
+    for_all(p) // for all p in f domain
+    {
+      mln_value(I) v = f(p);
+      for_all(q) // for all q in se(p)
+        if(f.has(q) and f(q) > v)
+          v = f(q);
+      g(p) = v;
+    }
+    return g;
+  }
+\end{minted}
+
+In this code \texttt{mln\_concrete}, \texttt{mln\_piter}, \texttt{mln\_qiter}, \texttt{for\_all} and \texttt{mln\_value}
+are all macros aiming at hiding the underlying complexity. Our goal is to replace those macros with existing C++ core
+language code to improve the user experience as well as ease the maintenance, contribution and further improvement of
+the library. Nowadays, a tool named range (and especially Eric Niebler's range-v3) allow seamless traversing of an
+image. For instance, we can rewrite the above algorithm this way:
+
+\begin{minted}{c++}
+  template<class I, class SE>
+  image_concrete_t<I> dilate(const I& f, const SE& se)
+  {
+    auto g = f.concretize();
+    auto supr = accu::supremum<image_value_t<I>>();
+    for(auto [f_px, g_px] : zip(f.pixels(), g.pixels()))
+    {
+      for(auto qx : se(f_px))
+        supr.take(qx.val());
+      g_px.val() = supr.result();
+    }
+    return g;
+  }
+\end{minted}
+
+Here we have a much more efficient code that, in theory, enables compiler optimizations such as vectorization or inner
+loops unrolling. But through benchmarking, we have learned that this solution doesn't mix well with the multidimensional
+nature of images. The issue originates from the fact that we have no way to explicitly say in the code that the
+multidimensional range is made of chunk of contiguous rows of memory. Indeed, for each element we have to compute an
+index originating from potentially $N$ dimensions. This disables critical optimizations such as vectorization.
+
+We solved this problem by augmenting range-v3's ranges with our own multidimensional ranges. Indeed, we only need to
+have contiguity on the last dimension to provide the compiler code it can optimize. Which means that each for-loop that
+traverses the whole n-dimensional image can be transformed into a double for-loop whose inner loop is guaranteed to be a
+contiguous row. This way we have now an outer range as well as an inner range, as illustrated in
+figure~\ref{fig.inner.outer.range}.
+
+\begin{figure}[htbp]
+  \centering
+  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/linear_rng}}
+  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/segmented_rng}}
+  \caption{Range-v3's ranges (a) vs. multidimensional ranges (b).}
+  \label{fig.inner.outer.range}
+\end{figure}
+
+Thanks to this new design we can now rewrite our algorithm with a double for-loop for the image traversing. Hopefully it
+stays really similar to what one would be used to when working with the classical two dimension image. As an example, we
+can rewrite the dilation algorithm this way:
+
+\begin{minted}{c++}
+  template<class I, class SE>
+  image_concrete_t<I> dilate(const I& f, const SE& se)
+  {
+    auto g = f.concretize();
+    auto supr = accu::supremum<image_value_t<I>>();
+    auto zipped_pixels = zip(f.pixels(), g.pixels());
+    for(auto&& row : ranges::rows(zipped_pixels))
+      for(auto [f_px, g_px] : row)
+      {
+        for(auto qx : se(f_px))
+          supr.take(qx.val());
+        g_px.val() = supr.result();
+      }
+    return g;
+  }
+\end{minted}
+
+The highlight of this code is the usage a new tool: \texttt{ranges::rows} to bring out an inner range (contiguous) from
+the multidimensional outer range.
+
+\clearpage
 
 \begin{itemize}
   \item origine, parallèle avec range-v3
