@@ -675,7 +675,7 @@ policy). To use the policy \texttt{native}, one would write \texttt{extension::b
 
 In the implementation of the local algorithm, a dispatch is made with the pattern \emph{visitor}, relying on the
 standard facilities \texttt{std::visit} and \texttt{std::variant} so that the performance overhead as well as the
-complexity of use remain minimal. Let us assume we have a local algorithm implemented this way: 
+complexity of use remain minimal. Let us assume we have a local algorithm implemented this way:
 \begin{minted}{C++}
   template <class Ima, class SE>
   local_algorithm(Ima ima, SE se)
@@ -702,41 +702,42 @@ This will be transparent from both practitioner and maintener points of views.
 
 \section{Performance discussion}
 
-\PLAGIAT{
-  \textbf{Views for performance.} Consider a classical design where each operation of the pipeline is implemented on
-  ``its own''. Each operation requires that memory be allocated for the output image, and also, each operation requires
-  that the image be traversed. This design is simple, flexible, composable, but is not memory efficient nor
-  computationally efficient. With the lazy evaluation approach, the image is traversed only once (when the dilation is
-  applied) that has two benefits. First, there are no intermediate images so this is memory effective. Second, it is
-  faster thanks to a better memory cache usage; processing a RGB16 pixel from the dilation algorithm directly converts
-  it in grayscale, then sub-quantized it to 8-bits, and finally make it available. It acts \emph{as if} we were writing
-  an optimal operator that would combine these operations.
-}
-
-\PLAGIAT{
-  As an experiment, we benchmarked both pipelines on a 20MPix image RGB16 (random generated values) on a desktop
-  computer i7-2600 CPU @ 3.40GHz, single-threaded\footnote{Experimentation code is available at
-    \url{https://gitlab.lrde.epita.fr/mroynard/roynard.icip.2020.snippets}}. The dilation is done with a small 3x3 square
-  structuring element using tiling for caching input values. The pipeline using views is about 20\% faster than the
-  regular one (133 vs 106 ms). Note that views are also compatible with optimizations such as parallelization and
-  vectorization.
-}
-
-\PLAGIAT{
-  Background Subtraction: The background subtraction pipeline is used to detect changes in image
-  sequences~\cite{opencv.bg_sub}. It is mainly used when regions of interest are foreground objects. The pipeline
-  components include: subtraction, Gaussian filtering, threshold, erode and dilate, as shown
-  in~\cref{fig.view.comp.sub_bg}.
-}
-
-\begin{figure}[tbh]
-  \begin{minipage}{\linewidth}
-    \includestandalone[mode=image, scale=0.59]{figs/pipeline_bg_sub_comp}
-  \end{minipage}
-  \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
-    \colorbox{thistle}{views}.}
-  \label{fig.view.comp.sub_bg}
-\end{figure}
+\FIXME{TODO: courbes tracés, discussion sur les résultats à faire.}
+% \PLAGIAT{
+%   \textbf{Views for performance.} Consider a classical design where each operation of the pipeline is implemented on
+%   ``its own''. Each operation requires that memory be allocated for the output image, and also, each operation requires
+%   that the image be traversed. This design is simple, flexible, composable, but is not memory efficient nor
+%   computationally efficient. With the lazy evaluation approach, the image is traversed only once (when the dilation is
+%   applied) that has two benefits. First, there are no intermediate images so this is memory effective. Second, it is
+%   faster thanks to a better memory cache usage; processing a RGB16 pixel from the dilation algorithm directly converts
+%   it in grayscale, then sub-quantized it to 8-bits, and finally make it available. It acts \emph{as if} we were writing
+%   an optimal operator that would combine these operations.
+% }
+% 
+% \PLAGIAT{
+%   As an experiment, we benchmarked both pipelines on a 20MPix image RGB16 (random generated values) on a desktop
+%   computer i7-2600 CPU @ 3.40GHz, single-threaded\footnote{Experimentation code is available at
+%     \url{https://gitlab.lrde.epita.fr/mroynard/roynard.icip.2020.snippets}}. The dilation is done with a small 3x3 square
+%   structuring element using tiling for caching input values. The pipeline using views is about 20\% faster than the
+%   regular one (133 vs 106 ms). Note that views are also compatible with optimizations such as parallelization and
+%   vectorization.
+% }
+% 
+% \PLAGIAT{
+%   Background Subtraction: The background subtraction pipeline is used to detect changes in image
+%   sequences~\cite{opencv.bg_sub}. It is mainly used when regions of interest are foreground objects. The pipeline
+%   components include: subtraction, Gaussian filtering, threshold, erode and dilate, as shown
+%   in~\cref{fig.view.comp.sub_bg}.
+% }
+% 
+% \begin{figure}[tbh]
+%   \begin{minipage}{\linewidth}
+%     \includestandalone[mode=image, scale=0.59]{figs/pipeline_bg_sub_comp}
+%   \end{minipage}
+%   \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
+%     \colorbox{thistle}{views}.}
+%   \label{fig.view.comp.sub_bg}
+% \end{figure}
 
 % TODO : convert tif to png
 
@@ -870,111 +871,111 @@ This will be transparent from both practitioner and maintener points of views.
 
 \cleardoublepage
 
-\chapter*{Material about views}
-
-
-\section*{Introducing range-based image traversing}
-\label{sec.range.traversing}
-
-Previously in Milena~\cite{levillain.2009.ismm} we had a very customized way of traversing images: macro-based. It aimed
-at hiding the complexity of such a task while loosing as little performance as possible. For example, the dilation
-algorithm was written this way:
-
-\begin{minted}{c++}
-  template<class I, class SE>
-  mln_concrete(I) dilate(const I& f, const SE& se)
-  {
-    mln_concrete(I) g;
-    initialize(g, f);
-    mln_piter(I) p(f.domain());
-    mln_qiter(SE) q(se, p);
-    for_all(p) // for all p in f domain
-    {
-      mln_value(I) v = f(p);
-      for_all(q) // for all q in se(p)
-        if(f.has(q) and f(q) > v)
-          v = f(q);
-      g(p) = v;
-    }
-    return g;
-  }
-\end{minted}
-
-In this code \texttt{mln\_concrete}, \texttt{mln\_piter}, \texttt{mln\_qiter}, \texttt{for\_all} and \texttt{mln\_value}
-are all macros aiming at hiding the underlying complexity. Our goal is to replace those macros with existing C++ core
-language code to improve the user experience as well as ease the maintenance, contribution and further improvement of
-the library. Nowadays, a tool named range (and especially Eric Niebler's range-v3) allow seamless traversing of an
-image. For instance, we can rewrite the above algorithm this way:
-
-\begin{minted}{c++}
-  template<class I, class SE>
-  image_concrete_t<I> dilate(const I& f, const SE& se)
-  {
-    auto g = f.concretize();
-    auto supr = accu::supremum<image_value_t<I>>();
-    for(auto [f_px, g_px] : zip(f.pixels(), g.pixels()))
-    {
-      for(auto qx : se(f_px))
-        supr.take(qx.val());
-      g_px.val() = supr.result();
-    }
-    return g;
-  }
-\end{minted}
-
-Here we have a much more efficient code that, in theory, enables compiler optimizations such as vectorization or inner
-loops unrolling. But through benchmarking, we have learned that this solution doesn't mix well with the multidimensional
-nature of images. The issue originates from the fact that we have no way to explicitly say in the code that the
-multidimensional range is made of chunk of contiguous rows of memory. Indeed, for each element we have to compute an
-index originating from potentially $N$ dimensions. This disables critical optimizations such as vectorization.
-
-We solved this problem by augmenting range-v3's ranges with our own multidimensional ranges. Indeed, we only need to
-have contiguity on the last dimension to provide the compiler code it can optimize. Which means that each for-loop that
-traverses the whole n-dimensional image can be transformed into a double for-loop whose inner loop is guaranteed to be a
-contiguous row. This way we have now an outer range as well as an inner range, as illustrated in
-figure~\ref{fig.inner.outer.range}.
-
-\begin{figure}[htbp]
-  \centering
-  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/linear_rng}}
-  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/segmented_rng}}
-  \caption{Range-v3's ranges (a) vs. multidimensional ranges (b).}
-  \label{fig.inner.outer.range}
-\end{figure}
-
-Thanks to this new design we can now rewrite our algorithm with a double for-loop for the image traversing. Hopefully it
-stays really similar to what one would be used to when working with the classical two dimension image. As an example, we
-can rewrite the dilation algorithm this way:
-
-\begin{minted}{c++}
-  template<class I, class SE>
-  image_concrete_t<I> dilate(const I& f, const SE& se)
-  {
-    auto g = f.concretize();
-    auto supr = accu::supremum<image_value_t<I>>();
-    auto zipped_pixels = zip(f.pixels(), g.pixels());
-    for(auto&& row : ranges::rows(zipped_pixels))
-      for(auto [f_px, g_px] : row)
-      {
-        for(auto qx : se(f_px))
-          supr.take(qx.val());
-        g_px.val() = supr.result();
-      }
-    return g;
-  }
-\end{minted}
-
-The highlight of this code is the usage a new tool: \texttt{ranges::rows} to bring out an inner range (contiguous) from
-the multidimensional outer range.
-
-\clearpage
-
-\begin{itemize}
-  \item origine, parallèle avec range-v3
-  \item Value/Ref semantics des images
-  \item Comment préserver les propriétés
-  \item Évaluation paresseuse
-  \item Composabilité/chaînage
-  \item ...
-  \item Performances + Bench
-\end{itemize}
+% \chapter*{Material about views}
+% 
+% 
+% \section*{Introducing range-based image traversing}
+% \label{sec.range.traversing}
+% 
+% Previously in Milena~\cite{levillain.2009.ismm} we had a very customized way of traversing images: macro-based. It aimed
+% at hiding the complexity of such a task while loosing as little performance as possible. For example, the dilation
+% algorithm was written this way:
+% 
+% \begin{minted}{c++}
+%   template<class I, class SE>
+%   mln_concrete(I) dilate(const I& f, const SE& se)
+%   {
+%     mln_concrete(I) g;
+%     initialize(g, f);
+%     mln_piter(I) p(f.domain());
+%     mln_qiter(SE) q(se, p);
+%     for_all(p) // for all p in f domain
+%     {
+%       mln_value(I) v = f(p);
+%       for_all(q) // for all q in se(p)
+%         if(f.has(q) and f(q) > v)
+%           v = f(q);
+%       g(p) = v;
+%     }
+%     return g;
+%   }
+% \end{minted}
+% 
+% In this code \texttt{mln\_concrete}, \texttt{mln\_piter}, \texttt{mln\_qiter}, \texttt{for\_all} and \texttt{mln\_value}
+% are all macros aiming at hiding the underlying complexity. Our goal is to replace those macros with existing C++ core
+% language code to improve the user experience as well as ease the maintenance, contribution and further improvement of
+% the library. Nowadays, a tool named range (and especially Eric Niebler's range-v3) allow seamless traversing of an
+% image. For instance, we can rewrite the above algorithm this way:
+% 
+% \begin{minted}{c++}
+%   template<class I, class SE>
+%   image_concrete_t<I> dilate(const I& f, const SE& se)
+%   {
+%     auto g = f.concretize();
+%     auto supr = accu::supremum<image_value_t<I>>();
+%     for(auto [f_px, g_px] : zip(f.pixels(), g.pixels()))
+%     {
+%       for(auto qx : se(f_px))
+%         supr.take(qx.val());
+%       g_px.val() = supr.result();
+%     }
+%     return g;
+%   }
+% \end{minted}
+% 
+% Here we have a much more efficient code that, in theory, enables compiler optimizations such as vectorization or inner
+% loops unrolling. But through benchmarking, we have learned that this solution doesn't mix well with the multidimensional
+% nature of images. The issue originates from the fact that we have no way to explicitly say in the code that the
+% multidimensional range is made of chunk of contiguous rows of memory. Indeed, for each element we have to compute an
+% index originating from potentially $N$ dimensions. This disables critical optimizations such as vectorization.
+% 
+% We solved this problem by augmenting range-v3's ranges with our own multidimensional ranges. Indeed, we only need to
+% have contiguity on the last dimension to provide the compiler code it can optimize. Which means that each for-loop that
+% traverses the whole n-dimensional image can be transformed into a double for-loop whose inner loop is guaranteed to be a
+% contiguous row. This way we have now an outer range as well as an inner range, as illustrated in
+% figure~\ref{fig.inner.outer.range}.
+% 
+% \begin{figure}[htbp]
+%   \centering
+%   \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/linear_rng}}
+%   \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/segmented_rng}}
+%   \caption{Range-v3's ranges (a) vs. multidimensional ranges (b).}
+%   \label{fig.inner.outer.range}
+% \end{figure}
+% 
+% Thanks to this new design we can now rewrite our algorithm with a double for-loop for the image traversing. Hopefully it
+% stays really similar to what one would be used to when working with the classical two dimension image. As an example, we
+% can rewrite the dilation algorithm this way:
+% 
+% \begin{minted}{c++}
+%   template<class I, class SE>
+%   image_concrete_t<I> dilate(const I& f, const SE& se)
+%   {
+%     auto g = f.concretize();
+%     auto supr = accu::supremum<image_value_t<I>>();
+%     auto zipped_pixels = zip(f.pixels(), g.pixels());
+%     for(auto&& row : ranges::rows(zipped_pixels))
+%       for(auto [f_px, g_px] : row)
+%       {
+%         for(auto qx : se(f_px))
+%           supr.take(qx.val());
+%         g_px.val() = supr.result();
+%       }
+%     return g;
+%   }
+% \end{minted}
+% 
+% The highlight of this code is the usage a new tool: \texttt{ranges::rows} to bring out an inner range (contiguous) from
+% the multidimensional outer range.
+% 
+% \clearpage
+% 
+% \begin{itemize}
+%   \item origine, parallèle avec range-v3
+%   \item Value/Ref semantics des images
+%   \item Comment préserver les propriétés
+%   \item Évaluation paresseuse
+%   \item Composabilité/chaînage
+%   \item ...
+%   \item Performances + Bench
+% \end{itemize}
