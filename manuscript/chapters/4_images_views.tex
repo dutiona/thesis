@@ -402,7 +402,7 @@ the image (End) Save the resulting 2D 8-bit grayscale image; as described in~\cr
 
 While is it tempting to use views everywhere, it is also important to note that you may converse or loose some
 properties from the base concrete image (the one holding the data buffer). To give a quick example, let us consider a
-classic RGB image and a views that calculate the grayscale on-the-fly. When only seeing the view, it is not possible to
+classic RGB image and a view that calculate the grayscale on-the-fly. When only seeing the view, it is not possible to
 modify the base values which are RGB colors. Indeed, we cannot infer how a modification on the grayscale value will
 impact the base color of the image. Passing from a grayscale image to a colored image is a research area on its own and
 cannot be done deterministically on-the-fly in a fixed time. This induces that piping an image into this grayscale views
@@ -415,7 +415,7 @@ There are six properties one want to keep track when working with views: forward
 accessible and indexable. Those properties echo to the concepts seen in~\cref{sec:library.concepts}. And image is
 \emph{forward} when it can be traversed in a forward way. It is \emph{bidirectional} when it can be traversed in both a
 forward and a backward way. It is \emph{raw} when its data buffer can is contiguous and can directly be accessed with
-informations about strides. It is \emph{writable} when the values are mutable. It is accessible whenever it allows to
+information about strides. It is \emph{writable} when the values are mutable. It is accessible whenever it allows to
 access the value associated to a point (i.e. it allows to write the expression $v = ima(p)$). Finally, an image is
 \emph{indexable} whenever its values can be accessed through an index localisator (i.e. it allows to write the
 expression $v = ima[idx]$). Usually, accessing through an index is faster than accessing by a point. The
@@ -427,20 +427,20 @@ table~\cref{table:views.properties} present all the views and how they conserve 
       \caption{Views: property conservation}
       \begin{tabular}{|l|l|cccccc|}
         \hline
-        %\thead{View type}    & \backslashbox{\thead{Expression}}{\thead{Property}} & Forward & Bidirectional & Raw    & Writable   & Accessible & Indexable \\
-        \thead{View type}    & \thead{Expression | Properties:} & Forward & Bidirectional & Raw    & Writable   & Accessible & Indexable \\
+        \thead{View type}    & \diagbox{\thead{Expression}}{\thead{Property}} & Forward & Bidirectional & Raw    & Writable   & Accessible & Indexable \\
+        %\thead{View type}    & \thead{Expression | Properties:} & Forward & Bidirectional & Raw    & Writable   & Accessible & Indexable \\
         \hline
-        \thead{Image}        & \texttt{ima1, ima2}              & \cmark  & \cmark        & \cmark & \cmark     & \cmark     & \cmark    \\
-        \thead{Cast}         & \texttt{cast<T>(ima)}            & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
-        \thead{Transform}    & \texttt{transform(ima, func)}    & \cmark  & \cmark        & \xmark & \cmark$^1$ & \cmark     & \cmark    \\
-        \thead{Filter}       & \texttt{filter(ima, pred)}       & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
-        \thead{Clip}         & \texttt{clip(ima, dom)}          & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
-        \thead{mask}         & \texttt{mask(ima, mask)}         & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
-        \thead{Zip}          & \texttt{zip(ima1, ima2)}         & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
-        \thead{Channel}      & \texttt{red(ima)}                & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
-        \thead{Arithmetic}   & \texttt{ima1 + ima2}             & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
-        \thead{Logical}      & \texttt{ima > 125}               & \cmark  & \cmark        & \xmark & \xmark$^2$ & \cmark     & \cmark    \\
-        \thead{Mathematical} & \texttt{abs(ima)}                & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
+        \thead{Image}        & \texttt{ima1, ima2}                            & \cmark  & \cmark        & \cmark & \cmark     & \cmark     & \cmark    \\
+        \thead{Cast}         & \texttt{cast<T>(ima)}                          & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
+        \thead{Transform}    & \texttt{transform(ima, func)}                  & \cmark  & \cmark        & \xmark & \cmark$^1$ & \cmark     & \cmark    \\
+        \thead{Filter}       & \texttt{filter(ima, pred)}                     & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
+        \thead{Clip}         & \texttt{clip(ima, dom)}                        & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
+        \thead{mask}         & \texttt{mask(ima, mask)}                       & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
+        \thead{Zip}          & \texttt{zip(ima1, ima2)}                       & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
+        \thead{Channel}      & \texttt{red(ima)}                              & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
+        \thead{Arithmetic}   & \texttt{ima1 + ima2}                           & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
+        \thead{Logical}      & \texttt{ima > 125}                             & \cmark  & \cmark        & \xmark & \xmark$^2$ & \cmark     & \cmark    \\
+        \thead{Mathematical} & \texttt{abs(ima)}                              & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
         \hline
       \end{tabular}
       \begin{tablenotes}
@@ -512,8 +512,8 @@ auto MyComplexImage = subquantize16to8b(togray(A));
 meaning that in~\cref{fig.view.highorder}, the creation of the views does not incur any computation. The computation is
 delayed until the invocation of the \texttt{v(p)} expression. Also, the computation can be delayed quite far thanks to
 the composition capability of views. In fact, a view is an image adaptor which actually is a \emph{template
-  expression}~\parencite{veldhuizen.1995.expression, veldhuizen.2000.blitz}. Indeed, the \emph{expression} used to generate
-the image is recorded as a template parameter. A view is represented by an \emph{expression tree}, as shown
+  expression}~\parencite{veldhuizen.1995.expression, veldhuizen.2000.blitz}. Indeed, the \emph{expression} used to
+generate the image is recorded as a template parameter. A view is represented by an \emph{expression tree}, as shown
 in~\cref{fig.view.ast}.
 
 
@@ -537,42 +537,32 @@ Image out = subquantize16to8b(
 
 \section{A practical example: border management}
 
-\section*{From local algorithm to border management}
-\label{sec.localgo.bm}
+\label{sec:border.management}
 
-In image processing there are three main families of algorithms:
-\begin{itemize}
-  \item Point-wise algorithms: they process each value of the image, individually from each others (e.g.
-        multiplication).
-  \item Local algorithms: they process each value of the image, helped with the knowledge of the neighboring values
-        catched in a window: the structuring element (e.g. convolution).
-  \item Global algorithms: they propagate the changes downstream during the algorithm unrolling. Knowledge of previously
-        computed values is required (e.g. chamfer distance transform).
-\end{itemize}
-Here we are interested in particular in local algorithms. The long recurring issue is about the behavior on the border
-of the image. There are many ways of dealing with this problem. One is to allocate additional memory for the border and
-paste values in it. Another is to check the bounds when looping over the neighbors. We can also decorate the image to
-return a correct lazily computed value when accessing out-of-image's-bound value still inside the extension. The point
-is: all these methods have advantages as well as disadvantages.
+When looking at local algorithms, we notice that a long recurring issue is about the behavior on the border of the
+image. There are many ways of dealing with this problem. One is to allocate additional memory for the border and paste
+values in it. Another is to check the bounds when looping over the neighbors inside the computational window. We can
+also decorate the image to return a correct lazily computed value when accessing out-of-image's-bound value still inside
+the extension. The point is: all these methods have advantages as well as disadvantages.
 
-\subsubsection{Memory allocated border}
+\paragraph{Memory allocated border}
 The border width is fixed at the image's creation and cannot be augmented without doing a reallocation. There is also a
 cost when computing border's values (to fill it) which is proportional to the border's width and to the image's size. On
 the other hand, the access time of a border value during the algorithm unrolling is as fast as a native access time
 within the image itself. The last issue remaining would be that the border is not infinite. We cannot process a local
 algorithm with a structuring element that does not fit in the extension. This method is especially adapted when there is
 medium structuring elements with a known size which will yield a lot of out-of-image's bound accesses. When speed is
-required, this method is a defacto standard.
+required, this method is a de facto standard.
 
-\subsubsection{Bound checking}
+\paragraph{Bound checking}
 Assuming there is no border and we are not allowed to access out-of-image's-bound values, a bound check is required when
 accessing each values. Another way to do would be to decorate the facility that yields the neighbors of a pixel: do not
 yield out-of-image's-bound pixels. This removes the need to bound check for each pixel's value which is relatively
 faster. The caveats of this method are that it induces a slight slow down when yielding the pixel's neighbors from the
-structuring element, and that it is not always viable: some algorithm do need to access values in an extension to
+structuring element, and that it is not always viable: some algorithms do need to access values in an extension to
 produce proper results.
 
-\subsubsection{Image decoration}
+\paragraph{Image decoration}
 The border is infinite and we make a view of our image to decorate it with the required extension. This method has the
 advantage to \textit{always work}. Given any structuring element of any size, any algorithm will work. The disadvantage
 is that we need to check for out-of-bound access at the image level, and lazily compute the value in case of
@@ -584,39 +574,92 @@ It is important to note the very close relation between an image's domain (to pe
 structuring element (notably its size) and the extension (its width). A user may require, for a specific set of those
 three elements, to decorate the image, and/or the structuring element and/or to perform computation and/or reallocation.
 To resolve this issue, we decided to provide the user with a new facility: the \textit{border manager} whose job is to
-prepare a suitable couple (image and structuring element) given a set of configuration wanted by the user.
+prepare a suitable pair (image and structuring element) given a set of configuration wanted by the user.
 
-We designed the configuration to be configured from a given set of a policy and a method. We currently offer two
+We designed the configuration to be constructed from a given set of a policy and a method. We currently offer two
 policies: native and auto.
 
 \begin{itemize}
   \item Native: if the border is large enough: forward the image as-is to the algorithm to allow the fastest access
         possible. Otherwise, the border manager fails and halt the program.
   \item Auto: if the border is large enough: forward the image as-is to the algorithm to allow the fastest access
-        possible. Otherwise, decorate the image with a view whose extension will emulate what is required by the algorithm
-        with the given structuring element.
+        possible. Otherwise, decorate the image with a view whose extension will emulate what is required by the
+        algorithm with the given structuring element.
 \end{itemize}
 
-We also provide seven different methods to fill the values of our extension. It is important to note that not all the
-methods are available for both policies. The policies are: none, fill, mirror, periodize, clamp, image and user.
+We also provide seven different methods to fill up our extension with the wanted values. It is important to note that
+not all the methods are available for both policies. The policies are: none, fill, mirror, periodize, clamp, image and
+user.
 
-\begin{itemize}
-  \item None: enforce a policy where there is no border to use. The method cannot fail as it enforces the border to
-        vanish. To enforce this method, the border manager decorate the structuring element in a view that checks the domain
-        inclusion of each neighboring point.
-  \item Fill: will fill the border with a specific value.
-  \item Mirror: will mirror the image following an axial symmetry of image's edges.
-  \item Periodize: replicate the image around, like a mosaic.
-  \item Clamp: expand the value at the image's edge on the border.
-  \item Image: assume all points out of the current image's domain are to be picked inside another image. A basic
-        use-case is preparing tiles from a large image. The position of our image can be offset in the image acting as an
-        extension which ease the ease of usage.
-  \item User: Assume the user knows what he is doing and do not touch nor decorate the given image in any way. Both
-        policies lead to the same behavior: check wether the structuring element fit and then forward the image as-is if it
-        fits. An exception is raised if it does not.
-\end{itemize}
+\paragraph{None} Enforces enforce a policy where there is no border to use. The method cannot fail as it enforces the
+border to vanish. To enforce this method, the border manager decorate the structuring element in a view that checks the
+domain inclusion of each neighboring point. And example is given in~\cref{fig:border.none}.
 
-As a consequence the usage of a local algorithm becomes very eased:
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=1in]{figs/extensions/none}
+  \label{fig:border.none}
+  \caption{Border method: none.}
+\end{figure}
+
+\paragraph{Fill} Enforces that the border is filled with a specific value. The figure~\cref{fig:border.fill} shows an
+image whose border is filled with the value $0$.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=2in]{figs/extensions/fill}
+  \label{fig:border.fill}
+  \caption{Border method: fill.}
+\end{figure}
+
+\paragraph{Fill} Enforces that the border is filled with a mirrored value from an axial symmetry relative to the image's
+edges. The figure~\cref{fig:border.mirror} shows an image whose border is filled with mirrored values.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=2in]{figs/extensions/mirror}
+  \label{fig:border.mirror}
+  \caption{Border method: mirror.}
+\end{figure}
+
+\paragraph{Periodize} Enforces that the border replicate the image, like a mosaic. The
+figure~\cref{fig:border:periodize} shows an image whose border is filled with periodized values.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=2in]{figs/extensions/periodize}
+  \label{fig:border.periodize}
+  \caption{Border method: periodize.}
+\end{figure}
+
+\paragraph{Clamp} Enforces that the border is filled with values expanded from the values at the image's edge. The
+figure~\cref{fig:border.clamp} shows an image whose border is filled with clamped values.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=2in]{figs/extensions/clamp}
+  \label{fig:border.clamp}
+  \caption{Border method: clamp.}
+\end{figure}
+
+\paragraph{Image} Enforces all points out of the current image's domain are to be picked inside another image. A basic
+use-case is preparing tiles from a large image. The position of our image can be offset in the image acting as an
+extension which ease the ease of usage. The figure~\cref{fig:border.image} shows how a subimage (tile) can consider the
+base image as its border.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=2in]{figs/extensions/image}
+  \label{fig:border.image}
+  \caption{Border method: image.}
+\end{figure}
+
+
+\paragraph{User} Assumes the user knows what he is doing and do not touch nor decorate the given image in any way. Both
+policies lead to the same behavior: check whether the structuring element fit and then forward the image as-is if it
+fits. An exception is raised if it does not.
+
+As a consequence the usage of a local algorithm becomes very simple:
 
 \begin{minted}{C++}
   // default border width is 3
@@ -630,8 +673,32 @@ As a consequence the usage of a local algorithm becomes very eased:
 The border manager \texttt{bm} is set with the method fill (with value 0) and policy \texttt{auto} (wich is the default
 policy). To use the policy \texttt{native}, one would write \texttt{extension::bm::native::fill(0)} instead.
 
-\FIXME{put schemas showing different type of border management}
-
+In the implementation of the local algorithm, a dispatch is made with the pattern \emph{visitor}, relying on the
+standard facilities \texttt{std::visit} and \texttt{std::variant} so that the performance overhead as well as the
+complexity of use remain minimal. Let us assume we have a local algorithm implemented this way: 
+\begin{minted}{C++}
+  template <class Ima, class SE>
+  local_algorithm(Ima ima, SE se)
+  {
+    // assume ima has a large enough border for the given se
+    // use ima & se in loop
+  }
+\end{minted}
+We can rewrite it leveraging the border manager facility this way :
+\begin{minted}{C++}
+  template <class Ima, class SE, class BM>
+  local_algorithm(Ima ima, SE se, BM bm)
+  {
+    auto [managed_ima, managed_se] = bm.manage(ima, se);
+    std::visit([&](auto&& ima_, auto&& se_) { 
+      // use ima_ & se_ in loop
+     }, managed_ima, managed_se);
+  }
+\end{minted}
+The overhead is kept minimal thanks to using \texttt{std::variant} and \texttt{std::visit} and the algorithm implementer
+delegate the border management to the border manager. This is made possible thanks to the views. Indeed, under the hood
+the border manager may pipe the orginal image into a view that will behave accordingly to the policy chosen by the user.
+This will be transparent from both practitioner and maintener points of views.
 
 \section{Performance discussion}
 
