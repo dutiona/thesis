@@ -700,174 +700,171 @@ delegate the border management to the border manager. This is made possible than
 the border manager may pipe the orginal image into a view that will behave accordingly to the policy chosen by the user.
 This will be transparent from both practitioner and maintener points of views.
 
+
 \section{Performance discussion}
 
-\FIXME{TODO: courbes tracés, discussion sur les résultats à faire.}
-% \PLAGIAT{
-%   \textbf{Views for performance.} Consider a classical design where each operation of the pipeline is implemented on
-%   ``its own''. Each operation requires that memory be allocated for the output image, and also, each operation requires
-%   that the image be traversed. This design is simple, flexible, composable, but is not memory efficient nor
-%   computationally efficient. With the lazy evaluation approach, the image is traversed only once (when the dilation is
-%   applied) that has two benefits. First, there are no intermediate images so this is memory effective. Second, it is
-%   faster thanks to a better memory cache usage; processing a RGB16 pixel from the dilation algorithm directly converts
-%   it in grayscale, then sub-quantized it to 8-bits, and finally make it available. It acts \emph{as if} we were writing
-%   an optimal operator that would combine these operations.
-% }
-% 
-% \PLAGIAT{
-%   As an experiment, we benchmarked both pipelines on a 20MPix image RGB16 (random generated values) on a desktop
-%   computer i7-2600 CPU @ 3.40GHz, single-threaded\footnote{Experimentation code is available at
-%     \url{https://gitlab.lrde.epita.fr/mroynard/roynard.icip.2020.snippets}}. The dilation is done with a small 3x3 square
-%   structuring element using tiling for caching input values. The pipeline using views is about 20\% faster than the
-%   regular one (133 vs 106 ms). Note that views are also compatible with optimizations such as parallelization and
-%   vectorization.
-% }
-% 
-% \PLAGIAT{
-%   Background Subtraction: The background subtraction pipeline is used to detect changes in image
-%   sequences~\cite{opencv.bg_sub}. It is mainly used when regions of interest are foreground objects. The pipeline
-%   components include: subtraction, Gaussian filtering, threshold, erode and dilate, as shown
-%   in~\cref{fig.view.comp.sub_bg}.
-% }
-% 
-% \begin{figure}[tbh]
-%   \begin{minipage}{\linewidth}
-%     \includestandalone[mode=image, scale=0.59]{figs/pipeline_bg_sub_comp}
-%   \end{minipage}
-%   \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
-%     \colorbox{thistle}{views}.}
-%   \label{fig.view.comp.sub_bg}
-% \end{figure}
+In order to have a relevant discussion on performances, we decided to implement a real world image processing pipeline:
+the background subtraction. It is used to detect changes in image sequences~\cite{opencv.bg_sub}. It is mainly used when
+regions of interest are foreground objects. The pipeline components include: subtraction, Gaussian filtering, threshold,
+erode and dilate, as shown in~\cref{fig.view.comp.sub_bg}.
 
-% TODO : convert tif to png
+\begin{figure}[tbh]
+  \begin{minipage}{\linewidth}
+    \includestandalone[mode=image, scale=0.59]{figs/pipeline_bg_sub_comp}
+  \end{minipage}
+  \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
+    \colorbox{thistle}{views}.}
+  \label{fig.view.comp.sub_bg}
+\end{figure}
 
-% \subsection{Castle example}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/castle_bg.tif}
-%   \caption{Castle background.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/castle_fg_1.tif}
-%   \caption{Castle with foreground.}
-% \end{figure}
-% 
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/castle/result_detected_castle_fg_1.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
-% 
-% 
-% \subsection{Garden example}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/garden_bg.tif}
-%   \caption{Garden background.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/garden_fg_1.tif}
-%   \caption{Garden with foreground 1.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/garden/result_detected_garden_fg_1.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/garden_fg_2.tif}
-%   \caption{Garden with foreground 2.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/garden/result_detected_garden_fg_2.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/garden_fg_3.tif}
-%   \caption{Garden with foreground 3.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/garden/result_detected_garden_fg_3.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/garden_fg_4.tif}
-%   \caption{Garden with foreground 4.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/garden/result_detected_garden_fg_4.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/garden_fg_5.tif}
-%   \caption{Garden with foreground 5.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/garden/result_detected_garden_fg_5.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
-% 
-% 
-% \subsection{Pathway example}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/pathway_bg.tif}
-%   \caption{Garden background.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/pathway_fg_1.tif}
-%   \caption{Garden with foreground 1.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/pathway/result_detected_pathway_fg_1.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/pathway_fg_2.tif}
-%   \caption{Garden with foreground 2.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/pathway/result_detected_pathway_fg_2.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/pathway_fg_3.tif}
-%   \caption{Garden with foreground 3.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/pathway/result_detected_pathway_fg_3.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/pathway_fg_4.tif}
-%   \caption{Garden with foreground 4.}
-% \end{figure}
-% 
-% \begin{figure}[tbh]
-%   \includegraphics[width=5.5in]{../assets/clean_samples/3870x2575/results_sig1_win5/pathway/result_detected_pathway_fg_4.tif}
-%   \caption{Background substraction: foreground detection.}
-% \end{figure}
+We have decided to run the algorithm on an original set of image to detect a changing foreground. Here are the 10 sets
+we have considered.
 
-% TODO ajouter courbes unes fois benchmarks terminés d'exécuter.
+\paragraph{Set \#1: castle} The figure~\cref{fig:bg_sub.castle.restults} presents the first candidate set we have run
+the algorithm with.
 
+\begin{figure}[tbh]
+  \centering
+  \begin{tabular}{cccc}
+    Background
+                                                                                     & Candidate & Result \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/castle_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/castle_fg_1.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}}
+  \end{tabular}
 
+  \caption{Background detection: castle results.}
+  \label{fig:bg_sub.castle.restults}
+\end{figure}
+
+We have run benchmarks on this set comparing multiple ways of achieving this result, both using Pylene and OpenCV as
+well as varying the size and the shape of the structuring element window.The breakdown of these benchmarks are presented
+in the figures~\cref{fig:bg_sub.castle.benchmarks} and~\cref{fig:bg_sub.castle.benchmarks.plnonly}.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.7\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0}
+
+  \caption{Background detection: castle benchmark.}
+  \label{fig:bg_sub.castle.benchmarks}
+\end{figure}
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.7\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0}
+
+  \caption{Background detection: castle benchmark, Pylene only.}
+  \label{fig:bg_sub.castle.benchmarks.plnonly}
+\end{figure}
+
+We have also run the algorithm on another another original set of images presented in figure~\cref{fig:bg_sub.garden.restults}.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{tabular}{cccc}
+    Background
+                                                                                     & Candidate & Result                     \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_1.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}} \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_2.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_2.png}} \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_3.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_3.png}} \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_4.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_4.png}} \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_5.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_5.png}}
+  \end{tabular}
+
+  \caption{Background detection: garden results.}
+  \label{fig:bg_sub.garden.restults}
+\end{figure}
+
+The breakdown of the benchmarks corresponding to this original set is presented in the
+figures~\cref{fig:bg_sub.garden.benchmarks}.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{tabular}{cccc}
+    Result                                                                                                                    & Benchmark & Benchmark Pln only \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_1.pdf}}                                          &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_1.pdf}}                                                                       \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_2.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_2.pdf}}                                          &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_2.pdf}}                                                                       \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_3.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_3.pdf}}                                          &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_3.pdf}}                                                                       \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_4.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_4.pdf}}                                          &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_4.pdf}}                                                                       \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_5.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_5.pdf}}                                          &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_5.pdf}}
+  \end{tabular}
+
+  \caption{Background detection: garden results.}
+  \label{fig:bg_sub.garden.benchmarks}
+\end{figure}
+
+Finally, we have run our algorithm on a last original set of image presented in
+figure~\cref{fig:bg_sub.pathway.restults}.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{tabular}{cccc}
+    Background
+                                                                                      & Candidate & Result                      \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_1.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}} \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_2.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_2.png}} \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_3.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_3.png}} \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_4.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_4.png}}
+  \end{tabular}
+
+  \caption{Background detection: pathway results.}
+  \label{fig:bg_sub.pathway.restults}
+\end{figure}
+
+The breakdown of the benchmarks corresponding to this original set is presented in the
+figures~\cref{fig:bg_sub.pathway.benchmarks}.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{tabular}{cccc}
+    Result                                                                                                                      & Benchmark & Benchmark Pln only \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_6.pdf}}                                            &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_6.pdf}}                                                                         \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_2.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_7.pdf}}                                            &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_7.pdf}}                                                                         \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_3.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_8.pdf}}                                            &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_8.pdf}}                                                                         \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_4.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_9.pdf}}                                            &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_9.pdf}}
+  \end{tabular}
+
+  \caption{Background detection: pathway results.}
+  \label{fig:bg_sub.pathway.benchmarks}
+\end{figure}
+
+\FIXME{TODO: discussion sur les résultats à faire.}
 
 \cleardoublepage
 
