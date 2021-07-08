@@ -1,7 +1,7 @@
 TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
 SRC = $(filter-out trash.tex, $(wildcard *.tex))
 PDF = $(SRC:.tex=.pdf)
-SUBDIRS = views
+SUBDIRS = views extensions
 
 all : $(SUBDIRS) $(PDF)
 

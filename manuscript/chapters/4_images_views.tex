@@ -593,65 +593,65 @@ user.
 
 \paragraph{None} Enforces enforce a policy where there is no border to use. The method cannot fail as it enforces the
 border to vanish. To enforce this method, the border manager decorate the structuring element in a view that checks the
-domain inclusion of each neighboring point. And example is given in~\cref{fig:border.none}.
+domain inclusion of each neighboring point. And example is given in figure~\ref{fig:border.none}.
 
 \begin{figure}[tbh]
   \centering
   \includegraphics[width=1in]{figs/extensions/none}
-  \label{fig:border.none}
   \caption{Border method: none.}
+  \label{fig:border.none}
 \end{figure}
 
-\paragraph{Fill} Enforces that the border is filled with a specific value. The figure~\cref{fig:border.fill} shows an
+\paragraph{Fill} Enforces that the border is filled with a specific value. The figure~\ref{fig:border.fill} shows an
 image whose border is filled with the value $0$.
 
 \begin{figure}[tbh]
   \centering
   \includegraphics[width=2in]{figs/extensions/fill}
-  \label{fig:border.fill}
   \caption{Border method: fill.}
+  \label{fig:border.fill}
 \end{figure}
 
 \paragraph{Fill} Enforces that the border is filled with a mirrored value from an axial symmetry relative to the image's
-edges. The figure~\cref{fig:border.mirror} shows an image whose border is filled with mirrored values.
+edges. The figure~\ref{fig:border.mirror} shows an image whose border is filled with mirrored values.
 
 \begin{figure}[tbh]
   \centering
   \includegraphics[width=2in]{figs/extensions/mirror}
-  \label{fig:border.mirror}
   \caption{Border method: mirror.}
+  \label{fig:border.mirror}
 \end{figure}
 
 \paragraph{Periodize} Enforces that the border replicate the image, like a mosaic. The
-figure~\cref{fig:border:periodize} shows an image whose border is filled with periodized values.
+figure~\ref{fig:border.periodize} shows an image whose border is filled with periodized values.
 
 \begin{figure}[tbh]
   \centering
   \includegraphics[width=2in]{figs/extensions/periodize}
-  \label{fig:border.periodize}
   \caption{Border method: periodize.}
+  \label{fig:border.periodize}
 \end{figure}
 
 \paragraph{Clamp} Enforces that the border is filled with values expanded from the values at the image's edge. The
-figure~\cref{fig:border.clamp} shows an image whose border is filled with clamped values.
+figure~\ref{fig:border.clamp} shows an image whose border is filled with clamped values.
 
 \begin{figure}[tbh]
   \centering
   \includegraphics[width=2in]{figs/extensions/clamp}
-  \label{fig:border.clamp}
   \caption{Border method: clamp.}
+  \label{fig:border.clamp}
 \end{figure}
 
 \paragraph{Image} Enforces all points out of the current image's domain are to be picked inside another image. A basic
 use-case is preparing tiles from a large image. The position of our image can be offset in the image acting as an
-extension which ease the ease of usage. The figure~\cref{fig:border.image} shows how a subimage (tile) can consider the
+extension which ease the ease of usage. The figure~\ref{fig:border.image} shows how a subimage (tile) can consider the
 base image as its border.
 
 \begin{figure}[tbh]
   \centering
   \includegraphics[width=2in]{figs/extensions/image}
-  \label{fig:border.image}
   \caption{Border method: image.}
+  \label{fig:border.image}
 \end{figure}
 
 
@@ -706,7 +706,7 @@ This will be transparent from both practitioner and maintener points of views.
 In order to have a relevant discussion on performances, we decided to implement a real world image processing pipeline:
 the background subtraction. It is used to detect changes in image sequences~\cite{opencv.bg_sub}. It is mainly used when
 regions of interest are foreground objects. The pipeline components include: subtraction, Gaussian filtering, threshold,
-erode and dilate, as shown in~\cref{fig.view.comp.sub_bg}.
+erode and dilate, as shown in~\ref{fig.view.comp.sub_bg}.
 
 \begin{figure}[tbh]
   \begin{minipage}{\linewidth}
@@ -720,7 +720,7 @@ erode and dilate, as shown in~\cref{fig.view.comp.sub_bg}.
 We have decided to run the algorithm on an original set of image to detect a changing foreground. Here are the 10 sets
 we have considered.
 
-\paragraph{Set \#1: castle} The figure~\cref{fig:bg_sub.castle.restults} presents the first candidate set we have run
+\paragraph{Set \#1: castle} The figure~\ref{fig:bg_sub.castle.restults} presents the first candidate set we have run
 the algorithm with.
 
 \begin{figure}[tbh]
@@ -739,7 +739,7 @@ the algorithm with.
 
 We have run benchmarks on this set comparing multiple ways of achieving this result, both using Pylene and OpenCV as
 well as varying the size and the shape of the structuring element window.The breakdown of these benchmarks are presented
-in the figures~\cref{fig:bg_sub.castle.benchmarks} and~\cref{fig:bg_sub.castle.benchmarks.plnonly}.
+in the figures~\ref{fig:bg_sub.castle.benchmarks} and~\ref{fig:bg_sub.castle.benchmarks.plnonly}.
 
 \begin{figure}[tbh]
   \centering
@@ -757,7 +757,8 @@ in the figures~\cref{fig:bg_sub.castle.benchmarks} and~\cref{fig:bg_sub.castle.b
   \label{fig:bg_sub.castle.benchmarks.plnonly}
 \end{figure}
 
-We have also run the algorithm on another another original set of images presented in figure~\cref{fig:bg_sub.garden.restults}.
+\paragraph{Set \#2: garden} We have also run the algorithm on another another original set of images presented in
+figure~\ref{fig:bg_sub.garden.restults}.
 
 \begin{figure}[tbh]
   \centering
@@ -786,7 +787,7 @@ We have also run the algorithm on another another original set of images present
 \end{figure}
 
 The breakdown of the benchmarks corresponding to this original set is presented in the
-figures~\cref{fig:bg_sub.garden.benchmarks}.
+figures~\ref{fig:bg_sub.garden.benchmarks}.
 
 \begin{figure}[tbh]
   \centering
@@ -813,8 +814,8 @@ figures~\cref{fig:bg_sub.garden.benchmarks}.
   \label{fig:bg_sub.garden.benchmarks}
 \end{figure}
 
-Finally, we have run our algorithm on a last original set of image presented in
-figure~\cref{fig:bg_sub.pathway.restults}.
+\paragraph{Set \#3: pathway} Finally, we have run our algorithm on a last original set of image presented in
+figure~\ref{fig:bg_sub.pathway.restults}.
 
 \begin{figure}[tbh]
   \centering
@@ -840,7 +841,7 @@ figure~\cref{fig:bg_sub.pathway.restults}.
 \end{figure}
 
 The breakdown of the benchmarks corresponding to this original set is presented in the
-figures~\cref{fig:bg_sub.pathway.benchmarks}.
+figures~\ref{fig:bg_sub.pathway.benchmarks}.
 
 \begin{figure}[tbh]
   \centering
@@ -864,9 +865,19 @@ figures~\cref{fig:bg_sub.pathway.benchmarks}.
   \label{fig:bg_sub.pathway.benchmarks}
 \end{figure}
 
-\FIXME{TODO: discussion sur les résultats à faire.}
+For small structuring elements ($radius < 15$), OpenCV is faster thanks to its handwritten code optimization. However,
+when the size of the structuring elements increase, so does the execution time, especially for structuring elements
+shaped as discs. We can see that the way OpenCV decomposes its structuring elements is not efficient for a disc whereas
+it is very efficient for a rectangle. Pylene, on the other hand has a starting cost higher even for small structuring
+elements but is extremely stable over the increase of structuring elements' size. Indeed, the only variation is seen
+when we are working with the disc shape and this variation stabilise for larger size. For a disc whose $radius > 25$,
+Pyelene will be faster than OpenCV.
 
-\cleardoublepage
+When looking at the performance of algorithms expressed in term of views, we can see that expressing an algorithm in
+term of view incurs a very small overhead that stays constant and stable over the increase of structuring elements'
+radius. Furthermore, it does not show on the graphics but the memory consumption is reduced when using views. Indeed,
+more computation is done on the fly and the image is copied less during the algorithm. This implies that caching values
+is harder when using views which may explain the overhead.
 
 % \chapter*{Material about views}
 % 
