@@ -1,14 +1,8 @@
 \chapter{Static dynamic bridge}
 \label{chap.static_dynamic_bridge}
 
-\section{Coexistance between the static world and the dynamic world}
-
-\section{Hybrid solution: $n*n$ dispatch thanks to variants}
-
-\section{JIT-based solutions: pros. and cons.}
-
-\section*{Material about Static dynamic bridge}
-\label{sec.bridge.sd}
+%\section{Coexistence between the static world and the dynamic world}
+%introduction
 
 Image processing communities like to have bridges with interpretable language such as Python or Matlab, to interface
 with their favorite tools, algorithms and/or facilities. As an example, with Python, the module
@@ -40,7 +34,16 @@ with the number of handled types. Which is not very generic. On the other hand t
 portability is guaranteed. Theoretical models exists that could bring solutions to lower the number of dispatcher to
 write, such as multi-method~\cite{pirkelbauer.2010.multimethods}. Unfortunately they are currently not part of C++.
 
-\bigskip
+\FIXME{TODO: schémas static/dynamic worlds}
+
+\section{Design hybrid solution, motivations and choices}
+
+\FIXME{TODO: schémas solution hybride, arbre de dikspatching etc.}
+
+\section{Hybrid solution: $n*n$ dispatch thanks to variants}
+
+\FIXME{TODO: liens, plus d'examples}
+
 
 In Pylene we have chosen an hybrid solution between type-erasure and dynamic dispatch. The aim is to have a set of known
 types for which we have no speed cost as well as continuing to handle other types to remain generic. To achieve this
@@ -149,11 +152,10 @@ algorithm this way:
 
 We can observe a hundred time factor between the fast and optimized path and the slow dynamically dispatched path.
 
-\clearpage
+\section{Performances & overhead}
 
-\begin{itemize}
-  \item rappel de la problématique (backward ref depuis Généricité/4.)
-  \item expliquer l'approche hybride (son design et les techniques de dispatch n*n avec variants)
-  \item bench, trade-off
-  \item continuité sur JIT avec autowig, cppyy (perspective)
-\end{itemize}
+\FIXME{TODO: courbes de performances mesurées depuis Python}
+
+\section{JIT-based solutions: pros. and cons.}
+
+\FIXME{TODO: état de l'art, schémas de fonctionnement du JIT}

@@ -1,0 +1,26 @@
+\documentclass[tikz]{standalone}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage[active,tightpage]{preview}
+\usetikzlibrary{3d,calc,shapes,shadows,arrows,patterns,trees,automata,positioning,snakes}
+
+\PreviewEnvironment{tikzpicture}
+
+\begin{document}
+\tikzstyle{node} = [shape=circle, minimum size=0.5cm, circular drop shadow, text=black, very thick, draw=orange!55, top color=white,bottom color=orange!20, text width=0.3cm, align=center]
+\begin{tikzpicture}[ every label/.style={ font={\LARGE}}]
+  %\clip (-1,0) circle (1);
+  %\fill[green] (-5,-2.5) rectangle (3.5,2);
+
+	\filldraw[fill=red!10, draw=black!30!red, thick, rounded corners] (0,0) rectangle (10,2.5);
+	\node[black!80!blue] (1) at (1.5,0.5) {At run time};
+	
+	\filldraw[fill=gray!60, draw=black!60!gray, thick] (0.5,1) rectangle (5.5,2);
+	\node[align=left] (2) at (3,1.5) {.a, .so, .lib, .dll, .exe \\Library or executable binary};
+	\draw[-triangle 60] (5.5,1.5) -- (6.5,1.5);
+
+	\filldraw[fill=yellow!20, draw=black!60!yellow, thick] (6.5,1) rectangle (9.5,2);
+	\node[] (3) at (8,1.5) {Result};
+	
+\end{tikzpicture}
+\end{document}

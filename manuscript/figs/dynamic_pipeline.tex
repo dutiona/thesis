@@ -1,0 +1,44 @@
+\documentclass[tikz]{standalone}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage[active,tightpage]{preview}
+\usetikzlibrary{3d,calc,shapes,shadows,arrows,patterns,trees,automata,positioning,snakes}
+
+\PreviewEnvironment{tikzpicture}
+
+\begin{document}
+\tikzstyle{node} = [shape=circle, minimum size=0.5cm, circular drop shadow, text=black, very thick, draw=orange!55, top color=white,bottom color=orange!20, text width=0.3cm, align=center]
+\begin{tikzpicture}[ every label/.style={ font={\LARGE}}]
+  %\clip (-1,0) circle (1);
+  %\fill[green] (-5,-2.5) rectangle (3.5,2);
+
+	\filldraw[fill=red!10, draw=black!30!red, thick, rounded corners] (0,0) rectangle (10,6.5);
+	\node[black!80!blue] (1) at (1.5,0.5) {At run time};
+	
+	\filldraw[fill=blue!10, draw=black!30!blue, thick, rounded corners] (3.5,0.5) rectangle (6.5,4.5);
+	\node[black!80!blue] (2) at (5,1) {JIT compilation};
+	
+	\filldraw[fill=green!20, draw=black!60!green, thick] (0.5,3.5) rectangle (3,4.5);
+	\node[align=left] (3) at (1.75,4) {.py, Python\\ source code};
+	\draw[-triangle 60] (3,4) -- (4,5.5);
+	
+	\filldraw[fill=purple!20, draw=black!60!purple, thick] (4,5) rectangle (6,6);
+	\node[] (4) at (5,5.5) {Interpreter};
+	\draw[-triangle 60] (6,5.5) -- (7,4);
+	
+	\node[align=left, font=\scriptsize, red!40!blue] (5) at (5.65,4.5) {Hot code\\ detection};
+	\draw[-triangle 60, red!40!blue] (5,5) -- (5,4);
+
+	\filldraw[fill=yellow!20, draw=black!60!yellow, thick] (7,3.5) rectangle (9.5,4.5);
+	\node[] (6) at (8.25,4) {Result};
+	
+	\filldraw[fill=purple!20, draw=black!60!purple, thick] (3.75,3) rectangle (6.25,4);
+	\node[] (7) at (5,3.5) {JIT Compiler};
+	\draw[-triangle 60] (5,3) -- (5,2.5);
+	
+	\filldraw[fill=purple!20, draw=black!60!purple, thick] (3.75,1.5) rectangle (6.25,2.5);
+	\node[align=left] (7) at (5,2) {.pyc, machine \\ native code};
+	\draw[-triangle 60] (6.5,2) -- (7,4);
+	
+\end{tikzpicture}
+\end{document}
