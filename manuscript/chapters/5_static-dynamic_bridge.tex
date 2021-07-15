@@ -4,6 +4,68 @@
 %\section{Coexistence between the static world and the dynamic world}
 %introduction
 
+In the programming world, there are two main families of programming language. There are the \emph{compiled}
+programming, such as C, C++, Rust or Go. There are also the \emph{interpreted} programming languages, such as Python,
+PHP, Lisp or Javascript. Finally, there are languages such as Java that are both at the same time.
+
+The \emph{compiled} programming languages have the advantage of being very end-user friendly. Indeed, the implementer
+distribute compiled self-sufficient binaries and the user select the binary that is compatible with his operating
+system. Then, the program is supposed to work out of the box without more work than that, as illustrated
+in~\cref{fig:static.dynamic.compiled.runtime}.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.6\linewidth]{figs/static_runtime}
+  \caption{Compiled languages: run-time}
+  \label{fig:static.dynamic.compiled.runtime}
+\end{figure}
+
+Opposite to this apparent simplicity for the end-user, all the burden is shouldered by the programmer. Indeed, to
+generate a binary, there are many steps, as illustrated in~\cref{fig:static.dynamic.compiled.compiletime}. There is a
+first pass with the compiler to generate intermediate machine code. Then there is a linker pass to resolve any
+dependency between machine code and system code into one or multiple final distributable binaries. However, this last
+pass tie the binary with a distribution. Indeed, the location of system libraries may vary between operating system,
+between version of the same operating system, between compiler variants etc. Also, as the developer wants to distribute
+efficient programs, he will use last optimized vectorized instructions if possible, which can tie further the binary to
+a certain set of hardware supporting some assembly instructions (SSE4, XOP, FMA4, AVX-512, etc.). Upstream from those
+issues, there are also issues with code. Indeed, many libraries are not cross-platform and leveraging all the
+equivalences from one OS to another incurs an increase in code quantity, tests and maintenance cost to support many
+platforms. For instance, the native GUI Windows libraries does not exist in Linux and must be rewritten with another
+framework, such as GTK or Qt. Or else, the developer can choose to use a cross-platform GUI library from start however
+this decision may not have been viable if the software was first windows-only and the cross-platform support was added
+at a later date. Another caveat is that using code introspection is often very difficult at compile-time because only
+few information are available (only static information). Dynamic reflection at runtime is impossible.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.6\linewidth]{figs/static_compiletime}
+  \caption{Compiled languages: compile-time}
+  \label{fig:static.dynamic.compiled.compiletime}
+\end{figure}
+
+The \emph{interpreted} programming language are a little less end-user friendly but are much more comfortable for
+developer to distribute their software. Indeed, as shown in~\cref{fig:static.dynamic.dynamic.pipeline}, everything
+happens at runtime. The maintainer only distribute the source code, the dependency list and the assets necessaries for
+his program. The burden is mostly shouldered by the end-user this time. He must download and install all the language
+interpreter and environment in order to execute the program from the source code. He must resolve the dependencies and
+be able to execute the source code on his computer. This has the advantage of having a very rich ecosystem as
+distributing, maintaining and using programs is very easy once integrated in a package manager (often delivered with the
+language SDK natively). However, the main disadvantage is the performance. As the source code is not compiled into
+optimized assembly code ready to be executed, the interpreter must do all the work in one go and very often this is
+slow. Nowadays, all the interpreter embarks a Just-In-Time (JIT) compiler that detected the portions of a program that
+are used heavily (a.k.a. hot code) and will compile them into native machine code to increase the performance
+drastically without having the user pay for a long compilation time. Also, those languages usually have very developed
+introspection facilities. Dynamic reflection at runtime is possible and some language, such as Common Lisp, even go
+further by allowing the developer to mutate the program Abstract Syntax Tree (AST) at runtime (macro). This allows very
+powerful integrations such as defining one's own DSL as if it was part of the core language itself.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.6\linewidth]{figs/dynamic_pipeline}
+  \caption{Compiled languages: compile-time}
+  \label{fig:static.dynamic.dynamic.pipeline}
+\end{figure}
+
 Image processing communities like to have bridges with interpretable language such as Python or Matlab, to interface
 with their favorite tools, algorithms and/or facilities. As an example, with Python, the module
 NumPy~\cite{oliphant.2006.numpy} is community standard which is heavily used. Henceforth, to broaden the usage of our
