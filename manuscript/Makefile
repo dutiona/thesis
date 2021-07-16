@@ -9,6 +9,9 @@ all : $(SUBDIRS) $(PDF)
 	$(TEX) $^ -jobname="$(basename $^)"
 	ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$(basename $^).compressed.pdf $@
 
+compressed :
+	ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=main.compressed.pdf main.pdf
+
 $(SUBDIRS) :
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 

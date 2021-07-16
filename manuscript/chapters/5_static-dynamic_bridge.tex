@@ -96,23 +96,135 @@ with the number of handled types. Which is not very generic. On the other hand t
 portability is guaranteed. Theoretical models exists that could bring solutions to lower the number of dispatcher to
 write, such as multi-method~\cite{pirkelbauer.2010.multimethods}. Unfortunately they are currently not part of C++.
 
-\section{Design hybrid solution, motivations and choices}
+%\section{Design hybrid solution, motivations and choices}
 
-\FIXME{TODO: schémas solution hybride, arbre de dispatching etc.}
+%\FIXME{TODO: schémas solution hybride, arbre de dispatching etc.}
 
-\section{Hybrid solution: $n*n$ dispatch thanks to variants}
-
-\FIXME{TODO: liens, plus d'examples}
+\section{Hybrid solution: type-erasure and $n*n$ dispatch}
 
 
 In Pylene we have chosen an hybrid solution between type-erasure and dynamic dispatch. The aim is to have a set of known
 types for which we have no speed cost as well as continuing to handle other types to remain generic. To achieve this
 goal, we have worked together with Célian Gossec~\cite{gossec.2019.pybind}, a student co-supervised by the authors of
-this report, in order to type-erased the most important types (images) as well as the algorithms. We then embark runtime
-information about carried types in the type-erased object. When the algorithm is called on the type-erased object, we
-attempt to cast this object into a known set of types (dimensions: 2, 3, 4; value: int, double, rgba). Should the cast
-succeed then we can call the fast, optimized routine. Otherwise we fallback onto an algorithm relying on dynamic
-dispatch even for its most basic operation (e.g. addition).
+this thesis, in order to provide a facility to expose our generic code to Python. As seen in the previous chapter, it is
+not possible to bind C++ source code to Python. We need to have a compiled binary implementing Python binding (we chose
+Pybind11~\parencite{jakob.2017.pybind11}) in order to be able to call C++ code from Python. In order to achieve the
+binding without sacrificing the genericity and the performances, we have designed a solution in two steps. We do not
+want to provide an abstract interface that will resolve the calls to access data on the call-site via virtual call
+because it would be very slow when the C++ code is executed. This would defeat the purpose of having to rely on C++ in a
+first place. However, it is possible to convert an abstract class into an instantiated concrete generic class whose
+template parameter are known. This requires, however, to enumerate all the possible cases. With modern C++, it has
+become possible to design $n*n$ dispatch without gigantic switch-case clauses.
+
+\paragraph{The step one} of our solution consists in designing a buffer class that holds all the informations about an
+image: dimension, underlying type, strides and pointer to data buffer. This class is named \texttt{ndimage\_buffer}.
+When interfacing with Python, it is necessary to convert the Python image which is a \texttt{NumpPy.array} into our
+image type. The purpose of this buffer image is to holds all the informations from the \texttt{NumpPy.array} to then
+instantiate a concrete C++ type. The first pitfall here is due to a limitation from the abstraction interface used in
+Python. Indeed, when using for instance \emph{Scikit-Image}, it is not possible to differentiate a 2D multichannel image
+from a 3D grayscale image. Indeed, the image is always broken down to its most simple value and a 3D multichannel image
+is turned into a 3-dimensional \texttt{NumpPy.array} containing 8-bits values, the last dimension contains only 3
+elements at max but can theoretically contain more as there is no limitation from the used abstraction to prevent that.
+A 3D grayscale image will be broken down into a 3-dimensional \texttt{NumpPy.array} containing 8-bits values, the last
+dimension will contain many values as it is expected of a 3D-image. To prevent this confusion, there is a need to
+explicitly say to the Python/C++ wrapper wether the image is multichannel or not. This information must be carried
+through the \texttt{ndimage\_buffer} into C++ for a correct instanciation. This process is illustrated
+in~\cref{fig:type-erased.buffer}.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.6\linewidth]{figs/type-erased_buffer}
+  \caption{Bridge from Python to C++ via Pybind11 and a type-erased C++ class.}
+  \label{fig:type-erased.buffer}
+\end{figure}
+
+From the point of view of a practitioner, the code on the callsite (python side) should be as follow:
+\begin{minted}{python}
+  from skimage import data
+  import numpy as np
+  import Pylena as pln # our python binding
+  img = data.astronaut() # 2D-rgb8 image -> Numpy.array(ndim=3, dtype='uint8')
+  pln_img = pln.ndimage(img, multichannel=True) # manualy point out multichannel information
+  # use(pln_img) for any pln.<algorithm> exposed to Python
+\end{minted}
+
+From the point of view of the library implementer, the code to expose the binding looks like this one:
+\begin{minted}{C++}
+  #include "ndimage.hpp"
+  #include <pybind11/pybind11.h>
+
+  // Expose pybind module
+  void init_class_ndimage(pybind11::module& m);
+  PYBIND11_MODULE(Pylena, m) { init_class_ndimage(m); }
+
+  // declare the conversion function
+  namespace mln::py {
+    mln::ndbuffer_image   ndimage_from_buffer(pybind11::buffer b);
+    pybind11::buffer_info ndimage_to_buffer(const mln::ndbuffer_image& img);
+  }
+
+  // expose the python ndimage class with the conversion from/to py::buffer (numpy.array buffer)
+  void init_class_ndimage(py::module& m)
+  {
+    py::class_<mln::ndbuffer_image>(m, "ndimage", py::buffer_protocol())
+        .def(py::init([](py::buffer b, bool multichannel) {
+          return mln::py::ndimage_from_buffer(b, multichannel); }))
+        .def_buffer(mln::py::ndimage_to_buffer);
+  }
+
+  // implement the conversion from Python to C++
+  mln::ndbuffer_image ndimage_from_buffer(::py::buffer b, bool multichannel)
+  {
+    /* Request a buffer descriptor from Python */
+    ::py::buffer_info info = b.request();
+
+    std::ptrdiff_t      strides[16];
+    int                 dims[16];
+    int                 ndim = info.ndim - static_cast<int>(multichannel);
+    int                 bpp  = info.itemsize;
+
+    // convert the type information from Python to C++ (string to enum) for faster dispatch
+    mln::sample_type_id st   = get_sample_type(info.format, multichannel);
+
+    for (int i = 0; i < ndim; ++i) {
+      dims[i]    = info.shape[ndim - 1 - i];
+      strides[i] = info.strides[ndim - 1 - i];
+    }
+
+    if (strides[0] != bpp)
+      throw std::runtime_error("Unsupported image stride along the last dimension.");
+
+    // construct the type-erased image with all informations
+    return mln::ndbuffer_image::from_buffer(
+      reinterpret_cast<std::byte*>(info.ptr), st, ndim, dims, strides);
+  }
+
+  // implement the conversion from C++ to Python
+  ::py::buffer_info ndimage_to_buffer(const mln::ndbuffer_image& img)
+  {
+    auto [ti, multichannel] = get_sample_type_id_traits(img.sample_type());
+
+    int ndim = img.pdim() + static_cast<int>(multichannel);
+
+    std::vector<ssize_t> dims(ndim);
+    std::vector<ssize_t> strides(ndim);
+
+    for (int i = 0; i < ndim - static_cast<int>(multichannel); ++i) {
+      dims[i]    = img.size(ndim - 1 - i);
+      strides[i] = img.byte_stride(ndim - 1 - i);
+    }
+    // compute manually the multichanneled information
+    if(multichannel) {
+      dims[ndim-1] = 3
+      strides[ndim-1] = img.byte_stride(ndim - 1) / 3;
+    }
+    // construct the python buffer with all the information
+    return ::py::buffer_info(img.buffer(), ti.size(),
+            get_sample_type(img.sample_type(), multichannel), ndim, dims, strides);
+  }
+\end{minted}
+
+\bigskip
 
 Let us illustrate this path with an example: the stretch algorithm. First let's see the naive algorithm:
 \begin{minted}{C++}
