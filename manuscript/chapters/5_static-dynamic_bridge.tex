@@ -215,8 +215,8 @@ From the point of view of the library implementer, the code to expose the bindin
     }
     // compute manually the multichanneled information
     if(multichannel) {
-      dims[ndim-1] = 3
-      strides[ndim-1] = img.byte_stride(ndim - 1) / 3;
+      dims[ndim-1] = img.size(ndim - 1)
+      strides[ndim-1] = img.byte_stride(ndim - 1) / dims[ndim-1];
     }
     // construct the python buffer with all the information
     return ::py::buffer_info(img.buffer(), ti.size(),
