@@ -116,10 +116,12 @@ first place. However, it is possible to convert an abstract class into an instan
 template parameter are known. This requires, however, to enumerate all the possible cases. With modern C++, it has
 become possible to design $n*n$ dispatch without gigantic switch-case clauses.
 
-\paragraph{The step one} of our solution consists in designing a buffer class that holds all the informations about an
-image: dimension, underlying type, strides and pointer to data buffer. This class is named \texttt{ndimage\_buffer}.
-When interfacing with Python, it is necessary to convert the Python image which is a \texttt{NumpPy.array} into our
-image type. The purpose of this buffer image is to holds all the informations from the \texttt{NumpPy.array} to then
+\subsection{First step: type-erasure}
+
+The first step of our solution consists in designing a buffer class that holds all the informations about an image:
+dimension, underlying type, strides and pointer to data buffer. This class is named \texttt{ndimage\_buffer}. When
+interfacing with Python, it is necessary to convert the Python image which is a \texttt{NumpPy.array} into our image
+type. The purpose of this buffer image is to holds all the informations from the \texttt{NumpPy.array} to then
 instantiate a concrete C++ type. The first pitfall here is due to a limitation from the abstraction interface used in
 Python. Indeed, when using for instance \emph{Scikit-Image}, it is not possible to differentiate a 2D multichannel image
 from a 3D grayscale image. Indeed, the image is always broken down to its most simple value and a 3D multichannel image
@@ -138,7 +140,7 @@ in~\cref{fig:type-erased.buffer}.
   \label{fig:type-erased.buffer}
 \end{figure}
 
-From the point of view of a practitioner, the code on the callsite (python side) should be as follow:
+From the point of view of a practitioner, the code on the call-site (python side) should be as follow:
 \begin{minted}{python}
   from skimage import data
   import numpy as np
@@ -171,7 +173,14 @@ From the point of view of the library implementer, the code to expose the bindin
           return mln::py::ndimage_from_buffer(b, multichannel); }))
         .def_buffer(mln::py::ndimage_to_buffer);
   }
+\end{minted}
 
+This code declares a new module named \texttt{Pylena}. It then declares a class named \texttt{ndimage} which is a bridge
+to Python's \texttt{buffer\_protocol}. This \texttt{buffer\_protocol} is an abstraction to allow the usage of NumPy's
+array. Finally, the code declares that the class is convertible to and from the \texttt{buffer\_protocol} thanks to
+provided callbacks. The code of those callbacks is as follow:
+
+\begin{minted}{C++}
   // implement the conversion from Python to C++
   mln::ndbuffer_image ndimage_from_buffer(::py::buffer b, bool multichannel)
   {
@@ -202,6 +211,7 @@ From the point of view of the library implementer, the code to expose the bindin
   // implement the conversion from C++ to Python
   ::py::buffer_info ndimage_to_buffer(const mln::ndbuffer_image& img)
   {
+    // return the python format of the underlying type, as well as information about multichanneling
     auto [ti, multichannel] = get_sample_type_id_traits(img.sample_type());
 
     int ndim = img.pdim() + static_cast<int>(multichannel);
@@ -224,7 +234,286 @@ From the point of view of the library implementer, the code to expose the bindin
   }
 \end{minted}
 
-\bigskip
+This code forward informations about the buffer and handle the special case of multichannel images which Python treat
+as 3D images.
+
+\subsection{Second step: multi-dispatcher}
+The second step of our hybrid solution is to dispatch the type-erased code to efficient generic code. The naive way of
+doing so would be to include a gigantic switch-case clause in each algorithm implementation and dispatch to the correct
+instantiated generic algorithm from there. Aside from being a nightmare to maintain, the size of those clause can grow
+several fold depending on the cardinality of the generic implementation. For instance, for a generic dilation, there are
+3 axis of cardinality: the underlying type, the dimension, the structuring element shape. In the case where the library
+support 5 different structuring element shape, 10 underlying types and 6 dimension for the image, the switch-case
+statement will have 300 clauses to dispatch. And each algorithm will have to dispatch. This solution is not viable,
+defeat the purpose of genericity which is to write less code in the first place. We had to find a solution to have those
+dispatch while keeping our code short and efficient. The idea we took to solve this problem comes from the design of a
+C++ feature, the variant, and especially the visitor. We need to have a way to write the implementation of the algorithm
+once while enumerating all the possible cases. Also, if possible, the list of supported types should be written once at
+one place for maintenance purpose.
+
+We then had the idea of writing a dispatcher. This dispatcher list all the supported types and call the given callbacks
+forwarding the given arguments by instantiating a specific type. For instance, let us first expose the binary threshold
+operator to Python. The Python call-site code will look like this:
+
+\begin{minted}{python}
+  img_grayscale = skimage.data.grass()
+  pln.operators.binary_threshold(img_grayscale)
+\end{minted}
+
+On C++ side, we need to expose the function with this code:
+\begin{minted}{C++}
+  void init_module_operators(pybind11::module& m);
+
+  mln::ndbuffer_image binary_threshold(::py::buffer buffer)
+
+  void init_module_operators(::py::module& m) {
+    using namespace pybind11::literals;
+
+    m.def("binary_threshold", binary_threshold,
+          "Perform a binary threshold.\n",
+          "Input"_a);
+  }
+
+  PYBIND11_MODULE(Pylena, m) {
+    /* ... */
+
+    auto operators = m.def_submodule("operators", "Image processing operators.");
+    init_module_operators(operators);
+  }
+\end{minted}
+
+Now that our python submodule and that our \texttt{binary\_threshold} operator are declared, let us have a look to the
+operator's implementation:
+
+\begin{minted}{C++}
+  mln::ndbuffer_image dilate(::py::buffer buffer)
+  {
+    // grayscale image mandatory
+    auto input = mln::py::ndimage_from_buffer(buffer);
+
+    // dispatch along dimension (dimension is a valued template parameter, hence _v)
+    return dispatch_v<binary_threshold_operator_t>(input.pdim(), input);
+  }
+\end{minted}
+
+We have replaced the gigantic switch-case clause by a dispatcher templated by an operator. This operator will cast the
+input image into the concrete generic type and call the fast generic algorithm on it. Let us have a look to what this
+operator look like:
+
+\begin{minted}{C++}
+  // Operator templated by the dimension
+  template <auto Dim>
+  struct binary_threshold_operator_t {
+    // Function templated by the image type
+    template <typename Img>
+    mln::ndbuffer_image operator()(Img&& img) const {
+      // Cast to a grayscale (information known) of the correct dimension
+      if (auto* image_ptr = std::forward<Img>(img).template cast_to<std::uint8_t, Dim>(); image_ptr)
+        // call generic algorithm
+        return mln::operators::binary_threshold(*image_ptr);
+      else {
+        std::runtime_error("Unable to convert the image to the required type.");
+        return {};
+      }
+    }
+  };
+\end{minted}
+
+This operator will attempt to cast the given image into a grayscale image of the correct dimension and then use the
+resulting concrete type to pass it the fast generic \texttt{binary\_threshold} operator. Now let us have a look at where
+the magic happen, at the dispatcher which list all the supported type.
+
+\begin{minted}{C++}
+template <template <auto> class V, typename... Args>
+auto dispatch_v(std::size_t dim, Args&&... args) {
+  switch (pdim) {
+  case (1):
+    return F<1>{}(std::forward<Args>(args)...);
+  case (2):
+    return F<2>{}(std::forward<Args>(args)...);
+  case (3):
+    return F<3>{}(std::forward<Args>(args)...);
+  case (4):
+    return F<4>{}(std::forward<Args>(args)...);
+  case (5):
+    return F<5>{}(std::forward<Args>(args)...);
+
+  /* ... */
+
+  case (0):
+    [[fallthrough]];
+  default:
+    throw std::runtime_error("Unsupported dimension.");
+}
+\end{minted}
+
+The dispatcher is instantiate the given type by the correct dimension number and then call the operator parenthesis
+(function call) forwarding all the given parameters. In our case, it will instantiate the type
+\texttt{binary\_threshold\_operator\_t<2>} and then call the function
+\texttt{binary\_threshold\_operator\_t<2>.operator()(input)}, forwarding the input image to the underlying algorithm.
+
+The main advantage of this approach is that all the supported features are to be listed only in one place, the
+dispatcher, while any number of dispatcher can be piped to achieve the cardinality wanted. Let us push our example to
+implement the mathematical morphology operator dilation. We now have two more generic axis to cover: the structuring
+element shape and the underlying datatype. First, let us expose the operator to the Python code. Here is what the Python call-site look like:
+
+\begin{minted}{python}
+img_grayscale = skimage.data.grass()
+rect = pln.se.rect2d(width=3, height=3)
+pln.operators.dilate(img_grayscale, se)
+\end{minted}
+
+We need to expose the new structuring element's sub-module for usage in the dilation operator:
+
+\begin{minted}{C++}
+void init_module_se(pybind11::module& m);
+
+void init_module_se(::py::module& m) {
+  ::py::class_<mln::se::disc>(m, "disc").def(
+      ::py::init([](float radius) { return mln::se::disc{radius}; }));
+
+  ::py::class_<mln::se::sphere>(m, "sphere").def(::py::init([](float radius) {
+    return mln::se::sphere{radius};
+  }));
+
+  ::py::class_<mln::se::rect2d>(m, "rect2d").def(::py::init([](int width, int height) {
+    return mln::se::rect2d{width, height};
+  }));
+
+  ::py::class_<mln::se::rect3d>(m, "rect3d").def(::py::init([](int width, int height, int depth) {
+    return mln::se::rect3d{width, height, depth};
+  }));
+}
+
+PYBIND11_MODULE(Pylena, m) {
+  /* ... */
+
+  auto mse = m.def_submodule("se", "Structuring elements module.");
+  init_module_se(mse);
+}
+\end{minted}
+
+Now we need to expose the dilate function into the operator submodule:
+\begin{minted}{C++}
+// using std::variant
+using se_t = std::variant<mln::se::disc, mln::se::sphere,
+                          mln::se::rect2d, mln::se::cube>;
+
+mln::ndbuffer_image dilate(::py::buffer buffer, const se_t& se)
+
+void init_module_operators(::py::module& m) {
+  /* ... */
+
+  m.def("dilate", dilate,
+    "Perform a morphological dilation.\n"
+    "\n"
+    "structuring element must be valid.",
+    "Input"_a, "se"_a);
+}
+\end{minted}
+
+We are all set to now implement the dilation operator. First, let us have a look at the underlying operator that will be
+dispatched:
+
+\begin{minted}{C++}
+template <auto Dim, typename T>
+struct dilate_operator_t {
+  template <typename Img, typename SE>
+  mln::ndbuffer_image operator()(Img&& img, SE se) const {
+    if (auto* image_ptr = std::forward<Img>(img).template cast_to<T, Dim>(); image_ptr)
+      return mln::dilation(*image_ptr, se);
+    else {
+      std::runtime_error("Unable to convert the image to the required type.");
+      return {};
+    }
+  }
+};
+\end{minted}
+
+Here we can see that we need a double dispatch. Also, the structuring element is no longue a variant and needs to be
+dispatched before instantiating this operator. Finally, there is an issue here because there are two template parameter
+and our dispatcher \texttt{dispatch\_v} does only handle one. We workaround this issue by writing another intermediate
+operator dispatcher \texttt{dilate\_operator\_intermediate\_t} serving as trampoline that will partially instantiate the
+final operator \texttt{dilate\_operator\_t} along the dimension template parameter to feed it to the last dispatcher,
+\texttt{dispatch\_t}:
+
+\begin{minted}{C++}
+template <auto Dim>
+struct dilate_operator_intermediate_t {
+  template <typename Img, typename SE>
+  mln::ndbuffer_image operator()(Img&& img, SE&& se) const {
+    // Partial instantiation
+    return double_dispatch_t<dilate_operator_t, Dim>(
+            input.sample_type(), std::forward<Img>(input), std::forward<SE>(se));
+  }
+};
+\end{minted}
+
+The final function implementation will look like this:
+
+\begin{minted}{C++}
+mln::ndbuffer_image dilate(::py::buffer buffer, const se_t& se) {
+  auto input = mln::py::ndimage_from_buffer(buffer);
+  // dispatch the structuring elements through using std::visit for std::variant 
+  return std::visit(
+      [&input](const auto& se_) {
+        return dispatch_v<dilate_operator_intermediate_t>(input.pdim(), input, se_);
+      }, se);
+}
+\end{minted}
+
+The final piece of our puzzle would be the double dispatch function that will handle the last dispatch along the
+underlying data while forwarding the first dispatch along the dimension. Here is how we implemented our double dispatch:
+
+\begin{minted}{C++}
+template <template <auto, typename> class F, auto Dim, typename... Args>
+auto double_dispatch_t(mln::sample_type_id tid, Args&&... args) {
+  switch (tid) {
+    case (mln::sample_type_id::INT8):
+      return F<Dim, std::int8_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::INT16):
+      return F<Dim, std::int16_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::INT32):
+      return F<Dim, std::int32_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT8):
+      return F<Dim, std::uint8_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT16):
+      return F<Dim, std::uint16_t>{}(std::forward<Args>(args)...);
+    case (sample_type_id::UINT32):
+      return F<Dim, std::uint32_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::DOUBLE):
+      return F<Dim, double>{}(std::forward<Args>(args)...);
+
+      /* ... */
+
+    case (mln::sample_type_id::OTHER):
+      [[fallthrough]];
+    default:
+      throw std::runtime_error("Unhandled data type");
+  }
+}
+\end{minted}
+
+Now we have all the pieces to build operators that are agnostic from the supported data-types. Indeed, the maintainer
+has gathered all the logic about listing supported data types and dimension into variant or custom dispatcher. He just
+need to maintain those to enable, by default, all exposed algorithm to support them. This hybrid solution mixes
+type-erasure and modern C++ facilities to allow maximum performance. Indeed, the dispatch is done before entering
+algorithms and the buffer protocol facility allows us to plug directly into the Python image without having any
+unnecessary copies. The only caveat would be the code bloat incurred by all the explicit instanciation leading to
+compiling a large binary. Another point not covered right now would be a way to inject Python types into C++. Indeed,
+our hybrid solution only support the types provided by the library. It will instantiate all the code relative to them
+and support all of the combinations. But the user may be tempted to plug a user-defined type from Python as an
+underlying data-type. To allow this use-case, we introduce a new concept: the value-set. The value-set is a standard way
+manipulate the underlying values. Through type-erasure, we can either manipulate a known underlying value with native
+facilities (near-zero overhead) or fallback on a virtual call that may report an error or callback user-provided Python
+routine to manipulate an unknown user value.
+
+\subsection{Third and final step: the value-set}
+
+\FIXME{TODO: write subsection.}
+
+\subsection*{Material for value-set}
+
 
 Let us illustrate this path with an example: the stretch algorithm. First let's see the naive algorithm:
 \begin{minted}{C++}
