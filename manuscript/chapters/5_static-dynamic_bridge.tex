@@ -182,18 +182,18 @@ provided callbacks. The code of those callbacks is as follow:
 
 \begin{minted}{C++}
   // implement the conversion from Python to C++
-  mln::ndbuffer_image ndimage_from_buffer(::py::buffer b, bool multichannel)
+  mln::ndbuffer_image ndimage_from_buffer(::py::buffer b, bool is_multichannel)
   {
     /* Request a buffer descriptor from Python */
     ::py::buffer_info info = b.request();
 
     std::ptrdiff_t      strides[16];
     int                 dims[16];
-    int                 ndim = info.ndim - static_cast<int>(multichannel);
+    int                 ndim = info.ndim - is_multichannel ? 1 : 0;
     int                 bpp  = info.itemsize;
 
     // convert the type information from Python to C++ (string to enum) for faster dispatch
-    mln::sample_type_id st   = get_sample_type(info.format, multichannel);
+    mln::sample_type_id st   = get_sample_type(info.format, is_multichannel);
 
     for (int i = 0; i < ndim; ++i) {
       dims[i]    = info.shape[ndim - 1 - i];
@@ -212,21 +212,16 @@ provided callbacks. The code of those callbacks is as follow:
   ::py::buffer_info ndimage_to_buffer(const mln::ndbuffer_image& img)
   {
     // return the python format of the underlying type, as well as information about multichanneling
-    auto [ti, multichannel] = get_sample_type_id_traits(img.sample_type());
+    auto [ti, is_multichannel] = get_sample_type_id_traits(img.sample_type());
 
-    int ndim = img.pdim() + static_cast<int>(multichannel);
+    int ndim = img.pdim() + is_multichannel ? 1 : 0;
 
     std::vector<ssize_t> dims(ndim);
     std::vector<ssize_t> strides(ndim);
 
-    for (int i = 0; i < ndim - static_cast<int>(multichannel); ++i) {
+    for (int i = 0; i < ndim; ++i) {
       dims[i]    = img.size(ndim - 1 - i);
       strides[i] = img.byte_stride(ndim - 1 - i);
-    }
-    // compute manually the multichanneled information
-    if(multichannel) {
-      dims[ndim-1] = img.size(ndim - 1)
-      strides[ndim-1] = img.byte_stride(ndim - 1) / dims[ndim-1];
     }
     // construct the python buffer with all the information
     return ::py::buffer_info(img.buffer(), ti.size(),
