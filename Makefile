@@ -18,7 +18,6 @@ $(SUBDIRS) :
 .PHONY : $(SUBDIRS)
 
 clean : subdirclean
-	latexmk -C *.tex
 	rm -rf $(PDF:.pdf=.final.pdf) $(PDF:.pdf=.bbl) build _minted-*
 
 subdirclean : $(SUBDIRS)

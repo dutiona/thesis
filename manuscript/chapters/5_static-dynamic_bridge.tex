@@ -161,17 +161,19 @@ From the point of view of the library implementer, the code to expose the bindin
 
   // declare the conversion function
   namespace mln::py {
-    mln::ndbuffer_image   ndimage_from_buffer(pybind11::buffer b);
+    mln::ndbuffer_image   ndimage_from_buffer(pybind11::buffer b, bool is_multichannel = false);
     pybind11::buffer_info ndimage_to_buffer(const mln::ndbuffer_image& img);
   }
 
   // expose the python ndimage class with the conversion from/to py::buffer (numpy.array buffer)
-  void init_class_ndimage(py::module& m)
-  {
-    py::class_<mln::ndbuffer_image>(m, "ndimage", py::buffer_protocol())
-        .def(py::init([](py::buffer b, bool multichannel) {
-          return mln::py::ndimage_from_buffer(b, multichannel); }))
-        .def_buffer(mln::py::ndimage_to_buffer);
+  void init_class_ndimage(py::module& m) {
+    using namespace pybind11::literals;
+
+    py::class_<mln::ndbuffer_image>(m, "ndimage", py::buffer_protocol(), "is_multichannel"_a = false)
+      .def(py::init(
+          [](py::buffer b, bool is_multichannel = false) {
+              return ndimage_from_buffer(b, is_multichannel); }))
+      .def_buffer(ndimage_to_buffer);
   }
 \end{minted}
 
@@ -182,8 +184,7 @@ provided callbacks. The code of those callbacks is as follow:
 
 \begin{minted}{C++}
   // implement the conversion from Python to C++
-  mln::ndbuffer_image ndimage_from_buffer(::py::buffer b, bool is_multichannel)
-  {
+  mln::ndbuffer_image ndimage_from_buffer(::py::buffer b, bool is_multichannel) {
     /* Request a buffer descriptor from Python */
     ::py::buffer_info info = b.request();
 
@@ -212,7 +213,8 @@ provided callbacks. The code of those callbacks is as follow:
   ::py::buffer_info ndimage_to_buffer(const mln::ndbuffer_image& img)
   {
     // return the python format of the underlying type, as well as information about multichanneling
-    auto [ti, is_multichannel] = get_sample_type_id_traits(img.sample_type());
+    auto [ti, is_multichannel, channel_count, channel_stride] =
+            get_sample_type_id_traits(img.sample_type());
 
     int ndim = img.pdim() + is_multichannel ? 1 : 0;
 
@@ -223,9 +225,11 @@ provided callbacks. The code of those callbacks is as follow:
       dims[i]    = img.size(ndim - 1 - i);
       strides[i] = img.byte_stride(ndim - 1 - i);
     }
+    dims[ndim - 1]    = channel_count;
+    strides[ndim - 1] = channel_stride;
     // construct the python buffer with all the information
     return ::py::buffer_info(img.buffer(), ti.size(),
-            get_sample_type(img.sample_type(), multichannel), ndim, dims, strides);
+            get_sample_type(img.sample_type(), is_multichannel), ndim, dims, strides);
   }
 \end{minted}
 
@@ -498,115 +502,332 @@ unnecessary copies. The only caveat would be the code bloat incurred by all the 
 compiling a large binary. Another point not covered right now would be a way to inject Python types into C++. Indeed,
 our hybrid solution only support the types provided by the library. It will instantiate all the code relative to them
 and support all of the combinations. But the user may be tempted to plug a user-defined type from Python as an
-underlying data-type. To allow this use-case, we introduce a new concept: the value-set. The value-set is a standard way
-manipulate the underlying values. Through type-erasure, we can either manipulate a known underlying value with native
-facilities (near-zero overhead) or fallback on a virtual call that may report an error or callback user-provided Python
-routine to manipulate an unknown user value.
+underlying data-type. To allow this use-case, we introduce a new concept: the \emph{value-set}. The value-set is a
+standard way manipulate the underlying values. Through type-erasure, we can either manipulate a known underlying value
+with native facilities (near-zero overhead) or fallback on a virtual call that may report an error or callback
+user-provided Python routine to manipulate an unknown user value.
 
 \subsection{Third and final step: the value-set}
 
-\FIXME{TODO: write subsection.}
-
-\subsection*{Material for value-set}
-
-
-Let us illustrate this path with an example: the stretch algorithm. First let's see the naive algorithm:
-\begin{minted}{C++}
-  template <typename T>
-  image2d<float> stretch(const image2d<T>& src)
-  {
-    auto res = image2d<float>(src.width(), src.height());
-    auto values_span = src.values();
-    std::transform(values_span.begin(), values_span.end(), res.values().begin(),
-      [](T val) -> float
-      {
-        return static_cast<float>(val) / std::numeric_limits<T>::max();
-      }
-    );
-    return res;
-  }
-\end{minted}
-
-One should observe that the function parameter is templated by a type \texttt{T}. This induces that "span" further in
-the code is also templated. Both needs to be type erased. Furthermore, getting the max value of the type \texttt{T} is
-also an issue that needs to be abstracted away.
-
-We aim at obtaining this prototype:
+The \emph{value-set} is an abstraction layer around common operations needed when implementing an image processing
+algorithm such as an addition, a multiplication, a type conversion, getting the maximum etc. It can be defined in C++ as
+a class template whose parameter is the manipulated type. The following code shows how to define a value-set:
 
 \begin{minted}{C++}
-  image2d<> stretch_py(const image2d<>& src);
+template <class T = void>
+struct value_set {
+  template <class U>
+  U cast(T&& v) const { return static_cast<U>(std::forward<T>(v)); }
+
+  T max() const noexcept { return std::numeric_limits<T>::max(); }
+  T min() const noexcept { return std::numeric_limits<T>::min(); }
+  /* inf, sup, ... */
+
+  T plus(T&& v) const noexcept { return +std::forward<T>(v); }
+  T minus(T&& v) const noexcept { return -std::forward<T>(v); }
+
+  T add(T&& l, T&& r) const noexcept { return std::forward<T>(l) + std::forward<T>(r); }
+  T sub(T&& l, T&& r) const noexcept { return std::forward<T>(l) - std::forward<T>(r); }
+  /* mod, pow, min, max, ... */
+};
 \end{minted}
 
-Here \texttt{image2d<>} which is also \texttt{image2d<void>} is the type-erased type of \texttt{image2d<T>}. This means
-that we have hierarchy where \texttt{image2d<T>} inherits from \texttt{image2d<void>}. We then introduce an intermediate
-step:
+We can see that the default parameter of the class template is \texttt{void}. Indeed, we are inspired by what was
+implemented in the standard library for \texttt{std:less} and providing a default (void) specialization in order to
+improve the usability. The following code shows how to implement this specialization:
 
-\begin{minted}[linenos]{C++}
-  template <typename T>
-  struct apply_stretch_t
-  {
-    auto operator()(const image2d<>& src)
-    {
-      return stretch(*src.cast_to<T>());
-    }
-  };
+\begin{minted}{C++}
+template <>
+struct value_set<void> {
+  template <class U, class T>
+  U cast(T&& t) const { return static_cast<U>(std::forward<T>); }
 
-  image2d<float> stretch(const image2d<>& src)
-  {
-    return visit<apply_stretch_t>(src.type().tid(), src);
-  };
-\end{minted}
-
-This piece of code is interesting in many ways. It introduces the way we dispatch according to the known types (line
-12): there is the embedded runtime type information we are going to use for the dispatch. Then there is the call to
-\texttt{visit} parametrized by the templated structure \texttt{apply\_stretch\_t}. This visitor will statically
-instantiate the correct \texttt{apply\_stretch\_t} with the correct dynamic type (\text{src.type().tid()}) and call a
-non type-erased version of the function stretch after having cast the values of the images. However, for this to work we
-still have to tweak the first implementation a little.
-
-\begin{minted}[linenos]{C++}
   template <class T>
-  image2d<float> stretch(const image2d<T>& src)
-  {
-    auto        res  = image2d<float>(src.width(), src.height());
-    auto        span = src.values();
-    const auto& vs   = src.get_value_set();
-    std::transform(span.begin(), span.end(), res.values().begin(),
-                   [&vs](auto val) -> float
-                   {
-                     auto tmp = vs.max();
-                     return vs.template cast<float>(val) / vs.template cast<float>(tmp);
-                   });
-    return res;
+  T max() const noexcept { return std::numeric_limits<T>::max();}
+  template <class T>
+  T min() const noexcept { return std::numeric_limits<T>::min(); }
+  /* ... */
+
+  template <class T, class U>
+  auto add(T&& l, U&& r) const noexcept { return std::forward<T>(l) + std::forward<U>(r); }
+  template <class T, class U>
+  auto sub(T&& l, U&& r) const noexcept { return std::forward<T>(l) - std::forward<U>(r); }
+  /* ... */
+};
+\end{minted}
+
+The template parameter is shifted from the class to the member functions. It is also important to note that the member
+function are not static, which requires to instantiate the \texttt{value-set} before using it. It may sound like a
+disadvantage at first glance but it can be turned into an advantage later on. Indeed, this design allows a subclass to
+hold member variables which will be crucial.
+
+Now that we have designed how our value-set is intended to work, we can deduce that an image is able to provide its own
+value-set. Indeed, an image knows what values it holds and thus is able to instantiate the proper value-set
+corresponding to this type. The member function returning the value-set in the class template ndimage<T, D> is then
+implemented as follow:
+
+\begin{minted}{C++}
+template <class T, std::size_t D>
+class ndimage {
+  /* ... */
+  auto get_value_set() const noexcept {
+    return value_set<T>{};
+  }
+};
+\end{minted}
+
+For the sake of example, we are going to implement the linear stretch algorithm in order to augment the contrast. First
+this algorithm construct an histogram to get both actual minimum and maximum value in the image. Then the algorithm get
+the maximum and minimum values possible in the space, construct a ratio from these informations and then apply this
+ratio to the image. For the sake of simplicity, we restrict our example to mono channel image. Here is how it can be
+naively implemented:
+
+\begin{minted}[linenos,highlightlines={4,9-11,14}]{C++}
+  template <class T = float, class V, std::size_t D>
+  mln::ndimage<T, D> stretch(mln::ndimage<V, D> img) {
+    // histogram
+    auto hist = std::vector<std::size_t>{std::numeric_limits<V>::max()+1, 0};
+    mln::for_each(img, [&hist](V v){ ++hist[v]; });
+    
+    // construct ratio
+    auto [m, M] = std::minmax_element(begin(hist), end(hist));
+    double min = (not std::is_floating_point_v<V>) ? static_cast<double>(std::numeric_limits<V>::min()) : 0.0;
+    double max = (not std::is_floating_point_v<V>) ? static_cast<double>(std::numeric_limits<V>::max()) : 1.0;
+    double ratio = (max - min) / (M - m);
+  
+    // construct and apply scaling functor
+    auto scale_fn = [m, x, r](double v) -> V { return static_cast<V>(x + (v - m) * r); };
+    return mln::transform(img, scale_fn);
   }
 \end{minted}
 
-We introduce a new tool: the value-set (line 6). This value-set is a type-erased way to provide basic operations on
-types such as casting, division, addition, getting the global max etc. This powerful tool, also embedded in the image,
-allow us to write the algorithm in a generic way lines 10-11.
+Now, we can see line 4 that we are gathering the maximum value of the input image's space. Then, line 9 and 10, we are
+gathering the maximum and minimum value of the input image's space. Finally, at lines 11 and 14, we are doing
+computation mixing input image's type and resulting image's type. In order to be agnostic from the way those
+computations are done, we can rewrite our algorithm using value-sets as in the following code:
 
-Thanks to this design, we have been able to type-erase our image types so that our algorithms can be called through
-python via bindings generated by pybind~\cite{jakob.2017.pybind11}. As an example, we can then call our stretch
-algorithm this way:
+\begin{minted}{C++}
+template <class T = float, class V, std::size_t D>
+mln::ndimage<T, D> stretch(mln::ndimage<V, D> img) {
+  auto img_vs = img.get_value_set();
+  aut default_vs = value_set<>{}; // void specialization
+
+  // histogram
+  auto hist = std::vector<std::size_t>{img_vs.max()+1, 0};
+  mln::for_each(img, [&hist](V v){ ++hist[v]; });
+  
+  // construct ratio
+  auto [m, M] = std::minmax_element(begin(hist), end(hist));
+  double min = (not std::is_floating_point_v<V>) ?
+                  img_vs.template cast<double>(img_vs.min()) : 0.0;
+  double max = (not std::is_floating_point_v<V>) ?
+                  img_vs.template cast<double>(img_vs.max()) : 1.0;
+  // equiv to (max - min) / (M - m);
+  double ratio = default_vs.div(default_vs.sub(max, min), default_vs.sub(M, m));
+
+  // construct and apply scaling functor
+  auto scale_fn = [m, x, r, default_vs](double v) -> V {
+    // equiv to static_cast<V>(x + (v - m) * r)
+    return default_vs.template cast<V>(default_vs.add(x, default_vs.mult(default_vs.sub(v, m), r)));
+  };
+  return mln::transform(img, scale_fn);
+}
+\end{minted}
+
+Despite loosing a little bit of expressivity (calling explicit function such as \texttt{vs.mult(..., ...)}) we are now
+completely agnostic from the underlying value-type when doing any computation. In this example we are using both the
+input image's value-set to gather informations about the value space limits as well as the default value-set in order to
+get the computations right. Now we are able to write an algorithm independently from its underlying type on the C++
+side. This feat enables one fundamental feature: type-injection from Python. Indeed, it is now possible to provide a
+value-set from Python. This feat is realized simply by specializing the base value-set class over the type
+\texttt{pybind::object} which is the generic way to refer to a non-trivially-convertible Python type. This
+specialization is able to call the operators on any input \texttt{pybind11::object} by using a value-set coming from
+Python at the construction of the image. Here is how this value-set specialization looks like on C++ side:
+
+\begin{minted}[linenos,highlightlines={7,11,14,19,22,27}]{C++}
+template <>
+struct value_set<pybind11::object> {
+value_set(pybind11::object python_vs_instance);
+
+template <typename U>
+pybind11::object cast(pybind11::object v) const {
+  return static_cast<U>(vs_instance_.attr("cast")(v, get_python_type<U>()));
+}
+
+pybind11::object max() const {
+  return vs_instance_.attr("max")();
+}
+pybind11::object min() const {
+  return vs_instance_.attr("min")();
+}
+/* ... */
+
+pybind11::object add(pybind11::object l, pybind11::object r) const {
+  return vs_instance_.attr("add")(l, r);
+}
+pybind11::object sub(pybind11::object l, pybind11::object r) const {
+  return vs_instance_.attr("sub")(l, r);
+}
+/* ... */
+
+private:
+  pybind11::object vs_instance_;
+};
+\end{minted}
+
+In this code we can clearly see that line 27 we are storing our Python's value-set instance into our class. This is
+possible due to the fact that our value-set abstraction is not providing static class function but member function.
+Hence, it is possible to offload the work of the value-set to a member variable at lines 11, 14, 19 and 22 that will
+call the Python's value-set and get the wanted result. Also, at line 7 we use multiples techniques at once to get the
+correct resulting cast from a Python type. First we call a function \texttt{get\_python\_type} that will return a string
+containing the python-compatible representation of the resulting type we want to cast the variable into. This function
+can be implemented with the C++ facilites contained in the \texttt{typeinfo} header such as the \texttt{typeid} operator
+and the \texttt{std::type\_index} helper class as in the following code:
+
+\begin{minted}{C++}
+#include <cinttypes>
+#include <string>
+#include <typeinfo>
+
+template <class U>
+std::string get_python_type() {
+  // C++ type -> Python type
+  static std::unordered_map<std::type_index, std::string> type_names {
+    { std::type_index(typeid(bool{})),          "bool"  },
+    { std::type_index(typeid(int8_t{})),        "int"   },
+    { std::type_index(typeid(int16_t{})),       "int"   },
+    { std::type_index(typeid(int32_t{})),       "int"   },
+    { std::type_index(typeid(int64_t{})),       "int"   },
+    { std::type_index(typeid(uint8_t{})),       "int"   },
+    { std::type_index(typeid(uint16_t{})),      "int"   },
+    { std::type_index(typeid(uint32_t{})),      "int"   },
+    { std::type_index(typeid(uint64_t{})),      "int"   },
+    { std::type_index(typeid(float{})),         "float" },
+    { std::type_index(typeid(double{})),        "float" },
+    { std::type_index(typeid((char*){})),       "str"   },
+    { std::type_index(typeid((const char*){})), "str"   },
+    { std::type_index(typeid(std::string{})),   "str"   }
+  };
+  return type_names[std::type_index(typeid(U{}))];
+}
+\end{minted}
+
+This code perform the conversion between the type information extracted from \texttt{U} with \texttt{typeid} which is
+compiler specific and the corresponding Python type in order to very easily perform the type-cast on the Python side.
+
+On this particular matter, the user will find a Python abstract class to implement in order for his value-set to be
+usable by the library. This abstract class is defined by the following Python code:
 
 \begin{minted}{python}
-  import pylena as pln, imageio, numpy as np
-  img_in = imageio.imread("lena.png")
-  np_arr = np.array(img_in, dtype='int8')
-  img = pln.image2d(np_arr)
-  print(timeit.timeit('img_out = pln.stretch(img)', number=1000,
-        globals=globals()))
-  >> 0.24129085899949132 # Seconds for 1000 cycles
+from abc import ABC, abstractmethod
+from typing import Any
+import math, importlib
 
-  # Using a type that isn't int8 or int16
-  np_arr64 = np.array(img_in, dtype='int64')
-  img64 = pln.image2d(np_arr64)
-  print(timeit.timeit('img_out64 = pln.invert(img64)', number=1000,
-        globals=globals()))
-  >> 26.124844277999728 # Seconds for 1000 cycles
+class AbstractValueSet(ABC):
+
+  @abstractmethod
+  def cast(self, value: Any, type_): pass
+    if type_ in ["int", "float", "bool", "str"]:
+      module = importlib.import_module('builtins')
+      cls = getattr(module, type_)
+      return cls(value)
+    else:
+      raise ValueError()
+
+  @abstractmethod
+  def max(self): return math.inf
+
+  @abstractmethod
+  def min(self): return -math.inf
+
+  # ...
+
+  @abstractmethod
+  def add(self, lhs: Any, rhs: Any) -> Any: return lhs + rhs
+
+  @abstractmethod
+  def sub(self, lhs: Any, rhs: Any) -> Any: return lhs - rhs
+
+  # ...
 \end{minted}
 
-We can observe a hundred time factor between the fast and optimized path and the slow dynamically dispatched path.
+This abstract class provide a facility to cast a value into a given type from its representation as a string. It also
+provides default / standard way of computing values. Those methods needs to be overridden by a child class as they are
+all tagged with the \texttt{@abstractmethod} attribute.
+
+Now, let us make our own custom Python data structure containing a value. Let us name our class \texttt{MyStruct} as in
+the following code:
+
+\begin{minted}{Python}
+from typing import Any
+class MyStruct:
+  v_: Any
+  def __init__(self, v: Any): self.v_ = v
+  def getV(self) -> Any:      return self.v_
+  def setV(self, v: Any):     self.v_ = v
+\end{minted}
+
+Now we want to use this custom structure in an image we pass to the C++ library. The following Python code will not
+work:
+
+\begin{minted}{Python}
+img = np.array(
+  [MyStruct(1), MyStruct(2), MyStruct(6.5), MyStruct(3.14)],
+  ndmin=1)
+pln_img = pln.ndimage(img, is_multichannel=false)
+\end{minted}
+
+Indeed, the image's value-type is a \texttt{pybind11::object} which requires the C++ code to fallback on the
+corresponding value-set specialization. However, in order to construct a value-set of that specialization, we are
+missing a parameter: the \texttt{pybind11::object} value-set offloading the work to Python. The next step is then to
+declare our custom value-set on Python side shown on the following code:
+
+\begin{minted}{Python}
+from typing import Any
+
+class MyValueSet(AbstractValueSet):
+  def get_MyStruct_val__(self, v: Any):
+    return v.getV() if isinstance(v, MyStruct) else v
+
+  def cast(self, value: Any, type_):
+    return super().cast(self.get_MyStruct__(value), type_)
+
+  def max(self): return super().max()
+
+  def min(self): return super().min()
+
+  def add(self, lhs: Any, rhs: Any) -> Any:
+    return MyStruct(super().add(self.get_MyStruct__(lhs), self.get_MyStruct__(rhs)))
+
+  def sub(self, lhs: Any, rhs: Any) -> Any:
+    return MyStruct(super().sub(self.get_MyStruct__(lhs), self.get_MyStruct__(rhs)))
+\end{minted}
+
+Now it is possible to write the following code:
+\begin{minted}{Python}
+  img = np.array(
+    [MyStruct(1), MyStruct(2), MyStruct(6.5), MyStruct(3.14)],
+    ndmin=1)
+  pln_img = pln.ndimage(img, is_multichannel=false, value_set=MyValueSet())
+\end{minted}
+
+And on the C++ side there are just small trivial adaptations to do to forward the \texttt{pybind11::object} to the
+\texttt{ndimage\_from\_buffer} function so that it is then correctly forwarded into the resulting
+\texttt{mln::ndbuffer\_image}, thus accessible from any algorithms. There is another way of achieving the exact same
+result which consist of having a concrete value-set Python class inheriting an abstract value-set C++ class. This is
+rendered possible by using a trampoline on the C++ side to define a special C++ class (with macros provided by pybind).
+Afterwards, it is possible to define a Python class in Python code inheriting from the trampoline intermediate C++
+class. Then the user implement the pure virtual member function with Python code. Thanks to polymorphism, it is then
+possible to pass this child class back to a C++ function as if it was the C++ parent class. Whichever solution is
+selected, the performances remain equally bad as Python code do the work in both case.
+
+Indeed, While it works and enables the user to construct \texttt{NumPy.array} of custom Python type and pass them to the
+library with the corresponding value-set for it to "just work", the performance is greatly impacted. As a matter of
+fact, the computation is no longer done on the C++ side with optimized, vectorized instructions. Instead, a callback to
+Python is done in order to get the result. It is important that the user keep in mind that custom python types are be
+supported by the library by providing a value-set at the cost that the resulting performances will literally be blown
+away. This may be sufficient for prototyping and tinkering however the user must consider implementing his own type on
+the C++ side when time comes to write production code.
 
 \section{Performances \& overhead}
 
