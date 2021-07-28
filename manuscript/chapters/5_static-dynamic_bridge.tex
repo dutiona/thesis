@@ -96,13 +96,6 @@ with the number of handled types. Which is not very generic. On the other hand t
 portability is guaranteed. Theoretical models exist that could bring solutions to lower the number of dispatcher to
 write, such as multi-method~\cite{pirkelbauer.2010.multimethods}. Unfortunately they are currently not part of C++.
 
-%\section{Design hybrid solution, motivations and choices}
-
-%\FIXME{TODO: schémas solution hybride, arbre de dispatching etc.}
-
-\section{Hybrid solution: type-erasure and $n*n$ dispatch}
-
-
 In Pylene we have chosen an hybrid solution between type-erasure and dynamic dispatch. The aim is to have a set of known
 types for which we have no speed cost as well as continuing to handle other types to remain generic. To achieve this
 goal, we have worked together with Célian Gossec~\cite{gossec.2019.pybind}, a student co-supervised by the authors of
@@ -116,7 +109,8 @@ first place. However, it is possible to convert an abstract class into an instan
 template parameter are known. This requires, however, to enumerate all the possible cases. With modern C++, it has
 become possible to design $n*n$ dispatch without gigantic switch-case clauses.
 
-\subsection{First step: type-erasure}
+
+\section{Hybrid solution's first step: type-erasure}
 
 The first step of our solution consists in designing a buffer class that holds all the informations about an image:
 dimension, underlying type, strides and pointer to data buffer. This class is named \texttt{ndimage\_buffer}. When
@@ -236,7 +230,9 @@ provided callbacks. The code of those callbacks is as follow:
 This code forward informations about the buffer and handle the special case of multichannel images which Python treat
 as 3D images.
 
-\subsection{Second step: multi-dispatcher}
+
+\section{Hybrid solution's second step: multi-dispatcher (a.k.a. $n*n$ dispatch)}
+
 The second step of our hybrid solution is to dispatch the type-erased code to efficient generic code. The naive way of
 doing so would be to include a gigantic switch-case clause in each algorithm implementation and dispatch to the correct
 instantiated generic algorithm from there. Aside from being a nightmare to maintain, the size of those clause can grow
@@ -507,7 +503,8 @@ standard way manipulate the underlying values. Through type-erasure, we can eith
 with native facilities (near-zero overhead) or fallback on a virtual call that may report an error or callback
 user-provided Python routine to manipulate an unknown user value.
 
-\subsection{Third and final step: the value-set}
+
+\section{Hybrid solution's third and final step: the value-set}
 
 The \emph{value-set} is an abstraction layer around common operations needed when implementing an image processing
 algorithm such as an addition, a multiplication, a type conversion, getting the maximum etc. It can be defined in C++ as
