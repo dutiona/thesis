@@ -62,14 +62,14 @@ powerful integrations such as defining one's own DSL as if it was part of the co
 \begin{figure}[tbh]
   \centering
   \includegraphics[width=.6\linewidth]{figs/dynamic_pipeline}
-  \caption{Compiled languages: compile-time}
+  \caption{Interpreted languages: run-time}
   \label{fig:static.dynamic.dynamic.pipeline}
 \end{figure}
 
 Image processing communities like to have bridges with interpretable language such as Python or Matlab, to interface
 with their favorite tools, algorithms and/or facilities. As an example, with Python, the module
 NumPy~\cite{oliphant.2006.numpy} is community standard which is heavily used. Henceforth, to broaden the usage of our
-library, we should be able to provide a way to communicate between our library and NumPy. However here is a showstopper:
+library, we should be able to provide a way to communicate between our library and NumPy. However, here is a showstopper:
 we only distribute source code, we don't hand over binaries. Indeed, genericity in C++ is achieved via usage of template
 metaprogramming. One caveat of it is that the C++ compiler cannot generate a binary until it knows which type (of image,
 of value) will be used. But we don't know this information: the user (on Python's end) is not going to recompile our
@@ -81,7 +81,7 @@ genericity. However we are now bound to specificities of a compiler vendor and l
 
 Another option is to type-erase our types to enables the use of various concrete types through a single generic
 interface. This would translate into a class hierarchy whose concrete classes are on the leaves (thus, whose value type
-and dimension are known). This induces a non negligible slow down but allow us to keep the genericity and portability at
+and dimension are known). This induces a non-negligible slow down but allow us to keep the genericity and portability at
 the cost of maintaining the class hierarchy.
 
 Type generalization can also be considered: cast everything into a super-type that is suitable for the vast majority of
@@ -93,7 +93,7 @@ And finally there is the dynamic dispatch. It consists in embarking dynamic info
 dispatch (think of switch/case) to the correct facility which can handle those types. The obvious caveat is the cost of
 maintenance induced by the genericity as we would have a number of possible dispatches that grow in a multiplicative way
 with the number of handled types. Which is not very generic. On the other hand there is almost no speed loss and the
-portability is guaranteed. Theoretical models exists that could bring solutions to lower the number of dispatcher to
+portability is guaranteed. Theoretical models exist that could bring solutions to lower the number of dispatcher to
 write, such as multi-method~\cite{pirkelbauer.2010.multimethods}. Unfortunately they are currently not part of C++.
 
 %\section{Design hybrid solution, motivations and choices}
@@ -121,7 +121,7 @@ become possible to design $n*n$ dispatch without gigantic switch-case clauses.
 The first step of our solution consists in designing a buffer class that holds all the informations about an image:
 dimension, underlying type, strides and pointer to data buffer. This class is named \texttt{ndimage\_buffer}. When
 interfacing with Python, it is necessary to convert the Python image which is a \texttt{NumpPy.array} into our image
-type. The purpose of this buffer image is to holds all the informations from the \texttt{NumpPy.array} to then
+type. The purpose of this buffer image is to holds all the information from the \texttt{NumpPy.array} to then
 instantiate a concrete C++ type. The first pitfall here is due to a limitation from the abstraction interface used in
 Python. Indeed, when using for instance \emph{Scikit-Image}, it is not possible to differentiate a 2D multichannel image
 from a 3D grayscale image. Indeed, the image is always broken down to its most simple value and a 3D multichannel image
@@ -644,10 +644,12 @@ value-set from Python. This feat is realized simply by specializing the base val
 specialization is able to call the operators on any input \texttt{pybind11::object} by using a value-set coming from
 Python at the construction of the image. Here is how this value-set specialization looks like on C++ side:
 
-\begin{minted}[linenos,highlightlines={7,11,14,19,22,27}]{C++}
+\begin{minted}[linenos,highlightlines={9,13,16,21,23,29}]{C++}
 template <>
 struct value_set<pybind11::object> {
-value_set(pybind11::object python_vs_instance);
+value_set(pybind11::object python_vs_instance)
+  : vs_instance_(python_vs_instance)
+{}
 
 template <typename U>
 pybind11::object cast(pybind11::object v) const {
@@ -831,8 +833,162 @@ the C++ side when time comes to write production code.
 
 \section{Performances \& overhead}
 
-\FIXME{TODO: courbes de performances mesurées depuis Python}
+Performance-wise, the hybrid solution aims at being very competitive when comparing to the other "standard" libraries.
+We want to compare to \emph{OpenCV} but also \emph{scikit-image} which are both widely use in image processing. For our
+benchmark, we are simply calling a dilation on a sample image whose data are randomized but kept identical for all the
+libraries. In order to conduct this benchmark, we use the Python \emph{timeit} module to evaluate the calls. Here is the
+code which generate the randomized image for the benchmarks:
+\begin{minted}{python}
+import numpy as np
+import random as rnd
+
+def setup_test_img():
+  sizes = {"width": 3138, "height": 3138}  # 10Mo
+  number = 100
+  percent = 20
+  ref = np.zeros((sizes["width"], sizes["height"]), dtype="uint8")
+  rnd.seed(42)
+  for x in range(0, sizes["width"]):
+    for y in range(0, sizes["height"]):
+      ref[x, y] = rnd.randint(0, 255)
+  return ref
+\end{minted}
+
+Now that our base image is setup, let us what we are going to mesure. We want to first compare the dilation algorithm
+relative to the radius of the structuring element (disc or rectangle), as well as distinguish the shapes.
+
+For OpenCV, the benchmarked functions will be as follow:
+\begin{minted}{python}
+import cv2
+
+def bench_cv2_disc(ref, radius):
+  disc = cv2.getStructuringElement(
+    cv2.MORPH_ELLIPSE, (radius*2+1, radius*2+1))
+  cv2.dilate(ref, disc, iterations=1)
+
+def bench_cv2_rect(ref, width, height):
+  disc = cv2.getStructuringElement(
+    cv2.MORPH_RECT, (rect_width, rect_height))
+  cv2.dilate(ref, disc, iterations=1)
+\end{minted}
+
+Now, for scikit-image, the benchmarked functions will be as follow:
+\begin{minted}{python}
+import skimage.morphology as skimorph
+
+def bench_sckimage_disc(ref, radius):
+  disc = skimorph.disk(radius, dtype="uint8")
+  skimorph.dilation(ref, disc)
+
+def bench_sckimage_rect(ref, width, height):
+  rect = skimorph.rectangle(width, height, dtype="uint8")
+  skimorph.dilation(ref, rect)
+\end{minted}
+
+And finally, for Pylena, we will use benchmark the following code:
+\begin{minted}{python}
+import Pylena as pln
+
+def bench_pylena_rect(ref, width, height):
+  rect = pln.se.rect2d(width, height)
+  pln.morpho.dilate(ref, rect)
+
+def bench_pylena_disc(ref, radius):
+  disc = pln.se.disc(float(radius))
+  pln.morpho.dilate(ref, disc)
+\end{minted}
+
+The resulting performance are shown in~\cref{fig:bench_python_restults}. We can see notably that for tiny structuring
+elements (small radius), OpenCV is very fast thanks to hand-made optimization in the core code. Scikit-image which rely
+on NumPy and then SciPy is consistently slower than both Pylena and OpenCV. It also remains stable only for a rectangle
+structuring element. For a disc, the execution time grows alongside the radius of the disc. OpenCV does not remain
+stable the larger the structuring element is, both for a rectangle and a disc. This may be due to the incremental nature
+of the decomposition of the structuring element algorithm which decompose it in smaller 3x3 structuring elements.
+However, OpenCV remains faster than Scikit-image. This algorithm remain slow for large structuring elements. Finally,
+Pylena is very stable both for a rectangle and a disc. It also is consistently faster than Scikit-image image in both
+cases. Compared to OpenCV, it may be slower for very small structuring elements in the case of a disc but only gets
+faster than OpenCV for medium sized rectangle shaped structuring elements. We conclude that the strict decomposition
+algorithm performed by Pylena allows the user to have very stable performances accross the mathematical morphology
+algorithms.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{tabular}{cccc}
+    Rectangle                                                                                          & Disc \\[5pt]
+    \fbox{\includegraphics[width=.45\linewidth]{figs/Dilation_SERect_Benchmarks__Time_vs_SE_size.png}} &
+    \fbox{\includegraphics[width=.45\linewidth]{figs/Dilation_SEDisc_Benchmarks__Time_vs_SE_size.png}}        \\[5pt]
+  \end{tabular}
+
+  \caption{Benchmark results: OpenCV vs. Scikit-image vs. Pylena (in a dilation).}
+  \label{fig:bench_python_restults}
+\end{figure}
+
+Indeed, the~\cref{fig:bench_python_restults_pln} shows the performance difference with the Pylena library when this one
+does not the decomposability of its structuring elements. The algorithm using a non-decomposable structuring element has
+its performances heavily impacted. Also, the algorithm is no longer stable and grows slower and slower with the radius
+of the structuring elements.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{tabular}{cccc}
+    Rectangle                                                                                             & Disc \\[5pt]
+    \fbox{\includegraphics[width=.45\linewidth]{figs/DilationPln_SERect_Benchmarks__Time_vs_SE_size.png}} &
+    \fbox{\includegraphics[width=.45\linewidth]{figs/DilationPln_SEDisc_Benchmarks__Time_vs_SE_size.png}}        \\[5pt]
+  \end{tabular}
+
+  \caption{Benchmark results: Pylena structuring elements decomposable vs. non-decomposable (in a dilation).}
+  \label{fig:bench_python_restults_pln}
+\end{figure}
+
+% TODO : bench with value_set callbacks to python
 
 \section{JIT-based solutions: pros. and cons.}
 
-\FIXME{TODO: état de l'art, schémas de fonctionnement du JIT}
+Our hybrid solution certainly has advantages but the huge disadvantage is the slowness of injecting our own types from
+the Python side. There exists another solution that this thesis did not have the opportunity to study in-depth. This
+solution is based on a known technology: the Just-In-Time (JIT) compilation which has been previously illustrated
+in~\cref{fig:static.dynamic.dynamic.pipeline}. Indeed, it is a technology already used by interpreted languages such as
+Java or PHP to generate on-the-fly native and optimized machine code for the section of the source code that is
+considered "hot" by the interpreter. A source code is "hot" when it is executed a lot: the end-user would gain paying
+the compilation time once to have this code executed faster several times later on. When applying this strategy to our
+problematic, it would mean that the user must be able to compile native machine code from the templated generic C++ code
+by injected the requested type when it is used. Such an operation shift heavily the burden on the user and it is
+well-known that compiling C++ code is notably \emph{complicated} and \emph{slow}. In addition, the library needs to be
+able to auto-generate python-binding once the code is compiled. There are several solutions to achieve this process.
+
+The first solution is to basically use system call to the compilers to actually \emph{compile} C++ code once the
+templated types are known and explicitly instanciated in the source code. This solution requires careful code-generation
+design and that the user actually possess a compiler on his computer. Furtheremore, the user must resolve all the
+library dependencies, such as \emph{freeimage} for IO etc. This solution was engineered in the
+library~\parencite{demaille.2013.vcsn}. Indeed, each time the user declared a new automata in his jupyter notebook,
+corresponding source code is compiled in the foreground and then cached. It is a very perilous solution to implement
+when the final execution environment (OS, installed software) is not well-known in advance. Nowadays, the issue may be
+lesser, however, it still requires to maintain both the library and the container solution to use it.
+
+The second solution is to use Cython~\parencite{behnel.2010.cython}. It is a transpiling infrastructure which transform
+a Python source code directly into C-language source code so that it can be compiled by a standard C compiler just by
+linking against the Python/C API. This remove the burden of writting the careful code-generation routine, system-calls
+to the C++ compiler and removes the need to resolve all the dependencies. This infrastructure takes care of everything
+for the user. Also, by transpiling it into C code, it is faster because a C compiler is faster than a C++ compiler. The
+big issue here is that C code has no support for templates. This means that instead of having to compile instanciated
+C++ templated code directly, we need to write some glue code to call templated C++ code from the generated C code from
+Python. Sadly the main issue here is not solved, just shifted.
+
+The third solution consists in relying on recent projects that are all relying on the LLVM infrastructure. We can
+notably note Autowig~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy} and
+Xeus-cling~\parencite{quantstack.2021.xeus-cling}. Autowig has in-house code based on LLVM/Clang to parse C++ code in
+order to generate and compile a Swig Python binding using the Mako templating engine. Autowig, coupled with Cython would
+permit the user to, for instance, generate C code related to a custom Python structure. Then a simple call to Autowig
+will parse the C code and inject it into the C++ library to generate the appropriate bindings for the user. As for
+Cppyy, it is based on LLVM/Cling, a C++ interpreter, and can directly interpret C++ code from a python string. This
+allow for easy injection of custom types, be they in Python code (transpiled with Cython) or C++ code (directly
+interpreted by Cling). Afterwards, the infrastructure generates the appropriate binding from the templated C++ library
+for the injected type. Finally, Xeus-cling is a ready-to-use jupyter kernel and allow the usage of C++ code directly
+from within a notebook. This completely bypass the need of a Python binding in the first place and allow the user to use
+the library from within the notebook as if he was using a Python library. However all those infrastructure come with a
+hefty cost in term of binary size. Indeed, a C++ compiler is not small and embarking it alongside the image processing
+library can easily impact greatly the final binary. Without the LLVM infrastructure the binary may weight around 3MB.
+With the LLVM infrastructure, the binary weight at the bare minimum 50MB. Also, these solutions may not be immediately
+faster. Indeed, when prototyping back and forth with a variety of types, the user may not be eager to wait for long
+compilations times each time he is testing with a an iteration of his work. Despite those facts, those solutions offers
+great avenue of research for the future and the author is eager to thread those paths.

@@ -1046,8 +1046,8 @@ on-the-fly when the binding does not exist. It then leverage the code hotloading
 due to its interpreted nature by providing a facility able to transpile a Python program into a C program so that a
 genuine C compiler (with extensions) is able to compile it and to link it against the Python/C API in order to achieve a
 huge performance gain at the cost of near zero knowledge of the complex Python/C API for the user. This novel solution
-essentialy bypass the work of a JIT compiler (that would be used by a programming using bytecode such as Java or C\#)
-and just offload it onto well known/proven solution: the machine's C compiler.
+essentially bypass the work of a JIT compiler (that would be used by a programming language using bytecode such as Java
+or C\#) and just offload it onto well known/proven solution: the machine's C compiler.
 
 \paragraph{Autowig~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy} and
   Xeus-cling~\parencite{quantstack.2021.xeus-cling}} are all solutions aiming to generate automatically Python bindings
