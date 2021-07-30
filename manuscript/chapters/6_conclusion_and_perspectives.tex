@@ -1,113 +1,57 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-Through concrete benchmarks and examples, we have shown how to leverage genericity nowadays without slowing down the
-performances. There are several types of genericity which have been presented, as well as several widely used
-implementation of them in the industry. Our take offer a new approach to reach the goal of having one code for several
-algorithm, one algorithm for several image types. Furthermore, we introduce meta-algorithms (canvas) that are based on
-behavior patterns known once the image type is known. We also show how C++ template metaprogramming techniques allow not
-to impact the performances despites the indirections induced. Finally, we show how an approach based on properties (on
-image type as well as on external data such as structuring elements) can be beneficial to introduce customization points
-to take advantage of opportunities to increase performances. When coupling both properties and algorithm canvas, it
-becomes standard for a user to write efficient and generic algorithm by default.
+The work presented in this thesis by the author followed a very clear narrative arc. The emphasis was first shown on
+presenting what is the notion of genericity, its story and how anyone can relate to its day to day usage especially when
+applied to image processing. Genericity is a 4-decades year old notion that has evolved and found usage in very modern
+area of our society. In particular, in image processing, it is widely used to build modern applications used around the
+world. However, it was demonstrated how difficult it can be to implement solutions relying on genericity by stating the
+rule of three related to genericity, performance and easy of use. The rule states that one can only have two of those
+items by sacrificing the third one. If one wants to be generic and efficient, then the naive solution will be very
+complex to use with lot of parameters. If one wants a solution to be generic and easy to use, then it will be not very
+efficient by default. If one wants a solution to be easy to use and efficient then it will not be very generic.
+In this thesis, we try to demonstrate how to break this rule in three steps.
 
-It is also shown how we were able to abstract two of the three main families of algorithms. First are point-wise
-algorithms that can all be expressed through the \emph{views}.\emph{Views} enables streamlining the writing process of
-image processing pipelines so that it is shorter, efficient and expressive. Second are local algorithm whose
-problematics (border management, structuring elements, pass number) can all be abstracted away behind a canvas hiding
-the complexity and taking advantage of opportunities to increase performance for you.
+The first step was to realize an inventory of image types and families as well as different image processing algorithms.
+The aim was to produce a comprehensive taxonomy of images and algorithms related to image processing in order to be able
+to write concepts (in the sense of C++ concepts). This first step is to make the perimeter of what the author means by
+genericity very clear. From this starting point, it becomes easier to write image processing algorithms by default, just
+by relying on those concepts. Furthermore, different concepts exists to enable algorithm implementers to leverage
+properties (structuring elements' decomposability, image's buffer contiguous, ...) in order to achieve maximum
+performances.
 
-The solutions presented in this paper do have some disadvantages, such as the readability when using local algorithm
-canvas, code-bloat due to heavy instantiation of C++ templates especially in the views and finally the lack of
-availability to the dynamic (prototyping) world by default. Indeed, C++ metaprogramming needs to be compiled at the time
-of its usage preventing direct link with dynamic languages such as python. There is on-going work to introduce dynamic
-dispatch at some key points to reduce code size without impairing the performance. For instance, a dynamic dispatch to
-select the correct version of an algorithm has much less impact than a dynamic dispatch when accessing the value of a
-pixel. Further work is required to improve the static-dynamic bridge and bring the capabilities of the techniques
-presented in this paper to the dynamic world, and in particular, python which is vastly used in the image processing
-world.
+A this point, we are still reasoning at low level and need to design an abstraction layer in order to enable fast
+prototyping for simple operations while guarantying very small memory footprint and near-zero performance impact. We
+expand the concept of \emph{views} from the C++ standard to images and design what is an image view. We also make the
+design choice to have cheap-to-copy (because of shared data buffer) image by default in order to merge concrete image
+and views from the user point of view. The lazy-evaluation, that systematically happens when using views allows
+performance gain when clipping larges images. In the case where the whole image is processed, we were able to still
+retain very satisfactory performances that remain stable. Also, we show through concrete use-case, such as pixel-wise
+algorithm and border management how the usage of views simplify greatly how to write more complex image processing
+algorithms that are efficient by default.
 
-\vspace{1cm}
+Finally, this thesis focused its attention on how it is possible to distribute this software to the image processing
+community which is mainly working with Python. The last work concentrate its effort to how best design a static
+(templated C++) - dynamic (Python notebook) bridge to bring those concepts and performances to the practitioner. This
+last work explores the dilemmas and offers to address them with one hybrid solution whose design is explained in-depth.
+This hybrid solution rely on a type-erased type which offers compatibility with a \emph{NumPy.array} that then is able
+to cast itself inside $n*n$ dispatcher (dimension and underlying type) into an optimized templated C++ type. This
+solution also explain how to write very simply the glue code to enable already-existing algorithms (in C++) to be
+exposed in Python thanks to a dispatch mechanic heavily inspired from the C++ standard (\texttt{std::visit},
+\texttt{std::variant}). The aim of this solution was to regroup at a single place in the code all the supported types
+into the dispatchers for maintenance purpose as well as demanding minimal work from algorithm implementer to expose
+their algorithm, all this while keeping the native performances. Indeed, no-copy is performed thanks to
+\emph{pybind11}'s \emph{buffer protocol} facility, and one cast is done from the type-erased type to the native one. All
+the work that is done in the algorithm is performed on native optimized type. Finally this solution offers a way to
+inject custom Python types into the library for prototyping purpose at the cost of heavy performance thanks to a new
+abstraction layer, the \emph{value-set} explained in-depth in the chapter. The downside of this solution is obviously
+the code bloat with the resulting binary size exploding exponentially with the number of supported types multiplied by
+the number of algorithms multiplied by the number of additional supported data (structuring elements, label map, etc.)
 
-Through a simple example, we have shown a step-by-step methodology to make an algorithm \emph{generic} with zero
-overhead~\footnote{The zero-cost abstraction of our approach is not argued here but will be discussed in an incoming
-  paper with a comparison with the state of the art libraries}. To reach such a level of genericity and be able to write
-versatile algorithms, we had to \emph{abstract} and \emph{define} the most simple and fundamental elements of the libray
-(e.g. \emph{image}, \emph{pixel}, \emph{structuring element}). We have shown that some tools of the Modern C++, such as
-\emph{concepts}, greatly facilitate the definition and the usage of such abstractions. These tools enable the library
-designer to focus on the abstraction of the library components and on the user-visible development. The complex
-\emph{template meta-programming} layer that used to be a large part of \emph{C++ generic programming} is no more
-inevitable. In this context, it is worth pointing out the approach is not limited Image Processing libraries but works
-for any library that wants to be modernized to augment its productivity.
-
-As one may have noticed, the solution presented in this paper is mostly dedicated to C++ developer and C++ end-user.
-Unlike dynamic environments (such as Python), C++ is not the most appropriate language when one has to prototype or
-experiment an IP solution. As a future work, we will study the conciliation of the \emph{static genericity} from C++
-(where types have to be known at compile time) with a \emph{dynamic} language (with a run-time polymorphism) to allows
-the interactive usage of a C++ generic library.
-
-The main issue, if we consider having an effective Python binding as our future main objective, is intrinsic to the way
-generic C++ code works. To be able to bind Python and C++, we need a compiled binary that will be called from Python.
-However, generic code is, by essence, \emph{header-only}. That means an abstraction layer that instantiate our generic
-code with predefined types is needed to generate the binary code required by Python. However this induces two
-disadvantages. First, there is no more \emph{zero-overhead} as the abstraction layer based on virtual dispatch will
-impact performances. Second, it will be very hard to consider injecting new types from the Python side into the library.
-
-A solution to the last disadvantage would be to consider solutions that compiles our C++ code on the fly when we know
-the types injected from the Python side. There already exists a tool based on Clang/LLVM that makes this integration
-relatively feasible. Namely there is Pythran~\cite{guelton.2015.pythran}, an ahead of time compiler that compiles
-annotated Python code into optimized native code (with SIMD instructions). This would allow the injection of Python code
-into our C++ at runtime. Henceforth this would provide a solution to inject new types defined on python side into the
-already compiled C++ binary code and have the virtual dispatch somehow use it.
-
-Another approach would be to consider a solution using another very promising tool:
-cppyy~\cite{wimtlplavrijsen.2016.cppyy} which is a an automatic Python/C++ binding generator designed for large scale
-programs. The C++ interpreter is based on Cling~\footnote{https://root.cern.ch/cling} (an interpreter based on
-Clang/LLVM and maintained by CERN). This would allow us to compile our generic C++ code directly from our Python code
-and have our bindings automatically generated. As a future work, we will implement both approaches to benchmark them in
-order to measure which one is the most effective for the many use-cases we have.
-
-\vspace{1cm}
-
-During our $2^{nd}$ year of work on our Ph.D. we have broaden our horizon and seen many issues as well as studied
-potential leads of solutions.
-
-For traversing of an image, a satisfactory solution has been found that does not hinder performances, though some small
-issues remain to be studied later.
-
-Concerning the way to handle an image's borders when processing a local algorithm, we have studied the question in depth
-and exercised the presented design against different kind of problem such as structuring elements which are static,
-dynamic or adaptive. All of these are within scope and handled by the solution presented in this paper.
-
-The static dynamic bridge proved to be a big challenge as there was very little experience feedback from existing
-solution experimented by other libraries. It took a lot of incremental trial and error to design the hybrid solution
-that would perform with satisfactory performances for common use cases without duplicating code. This question still
-remains open as we would like to study the usability of bringing in a C++ interpreter such as
-Cppyy~\cite{wimtlplavrijsen.2016.cppyy} (based on clang) to dynamically generate python bindings on the fly when those
-are missing for specific types. This would allows us to inject user type from python into the C++ core library code. The
-solution of code generation through tools like AsmJIT~\cite{kobalicek.2011.asmjit} also remains open for future work.
-
-Finally the reflection about how we can bring parallelism and more generally heterogeneous computing into the library
-brought us to study different approaches, different paradigms and think about how our data structure operate with the
-on-going computation. We attempted to bring a solution with the algorithm canvas though we did not took advantage of it
-for the moment. For instance, we do not dispatch CUDA kernel yet. This question remains open and can still be studied
-further.
-
-To conclude, the priority in the future will be put into having a first stable release of the library. Indeed, we want
-to provide the library for the students so that they can give feedbacks on its usability. We will study both the
-usability of the C++ aspect and the python aspect.
-
-
-\clearpage
-
-
-\begin{itemize}
-  \item Synthèse générale
-  \item Réponse à la problématique d'Introduction
-  \item confrontation à d'autres travaux de recherche ayant donné naissance à une bibliothèque de TI
-  \item Ouvertures, perspectives, limites
-        \begin{itemize}
-          \item continuité JIT
-          \item ce qu'il reste à faire
-        \end{itemize}
-\end{itemize}
+We conclude this thesis by offering new avenue of research, the JIT-compilation. The author think that this avenue is
+worth exploring, especially with the already promising existing tools (xeus-cling, cppyy, Cython, autowig) in order to
+solve the code bloat issue. We would only compile what the user needs. But the entry price may be to statically link a
+C++ interpreter (LLVM/cling ?) into the binary which in itself would greatly bloat it. It may be possible to rely on
+user's system-wide infrastructure however so that the maintenance does not distribute a whole C++ interpreter/compiler
+alongside his image processing library binary. This is still a new area of research and the author would very much want
+to delve into it to study what is possible to achieve as of today with those tools for the image processing community.
