@@ -1,4 +1,4 @@
- 4.1 Cette partie définit les vues disponibles dans la bibliothèque et d’où vient
+ 4.1 Cette partie définit les vues disponibles dans la bibliothèque et d'où vient
 le besoin. Comme souvent, tu pars trop dans une énumération des fonctionnalités,
 là ou il faudrait motiver leur besoin.
 

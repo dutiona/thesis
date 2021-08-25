@@ -129,6 +129,45 @@
 
 * SWDC, MPOOL, CIARP, IPOL : conference morte ?
 
+## Subjects ideas
+
+1. Image processing
+  * Taxonomy:
+    * set representation of images
+    * conceptualization
+    * a minimal taxonomy necessary to work with local algorithm ?
+  * Views:
+    1. new paradigm to design IP algorithms by abstracting away pixel-wise algorithms
+      * chainability
+      * lazy evaluation
+      * reusability
+      * low impact performance wise
+    2. practical example: border management
+      * problematic of border behavior in local algorithm
+      * design choice and motivation
+      * views to add/remove/modify border behavior of an image
+      * views to add/remove/modify structuring element if necessary
+      * very low impact on IP algorithmic side
+2. Software engineering
+  * Taxonomy:
+    * introducing concepts in C++ programming language and its applications in IP
+    * conceptualization of an algorithm
+    * discussion around the design choice of "all images are cheap-to-copy views" and "what is a concrete image"
+    * a minimal taxonomy given to work with local algorithms ?
+  * Views:
+    1. parallel between ranges-v3 and images
+      * multidimensional traversing
+      * chainability/lazy eval/reusability/good performances
+  * Static dynamic bridge:
+    * definition of "static world" and "dynamic world"
+    * motivations (enable usage of library from Python)
+    * existing ways of achieving results, pros & cons
+    * hybrid solution:
+      1. dispatch on known types for good performances
+      2. fallback on type-erasure for unknown types (performances lowered but at least, it works)
+      3. explain the mechanic behind the multi-dispatch
+
+
 ## Ressources
 
 https://www.scimagojr.com/journalsearch.php
