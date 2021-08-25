@@ -57,18 +57,18 @@
 ## Dates
 
 * CVPR
-  http://cvpr2022.thecvf.com/
-  Paper Submission Site Opened: TBD
-  Paper Registration Deadline: November 9, 2021
-  Paper Submission Deadline: November 16, 2021
-  Supplementary Materials Deadline: November 23, 2021
-  Reviews Released to Authors: January 24, 2022
-  Rebuttal Due: January 31, 2022
-  Final Decisions to Authors: March 2, 2022
-  Camera ready due: TBD
+  * http://cvpr2022.thecvf.com/
+  * Paper Submission Site Opened: TBD
+  * Paper Registration Deadline: November 9, 2021
+  * Paper Submission Deadline: November 16, 2021
+  * Supplementary Materials Deadline: November 23, 2021
+  * Reviews Released to Authors: January 24, 2022
+  * Rebuttal Due: January 31, 2022
+  * Final Decisions to Authors: March 2, 2022
+  * Camera ready due: TBD
 
 * ICCV : no infos as of yet
-  http://iccv2021.thecvf.com/node/5
+  * http://iccv2021.thecvf.com/node/5
 
 * ECCV : no infos
 
@@ -77,53 +77,53 @@
   * https://conf.researchr.org/home/icse-2022
 
 * ICPR :
-  Registration deadline: January 10, 2022
-  Submission deadline: January 17, 2022
-  Acceptance/Rejection/Revision decision: March 14, 2022
-  Revision/rebuttal deadline: April 11, 2022
-  Final decision on submissions: May 9, 2022
-  Camera ready manuscript deadline: June 6, 2022
-  Early bird registration deadline: June 6, 2022
-  Presentation dates: August 22-25, 2022
+  * Registration deadline: January 10, 2022
+  * Submission deadline: January 17, 2022
+  * Acceptance/Rejection/Revision decision: March 14, 2022
+  * Revision/rebuttal deadline: April 11, 2022
+  * Final decision on submissions: May 9, 2022
+  * Camera ready manuscript deadline: June 6, 2022
+  * Early bird registration deadline: June 6, 2022
+  * Presentation dates: August 22-25, 2022
 
 * ICIP : no infos as of yet
-  http://2022.ieeeicip.org/
+  * http://2022.ieeeicip.org/
 
 * VCIP : no infos as of yet
-  https://www.vcip2021.org/
-  2021 edition is going to be in December 5-8, 2021
+  * https://www.vcip2021.org/
+  * 2021 edition is going to be in December 5-8, 2021
 
 * COMPSAC :
   * https://ieeecompsac.computer.org/2022
   * Main Conference:
-    Main conference papers due: January 31, 2022
-    Paper notification: April 15, 2022
-    Camera-ready and registration due: May 31, 2022
+    * Main conference papers due: January 31, 2022
+    * Paper notification: April 15, 2022
+    * Camera-ready and registration due: May 31, 2022
   * Workshops:
-    Workshops proposal acceptance notification: 15 December 2020
-    Workshop papers due: April 21, 2022
-    Workshop paper notifications: May 15, 2022
-    Camera-ready and registration due: May 31, 2022
+    * Workshops proposal acceptance notification: 15 December 2020
+    * Workshop papers due: April 21, 2022
+    * Workshop paper notifications: May 15, 2022
+    * Camera-ready and registration due: May 31, 2022
 
 * SEKE : no infos for 2022
-  http://ksiresearch.org/seke/seke21.html
+  * http://ksiresearch.org/seke/seke21.html
 
 * WACV :
-  http://wacv2022.thecvf.com/home
-  Submission: Wednesday, August 18th, 11:59 PM Pacific (August 19th, 6:59 AM GMT), CMT availalble for submissions on July 28th.
-  Supplementary: Friday, August 20th, 11:59 PM Pacific (August 21st, 6:59 AM GMT)
-  Decisions: Saturday, October 2nd, 11:59 PM Pacific (October 3rd, 6:59 AM GMT)
+  * http://wacv2022.thecvf.com/home
+  * Submission: Wednesday, August 18th, 11:59 PM Pacific (August 19th, 6:59 AM GMT), CMT availalble for submissions on July 28th.
+  * Supplementary: Friday, August 20th, 11:59 PM Pacific (August 21st, 6:59 AM GMT)
+  * Decisions: Saturday, October 2nd, 11:59 PM Pacific (October 3rd, 6:59 AM GMT)
 
 * ICCVW : no info as of yet
-  http://iccv2021.thecvf.com/node/5
+  * http://iccv2021.thecvf.com/node/5
 
 * GRETSI 2022
-  http://gretsi.fr/colloque2022/
+  * http://gretsi.fr/colloque2022/
 
 * GTGDMM: no infos for a 2022 conf
-  https://gdmm2020.sciencesconf.org/
-  http://gt-gdmm.u-bordeaux.fr/
-  https://www.gdr-im.fr/
+  * https://gdmm2020.sciencesconf.org/
+  * http://gt-gdmm.u-bordeaux.fr/
+  * https://www.gdr-im.fr/
 
 * AFRIF: http://afrif.irisa.fr/
 
@@ -170,6 +170,6 @@
 
 ## Ressources
 
-https://www.scimagojr.com/journalsearch.php
-http://portal.core.edu.au/conf-ranks/
-http://portal.core.edu.au/jnl-ranks/
+* https://www.scimagojr.com/journalsearch.php
+* http://portal.core.edu.au/conf-ranks/
+* http://portal.core.edu.au/jnl-ranks/
