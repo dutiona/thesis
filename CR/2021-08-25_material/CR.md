@@ -7,9 +7,9 @@ Ordre du jour : Manuscrit, Jury, Publications
 ## Manuscrit
 
 * Modification page/marges (cf. commit de Théo)
-* Partie contribution et chapitre Genericité à renommer
-* Chapitre taxonomy : mettre tableau en annexes, garder le 1er pour exploquer comment les lire
-* Bien délimiter l'état de l'art et les contribs
+* Partie contribution et chapitre Généricité à renommer
+* Chapitre taxonomy : mettre tableau en annexes, garder le 1er pour expliquer comment les lire
+* Bien délimiter l'état de l'art et les contributions
 * Remanier les chapitres pour avoir toujours la même structure :
   * état de l'art (introduction, où est-ce que l'on s'est arrêté)
   * problème à résoudre, motivation, où est-ce que l'on veut en venir
@@ -21,16 +21,16 @@ Ordre du jour : Manuscrit, Jury, Publications
 ## Constitution du Jury
 
 * Le jury doit avoir 5-8 personnes
-* constitué avec une majorité de HDR ou équivalent (cf. consignes sur le sire du collège doctoral de la Sobonne Université)
+* constitué avec une majorité de HDR ou équivalent (cf. consignes sur le site du collège doctoral de la Sorbonnes Université)
 * constitution :
   * 1 président HDR "cappé" en contribution
-  * 2 raporteurs HDR
-  * >= 2 exaximateurs (au moins docteurs)
+  * 2 rapporteurs HDR
+  * >= 2 examinateurs (au moins docteurs)
 * Propositions de noms :
   * examinateurs :
     * Camille Kurtz (Université de Paris)
     * Joël Falcou (LRI)
-  * raporteurs :
+  * rapporteurs :
     * Jean Cousty (ESIEE)
     * Benjamin Perret (ESIEE, auteur de HIGRA)
     * David Coeurjoli (CNRS, LIRIS, auteur de DGTAL)
@@ -57,9 +57,10 @@ Ordre du jour : Manuscrit, Jury, Publications
 ## Actions
   
 MR:
+
 * Publication:
   * Regarder les conférences/revues en détail (dates, papiers publiés, tracklines)
   * Retenir les conférences intéressantes pour publier le papier existant
-  * Établir un planning où l'on peut tenter 2 à 3 conférences (en fonction des submission dates/notification dates)
-* Continuer de retravailler le manuscrit pour prendre en compte les remarques d'EC
+  * Établir un planning où l'on peut tenter 2 à 3 conférences (en fonction des dates de soumissions/dates de notification)
+* Continuer de retravailler le manuscrit pour prendre en compte les remarques d'EC et de TG
 * Prendre un rdv pour la semaine prochaine pour refaire un point sur les publications
