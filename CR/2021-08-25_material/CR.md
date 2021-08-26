@@ -2,6 +2,8 @@
 
 Présents : EC TG MR
 
+Ordre du jour : Manuscrit, Jury, Publications
+
 ## Manuscrit
 
 * Modification page/marges (cf. commit de Théo)
@@ -55,10 +57,9 @@ Présents : EC TG MR
 ## Actions
   
 MR:
-  * Publication:
-    * Regarder les conférences/revues en détail (dates, papiers publiés, tracklines),
-    * Retenir les conférences intéressantes pour publier le papier existant
-    * Etablir un planning où l'on peut tenter 2 à 3 conférences (submission dates/notification dates)
-  * Continuer de retravailler le manuscrit pour prendre en compte les remarques d'EC
-  * Prendre un rdv pour la semaine prochaine pour refaire un point sur les publications
-
+* Publication:
+  * Regarder les conférences/revues en détail (dates, papiers publiés, tracklines)
+  * Retenir les conférences intéressantes pour publier le papier existant
+  * Établir un planning où l'on peut tenter 2 à 3 conférences (en fonction des submission dates/notification dates)
+* Continuer de retravailler le manuscrit pour prendre en compte les remarques d'EC
+* Prendre un rdv pour la semaine prochaine pour refaire un point sur les publications
