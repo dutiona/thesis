@@ -11,7 +11,7 @@ définitions de concepts). Il ne doit rester que ceux qui sont essentiels
 Chapitre 2: Généricité.
 Beaucoup trop d'exemples hors-sol, la thèse parle de TI, il faut que tu
 illustres sur des algos de TI. Les exemples de la partie 2.2 sont à
-revoir complétement et à choisir pour illustrer la différence avec le
+revoir complètement et à choisir pour illustrer la différence avec le
 C++ moderne introduit dans les chapitres qui suivront.
 La section 2.3.1 est une préface à la taxonomie, il faut le dire. Encore
 une fois, les exemples hors-sols sont sans intérêts. La notion de traits
