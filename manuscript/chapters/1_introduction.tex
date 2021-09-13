@@ -190,7 +190,7 @@ Blitz++~\cite{veldhuizen.2000.blitz} or Armadillo~\cite{sanderson.2016.armadillo
 C++ programming language (\emph{expression templates}~\cite{veldhuizen.1995.expression}) to achieve it.
 
 
-\section*{Topic of thesis}
+\section*{Topic of this thesis}
 
 %Définitions du périmètre de la bibliothèque et de ses objectifs:
 %\begin{itemize}
@@ -201,21 +201,32 @@ C++ programming language (\emph{expression templates}~\cite{veldhuizen.1995.expr
 %  \item Utilisable depuis Python, Orientée MM
 %\end{itemize}
 
-In the end, \FIXME{(find the quote)} it is often known that there is a rule of three about genericity, efficiency and
-ease of use. The rule states that one can only have two of those items by sacrificing the third one. If one wants to be
-generic and efficient, then the naive solution will be very complex to use with lot of parameters. If one wants a
-solution to be generic and easy to use, then it will be not very efficient by default. If one wants a solution to be
-easy to use and efficient then it will not be very generic. In this thesis, we chose to work on an image processing
-library though continuing the work on Pylene~\cite{carlinet.2018.pylena}. But only working at library level would
-restrict the usability of our work and thus its impact. That is why we aim to reach prototyping users through providing
-a package that can be used in dynamic language such as Python without sacrificing efficiency. In particular, we aim to
-be usable in a jupyter notebook. It is a very important goal for us to reach a usability able to permeate into the
-educational side which is a strength of Python. In this library, we demonstrate how to achieve genericity and efficiency
-while remaining easy to use all at the same time. The scope of this library would be to specialize in mathematical
-morphology as well as providing very versatile image types. We leverage the modern C++ language and its many new
-features related to genericity and performance to break this rule in the image processing area. Finally, we attempt,
-through a static/dynamic bridge, to bring low level tools and concepts from the static world to the high level and
-dynamic prototyping world for a better diffusion and ease of use.
+In the end, it is often known that there is a rule of three about genericity, efficiency and ease of use. The rule
+states that one can only have two of those items by sacrificing the third one. If one wants to be generic and efficient,
+then the naive solution will be very complex to use with lot of parameters. If one wants a solution to be generic and
+easy to use, then it will be not very efficient by default. If one wants a solution to be easy to use and efficient then
+it will not be very generic. To illustrate this rule, we can find examples among existing libraries. A notably generic
+and efficient library in C++ is Boost~\parencite{boost.2021}: it is also notably known to be hard to use. Components
+such as Boost.Graph, Boost.Fusion or Boost.Spirit are hard to use. Also, a library which is generic and easy to use is
+the json parser written by Niels Lohmann~\parencite{nlohmann.2021.json} it strives to handle every use case while
+remaining very easy to integrate and to use in user code (syntax really close to native json in C++ code by providing
+DSL to parse C++ constructs into JSON). However this has a cost and the parser is slower than Json parser optimized for
+speed such as simdjson~\parencite{lemire.2021.simdjson} whose aim is to "parse gigabytes of JSON per second". Finally,
+there are plenty of example of user friendly and efficient code which is not generic. We can cite
+Scikit-image~\parencite{vanderwalt.2014.skimage} and OpenCV~\parencite{bradski.2000.opencv} that are easy to use and
+efficient (lot of handwritten simd/gpu code) but not generic due to the design choices.
+
+In this thesis, we chose to work on an image processing library though continuing the work on
+Pylene~\cite{carlinet.2018.pylena}. But only working at library level would restrict the usability of our work and thus
+its impact. That is why we aim to reach prototyping users through providing a package that can be used in dynamic
+language such as Python without sacrificing efficiency. In particular, we aim to be usable in a jupyter notebook. It is
+a very important goal for us to reach a usability able to permeate into the educational side which is a strength of
+Python. In this library, we demonstrate how to achieve genericity and efficiency while remaining easy to use all at the
+same time. The scope of this library would be to specialize in mathematical morphology as well as providing very
+versatile image types. We leverage the modern C++ language and its many new features related to genericity and
+performance to break this rule in the image processing area. Finally, we attempt, through a static/dynamic bridge, to
+bring low level tools and concepts from the static world to the high level and dynamic prototyping world for a better
+diffusion and ease of use.
 
 With this philosophy in mind, this manuscript aims at presenting our thesis work related to the C++ language applied to
 the Image Processing domain. It is organized as followed:
