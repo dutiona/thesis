@@ -391,6 +391,7 @@ implementation code. This enables proper compile-type checks, type-safety and th
 optimized code by the compiler. The following code illustrate how to create a cluster (or class) named \emph{vector},
 declaring a set of member functions and requiring a specific behavior (operator $=$ and $<$) from its underlying stored
 elements:
+
 \begin{minted}{cobol}
   vector = cluster [T: type] is
     create, size, contains, sort, remove, push_back
@@ -426,6 +427,7 @@ In the Ada programming language, it is possible to mark a package or a procedure
 keyword. The developer then lists the parametrized parameter the package and/or the function requires to be implemented.
 The following code demonstrates how this feature work by implementing a function replacing the first argument by a new
 value and returning its previous value (also known as exchange).
+
 \begin{minted}{Ada}
 generic
   type T is private;
@@ -456,6 +458,7 @@ of this study and will not be discussed in this thesis.
 Also, Ada support syntactic constraints on parameters similar to the CLU language. It is translated into a \texttt{with}
 clause listing the constraints on the parameter(s). The following code shows how to implement such a constrained generic
 function by using the mathematical maximum operator as an example:
+
 \begin{minted}{ada}
 generic
   type T is private;
@@ -526,6 +529,7 @@ parameters that are \texttt{const}. The defined underlying alias \texttt{type} f
 (or metafunction): either the passed parameter is not \texttt{const} which means it will be forwarded as-is to the
 underlying alias \texttt{type} or the passed parameter is \texttt{const} which means the underlying alias \texttt{type}
 will be defined by dropping the \texttt{const-qualifier} off of the passed parameter type. For instance:
+
 \begin{minted}{C++}
   using T1 = remove_const<double>::type // T1 is double
   using T2 = remove_const<const double>::type // T2 is double too, const-qualifier is dropped
@@ -547,6 +551,7 @@ box3d domain would not accept access via a point2D. It would instead require a p
 addressed later in the~\cref{chap:image.algorithms.taxonomy}. However, we can already give here minimal working example
 as to how type traits are especially useful in a generic image processing library. First let us define some minimal data
 structures:
+
 \begin{minted}{C++}
   struct point2d {int x, y; };
   string rgb8 { uint8_t r, g, b; };
@@ -570,11 +575,12 @@ in a generic library:
   template <class T> struct image_point_type  { using type = typename T::point_type;  };
   template <class T> struct image_value_type  { using type = typename T::value_type;  };
   template <class T> struct image_domain_type { using type = typename T::domain_type; };
-\begin{minted}
-  
+\end{minted}
+
 These traits extract information about types in a generic way and can be used in any algorithm taking an image as a
 template parameter. For instance, here is how an image processing algorithm (trivially extracting the max value) would b
 e written:
+
 \begin{minted}{C++}
 template <class Ima>
 typename image_value_type<Ima>::type // usage of trait
@@ -592,86 +598,110 @@ min_value(const Ima& ima) {
 \subsubsection{SFINAE: Substitution-Failure-Is-Not-An-Error}
 \label{subsec:sfinae}
 
-In spite of all those limitations at the time, generic programming was well supported by the language and allowed the
-programmer to already design generic libraries, in particular thanks to the SFINAE~\parencite{vandevoorde.2002.c++}
-(substitution-failure-is-not-an-error) technique that leads to the popularisation of the usage of the
-\texttt{std::enable\_if} meta-programming facility. The SFINAE technique relies on a feature of the C++ programming
-language. Indeed, when standardizing how the compiler should resolve and select function overloads, in a templated
-context, the standard committee chose to have the following behavior. When substituting the explicitly specified or
-deduced type for the template parameter fails, the specialization (function overload candidate) is discarded from the
-overload set (of matching functions) instead of causing an error.
+Additionnaly, another feature related to metaprogramming  allowed the developer to design generic libraries: the
+SFINAE~\parencite{vandevoorde.2002.c++} (substitution-failure-is-not-an-error) technique that leads to the
+popularization of the usage of the \texttt{std::enable\_if} metaprogramming construct. The SFINAE technique relies on a
+feature of the C++ programming language. Indeed, when standardizing how the compiler should resolve and select function
+overloads, in a templated context, the standard committee chose to have the following behavior: "when substituting the
+explicitly specified or deduced type for the template parameter fails, the specialization (function overload candidate)
+is discarded from the overload set (of matching functions) instead of causing an error".
 
-This feature allows to write code that seem to be ill-formed, for instance in a function, trying to access to a class
-member type, variable or function that does not exist should be ill-formed. However, because it happens in the templated
-world, when the compiler tries to compile the function code with a given type, the compiler will just discard the
-function from the overload resolution at call-site instead of throwing a hard error. An error can occur only when the
-compiler tried all the overload it knows and still could not find an overload that was not ill-formed. If this happen,
-the compiler will then proceed to list all the overloads it tried, to list all the template substitution it tried and
-finally to list why it failed. This mechanism is the very reason of the unpopularity of this technique because it leads
-to situation where the compiler can output \emph{several Mos} of error message for one single file. Error messages
-becomes incomprehensible very fast and programs are hard to debug. But still, it was the only technique we had to
-perform detections on types at compile time and process some kind of contraints on them. For instance, a code that
-detects wether a class provide a subtype named \texttt{custom\_type} at that time is shown
-in~\cref{code:gen.sfinae.nested}.
+This feature allows writing code that seem to be ill-formed, for instance in a function, trying to access a class member
+type, variable or function that does not exist should be ill-formed. However, because it happens in a templated context
+during the instantiation resolution, when the compiler tries to instantiate a function template with a parametrized
+type, the compiler will just discard the function from the overload resolution set at call-site instead of throwing
+a hard error. An error can occur only when the compiler tried all the overload it knows in the overload set and still
+could not find an overload that was not ill-formed. If this happens, the compiler will then proceed to list all the
+overloads it tried, to list all the template substitution it tried and finally to list why it failed. This mechanism is
+the very reason of the unpopularity of this technique because it leads to situation where the compiler can output
+\emph{several Mos} of error message for one single file. Error messages become incomprehensible very fast and programs
+are hard to debug because everythFor instance, here is some real-world example extracted from generic image prcessing code that allows implementing the
+\emph{fill} algorithm in two very different ways depending on how behaves the input image type:ing happens at compile-time. But still, it was the only technique we had to perform any
+kind of detections on types at compile time to require some any given constraints on them.
 
-\begin{figure}[tbh]
-  \centering
-  \begin{minted}[]{C++}
-    // Step 1: write the detector using partial specialization
-    template <class TestedType, class Void = void>
-    struct has_nested_sub_type {
-      typedef bool type;
-      static const type value = false; // default value: not detected
-    };
-    // This class template specialization has value set as true
-    // when it detects that the nested type exists
-    template <class TestedType>
-    struct has_nested_sub_type<TestedType, typename TestedType::custom_type> {
-      typedef bool type;
-      static const type value = true;
-    };
+For instance, here is some real-world example extracted from generic image processing code that allows implementing the
+\emph{fill} algorithm in two very different ways depending on how behaves the input image type. First we need to write
+the detector which is a structure whose templated context will be ill-formed during template instantiation. This
+detector will inherit either \texttt{std::true\_type} or \texttt{false\_type} depending on whether the detection is
+successful or not:
 
-    // Step 2: declare the well- and ill-formed classes
-    class well_formed {
-      typedef int custom_type;
-    };
-    class ill_formed {
-      typedef int another_type;
-    };
+\begin{minted}{C++}
+  // Step 1 write detector
+  template <class Ima, class = void>
+  struct is_image_with_lut : std::false_type {};
 
-    // Step 3: implement the enable_if facility that will use our
-    // detector written at step 1
-    template<bool B, class T = void>
-    struct enable_if {
-    };
-    template<class T>
-    struct enable_if<true, T> {
-      typedef T type;
-    };
+  template <class Ima>
+  struct is_image_with_lut<
+    Ima, typename Ima::lut_type
+  > : std::true_type {};
+\end{minted}
 
-    // Step 4: write overloads the compiler will use
-    // overload #1
-    template <typename UserType>
-    void my_procedure(const UserType& ut) {}; // accept everything
+Now let us introduce a new image type for the sake of this example:
 
-    // overload #2
-    template <typename UserType>
-    void my_procedure(const UserType& ut, // accept only constrained types
-    typename enable_if<has_nested_sub_type<UserType>::value>::type* = 0) {};
+\begin{minted}{C++}
+  struct image2d_lut : image2d {
+    using lut_type = std::array<uint8_t, 256>;
+    using value_type = uint8_t:
+    lut_type& get_lut();
+  };
+  template <class Ima>
+  struct image_lut_type {
+    using type = typename Ima::lut_type;
+  }
+\end{minted}
 
-    int main() {
-      well_formed wlf;
-      ill_formed ilf;
+The next step is to implement the \texttt{enable\_if} facility. This is included in the C++ STL starting from C++11 and
+onward:
 
-      my_procedure(wlf); // will call overload #1
-      my_procedure(ilf); // no hard error, will call opverload #2
+\begin{minted}{C++}
+  template<bool B, class = void>
+  struct enable_if {};
 
-      // A hard error would occur only if overload #1 did not exist.
-    }
-  \end{minted}
-  \caption{C++0x SFINAE detection of nested sub-type.}
-  \label{code:gen.sfinae.nested}
-\end{figure}
+  template<class T>
+  struct enable_if<true, T> {
+    using type = T;
+  };
+\end{minted}
+
+Now we are all set to use all those construct to dispatch our algorithms from call-site depending on our input image
+type:
+
+\begin{minted}{C++}
+  // Overload #1 : with lut
+  template <class Ima, 
+  void fill(Ima& ima, typename image_value_type<Ima>::type val,
+            typename enable_if<is_image_with_lut<Ima>::type::value, void*>::type = 0)
+  { // Image with lut
+    using lut_t = typename image_lut_type<Ima>::type;
+    using value_t = typename image_value_type<Ima>::type;
+    lut_t& lut = ima.get_lut();
+    for(value_t& v : lut)
+      v = val;
+  }
+
+  // Overload #2 : without lut
+  template <class Ima, 
+  void fill(Ima& ima, typename image_value_type<Ima>::type val,
+            typename enable_if<not is_image_with_lut<Ima>::type::value, void*>::type = 0)
+  { // Image without lut
+  using value_t = typename image_value_type<Ima>::type;
+  for(value_t& v : ima.values())
+    v = val;
+  }
+\end{minted}
+
+Finally, let us give some call-site example to finish illustrating our point:
+
+\begin{minted}{C++}
+  image2d_lut ima1;
+  image2d ima2;
+
+  fill(ima1, 0);   // will dispatch over overload #1
+  fill(ima2, 255); // will dispatch over overload #2
+\end{minted}
+Here, no hard error occur. Both overload are dispatched according to the constraint built with the SFINAE construct. Now
+we can talk about \emph{constrained genericity} in C++.
+
 
 \subsection{CRTP: Curiously Recurring Template Pattern}
 \label{subsec:crtp}
@@ -947,8 +977,8 @@ point the value is only accessed in read-only. We can then write the following t
   } && ForwardRange<I::point_range>     // needed for b
   && requires (I ima, I::point_type pnt) {
     { ima.domain() };                   // a
-    { ima.points() } -> I::point_range  // b
-    { ima(pnt) }     -> I::value_type   // c
+    { ima.points() } -> I::point_range; // b
+    { ima(pnt) }     -> I::value_type;  // c
   };
 \end{minted}
 In reality, more boilerplate code is needed to ensure, for instance that there is no type mismatch between the image's
