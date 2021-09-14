@@ -384,7 +384,7 @@ iterators and especially \emph{parametrized modules}. A module in CLU is represe
 would call it a class where the data structure correspond to the member variables and the operations correspond to the
 member functions (or methods). In CLU, the clusters can be parametrized which is a way to introduce the notion of
 parametric polymorphism. Indeed, clusters offered the ability to define a generic data structure and its functions whose
-behavior will not change whatever type the cluster was parametrized with. At first, type-safety was enforced at run time
+behavior will not change whatever type the cluster is parametrized with. At first, type-safety was enforced at run-time
 in CLU. Later, \emph{where clauses} were introduced to specify specific requirements over cluster type parameters. This
 had the consequence of allowing only the operations required in the where clause to be used in the cluster
 implementation code. This enables proper compile-type checks, type-safety and the compilation into a simple native and
@@ -399,24 +399,195 @@ elements:
     T has less: prototype(T, T) return (bool)
 \end{minted}
 
+When implementing the member functions declared for \texttt{vector}, the only valid operations that can be performed on
+a value of type \texttt{T} are \texttt{equal} ($=$ for comparison) and \texttt{less} ($<$ for ordering). In CLU the
+actual instantiation of the parameter (here \texttt{T}) is done at run-time. Indeed, each type is represented by a
+descriptor, even a parametrized type parameter. At run-time, a concrete type is used to instantiate the cluster. To
+achieve this, the placeholder type descriptor is replaced by the one of the actual concrete type at this moment. The
+instantiation can then be considered dynamic which differs from the C++ compilation model where the template
+instantiation is considered static (i.e. done at compile-time). The pros and cons of this approach are discussed
+in~\parencite{atkinson.1978.cluimpl} which essentially are the resulting binary code size due to combinatorial explosion
+combined with optimized code generation versus small, flexible and slower binary.
 
+Later on came the Ada programming language whose conception work started in 1977 and first version was released in 1980.
+It was first standardized in 1983~\parencite{ansi.1983.ada} in the United States by the American National Standards
+Institute (ANSI) before being Internationally standardized by the International Organization for Standardization (ISO)
+in 1987~\parencite{iso.1987.ada}. From this point on, the Ada language released a new version in
+1995~\parencite{iso.1995.ada, iso.1995.ada.corr}, then the standard committee published an Amendment in
+2007~\parencite{iso.1995.ada.amend} which is often referred as Ada 2005. Finally, a new version of the language was
+published in 2012~\parencite{iso.2012.ada,iso.2012.ada.corr}. What interest us in the Ada language is the fact that the
+language features \emph{generics} since it was first designed in 1977-1980 which \emph{ten years} before Musser and
+Stepanov published their first work about genericity in 1988~\parencite{musser.1988.generic}. Indeed, it took around 20
+years for the fist Standard Template Library (STL) will then be standardized in the C++ programming language in
+C++98~\parencite{iso.1998.cpp}. It then took almost 10 more years for an STL to land into the Ada programming language in
+the 2007 Amendment for Ada 2005.
 
+In the Ada programming language, it is possible to mark a package or a procedure as generic with the \texttt{generic}
+keyword. The developer then lists the parametrized parameter the package and/or the function requires to be implemented.
+The following code demonstrates how this feature work by implementing a function replacing the first argument by a new
+value and returning its previous value (also known as exchange).
+\begin{minted}{Ada}
+generic
+  type T is private;
+function exchange (x : in out T; v : in T) return T is
+  tmp : T;
+begin
+  tmp := x;
+  x   := v;
+  return tmp;
+end exchange;
+\end{minted}
+
+In Ada, generic packages and routines (procedures, functions) must be instantiated explicitly: the compiler cannot infer
+the parametrized type at compile time from the context of use (whereas a C++ compiler can). Thus, the following three
+lines must be written explicitly for the compiler to generate the binary code of the above function:
+\begin{minted}{ada}
+  function int_exchange is new exchange (Integer);
+  function float_exchange is new exchange (Float);
+  function str_exchange is new exchange (String);
+\end{minted}
+
+In Ada, this model enables the possibility of sharing a generic across several compilation units since its compilation is
+independent of its use whereas in C++, until C++20 the sharing model consists in copy-pasting the whole source code
+(and transitive recursive dependencies) each time a generic (a template) code is compiled. C++20 (standardized in 2020,
+42 years after C++98) bring a solution to this issue by standardizing C++ modules. However, this feature is out of scope
+of this study and will not be discussed in this thesis.
+
+Also, Ada support syntactic constraints on parameters similar to the CLU language. It is translated into a \texttt{with}
+clause listing the constraints on the parameter(s). The following code shows how to implement such a constrained generic
+function by using the mathematical maximum operator as an example:
+\begin{minted}{ada}
+generic
+  type T is private;
+  with function "<" (x, y: T) return Boolean is <>;
+function maximum (x, y : in T) return T is
+  tmp : T;
+begin
+  if x < y then
+    return x;
+  else
+    return y;
+  end if;
+end maximum;
+\end{minted}
+
+Let us not forget to instantiate the constrained generic function for integers:
+
+\begin{minted}{ada}
+  function int_maximum is new maximum (Integer);
+\end{minted}
+
+This idea of constrained generic is 30 years old and has only made his way very recently (2020) in the C++ programming
+language under the feature name of \emph{concepts}.
+
+Now that we have introduced where generic programming is coming from, let us focus on the C++ programming language and
+how it has made his way into the language along the last 30 years, as well as along the years to come.
 
 \subsection{Genericity in pre C++11}
 \label{sec:precpp11}
 
 Before C++11~\parencite{iso.2011.cpp} came out the genericity facilities offered by the C++ programming language were
-already turing complete~\parencite{veldhuizen.2003.c++templates}. However, it was lacking a certain amount of features
+already Turing-complete~\parencite{veldhuizen.2003.c++templates}. However, it was lacking a certain amount of features
 the language now have that made writing generic code a real challenge at that time. For instance, when writing code with
-a variable number of type (nowadays designed as variadic templates) one had to write the generic code for each and every
-number of type supported. This meant that to implement \texttt{std::tuple}, one had to copy the implementation for every
-number of type supported by \texttt{std::tuple}. This limitation defeated the very first principle and motivation of
-generic programming which is to write \emph{less} Code. To compensate, library implementers used tricks with macro not
-to have to rewrite code which made the initial code even harder to understand for outsiders.
+a variable number of types (nowadays designated as variadic templates) one had to write the generic code for each and
+every number of type supported. This meant that to implement \texttt{std::tuple}, one had to copy the implementation for
+every number of type supported by \texttt{std::tuple}. This limitation defeated the very first principle and motivation
+of generic programming which is to write \emph{less} Code. To compensate, library implementers used tricks with macro
+not to have to rewrite code which made the initial code even harder to understand for outsiders.
 
 
 \subsubsection{Functions on types (or traits)}
-\FIXME{TODO}
+
+The very first feature every developer writing metaprogramming C++ code has used is called \emph{type-traits}. Those
+\emph{traits} are a way to mutate a type depending on the way a template declared on a data structure is resolved.
+Indeed, in C++ the instantiation of a template depends on the context, which means the compiler is required to build a
+set of possible way to resolve a template instantiation and in order to determine the best match to resolve the
+instantiation. This mechanism is well known and documented in the C++ standard, it can then be used (and abused) to do a
+great number of things. Among all the traits that exist (a lot of them have been standardized in C++11, 2011, in the
+header \texttt{<type\_traits>}), some in particular are used in every codebase: \texttt{remove\_const},
+\texttt{remove\_volatile} and \texttt{remove\_reference}. Let us see how they are implemented:
+
+\begin{minted}{C++}
+  template<class T> struct remove_const                { using type = T; };
+  template<class T> struct remove_const<const T>       { using type = T; };
+  
+  template<class T> struct remove_volatile             { using type = T; };
+  template<class T> struct remove_volatile<volatile T> { using type = T; };
+
+  template<class T> struct remove_reference            { using type = T; };
+  template<class T> struct remove_reference<T &>       { using type = T; };
+  template<class T> struct remove_reference<T &&>      { using type = T; };
+\end{minted}
+
+For \texttt{remove\_const}, first is defined the structure whose underlying alias \texttt{type} points to the passed
+template parameter \texttt{T}. Then we define a template specialization whose matching parameters are all \texttt{T}
+parameters that are \texttt{const}. The defined underlying alias \texttt{type} for this specialization then is
+\texttt{T} without the qualifying \texttt{const}. This way, there are two possibilities when calling this \texttt{trait}
+(or metafunction): either the passed parameter is not \texttt{const} which means it will be forwarded as-is to the
+underlying alias \texttt{type} or the passed parameter is \texttt{const} which means the underlying alias \texttt{type}
+will be defined by dropping the \texttt{const-qualifier} off of the passed parameter type. For instance:
+\begin{minted}{C++}
+  using T1 = remove_const<double>::type // T1 is double
+  using T2 = remove_const<const double>::type // T2 is double too, const-qualifier is dropped
+\end{minted}
+
+This language construct is very useful when developing generic libraries because it enables performing "functions" on
+types, and even chain them. It is also possible to perform checks to extract information about those types. We can
+easily write a \texttt{is\_const} metafunction if we need it.
+
+In image processing in particular, the usage of traits in the generic library
+Milena~\parencite{levillain.2009.ismm,levillain.2010.icip} was very useful to achieve standard ways to compute very
+useful types from other complex type. To understand the following example, we first need to briefly what is an image. In
+image processing, an image $Im$ is defined on a domain $\mathcal{D}$ (which contains points) by the relation $\forall x
+  \in \mathcal{D}, y = Im(x)$ where y is the value of the image $Im$ for the point $x$. From this definition we can
+already see a number of traits that a generic library would want to provide. Indeed, it would be useful to be able to
+extract the type of the domain (box2d, box3d, etc.), the type of the point (point2d, point3d, ...), the underlying value
+type (uint8, rgb8, etc.) and so on. We can also already see emerging consistency issues between those types. Indeed, a
+box3d domain would not accept access via a point2D. It would instead require a point3d. All those issues will be
+addressed later in the~\cref{chap:image.algorithms.taxonomy}. However, we can already give here minimal working example
+as to how type traits are especially useful in a generic image processing library. First let us define some minimal data
+structures:
+\begin{minted}{C++}
+  struct point2d {int x, y; };
+  string rgb8 { uint8_t r, g, b; };
+  struct box2d {
+    using value_type = point2D;
+    // ...
+  };
+  struct image2d {
+    using domain_type = box2d;
+    using point_type  = point2d;
+    using value_type  = rgb8;
+    // ...
+  };
+\end{minted}
+
+Now we would want to implement \texttt{traits} to extract type information from those structures. Here is how we do it
+in a generic library:
+
+\begin{minted}{C++}
+  template <class T> struct domain_value_type { using type = typename T::value_type;  };
+  template <class T> struct image_point_type  { using type = typename T::point_type;  };
+  template <class T> struct image_value_type  { using type = typename T::value_type;  };
+  template <class T> struct image_domain_type { using type = typename T::domain_type; };
+\begin{minted}
+  
+These traits extract information about types in a generic way and can be used in any algorithm taking an image as a
+template parameter. For instance, here is how an image processing algorithm (trivially extracting the max value) would b
+e written:
+\begin{minted}{C++}
+template <class Ima>
+typename image_value_type<Ima>::type // usage of trait
+min_value(const Ima& ima) {
+  using value_t = typename image_value_type<Ima>::type; // usage of trait
+  auto min = std::numeric_limits<value_t>::max();
+  for(auto v : ima.values()) {
+    auto min = std::min(min, v);
+  }
+  return min;
+}
+\end{minted}
+
 
 \subsubsection{SFINAE: Substitution-Failure-Is-Not-An-Error}
 \label{subsec:sfinae}

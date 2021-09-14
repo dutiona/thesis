@@ -1994,12 +1994,88 @@
               executable. We discuss various tools and use cases for notebook documents.}
 }
 
+@book{ansi.1983.ada,
+  author    = {{ANSI}},
+  title     = {{ANSI/MIL-STD-1815A}: {Programming} languages --- {Ada}},
+  publisher = {American National Standards Institute},
+  pages     = {333},
+  month     = {06},
+  year      = {1983},
+  url       = {https://www.iso.org/standard/16028.html}
+}
+
 @String{pub-ISO     = "International Organization for Standardization"}
 @String{pub-ISO:adr = "Geneva, Switzerland"}
 
+@book{iso.1987.ada,
+  author    = {{ISO}},
+  title     = {{ISO\slash IEC JTC 1/SC 22}: {Programming} languages --- {Ada}},
+  publisher = pub-ISO,
+  address   = pub-ISO:adr,
+  pages     = {333},
+  month     = {06},
+  year      = {1987},
+  url       = {https://www.iso.org/standard/16028.html}
+}
+
+@book{iso.1995.ada,
+  author    = {{ISO}},
+  title     = {{ISO\slash IEC JTC 1/SC 22}: {Programming} languages --- {Ada}},
+  publisher = pub-ISO,
+  address   = pub-ISO:adr,
+  pages     = {511},
+  month     = {02},
+  year      = {1995},
+  url       = {https://www.iso.org/standard/22983.html}
+}
+
+@book{iso.1995.ada.corr,
+  author    = {{ISO}},
+  title     = {{ISO\slash IEC JTC 1/SC 22}: {Programming} languages --- {Ada} --- Technical Corrigendum 1},
+  publisher = pub-ISO,
+  address   = pub-ISO:adr,
+  pages     = {56},
+  month     = {06},
+  year      = {2001},
+  url       = {https://www.iso.org/standard/35451.html}
+}
+
+@book{iso.1995.ada.amend,
+  author    = {{ISO}},
+  title     = {{ISO\slash IEC JTC 1/SC 22}: {Programming} languages --- {Ada} --- Amendment 1},
+  publisher = pub-ISO,
+  address   = pub-ISO:adr,
+  pages     = {317},
+  month     = {03},
+  year      = {2007},
+  url       = {https://www.iso.org/standard/45001.html}
+}
+
+@book{iso.2012.ada,
+  author    = {{ISO}},
+  title     = {{ISO\slash IEC JTC 1/SC 22}: {Programming} languages --- {Ada}},
+  publisher = pub-ISO,
+  address   = pub-ISO:adr,
+  pages     = {832},
+  month     = {21},
+  year      = {2012},
+  url       = {https://www.iso.org/standard/61507.html}
+}
+
+@book{iso.2012.ada.corr,
+  author    = {{ISO}},
+  title     = {{ISO\slash IEC JTC 1/SC 22}: {Programming} languages --- {Ada} --- Technical Corrigendum 1},
+  publisher = pub-ISO,
+  address   = pub-ISO:adr,
+  pages     = {75},
+  month     = {02},
+  year      = {2016},
+  url       = {https://www.iso.org/standard/69798.html}
+}
+
 @book{iso.1998.cpp,
   author    = {{ISO}},
-  title     = {{ISO\slash IEC 14882:1998}: {Programming} languages --- {C++}},
+  title     = {{ISO\slash IEC 14882:2003}: {Programming} languages --- {C++}},
   publisher = pub-ISO,
   address   = pub-ISO:adr,
   pages     = {732},
@@ -2226,4 +2302,53 @@
   numpages  = {15},
   location  = {Cambridge, Massachusetts, USA},
   series    = {HOPL-II}
+}
+
+@inproceedings{atkinson.1978.cluimpl,
+  author    = {Atkinson, Russell R. and Liskov, Barbara H. and Scheifler, Robert W.},
+  title     = {Aspects Of Implementing CLU},
+  year      = {1978},
+  isbn      = {0897910001},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/800127.804079},
+  doi       = {10.1145/800127.804079},
+  abstract  = {Linguistic mechanisms used in CLU to support 1) structured exception handling, 2) iteration over abstract
+               objects, and 3) parameterized abstractions are briefly reviewed, and methods of realizing these
+               mechanisms are described. The mechanisms discussed support features that are likely to be included in
+               other programming languages, and the implementation methods should be applicable to a wide range of
+               languages.},
+  booktitle = {Proceedings of the 1978 Annual Conference},
+  pages     = {123–129},
+  numpages  = {7},
+  keywords  = {CLU, Iterators, Programming language, Parameterized modules, Exception handling, Implementation methods},
+  location  = {Washington, D.C., USA},
+  series    = {ACM '78}
+}
+
+@article{goguen.1984.parametrized,
+  author   = {Goguen, Joseph A.},
+  journal  = {IEEE Transactions on Software Engineering},
+  title    = {Parameterized Programming},
+  year     = {1984},
+  volume   = {SE-10},
+  number   = {5},
+  pages    = {528-543},
+  abstract = {Parameterized programming is a powerful technique for the reliable reuse of software. In this technique,
+              modules are parameterized over very general interfaces that describe what properties of an environment are
+              required for the module to work correctly. Reusability is enhanced by the flexibility of the
+              parameterization mechanism proposed here. Reliability is further enhanced by permitting interface
+              requirements to include more than purely syntactic information. This paper introduces three new ideas that
+              seem especially useful in supporting parameterized programming: 1) theories, which declare global
+              properties of program modules and interfaces; 2) views, which connect theories with program modules in an
+              elegant way; and 3) module expressions, a kind of general structured program transformation which produces
+              new modules by modifying and combining existing modules. Although these ideas are illustrated with some
+              simple examples in the OBJ programming language, they should also be taken as proposals for an
+              Ada<sup>1</sup> library system, for adding modules to Prolog, and as considerations for future language
+              design efforts. OBJ is an ultra-high level programming language, based upon rewrite rules, that
+              incorporates these ideas, and many others from modern programming methodology.},
+  keywords = {},
+  doi      = {10.1109/TSE.1984.5010277},
+  issn     = {1939-3520},
+  month    = {Sep.}
 }
