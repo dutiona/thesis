@@ -609,15 +609,16 @@ is discarded from the overload set (of matching functions) instead of causing an
 This feature allows writing code that seem to be ill-formed, for instance in a function, trying to access a class member
 type, variable or function that does not exist should be ill-formed. However, because it happens in a templated context
 during the instantiation resolution, when the compiler tries to instantiate a function template with a parametrized
-type, the compiler will just discard the function from the overload resolution set at call-site instead of throwing
-a hard error. An error can occur only when the compiler tried all the overload it knows in the overload set and still
+type, the compiler will just discard the function from the overload resolution set at call-site instead of throwing a
+hard error. An error can occur only when the compiler tried all the overload it knows in the overload set and still
 could not find an overload that was not ill-formed. If this happens, the compiler will then proceed to list all the
 overloads it tried, to list all the template substitution it tried and finally to list why it failed. This mechanism is
 the very reason of the unpopularity of this technique because it leads to situation where the compiler can output
 \emph{several Mos} of error message for one single file. Error messages become incomprehensible very fast and programs
-are hard to debug because everythFor instance, here is some real-world example extracted from generic image prcessing code that allows implementing the
-\emph{fill} algorithm in two very different ways depending on how behaves the input image type:ing happens at compile-time. But still, it was the only technique we had to perform any
-kind of detections on types at compile time to require some any given constraints on them.
+are hard to debug because everythFor instance, here is some real-world example extracted from generic image prcessing
+code that allows implementing the \emph{fill} algorithm in two very different ways depending on how behaves the input
+image type:ing happens at compile-time. But still, it was the only technique we had to perform any kind of detections on
+types at compile time to require some any given constraints on them.
 
 For instance, here is some real-world example extracted from generic image processing code that allows implementing the
 \emph{fill} algorithm in two very different ways depending on how behaves the input image type. First we need to write
@@ -631,8 +632,8 @@ successful or not:
   struct is_image_with_lut : std::false_type {};
 
   template <class Ima>
-  struct is_image_with_lut<
-    Ima, typename Ima::lut_type
+  struct is_image_with_lut<Ima,
+     typename Ima::lut_type // constraint over the existence of the lut_type field
   > : std::true_type {};
 \end{minted}
 
