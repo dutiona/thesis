@@ -708,157 +708,139 @@ we can talk about \emph{constrained genericity} in C++.
 \label{subsec:crtp}
 
 Another features that precede C++11 and was available in C++98~\parencite{iso.1998.cpp} and
-C++03~\parencite{iso.2003.cpp} is the curiously recurring template pattern (CRTP). This programming technique allowed a
-base class (in its specific code) to be aware of its derived class at compile type. This pattern is extremely useful to
-solve issues revolving around covariant return type polymorphism in C++ with pointers. Indeed, before smart pointers
-were standardized, they existed in libraries such as boost~\parencite{boost.2021} and were used to solve memory leak
-issues. However, when implementing cloning facilities where lots of derived class were involved, one could not just
-return a smart pointer of the base class since no derived class derived from the capsule smart pointer class itself.
-This broke the covariant return type feature. CRTP is a tool that brings a solution: we were now able to construct a
-smart pointer capsule of the derived class inside the base class: there are now only one function in the base class and
-no ambiguities is detected by the compiler.
+C++03~\parencite{iso.2003.cpp} is the curiously recurring template pattern (CRTP) introduced in 1996 by
+Coplien~\parencite{coplien.1996.crtp}. This programming technique allows a base class (in its specific code) to be aware
+of its derived class at compile type. We made extensive use of this pattern in the past to design a new paradigm,
+SCOOP~\parencite{burrus.2003.mpool, geraud.2006.scoop-pres, geraud.2008.mpool, levillain.2011.phd} which combined
+multiple inheritance (via CRTP) and concept checking (via SFINAE) to implement a solution to provide a library with
+constrained genericity in C++ for the image processing area. The Scoop paradigm relied on the fact that multiple
+(especially diamond) inheritance did not pose much of an issue as long as there was no member variable involved. This
+way, one could consider a class hierarchy as a hierarchy of constraint indeed. Using CRTP, it was possible to find back,
+inside constraining classes, what was the concrete leaf class of the hierarchy in order to check whether its
+implementation satisfied the constraints or not. For instance, let us assume that we have a concrete class
+\texttt{image2d} inheriting from a constraining class \texttt{Image}. Let us now see how one would use the SCOOP
+paradigm to implement it. First we need to implement the satellite constraints around the image type which are related
+to the underlying point and domain of the image.
 
-\begin{figure}[tbh]
-  \centering
-  \begin{minted}[]{C++}
-    #include <string>
+\begin{minted}{C++}
+  template <class P>
+  struct Point { // concept checking class
+    int (P::*m_ptr1) const = & P::dim;
+  };
 
-    class AbstractBase {
-    public:
-        virtual ~AbstractBase()                      = default;
-        virtual AbstractBase*       clone() const    = 0; // covariant return type
-        virtual const std::string&  get_name() const = 0;
-    };
+  struct point2d : Point<point2d> { // CRTP
+    int x, y;
+    int dim() const { return 2; }
+  };
 
-    class Derived : public AbstractBase {
-        std::string name_;
-    public:
-        Derived(const std::string& name) : name_(name) {}
-        Derived* clone() const /* override */ {
-        return new Derived(name_);             // works thanks to covariance
-        }
-        const std::string& get_name() const {
-        return name_;
-        }
-    };
+  template <class D>
+  struct Domain { // concept checking class
+    using value_type = typename D::value_type;
+    // ...
+  };
 
-    int main() {
-        AbstractBase* objptr = new Derived("John");     // works
-        AbstractBase* cloned_objptr = objptr->clone();  // also works
-        objptr->get_name();        // "John"
-        cloned_objptr->get_name(); // also "John"
-        // Do not forget to delete to avoid memory leaks
-        delete cloned_objptr;
-        delete objptr;
+  struct box2d : Domain<box2d> { // CRTP
+    using value_type = point2d;
+    // ...
+  };
+\end{minted}
+
+For the sake of brevity, we are omitting the implementation of domain functions related to iterating over all the points
+of the domain. With those concept defined, we can now dig into how we would implement an image class with the SCOOP
+paradigm.
+
+\begin{minted}{C++}
+
+  template <class I>
+  struct Image { // concept checking class
+    using value_type = typename I::value_type;
+    using point_type = Point<typename I::point_type>;
+    using domain_type = Domain<typename I::domain_type>;
+
+    const domain_type& (I::*m_ptr1)() const = & I::domain;
+    // ...
+  };
+
+  struct image2d : Image<image2d> { // CRTP
+    using value_type = uint8_t;
+    using point_type = point2d;
+    using domain_type = box2d;
+
+    // ... ctors ...
+
+    const domain_type& domain() const {
+      return m_dom;
     }
-  \end{minted}
-  \caption{C++0x cloning example with covariant return type.}
-  \label{code:gen.crtp.work}
-\end{figure}
+  private:
+    domain_type m_dom;
+  };
+\end{minted}
 
-For instance, a cloning facility with no smart pointers was implemented with covariant return type in the code shown
-in~\cref{code:gen.crtp.work}. The obvious disadvantage was to have to deal with naked pointers, \texttt{new},
-\texttt{delete} and all the consequences that comes with the manual memory handling. When the programmer wants to switch
-to an implementation that uses smart pointers, he would naively write the code shown in~\cref{code:gen.crtp.dontwork}.
+Each time a leaf class in the hierarchy inherit from a base class, the concepts are checked. The syntax is not really
+intuitive, especially writing the function pointers to check that their prototype is confirming a certain behavior, but
+it was all what was available at that time. To be completely exhaustive, the library implementing this paradigm,
+Milena~\parencite{levillain.2010.icip, levillain.2009.ismm} featured another powerful tool which allows one to require
+only concept class into input data for algorithms. Inside the algorithm it was then possible to get back the concrete
+class and use it as if it was originally passed as an argument. To do so, it was needed to add a member field to the
+concept class named \texttt{exact\_t} that kept track of the leaf class into the concept checking class.
 
-\begin{figure}[tbh]
-  \centering
-  \begin{minted}[]{C++}
-    #include <string>
-    #include <smart_pointers>
+\begin{minted}{C++}
+  template <class I>
+  class Image {
+    // ...
+    using exact_t = I;
+  };
+\end{minted}
 
-    class AbstractBase {
-    public:
-      virtual ~AbstractBase()                           = default;
-      virtual unique_ptr<AbstractBase> clone() const    = 0; // covariance is lost
-      virtual const std::string&       get_name() const = 0;
-    };
+Then a simple cast routine would do the trick inside the algorithm:
 
-    class Derived : public AbstractBase {
-      std::string name_;
-    public:
-      Derived(const std::string& name) : name_(name) {}
-      unique_ptr<Derived> clone() const /* override */ { // No covariance
-        // does not work because Derived does not derive from unique_ptr
-        return unique_ptr<Derived>(new Derived(name_)); 
-      }
-      const std::string& get_name() const{
-        return name_;
-      }
-    };
-
-    int main() {
-      unique_ptr<AbstractBase> objptr =
-          unique_ptr<AbstractBase>(new Derived("John"));        // works
-      unique_ptr<AbstractBase> cloned_objptr = objptr->clone(); // does not work
-      objptr->get_name();        // "John"
-      cloned_objptr->get_name(); // also "John"
-      // No delete needed
-    }
-  \end{minted}
-  \caption{C++0x not-working cloning example with smart pointers.}
-  \label{code:gen.crtp.dontwork}
-\end{figure}
-
-The solution is then found with the CRTP technique where we do all the creation inside the base class instead of forcing
-the derive class to implement its own cloning facility. The code in~\cref{code:gen.crtp.final} shows how it is done. In
-order for the user not to have to write \texttt{AbstractClass<Devived>} in his code, we have adopted another abstraction
-layer to hide this implementation detail in the form of a intermediary class \texttt{Base} that hides the CRTP
-complexity.
-
-\begin{figure}[tbh]
-  \centering
-  \begin{minted}[]{C++}
-    #include <string>
-    #include <smart_pointers>
+\begin{minted}{C++}
+  #define EXACT(Ima) \
+    typename Ima::exact_t
     
-    class AbstractBase {
-    public:
-        virtual ~AbstractBase()                           = default;
-        virtual unique_ptr<AbstractBase> clone()    const = 0;
-        virtual const std::string&       get_name() const = 0;
-    };
-    
-    template <class Derived>
-    class Base : public AbstractBase{
-    public:
-        virtual unique_ptr<AbstractBase> clone() const /* override */ {
-            // Covariance is kept by converting here
-            return unique_ptr<Derived>(new Derived(get_name()));
-        }
-    };
-    
-    class Derived : public Base<Derived> {
-        std::string name_;
-    public:
-        Derived(const std::string& name) : name_(name) {}
-        const std::string& get_name() const {
-            return name_;
-        }
-    };
-    
-    int main() {
-        unique_ptr<AbstractBase> objptr =
-            unique_ptr<AbstractBase>(new Derived("John"));        // works
-        unique_ptr<AbstractBase> cloned_objptr = objptr->clone(); // does work
-        objptr->get_name();       // "John"
-        cloned_objptr->get_name(); // also "John"
-        // No delete needed
-    }
-  \end{minted}
-  \caption{C++0x working cloning example with smart pointers.}
-  \label{code:gen.crtp.final}
-\end{figure}
+  template <class Ima> // mutable routine
+  EXACT(Ima)& exact(Ima& ima) { return static_cast<EXACT(Ima)&>(ima); }
 
-Thanks to these two techniques (SFINAE and CRTP), past work was done to achieve a design:
-SCOOP~\parencite{burrus.2003.mpool,geraud.2006.scoop-pres,geraud.2008.mpool}. These design combined CRTP and SFINAE to
-build a machinery where it is possible to apply constraints via concepts (in the sense described
-in~\citetitle{stepanov.2009.elements} by~\citeauthor{stepanov.2009.elements}). The library
-Olena~\parencite{olena.2000.www,geraud.2012.hdr} was born and carried the work around this field of research applied to
-Image processing in~\parencite{geraud.2000.icpr,duretlutz.2000.olena,darbon.2002.ismm,darbon.2004.ecoopphd}. This design
-is described in details by~\citeauthor{levillain.2011.phd} among his
-work~\parencite{levillain.2009.ismm,levillain.2010.icip,levillain.2010.wadgmm,levillain.2011.gretsi,levillain.2011.phd,levillain.2012.wadgmm-lncs,levillain.2014.ciarp}.
-Finally, with the release of new C++ standards in 2011~\parencite{iso.2011.cpp}, then 2014~\parencite{iso.2014.cpp},
+  template <class Ima> // const routine
+  const EXACT(Ima)& exact(const Ima& ima) { return static_cast<const EXACT(Ima)&>(ima); }
+\end{minted}
+
+This way, in image processing algorithms, the implementer would only need to write minimal code for it to work out of
+the box:
+
+\begin{minted}{C++}
+  template <class I>
+  void fill(Image<I>& ima, typename image_value_type<Ima>::type val) {
+    EXACT(Ima)& ima_ = exact(ima);
+
+    // use the concrete underlying ima ima_ and val
+  }
+\end{minted}
+
+This constrained genericity would be totally transparent as shown with the following code that just works out of the
+box, thanks to the SCOOP paradigm and its inheritance strategy to constrain classes.
+\begin{minted}{C++}
+  image2d ima = /* ... */;
+  uint8_t val = 0;
+  fill(ima, val);
+\end{minted}
+
+By extension, this work on Milena was integrated in the image processing platform
+Olena~\parencite{olena.2000.www,geraud.2012.hdr}. This platform centralizes the work that was done around this field of
+research for a long time~\parencite{geraud.2000.icpr,duretlutz.2000.olena,darbon.2002.ismm,darbon.2004.ecoopphd}. More
+details can be found about SCOOP, and notably how it enables property based programming (augmentation of types via
+properties) in the work of
+\citeauthor{levillain.2011.phd}~\parencite{levillain.2011.phd,levillain.2009.ismm,levillain.2010.icip,levillain.2010.wadgmm,levillain.2011.gretsi,levillain.2011.phd,levillain.2012.wadgmm-lncs,levillain.2014.ciarp}.
+
+Those approaches have the advantage of being really flexible and to be able to perform the concept checking work that we
+wanted to have, be it to constrain implementation or to dispatch to the correct overloaded algorithms depending on
+specific properties. The disadvantages come in the form of an increased complexity of the design hierarchy of
+implemented types as they must inherit concepts via CRTP and conform to specific constrains. Also, all the
+implementation is visible as all the code is generic (template) and all the implementation details are leaked to the
+user code. For an image processing library which can use several dependencies (for instance, a library that read images
+from disc from multiple image formats), this is a huge drawback.
+
+With the release of new C++ standards in 2011~\parencite{iso.2011.cpp}, then 2014~\parencite{iso.2014.cpp},
 2017~\parencite{iso.2017.cpp} where template metaprogramming facilities were greatly improved, it was necessary to
 review once more this design to improve the design in order to achieve genericity, performance and ease of use. This is
 the birth of a new library, Pylene~\parencite{carlinet.2018.pylena}. In the end, it was C++20~\parencite{iso.2011.cpp}
@@ -866,7 +848,6 @@ that marked the shift wanted by
 Stepanov~\parencite{musser.1988.generic,musser.1994.algorithm,dehnert.1998.fundamentals,stepanov.2009.elements} and
 Stroustrup~\parencite{stroustrup.1995.design,stroustrup.1999.hot,stroustrup.2003.concepts,stroustrup.2007.hopl} for
 years with the coming of Concepts, and all the new possibilities it brings to the programmer.
-
 
 \section{Genericity in post C++11 (C++20 and Concepts)}
 \label{sec:postcpp11}
