@@ -685,9 +685,9 @@ type:
   void fill(Ima& ima, typename image_value_type<Ima>::type val,
             typename enable_if<not is_image_with_lut<Ima>::type::value, void*>::type = 0)
   { // Image without lut
-  using value_t = typename image_value_type<Ima>::type;
-  for(value_t& v : ima.values())
-    v = val;
+    using value_t = typename image_value_type<Ima>::type;
+    for(value_t& v : ima.values())
+      v = val;
   }
 \end{minted}
 
@@ -813,7 +813,7 @@ the box:
   void fill(Image<I>& ima, typename image_value_type<Ima>::type val) {
     EXACT(Ima)& ima_ = exact(ima);
 
-    // use the concrete underlying ima ima_ and val
+    // use the concrete underlying image ima_ and val
   }
 \end{minted}
 
@@ -855,11 +855,11 @@ years with the coming of Concepts, and all the new possibilities it brings to th
 \begin{figure}[tbh]
   \centering
   \begin{minted}[linenos,xleftmargin=17pt,gobble=2,highlightlines={2,4,5}]{c++}
-  template <Collection C, ValueType V>
-    requires Same<Collection::ValueType, ValueType>
-  void fill(C c, V v) {
-    for(auto e : c)
-      e = v;
+  template <Image Ima, ValueType Val>
+    requires same<Ima::value_type, V>
+  void fill(Ima ima, Val val) {
+    for(Val v : ima)
+      v = val;
   }
   \end{minted}
 
@@ -911,10 +911,10 @@ you to define a \texttt{hash} functions (\texttt{std::map}), some requires you t
 very early in 1988~\cite{musser.1988.generic}) is the answer to: \blockquote{\emph{What is a generic algorithm?}}. The
 answer is: \blockquote{\emph{An algorithm is generic when it is expressed in the most abstract way possible}}. Later, in
 his book~\cite{stepanov.2009.elements}, Stepanov explained the design decision behind those algorithms as well as an
-important notion born in the early 2000s: the concepts. The most important point about concepts is that it constraints
+important notion born in the early 2000s: the concepts. The most important point about concepts is that it constrains
 the behavior. Henceforth: \blockquote{\emph{It is not the types that define the concepts: it is the algorithms}}. The
 \emph{Image Processing} and \emph{Computer Vision} fields are facing this issue because there are a lot of algorithms, a
-lot of different kind of images and a lot of different kind of requirements/properties for those algorithms to work. In
+lot of different kinds of images and a lot of different kinds of requirements/properties for those algorithms to work. In
 fact, when analyzing the algorithms, you can always extract those requirements in the form of one or several
 \emph{concepts}.
 
