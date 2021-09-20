@@ -2244,7 +2244,7 @@
                 Google's clusters every day, processing a total of more than twenty petabytes of data per day.},
   journal    = {Commun. ACM},
   month      = {01},
-  pages      = {107–113},
+  pages      = {107-113},
   numpages   = {7}
 }
 
@@ -2319,7 +2319,7 @@
                other programming languages, and the implementation methods should be applicable to a wide range of
                languages.},
   booktitle = {Proceedings of the 1978 Annual Conference},
-  pages     = {123–129},
+  pages     = {123-129},
   numpages  = {7},
   keywords  = {CLU, Iterators, Programming language, Parameterized modules, Exception handling, Implementation methods},
   location  = {Washington, D.C., USA},
@@ -2361,6 +2361,170 @@
   publisher = {SIGS Publications, Inc.},
   address   = {USA},
   booktitle = {C++ Gems},
-  pages     = {135–144},
+  pages     = {135-144},
   numpages  = {10}
 }
+
+@article{stroustrup.2020.acm,
+  author     = {Stroustrup, Bjarne},
+  title      = {Thriving in a Crowded and Changing World: C++ 2006-2020},
+  year       = {2020},
+  issue_date = {June 2020},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {4},
+  number     = {HOPL},
+  url        = {https://doi.org/10.1145/3386320},
+  doi        = {10.1145/3386320},
+  abstract   = {By 2006, C++ had been in widespread industrial use for 20 years. It contained parts that had survived
+                unchanged since introduced into C in the early 1970s as well as features that were novel in the early
+                2000s. From 2006 to 2020, the C++ developer community grew from about 3 million to about 4.5 million. It
+                was a period where new programming models emerged, hardware architectures evolved, new application
+                domains gained massive importance, and quite a few well-financed and professionally marketed languages
+                fought for dominance. How did C++ -- an older language without serious commercial backing -- manage to
+                thrive in the face of all that? This paper focuses on the major changes to the ISO C++ standard for the
+                2011, 2014, 2017, and 2020 revisions. The standard library is about 3/4 of the C++20 standard, but this
+                paper's primary focus is on language features and the programming techniques they support. The paper
+                contains long lists of features documenting the growth of C++. Significant technical points are
+                discussed and illustrated with short code fragments. In addition, it presents some failed proposals and
+                the discussions that led to their failure. It offers a perspective on the bewildering flow of facts and
+                features across the years. The emphasis is on the ideas, people, and processes that shaped the language.
+                Themes include efforts to preserve the essence of C++ through evolutionary changes, to simplify its use,
+                to improve support for generic programming, to better support compile-time programming, to extend
+                support for concurrency and parallel programming, and to maintain stable support for decades' old code.
+                The ISO C++ standard evolves through a consensus process. Inevitably, there is competition among
+                proposals and clashes (usually polite ones) over direction, design philosophies, and principles. The
+                committee is now larger and more active than ever, with as many as 250 people turning up to week-long
+                meetings three times a year and many more taking part electronically. We try (not always successfully)
+                to mitigate the effects of design by committee, bureaucratic paralysis, and excessive enthusiasm for a
+                variety of language fashions.  Specific language-technical topics include the memory model, concurrency
+                and parallelism, compile-time computation, move-semantics, exceptions, lambda expressions, and modules.
+                Designing a mechanism for specifying a template's requirements on its arguments that is sufficiently
+                flexible and precise yet doesn't impose run-time costs turned out to be hard. The repeated attempts to
+                design ``concepts'' to do that have their roots back in the 1980s and touch upon many key design issues
+                for C++ and for generic programming.  The description is based on personal participation in the key
+                events and design decisions, backed by the thousands of papers and hundreds of meeting minutes in the
+                ISO C++ standards committee's archives.},
+  journal    = {Proc. ACM Program. Lang.},
+  month      = jun,
+  articleno  = {70},
+  numpages   = {168},
+  keywords   = {C++, concurrency and parallelism, generic programming, programming language design and evolution,
+                resource management, simplification of language use, standardization}
+}
+
+@article{dosries.2066.specifying.art,
+  author     = {Dos Reis, Gabriel and Stroustrup, Bjarne},
+  title      = {Specifying C++ Concepts},
+  year       = {2006},
+  issue_date = {January 2006},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {41},
+  number     = {1},
+  issn       = {0362-1340},
+  url        = {https://doi.org/10.1145/1111320.1111064},
+  doi        = {10.1145/1111320.1111064},
+  abstract   = {C++ templates are key to the design of current successful mainstream libraries and systems. They are the
+                basis of programming techniques in diverse areas ranging from conventional general-purpose programming
+                to software for safety-critical embedded systems. Current work on improving templates focuses on the
+                notion of concepts (a type system for templates), which promises significantly improved error
+                diagnostics and increased expressive power such as concept-based overloading and function template
+                partial specialization. This paper presents C++ templates with an emphasis on problems related to
+                separate compilation. We consider the problem of how to express concepts in a precise way that is simple
+                enough to be usable by ordinary programmers. In doing so, we expose a few weaknesses of the current
+                specification of the C++ standard library and suggest a far more precise and complete specification. We
+                also present a systematic way of translating our proposed concept definitions, based on use-patterns
+                rather than function signatures, into constraint sets that can serve as convenient basis for concept
+                checking in a compiler.},
+  journal    = {SIGPLAN Not.},
+  month      = jan,
+  pages      = {295-308},
+  numpages   = {14},
+  keywords   = {C++ concepts, C++ templates, separate compilation, generic programming, type systems}
+}
+
+@inproceedings{dosries.2066.specifying.proc,
+  author    = {Dos Reis, Gabriel and Stroustrup, Bjarne},
+  title     = {Specifying C++ Concepts},
+  year      = {2006},
+  isbn      = {1595930272},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/1111037.1111064},
+  doi       = {10.1145/1111037.1111064},
+  abstract  = {C++ templates are key to the design of current successful mainstream libraries and systems. They are the
+               basis of programming techniques in diverse areas ranging from conventional general-purpose programming to
+               software for safety-critical embedded systems. Current work on improving templates focuses on the notion
+               of concepts (a type system for templates), which promises significantly improved error diagnostics and
+               increased expressive power such as concept-based overloading and function template partial
+               specialization. This paper presents C++ templates with an emphasis on problems related to separate
+               compilation. We consider the problem of how to express concepts in a precise way that is simple enough to
+               be usable by ordinary programmers. In doing so, we expose a few weaknesses of the current specification
+               of the C++ standard library and suggest a far more precise and complete specification. We also present a
+               systematic way of translating our proposed concept definitions, based on use-patterns rather than
+               function signatures, into constraint sets that can serve as convenient basis for concept checking in a
+               compiler.},
+  booktitle = {Conference Record of the 33rd ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages     = {295-308},
+  numpages  = {14},
+  keywords  = {C++ concepts, generic programming, type systems, C++ templates, separate compilation},
+  location  = {Charleston, South Carolina, USA},
+  series    = {POPL '06}
+}
+
+@inproceedings{Stroustrup.2007.evolving,
+  author    = {Stroustrup, Bjarne},
+  title     = {Evolving a Language in and for the Real World: C++ 1991-2006},
+  year      = {2007},
+  isbn      = {9781595937667},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/1238844.1238848},
+  doi       = {10.1145/1238844.1238848},
+  abstract  = {This paper outlines the history of the C++ programming language from the early days of its ISO
+               standardization (1991), through the 1998 ISO standard, to the later stages of the C++0x revision of that
+               standard (2006). The emphasis is on the ideals, constraints, programming techniques, and people that
+               shaped the language, rather than the minutiae of language features. Among the major themes are the
+               emergence of generic programming and the STL (the C++ standard library's algorithms and containers).
+               Specific topics include separate compilation of templates, exception handling, and support for embedded
+               systems programming. During most of the period covered here, C++ was a mature language with millions of
+               users. Consequently, this paper discusses various uses of C++ and the technical and commercial pressures
+               that provided the background for its continuing evolution.},
+  booktitle = {Proceedings of the Third ACM SIGPLAN Conference on History of Programming Languages},
+  pages     = {4-1-4-59},
+  keywords  = {programming language, standardization, libraries, language use, STL, multi-paradigm programming,
+               evolution, ISO, C++, history},
+  location  = {San Diego, California},
+  series    = {HOPL III}
+}
+  
+@article{stroustrup.2005.design,
+  title   = {The design of C++ 0x},
+  author  = {Stroustrup, Bjarne},
+  journal = {C/C++ Users Journal},
+  volume  = {23},
+  number  = {5},
+  pages   = {7},
+  year    = {2005}
+}
+
+@inbook{stroustrup.1996.history,
+  author    = {Stroustrup, Bjarne},
+  title     = {A History of C++: 1979--1991},
+  year      = {1996},
+  isbn      = {0201895021},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/234286.1057836},
+  abstract  = {This paper outlines the history of the C++ programming language. The emphasis is on the ideas,
+               constraints, and people that shaped the language, rather than the minutiae of language features. Key
+               design decisions relating to language features are discussed, but the focus is one of the overall design
+               goals and practical constraints. The evolution of C++ is traced from C with Classes to the current ANSI
+               and ISO standards work and the explosion of use, interest, commercial activity, compilers, tools,
+               environments, and libraries.},
+  booktitle = {History of Programming Languages---II},
+  pages     = {699-769},
+  numpages  = {71}
+}
+
