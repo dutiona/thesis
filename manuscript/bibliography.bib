@@ -1943,6 +1943,14 @@
   date    = {2020-12-16}
 }
 
+@software{dionne.2021.metabench,
+  author  = {Louis Dionne},
+  title   = {Metabench},
+  url     = {https://github.com/ldionne/metabench/},
+  version = {head},
+  date    = {2019-09-16}
+}
+
 @article{vanderWalts.2014.scikit-image,
   title    = {scikit-image: image processing in {P}ython},
   author   = {van der Walt, {S}t\'efan and {S}ch\"onberger, {J}ohannes {L}. and
@@ -2198,14 +2206,6 @@
   url     = {https://github.com/simdjson/simdjson},
   version = {1.0},
   date    = {2021-09-08}
-}
-
-@software{boost.2021,
-  author  = {Boost},
-  title   = {Boost C++ Libraries},
-  url     = {https://www.boost.org/},
-  version = {1.76.0},
-  date    = {2021-04-16}
 }
 
 @inproceedings{vassilev.2012.cling,
@@ -2473,7 +2473,7 @@
   series    = {POPL '06}
 }
 
-@inproceedings{Stroustrup.2007.evolving,
+@inproceedings{stroustrup.2007.evolving,
   author    = {Stroustrup, Bjarne},
   title     = {Evolving a Language in and for the Real World: C++ 1991-2006},
   year      = {2007},
@@ -2526,5 +2526,51 @@
   booktitle = {History of Programming Languages---II},
   pages     = {699-769},
   numpages  = {71}
+}
+
+@article{angulo.2007.morpho_color,
+  title    = {Morphological colour operators in totally ordered lattices based on distances: Application to image
+              filtering, enhancement and analysis},
+  journal  = {Computer Vision and Image Understanding},
+  volume   = {107},
+  number   = {1},
+  pages    = {56-73},
+  year     = {2007},
+  note     = {Special issue on color image processing},
+  issn     = {1077-3142},
+  doi      = {https://doi.org/10.1016/j.cviu.2006.11.008},
+  url      = {https://www.sciencedirect.com/science/article/pii/S1077314206002165},
+  author   = {Jesús Angulo},
+  keywords = {Colour mathematical morphology, Colour distance, Multivariate ordering, Colour feature extraction,
+              Colour noise removal, Colour contrast enhancement, LSH, Lab},
+  abstract = {The extension of mathematical morphology operators to multi-valued functions, and in particular to colour
+              images, is neither direct nor general. In this paper, a generalisation of distance-based and
+              lexicographical-based approaches is proposed, allowing the extension of morphological operators to colour
+              images for any colour representation (e.g., RGB, LSH and L∗a∗b∗) and for any metric distance to a
+              reference colour. The performance of the introduced operators is illustrated by means of different
+              applications: colour feature extraction using openings (closings) by reconstruction, colour gradients for
+              segmenting, colour denoising by the centre operator and colour enhancement by the contrast mapping.
+              Examples from natural colour images and biomedical microscopic colour images are given.}
+}
+
+@inproceedings{dewitte.2005.morpho_color,
+  author    = {De Witte, Val{\'e}rie and Schulte, Stefan and Nachtegael, Mike and Van der Weken, Dietrich and
+               Kerre, Etienne E.},
+  editor    = {Kamel, Mohamed and Campilho, Aur{\'e}lio},
+  title     = {Vector Morphological Operators for Colour Images},
+  booktitle = {Image Analysis and Recognition},
+  year      = {2005},
+  publisher = {Springer Berlin Heidelberg},
+  address   = {Berlin, Heidelberg},
+  pages     = {667--675},
+  abstract  = {In this paper we extend the basic morphological operators dilation and erosion for grey-scale images
+               based on the threshold approach, umbra approach and fuzzy set theory to colour images. This is realised
+               by treating colours as vectors and defining a new vector ordering so that new colour morphological
+               operators are presented. Here we only discuss colours represented in the RGB colour space. The colour
+               space RGB becomes together with the new ordering and associated minimum and maximum operators a complete
+               chain. All this can be extended to the colour spaces HSV and L*a*b*. Experimental results show that our
+               method provides an improvement on the component-based approach of morphological operators applied to
+               colour images. The colours in the colour images are preserved, that is, no new colours are introduced.},
+  isbn      = {978-3-540-31938-2}
 }
 
