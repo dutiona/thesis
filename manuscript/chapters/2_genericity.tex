@@ -1018,13 +1018,13 @@ point the value is only accessed in read-only. We can then write the following t
 \begin{minted}{C++}
   template <typename I>
   concept Image = requires {
-    typename I::point_range;            // needed for b
-    typename I::point_type;             // needed for c
-    typename I::value_type;             // needed for c
-  } && ForwardRange<I::point_range>     // needed for b
+    typename I::point_range;            // needed for a
+    typename I::point_type;             // needed for b
+    typename I::value_type;             // needed for b
+  } && ForwardRange<I::point_range>     // needed for a
   && requires (I ima, I::point_type pnt) {
-    { ima.domain() };                   // a
-    { ima(pnt) }     -> I::value_type;  // c
+    { ima.points() } -> I::point_range; // a
+    { ima(pnt) }     -> I::value_type;  // b
   };
 \end{minted}
 In reality, more boilerplate code is needed to ensure, for instance that there is no type mismatch between the image's
