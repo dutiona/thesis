@@ -1275,3 +1275,86 @@ Jupyter notebook. Like Cppyy, it is based on LLVM/Cling. Those three projects ar
 scope of possibilities for the future.
 
 \FIXME{Conclusion}
+
+
+% relationship between parallel computation and associative property
+% you need to be able to reorder the computation
+% parallel reduction is associated with monoïds
+% programming ahas relationship with algebraic structures
+% software is associated with algebraic structures
+
+% Bakus talks about functional forms and talks about the fact of having 5 computational forms with wich you can build up
+% all of the rest of the computational infrastructure. Every piece of software is built from those five functional forms.
+
+% Alex : five functional forms are theorems. Alex thinks there is an infinite number of theorem (as in mathematics) and
+% that reducing their number to five for software programming is taking things a little too far.
+
+% Higher order programming 1987 talks about the fact that you cannot ignore arrays and mutation if one wants efficiency
+% (investigate, read paper)
+
+% Mathematics shifted from being an invention to being a discovery. Mathematics were previously rooted as an abstract
+% thought (or logic) and were now rooted in precise and quantitative laws (physics).
+
+% Software is defined on top of algebraic structures. It's our job to discover those structures and laws that rule
+% software. Software is also the process of a discovery.
+
+% This lead to Generic programming in 1988 musser.1988.generic that introduce the term Generic programming for the first time.
+% generic programming definition as in musser.1988.generic
+% """
+% By generic programming we mean the definition of algorithms and data structures at an abstract or generic level,
+% thereby accomplishing many related programming tasks simultaneously. The central notion is that of generic algorithms,
+% which are parametrized procedural schemata that are completely independent of the underlying data representation and
+% are derived from concrete, efficient algorithms.
+% """
+
+
+% This lead to the genesis of the book the Ada Generic library musser.1989.ada
+
+% Then Alex and Meng wrote the first version of the Standard Template Library stepanov.1995.standard that will then be
+% incorporated alongside the C++ language for the release of the first ISO standard of the language in 1998 iso.1998.cpp
+
+% That same year is published dehnert.1998.fundamentals. This is the first place where the term "concept" is defined as 
+% """ a set of axioms satisfied by a data type and a set of operations on it """. This term is designed to include the
+% complexity of an operation as part of an axiom in software programming. This term is introduced to replace the
+% prevously used mathematical terms that could not include this notion of complexity.
+% """
+% Since we wish to extend semantics as well as syntax from built-in types to user types, we introduce the idea of
+% regular type, which matches the b uilt-in type semantics, thereby making our user-defined types behave like built-in
+% types as well.
+% """
+
+% Efforts were made by Douglas Gregor et al. gregor.2006.concepts-art in 2006 to introduce them into C++ but it ultimately
+% failed and the feature was pulled off of the C++ standard.
+
+
+% Elements of programming (reads as a maths book) 
+
+% Alex presented Generic programming to Bakus and Bakus """ always knew that at some points he needed to figure out
+% mutation into functional programming and one view of generic programming is that generic pr ogramming is functional
+% programming with a well-defined way to handle mutation". Bakus passed away before being able to write the forewords of
+% Elements of Programming. The term generic programming never appears in the book because Alex thought he lost control
+% over the term generic programming which has evolved in pratice into metaprogramming, effectively associated to C++
+% template metaprogramming instead of being associated with the underlying mathematics and algorithms. This book
+% introduce for the first time the requires clause on algorithms in order to get constrained genericity.
+
+% A workshop was help and its summary was published in 2012 sutton.2012.concepts, refered to as the Palo Alto report, to
+% summarise what design the commitee wanted for concepts and what problem it would solve. Elements agrue that just
+% having constrained template was already incredibly useful and the STL could be described in term of requires clauses.
+% This subset becomes known as concepts light and was enrished to becomes later what would be standardize in C++20.
+
+% Alex published From mathematics to Generic programming that traces the history of algorithms and ties the history of
+% mathematics with the history of generic programming. Alex gave a lecture in 2003 where stepanov.2003.gcm he traces in
+% particular the history of the algorithm of gcd/gcm for 2500 years and explain how successive generation of
+% mathematicians improved on by always looking for more generic ways to solve the same problem.
+% In essence, the book present the world view of the generic programming is an extension of mathematical algorithms
+% evolution over time. In this book, Alex is reclaiming the term of generic programming.
+
+
+% """
+% Generic programming is about abstracting and classifying algorithms and data structures. It gets its inspiration from
+% Knuth and not from type theory. Its goal is the incremental construction of systematic catalogs of useful, efficient
+% and abstract algorithms and data structures. Such an undertaking is still a dream.
+% """ - Alex stepanov
+% Stepanov thought of STL as a starting point to a very large library of data structures and algorithms, written in a
+% generic form, that would all work together nicely. STL is intended to be an example of how industry should move
+% forward and work on building a large library of this form.
