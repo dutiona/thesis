@@ -625,20 +625,20 @@ recent assembly instructions to use wide vectorized registries (AVX512). The use
 help much needed.
 
 Finally, the third aspect is not as trivial as the first two ones. It consists in studying the structure of an algorithm
-to allow distributed computation. Sometimes algorithm are friendly to be distributed on several processing unit that
+to allow distributed computation. Sometimes algorithm are friendly to be distributed on several processing units that
 compute a part of the result concurrently. This is what we call parallelism. There exists several way to take advantage
-of parallelism. First there is the use of several CPU unit on the host computer. Then there is the use of GPU units
+of parallelism. First there is the use of several CPU units on the host computer. Then there is the use of GPU units
 working in combination with the CPU units to take advantage of the massive amount of core a graphic card can provide.
 Finally there is the use of cloud computing which consists in using several "virtual" computers, each of them offering
 of CPU and GPU units in order to compute a result. One should be aware that each time we introduce a new layer of
 abstraction, there is a cost to orchestrate the computation, send the input data and retrieve the results. It is thus
-very important to study case by case what is needed. Some solutions exists that abstract away completely the hardware
+very important to study case by case what is needed. Some solutions exist that abstract away completely the hardware
 through a DSL~\footnote{Domain Specific Language} such as Halide~\cite{ragankelley.2013.halide}: the DSL compiler's job
 will be to try very hard to make the most out of both the available (or targeted) hardware and the code. Those solutions
 are not satisfactory for us as we want to avoid DSL and remain at code level. We are not developing a compiler: we are
 working with it.
 
-There is one true issue when studying parallel algorithm: it is wether they can be parallelized or not. Not all
+There is one true issue when studying parallel algorithm: it is whether they can be parallelized or not. Not all
 algorithms can be parallelized. Some just intrinsically cannot, typically, algorithms that immediately need the result
 at the previous iteration to compute the next iteration. There are still way to parallelize those one but it is not
 trivial and will not be treated in this paper. What interest us are the algorithms whose structure is an accumulation
