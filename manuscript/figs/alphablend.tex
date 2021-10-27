@@ -1,0 +1,21 @@
+
+\documentclass[tikz]{standalone}
+\usetikzlibrary{positioning}
+
+\begin{document}
+\begin{tikzpicture}
+  \tikzset{every node/.style={node distance=5pt, font=\Huge},
+    every label/.style={font=\Large\tt},
+  }
+
+  \node[label=below:ima] (p0) { \includegraphics[width=3cm]{../images/lena_small_alphablend_g.png} };
+  \node (p0) [right=of p0] { $~\leftarrow~$ };
+  \node (p0) [right=of p0] { $0.2$ };
+  \node (p0) [right=of p0] { $\times$ };
+  \node[label=below:ima1] (p0) [right=of p0] { \includegraphics[width=3cm]{../images/lena_small_g.png} };
+  \node (p0) [right=of p0] { $+$ };
+  \node (p0) [right=of p0] { $0.8$ };
+  \node (p0) [right=of p0] { $\times$ };
+  \node[label=below:ima2] (p0) [right=of p0] { \includegraphics[width=3cm]{../images/lena_small_blurred_g.png} };
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,23 @@
+\documentclass[svgnames,tikz]{standalone}
+\usetikzlibrary{positioning,arrows,calc}
+\usepackage{forest}
+
+\input{common.tikz}
+
+\begin{document}
+\begin{forest}
+  for tree={font=\tt, shape=rectangle, rounded corners, draw,
+  align=center, top color=white, bottom color=gray!20}
+  [$+$
+  [$*$
+      [$f$]
+        [$alpha$]
+    ]
+    [$*$
+      [$g$]
+        [$1-alpha$]
+    ]
+  ]
+\end{forest}
+\end{document}
+

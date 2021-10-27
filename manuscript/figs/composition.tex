@@ -6,7 +6,7 @@
   \tikzset{
     Box/.style={draw, align=center, minimum height=30pt},
     ImageBox/.style={Box, fill=LightBlue},
-    AlgoBox/.style={Box, fill=LightGreen}
+    AlgoBox/.style={Box, fill=LightGrey}
   };
 
 
@@ -22,18 +22,18 @@
   \draw[-latex] (A3) -- (A4);
 
   %%\node [Olive, above=of A2] {Algorithm Composition};
-  \draw[DarkGreen, very thick] ($ (A3.north east) + (.5,.75) $) node [DarkGreen, above left] {Algorithm Composition = MyComplexOperator}
+  \draw[DarkGreen, very thick] ($ (A3.north east) + (.5,.75) $) node [DarkGreen, above left] {Algorithm Composition = MyConplexOperator}
   rectangle ($ (A1.south west) + (-.5,-.25) $);
 
 
-  \draw[Magenta, very thick] ($ (A0.south west) + (-.5,-.75) $) node [Magenta, below right] {Image Composition = MyComplexImage}
+  \draw[Magenta, very thick] ($ (A0.south west) + (-.5,-.75) $) node [Magenta, below right] {Image Views Composition = MyComplexImage}
   rectangle ($ (A2.north east) + (.5,.25) $);
 
   \begin{scope}[on background layer]
-    \fill[LightGray] ($ (A1.north west) + (-.5,.75) $) rectangle ($ (A3.south east) + (.5,-.25) $);
-    \fill[DarkRed,opacity=0.25] ($ (A0.north west) + (-.5,.25) $) rectangle ($ (A2.south east) + (.5,-.75) $);
+    \fill[LightGreen] ($ (A1.north west) + (-.5,.75) $) rectangle ($ (A3.south east) + (.5,-.25) $);
+    \fill[Thistle,opacity=0.25] ($ (A0.north west) + (-.5,.25) $) rectangle ($ (A2.south east) + (.5,-.75) $);
   \end{scope}
 
-  
+
 \end{tikzpicture}
 \end{document}
