@@ -2,7 +2,7 @@
 
 Le pont statique-dynamique est introduit par une comparaison entre langage "compilé" vs "interprété"
 avec des arguments qui n'ont parfois rien à voir avec les langages, mais plutôt leur écosystème.
-Les points de comparaison proposés sont :
+Les points de comparaison proposés sont :
 1. La portabilité. *"Les programmes C++ sont plus portables que les programmes Python."* C'est très contestable !
 2. La facilité d'utilisation pour le end-user. *"Les progammes C++ sont censés tourner 'out-of-the-box' ?"* C'est aussi très contestable. Il y a une grosse confusion entre le langage statique/dynamique, le linkage qui peut être aussi statique/dynamique et la notion de dépendance. Un programme Python (interprété) peut embarquer l'ensemble de ses dépendances (bundle). Un programme C++ (compilé) peut se lier dynamiquement à ses dépendances qu'il embarque (un .framework qui fournit ses so/dll) ou pas (dépendances systèmes). Je ne suis pas sûr que le mode de linkage est quelque chose à voir avec le sujet du chapitre
 3. La vitesse d'exécution => OK

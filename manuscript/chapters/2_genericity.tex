@@ -359,7 +359,8 @@ user standpoint and thus are often difficult and complex to handle. It is also h
 templated code shows up very deep in compiler error trace.
 
 The table comparing all the pros. and cons. from the aforementioned approaches is presented
-in~\cref{table:gen.approaches}.
+in~\cref{table:gen.approaches}. We can see in this table that Generic Programming in C++20 check all the boxes that we
+are interested in.
 
 \begin{table}[tbh]
   \centering
@@ -377,16 +378,19 @@ in~\cref{table:gen.approaches}.
       \quad with C++20     & \cmark  & \cmark  & \cmark  & \cmark & \cmark  \\
     \end{tabular}
     \begin{tablenotes}
-      \item TC: type checking; CS: code simplicity; E: efficiency
-      \item One IA: one implementation per algorithm; EA: explicit abstractions / constrained genericity
+      \item TC: type checking
+      \item CS: code simplicity
+      \item E: efficiency
+      \item One IA: one implementation per algorithm
+      \item EA: explicit abstractions / constrained genericity
     \end{tablenotes}
     \label{table:gen.approaches}
   \end{threeparttable}
 \end{table}
 
-We can see in this table that Generic Programming in C++20 check all the boxes that we are interested in.
-
+The code duplication approach does not meet the requirements for code simplicity because of the copy/past mechanic
 \FIXME{Discussion à propos du tableaux : motivé avec des exemples les principaux points}
+
 
 \subsection{Unjustified limitations}
 \label{subsec:limitations}
