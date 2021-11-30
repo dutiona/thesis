@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Généré par Microsoft Visio, SVG Export pixel.svg Page-1 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="4.06414in" height="2.4106in"
+		viewBox="0 0 292.618 173.563" xml:space="preserve" color-interpolation-filters="sRGB" class="st8">
+	<v:documentProperties v:langID="1036" v:metric="true" v:viewMarkup="false">
+		<v:userDefs>
+			<v:ud v:nameU="msvSubprocessMaster" v:prompt="" v:val="VT4(Rectangle)"/>
+			<v:ud v:nameU="msvNoAutoConnect" v:val="VT0(1):26"/>
+		</v:userDefs>
+	</v:documentProperties>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:url(#grad0-4);stroke:#3c63ac;stroke-width:0.75}
+		.st2 {fill:#3c63ac;font-family:Calibri;font-size:0.833336em}
+		.st3 {fill:none;stroke:none;stroke-width:0.25}
+		.st4 {fill:#4672c4;font-family:Calibri;font-size:0.666664em}
+		.st5 {font-size:1em}
+		.st6 {marker-end:url(#mrkr4-29);stroke:#4672c4;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st7 {fill:#4672c4;fill-opacity:1;stroke:#4672c4;stroke-opacity:1;stroke-width:0.28409090909091}
+		.st8 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<defs id="Patterns_And_Gradients">
+		<linearGradient id="grad0-4" x1="0" y1="0" x2="1" y2="0" gradientTransform="rotate(60 0.5 0.5)">
+			<stop offset="0" stop-color="#e8ebf4" stop-opacity="1"/>
+			<stop offset="0.24" stop-color="#f4f5f9" stop-opacity="1"/>
+			<stop offset="0.54" stop-color="#feffff" stop-opacity="1"/>
+		</linearGradient>
+	</defs>
+	<defs id="Markers">
+		<g id="lend4">
+			<path d="M 2 1 L 0 0 L 2 -1 L 2 1 " style="stroke:none"/>
+		</g>
+		<marker id="mrkr4-29" class="st7" v:arrowType="4" v:arrowSize="2" v:setback="7.04" refX="-7.04" orient="auto"
+				markerUnits="strokeWidth" overflow="visible">
+			<use xlink:href="#lend4" transform="scale(-3.52,-3.52) "/>
+		</marker>
+	</defs>
+	<g v:mID="0" v:index="1" v:groupContext="foregroundPage">
+		<v:userDefs>
+			<v:ud v:nameU="msvThemeOrder" v:val="VT0(0):26"/>
+		</v:userDefs>
+		<title>Page 1</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
+				v:shadowOffsetY="-8.50394"/>
+		<v:layer v:name="Lien" v:index="0"/>
+		<g id="shape6-1" v:mID="6" v:groupContext="shape" transform="translate(18.75,-100.955)">
+			<title>Rectangle</title>
+			<desc>Value</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="56.6929" cy="146.634" width="113.39" height="53.8583"/>
+			<rect x="0" y="119.705" width="113.386" height="53.8583" class="st1"/>
+			<text x="45.2" y="132.7" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Value</text>		</g>
+		<g id="shape7-6" v:mID="7" v:groupContext="shape" transform="translate(24.4193,-106.624)">
+			<title>Feuille.7</title>
+			<desc>uint8, float, rgb8, rgba16, ...</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="51.0236" cy="165.059" width="102.05" height="17.0079"/>
+			<rect x="0" y="156.555" width="102.047" height="17.0079" class="st3"/>
+			<text x="5.64" y="167.46" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>uint8, float, rgb8, rgba16, ...</text>		</g>
+		<g id="shape10-9" v:mID="10" v:groupContext="shape" transform="translate(160.482,-100.955)">
+			<title>Rectangle.10</title>
+			<desc>Point</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="56.6929" cy="146.634" width="113.39" height="53.8583"/>
+			<rect x="0" y="119.705" width="113.386" height="53.8583" class="st1"/>
+			<text x="46.02" y="132.7" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Point</text>		</g>
+		<g id="shape13-13" v:mID="13" v:groupContext="shape" transform="translate(166.152,-106.624)">
+			<title>Feuille.13</title>
+			<desc>2D (x, y); 3D (x, y, z); Complex (1 face, 2 faces)</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="51.0236" cy="165.059" width="102.05" height="17.0079"/>
+			<rect x="0" y="156.555" width="102.047" height="17.0079" class="st3"/>
+			<text x="4" y="162.66" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>2D (x, y); 3D (x, y, z); <tspan x="4"
+						dy="1.2em" class="st5">Complex (1 face, 2 faces)</tspan></text>		</g>
+		<g id="shape16-17" v:mID="16" v:groupContext="shape" transform="translate(89.6161,-18.75)">
+			<title>Rectangle.16</title>
+			<desc>Pixel</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="56.6929" cy="146.634" width="113.39" height="53.8583"/>
+			<rect x="0" y="119.705" width="113.386" height="53.8583" class="st1"/>
+			<text x="47.16" y="132.7" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Pixel</text>		</g>
+		<g id="shape17-21" v:mID="17" v:groupContext="shape" transform="translate(98.1201,-24.4193)">
+			<title>Feuille.17</title>
+			<desc>(pnt2D, rgb8)</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="49.6063" cy="163.642" width="99.22" height="19.8425"/>
+			<rect x="0" y="153.72" width="99.2126" height="19.8425" class="st3"/>
+			<text x="27.84" y="166.04" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>(pnt2D, rgb8)</text>		</g>
+		<g id="shape19-24" v:mID="19" v:groupContext="shape" v:layerMember="0" transform="translate(75.4429,-100.955)">
+			<title>Lien dynamique</title>
+			<path d="M0 173.56 L0 228.84 L7.13 228.84" class="st6"/>
+		</g>
+		<g id="shape20-30" v:mID="20" v:groupContext="shape" v:layerMember="0" transform="translate(217.175,-100.955)">
+			<title>Lien dynamique.20</title>
+			<path d="M-0 173.56 L-0 228.84 L-7.13 228.84" class="st6"/>
+		</g>
+	</g>
+</svg>
