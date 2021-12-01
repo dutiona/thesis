@@ -25,25 +25,25 @@ Let us take the gamma correction algorithm as an example. The naive way to write
 template <class Image>
 void gamma_correction(Image& ima, double gamma)
 {
-  const auto gamma_corr = 1 / gamma;
+  const auto gamma_corr = 1.f / gamma;
 
   for (int x = 0; x < ima.width(); ++x)
     for (int y = 0; y < ima.height(); ++y)
     {
-      ima(x, y).r = std::pow((255 * ima(x, y).r) / 255, gamma_corr);
-      ima(x, y).g = std::pow((255 * ima(x, y).g) / 255, gamma_corr);
-      ima(x, y).b = std::pow((255 * ima(x, y).b) / 255, gamma_corr);
+      ima(x, y).r = 256.f * std::pow(ima(x, y).r / 256.f, gamma_corr);
+      ima(x, y).g = 256.f * std::pow(ima(x, y).g / 256.f, gamma_corr);
+      ima(x, y).b = 256.f * std::pow(ima(x, y).b / 256.f, gamma_corr);
     }
 }
 \end{minted}
 
-\noindent This algorithm here does the job but it also makse a lot of hypothesis. Firstly, we suppose that we can write
-in the image via the \texttt{=} operator (l.9-11): it may not be true if the image is sourced from a generator function.
-Secondly, we suppose that we have a 2D image via the double loop (l.6-7). Finally, we suppose we are operating on 8bits
-range (0-255) RGB via \texttt{'.r'}, \texttt{'.g'}, \texttt{'.b'} (l.9-11). Those hypothesis are unjustified.
-Intrinsically, all we want to say is \blockquote{\emph{For each value of \texttt{ima}, apply a gamma correction on
-    it.}}. Let us proceed to make this algorithm the most generic possible by lifting those unjustified constraints one by
-one.
+\noindent This algorithm here performs the transformation correctly but it also makes a lot of hypothesis. Firstly, we
+suppose that we can write in the image via the \texttt{=} operator (l.9-11): it may not be true if the image is sourced
+from a generator function. Secondly, we suppose that we have a 2D image via the double loop (l.6-7). Finally, we suppose
+we are operating on 8bits range (0-255) RGB via \texttt{'.r'}, \texttt{'.g'}, \texttt{'.b'} (l.9-11). Those hypothesis
+are unjustified. Intrinsically, all we want to say is \blockquote{\emph{For each value of \texttt{ima}, apply a gamma
+    correction on it.}}. Let us proceed to make this algorithm the most generic possible by lifting those unjustified
+constraints one by one.
 
 
 
@@ -53,12 +53,12 @@ First, we get rid of the 8bits color range (0-255) RGB format requirement. The l
 \begin{minted}{C++}
   using value_t = typename Image::value_type;
 
-  const auto gamma_corr = 1 / gamma;
+  const auto gamma_corr = 1.f / gamma;
   const auto max_val = std::numeric_limits<value_t>::max();
 
   for(int x = 0; x < ima.width(); ++x)
     for(int y = 0; y < ima.height(); ++y)
-      ima(x, y) = std::pow((max_val * ima(x, y)) / max_val, gamma_corr);
+      ima(x, y) = max_val * std::pow(ima(x, y) / max_val, gamma_corr);
 \end{minted}
 
 \noindent By lifting this constraint, we now require the type Image to define a nested type \texttt{Image::value\_type}
@@ -73,8 +73,8 @@ Here we need to introduce a new abstraction layer, the \emph{pixel}. A \emph{pix
 double loop then becomes:
 
 \begin{minted}{C++}
-  for (auto&& pix : ima.pixels())
-    pix.value() = std::pow((max_val * pix.value()) / max_val, gamma_corr);
+  for (auto&& val : ima.values())
+    val = max_val * std::pow(val / max_val, gamma_corr);
 \end{minted}
 
 \noindent This led to us requiring that the type \emph{Image} requires to provide a method \texttt{Image::pixels()} that
@@ -185,6 +185,8 @@ this paper.
 
 \subsection{Concept definition}
 \label{subsec:concept}
+
+
 
 The more algorithms we analyze to extract their requirements, the clearer the \emph{concepts} become. They are slowly
 appearing. Let us now attempt to formalize them. The formalization of the \emph{concept Image} from the information and
@@ -780,6 +782,42 @@ code is as fast as a non-generic handwritten dilation.
 
 \section{Library concepts: listing and explanation}
 \label{sec:library.concepts}
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.5\linewidth]{figs/concepts/pixel.pdf}
+  \caption{Pixel concept.}
+  \label{fig:concept.pixel}
+\end{figure}
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.5\linewidth]{figs/concepts/domain.pdf}
+  \caption{Domain concept.}
+  \label{fig:concept.domain}
+\end{figure}
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.5\linewidth]{figs/concepts/image.pdf}
+  \caption{Image concept.}
+  \label{fig:concept.image}
+\end{figure}
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.5\linewidth]{figs/concepts/images_all.pdf}
+  \caption{All images concepts.}
+  \label{fig:concept.images}
+\end{figure}
+
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.5\linewidth]{figs/concepts/se_extension.pdf}
+  \caption{Structuring element and Extension concepts.}
+  \label{fig:concept.se_extension}
+\end{figure}
 
 Let us now delve into concepts related to the Image Processing area. Indeed, this domain has his specificities and we
 want to improve generic image processing library design by learning from our past experiments and working with new
