@@ -1,19 +1,57 @@
 \chapter{Concepts \& archetypes}
 \label{appendix:concepts.and.archetypes}
 
-\subsection{Concepts}
+\section{The fundamentals}
 
-\paragraph{Index}
+\subsection{Value}
 
-\begin{minted}{c++}
-// Index
-template <typename Idx>
-concept Index = std::signed_integral<Idx>;
-\end{minted}
+\paragraph{Concept table}
 
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type}      \\
+      \cline{1-4}
+      Value           & \texttt{Val}          & $\emptyset$                   & \texttt{val}                  \\
+      ComparableValue & \texttt{CmpVal}       & Value                         & \texttt{cmp\_val1, cmp\_val2} \\
+      OrderedValue    & \texttt{OrdVal}       & ComparableValue               & \texttt{ord\_val1, ord\_val2} \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
 
-\paragraph{Value}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                       & \thead{Expression}                                                   & \thead{Return
+      Type}                                                 & \thead{Description}                                                                     \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{Value}                            & \texttt{std::semiregular<Val>}                                       &
+      \texttt{std::true\_type}                              & \makecell[l]{\texttt{Val} is a semiregular type. It can be:                             \\
+      copied, moved, swapped,                                                                                                                         \\ and default constructed.}                                                                                                    \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{ComparableValue}} & \texttt{std::regular<CmpVal>}                                        &
+      \texttt{std::true\_type}                              & \makecell[l]{\texttt{CmpVal} is a regular type. It is a semiregular                     \\
+      type that is equality comparable.}                                                                                                              \\
+      \multicolumn{1}{c|}{}                                 & \texttt{cmp\_val1 == cmp\_val2}                                      & \texttt{boolean}
+                                                            & Supports equality comparison                                                            \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{OrderedValue}}    & \texttt{std::totally\_ordered<OrdVal>}                               &
+      \texttt{std::true\_type}                              & \makecell[l]{\texttt{CmpVal} is a totally ordered as well as                            \\
+      a regular type. Additionally the expressions                                                                                                    \\ must be equality preserving.}                                                                                           \\
+      \multicolumn{1}{c|}{}                                 & \texttt{ord\_val1 < ord\_val2}                                       & \texttt{boolean}
+                                                            & \multicolumn{1}{l}{\multirow{2}{*}{Supports inequality comparisons}}                    \\
+      \multicolumn{1}{c|}{}                                 & \texttt{ord\_val1 <= ord\_val2, \dots}                               & \texttt{boolean}
+                                                            & \multicolumn{1}{l}{}                                                                    \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
 
+    \caption{Concepts Value: expressions}
+  \end{scriptsize}
+  \label{table:concept.value.expressions}
+\end{table}
+
+\paragraph{Concept code}
 \begin{minted}{c++}
 // Value
 template <typename Val>
@@ -31,8 +69,76 @@ concept OrderedValue =
   std::totally_ordered<STORegVal>;
 \end{minted}
 
+\paragraph{Archetype code}
 
-\paragraph{Point}
+\begin{minted}{c++}
+struct Value
+{
+};
+
+struct ComparableValue
+{
+};
+bool operator==(const ComparableValue&, const ComparableValue&);
+bool operator!=(const ComparableValue&, const ComparableValue&);
+
+
+struct OrderedValue
+{
+};
+bool operator==(const OrderedValue&, const OrderedValue&);
+bool operator!=(const OrderedValue&, const OrderedValue&);
+bool operator<(const OrderedValue&, const OrderedValue&);
+bool operator>(const OrderedValue&, const OrderedValue&);
+bool operator<=(const OrderedValue&, const OrderedValue&);
+bool operator>=(const OrderedValue&, const OrderedValue&);
+
+static_assert(mln::concepts::Value<Value>, "Value archetype does not model the Value concept!");
+static_assert(mln::concepts::ComparableValue<ComparableValue>, "ComparableValue archetype does not model the ComparableValue concept!");
+static_assert(mln::concepts::OrderedValue<OrderedValue>, "OrderedValue archetype does not model the OrderedValue concept!");
+\end{minted}
+
+
+\subsection{Point}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      Point           & \texttt{Pnt}          & $\emptyset$                   & \texttt{pnt1, pnt2}      \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                             & \thead{Expression}                     & \thead{Return Type}      &
+      \thead{Description}                                                                                               \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{Point}} & \texttt{std::regular<Pnt>}             & \texttt{std::true\_type} &
+      \makecell[l]{\texttt{Pnt} is a regular type. It can be:                                                           \\ copied, moved, swapped, and default
+      constructed.                                                                                                      \\ It also is equality comparable.} \\
+      \multicolumn{1}{c|}{}                       & \texttt{std::totally\_ordered<OrdVal>} & \texttt{std::true\_type} &
+      \makecell[l]{\texttt{Pnt} is a totally ordered as well as a regular type.                                         \\ Additionally the expressions must be \\
+      equality preserving.}                                                                                             \\
+      \multicolumn{1}{c|}{}                       & \texttt{pnt1 < pnt2}                   & \texttt{boolean}         &
+      \multicolumn{1}{l}{\multirow{2}{*}{supports inequality comparisons}}                                              \\
+      \multicolumn{1}{c|}{}                       & \texttt{pnt1 <= pnt2, \dots}           & \texttt{boolean}         &
+      \multicolumn{1}{l}{}                                                                                              \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Point: expressions}
+  \end{scriptsize}
+  \label{table:concept.point.expressions}
+\end{table}
+
+\paragraph{Concept code}
 
 \begin{minted}{c++}
 // Point
@@ -42,8 +148,98 @@ concept Point =
   std::totally_ordered<P>;
 \end{minted}
 
+\paragraph{Archetype code}
 
-\paragraph{Pixel}
+\begin{minted}{c++}
+struct Point final
+{
+};
+
+bool operator==(const Point&, const Point&);
+bool operator!=(const Point&, const Point&);
+bool operator<(const Point&, const Point&);
+bool operator>(const Point&, const Point&);
+bool operator<=(const Point&, const Point&);
+bool operator>=(const Point&, const Point&);
+
+static_assert(mln::concepts::Point<Point>, "Point archetype does not model the Point concept!");
+\end{minted}
+
+
+\subsection{Pixel}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      Pixel           & \texttt{Pix}          & $\emptyset$                   & \texttt{pix}             \\
+      OutputPixel     & \texttt{OPix}         & Pixel                         & \texttt{opix}            \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                             & \thead{Definition}       & \thead{Description}            &
+      \thead{Requirement}                                                                                       \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \texttt{value\_type}     & \makecell[l]{Type of the value
+      contained in the pixel.                                                                                   \\ Cannot be constant or reference.}       & Models
+      the concept \texttt{Value}.                                                                               \\
+      \multicolumn{1}{c|}{}                       & \texttt{reference\_type} & \makecell[l]{Type used to
+      mutate the pixel's value                                                                                  \\ if non-const. Can be a proxy.}       & \makecell[l]{Models the concept \\
+      \texttt{std::indirectly\_writable} if non-const.}                                                         \\
+      \multicolumn{1}{c|}{}                       & \texttt{point\_type}     & Type of the pixel's point.     &
+      Models the concept \texttt{Point}                                                                         \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Pixel: definitions}
+  \end{scriptsize}
+  \label{table:concept.pixel.definitions}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{ll}
+      \cline{1-2}
+      \thead{Type}              & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{Pix::value\_type} & \texttt{val}             \\
+      \texttt{Pix::point\_type} & \texttt{pnt}             \\
+      \cline{1-2}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                             & \thead{Expression}        & \thead{Return Type}           &
+      \thead{Description}                                                                                              \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \texttt{pix.val()}        & \texttt{Pix::reference\_type} &
+      \makecell[l]{Access the pixel's value for read and/or write purpose.}                                            \\
+      \multicolumn{1}{c|}{}                       & \texttt{pix.point()}      & \texttt{Pix::point\_type}     &
+      \makecell[l]{Read the pixel's point.}                                                                            \\
+      \multicolumn{1}{c|}{}                       & \texttt{pix.shift(pnt)}   & \texttt{void}                 & Shift
+      pixel's point coordinate base on \texttt{pnt}'s coordinates.                                                     \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{OutputPixel}            & \texttt{opix.val() = val} & \texttt{void}                 & Mutate
+      pixel's value.                                                                                                   \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Pixel: expressions}
+  \end{scriptsize}
+  \label{table:concept.pixel.expressions}
+\end{table}
+
+\paragraph{Concept code}
 
 \begin{minted}{c++}
 // Pixel
@@ -83,8 +279,128 @@ template <typename Pix>
 concept OutputPixel = detail::WritablePixel<Pix>;
 \end{minted}
 
+\paragraph{Archetype code}
 
-\paragraph{Ranges}
+\begin{minted}{c++}
+namespace details
+{
+  template <class P, class V>
+  struct PixelT
+  {
+    using value_type = V;
+    using point_type = P;
+    using reference  = const value_type&;
+
+    PixelT()              = delete;
+    PixelT(const PixelT&) = default;
+    PixelT(PixelT&&)      = default;
+    PixelT& operator=(const PixelT&) = delete;
+    PixelT& operator=(PixelT&&) = delete;
+
+    point_type point() const;
+    reference  val() const;
+    void       shift(const P& dp);
+  };
+
+  struct OutputPixel : PixelT<Point, Value>
+  {
+    using reference = Value&;
+    reference val() const;
+  };
+
+
+  template <class Pix>
+  struct AsPixel : Pix, mln::details::Pixel<AsPixel<Pix>>
+  {
+  };
+} // namespace details
+
+template <class P, class V = Value>
+using PixelT      = details::AsPixel<details::PixelT<P, V>>;
+using Pixel       = PixelT<Point, Value>;
+using OutputPixel = details::AsPixel<details::OutputPixel>;
+
+static_assert(mln::concepts::Pixel<Pixel>, "Pixel archetype does not model the Pixel concept!");
+static_assert(mln::concepts::OutputPixel<OutputPixel>, "OutputPixel archetype does not model the OutputPixel concept!");
+\end{minted}
+
+\subsection{Ranges}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}   & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      MDRange           & \texttt{MDRng}        & $\emptyset$                   & \texttt{mdrng}           \\
+      OutputMDRange     & \texttt{OMDRng}       & MDRange                       & \texttt{omdrng}          \\
+      ReversibleMDRange & \texttt{RMDRng}       & MDRange                       & \texttt{rmdrng}          \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                               & \thead{Definition}       & \thead{Description}                      &
+      \thead{Requirement}                                                                                                   \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}} & \texttt{value\_type}     & \makecell[l]{Type of the value contained
+      in the range.                                                                                                         \\ Cannot be constant or reference.} &  Models the concept \texttt{Value}. \\
+      \multicolumn{1}{c|}{}                         & \texttt{reference\_type} & \makecell[l]{Type used to mutate the
+      pixel's value                                                                                                         \\if non-const.                                                                                            Can be a proxy.}    & \makecell[l]{Models the concept \\
+      \texttt{std::indirectly\_writable} if non-const.}                                                                     \\
+      \cline{1-4}
+    \end{tabular}
+
+    \smallskip
+
+    \caption{Concepts Ranges: definitions}
+  \end{scriptsize}
+  \label{table:concept.ranges.definitions}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{ll}
+      \cline{1-2}
+      \thead{Type}                                 & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{std::ranges::range\_value\_t<MDRng>} & \texttt{val}             \\
+      \cline{1-2}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                         & \thead{Expression}                              &
+      \thead{Return Type}                                     & \thead{Description}                                                                            \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}}           & \texttt{mdrng.begin()}                          &
+      \texttt{unspecified}                                    & \makecell[l]{Return a forward iterator allowing                                                \\ a traversing of the range.} \\
+      \multicolumn{1}{c|}{}                                   & \texttt{mdrng.end()}                            &
+      \texttt{unspecified}                                    & \makecell[l]{Return a sentinel allowing to                                                     \\know when the end is reached.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{OutputMDRange}                      & \makecell[l]{\texttt{auto it = omdrng.begin()}                                                 \\
+      \texttt{*it++ = val}}                                   & \texttt{void}                                   & \makecell[l]{Mutate a value inside the range \\
+      then increment the iterator's position}                                                                                                                  \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{ReversibleMDRange}} & \texttt{rmdrng.rbegin()}                        &
+      \texttt{unspecified}                                    & \makecell[l]{Return a forward iterator allowing                                                \\ a traversing of the range \\ starting from
+      the end.}                                                                                                                                                \\
+      \multicolumn{1}{c|}{}                                   & \texttt{rmdrng.rend()}                          &
+      \texttt{unspecified}                                    & \makecell[l]{Return a sentinel allowing to                                                     \\ know when the end is reached.} \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Ranges: expressions}
+  \end{scriptsize}
+  \label{table:concept.ranges.expressions}
+\end{table}
+
+\paragraph{Concept code}
 
 \begin{minted}{c++}
 template <class C>
@@ -143,8 +459,77 @@ template <class R>
 concept reversible_mdrange = MDBidirectionalRange<R> || std::ranges::bidirectional_range<R>;
 \end{minted}
 
+\paragraph{Archetype code}
 
-\paragraph{Domain}
+\begin{minted}{c++}
+  // TODO
+\end{minted}
+
+
+\subsection{Domain}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      Domain          & \texttt{MDRng}        & MDRange                       & \texttt{dom}             \\
+      SizedDomain     & \texttt{OMDRng}       & Domain                        & \texttt{sdom}            \\
+      ShapedDomain    & \texttt{RMDRng}       & SizedDomain                   & \texttt{shdom}           \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Domain: definitions}
+    \label{table:concept.domain.definitions}
+  \end{scriptsize}
+\end{table}
+
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{ll}
+      \cline{1-2}
+      \thead{Type}              & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{Dom::value\_type} & \texttt{pnt}             \\
+      \cline{1-2}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                              & \thead{Expression}               & \thead{Return Type}          &
+      \thead{Description}                                                                                              \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{Domain}} & \texttt{Point<Dom::value\_type>} & \texttt{std::true\_type}     &
+      \makecell[l]{Domain's value models the \texttt{Point} concept}                                                   \\
+      \multicolumn{1}{c|}{}                        & \texttt{dom.has(pnt)}            & \texttt{bool}                &
+      \makecell[l]{Check if a points is included in the domain.}                                                       \\
+      \multicolumn{1}{c|}{}                        & \texttt{dom.empty()}             & \texttt{void}                &
+      \makecell[l]{Read the pixel's point.}                                                                            \\
+      \multicolumn{1}{c|}{}                        & \texttt{dom.dim()}               & \texttt{void}                &
+      Returns the domain's dimension.                                                                                  \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{SizedDomain}             & \texttt{sdom.size()}             & \texttt{unsigned int}        &
+      Returns the number of points inside the domain.                                                                  \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{ShapedDomain}            & \texttt{shdom.extends()}         & \texttt{std::forward\_range} &
+      \makecell[l]{Return a range that yields the number                                                               \\ of elements for each dimension.}
+      \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Domain: expressions}
+  \end{scriptsize}
+  \label{table:concept.domain.expressions}
+\end{table}
+
+\paragraph{Concept code}
 
 \begin{minted}{c++}
 // Domain
@@ -176,110 +561,107 @@ concept ShapedDomain =
   };
 \end{minted}
 
-
-\paragraph{Structuring Element}
-
-\begin{minted}{c++}
-namespace details
-{
-  template <typename SE>
-  concept DynamicStructuringElement =
-    requires (SE se) {
-    { se.radial_extent() }  -> std::same_as<int>;
-    };
-
-
-  constexpr bool implies(bool a, bool b) { return !a || b; }
-}
-
-
-template <typename SE, typename P>
-concept StructuringElement =
-  std::convertible_to<SE, mln::details::StructuringElement<SE>> &&
-  std::ranges::regular_invocable<SE, P> &&
-  std::ranges::regular_invocable<SE, mln::archetypes::PixelT<P>> &&
-  requires {
-    typename SE::category;
-    typename SE::incremental;
-    typename SE::decomposable;
-    typename SE::separable;
-  } &&
-  std::convertible_to<typename SE::category, mln::adaptative_neighborhood_tag> &&
-  details::implies(std::convertible_to<typename SE::category, mln::dynamic_neighborhood_tag>,
-                    details::DynamicStructuringElement<SE>) &&
-  requires (SE se, const SE cse, P p, mln::archetypes::PixelT<P> px) {
-    { se(p) }         -> std::ranges::forward_range;
-    { se(px) }        -> std::ranges::forward_range;
-    { cse.offsets() } -> std::ranges::forward_range;
-
-    requires std::convertible_to<std::ranges::range_value_t<decltype(se(p))>, P>;
-    requires std::Pixel<std::ranges::range_value_t<decltype(se(px))>>;
-    requires std::convertible_to<std::ranges::range_value_t<decltype(cse.offsets())>, P>;
-  };
-
-namespace details
-{
-  template <typename R, typename P>
-  concept RangeOfStructuringElement =
-    StructuringElement<std::ranges::range_value_t<R>, P>;
-}
-
-
-
-template <typename SE, typename P>
-concept DecomposableStructuringElement =
-  StructuringElement<SE, P> &&
-  std::convertible_to<typename SE::decomposable, std::true_type> &&
-  requires(const SE se) {
-    { se.is_decomposable() }  -> std::same_as<bool>;
-    { se.decompose() }        -> std::ranges::forward_range;
-    requires details::RangeOfStructuringElement<decltype(se.decompose()), P>;
-  };
-
-
-template <typename SE, typename P>
-concept SeparableStructuringElement =
-  StructuringElement<SE, P> &&
-  std::convertible_to<typename SE::separable, std::true_type> &&
-  requires(const SE se) {
-    { se.is_separable() } -> std::same_as<bool>;
-    { se.separate() }     -> std::ranges::forward_range;
-    requires details::RangeOfStructuringElement<decltype(se.separate()), P>;
-  };
-
-
-template <typename SE, typename P>
-concept IncrementalStructuringElement =
-  StructuringElement<SE, P> &&
-  std::convertible_to<typename SE::incremental, std::true_type> &&
-  requires(const SE se) {
-    { se.is_incremental() } -> std::same_as<bool>;
-    { se.inc() }  -> StructuringElement<SE, P>;
-    { se.dec() }  -> StructuringElement<SE, P>;
-  };
-\end{minted}
-
-\paragraph{Neighborhood}
+\paragraph{Archetype code}
 
 \begin{minted}{c++}
-template <typename SE, typename P>
-concept Neighborhood =
-  StructuringElement<SE, P> &&
-  requires (SE se, P p, mln::archetypes::PixelT<P> px) {
-    { se.before(p) }  -> std::ranges::forward_range;
-    { se.after(p) }   -> std::ranges::forward_range;
-    { se.before(px) } -> std::ranges::forward_range;
-    { se.after(px) }  -> std::ranges::forward_range;
+struct Domain
+{
+  using value_type = Point;
+  using reference  = Point&;
 
-    requires std::convertible_to<std::ranges::range_value_t<decltype(se.before(p))>, P>;
-    requires std::convertible_to<std::ranges::range_value_t<decltype(se.after(p))>, P>;
-    requires std::Pixel<std::ranges::range_value_t<decltype(se.before(px))>>;
-    requires std::Pixel<std::ranges::range_value_t<decltype(se.after(px))>>;
-  };
+  value_type* begin();
+  value_type* end();
+
+  bool has(value_type) const;
+  bool empty() const;
+  int  dim() const;
+};
+
+static_assert(mln::concepts::Domain<Domain>, "Domain archetype does not model the Domain concept!");
+
+struct SizedDomain : Domain
+{
+  unsigned size() const;
+};
+
+static_assert(mln::concepts::SizedDomain<SizedDomain>,
+                          "SizedDomain archetype does not model the SizedDomain concept!");
+
+struct ShapedDomain final : SizedDomain
+{
+  static constexpr std::size_t  ndim = 1;
+  value_type                    shape() const;
+  std::array<std::size_t, ndim> extents() const;
+};
+
+static_assert(mln::concepts::ShapedDomain<ShapedDomain>,
+                          "ShapedDomain archetype does not model the ShapedDomain concept!");
 \end{minted}
 
 
-\paragraph{Image}
+\subsection{Image}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      \makecell[l]{Image (InputImage,                                                                    \\ ForwardImage)}    & \texttt{Img}          & $\emptyset$                                                                  & \texttt{img}             \\
+      WritableImage   & \texttt{WImg}         & Image                         & \texttt{wimg}            \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                               & \thead{Definition}          & \thead{Description}                            & \thead{Requirement}                 \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{117}{*}{Image}} & \texttt{pixel\_type}        & Type of the image's pixel.                     & Models the concept \texttt{Pixel}.  \\
+      \multicolumn{1}{c|}{}                         & \texttt{point\_type}        & Type of the image's point.                     & Models the concept \texttt{Point}.  \\
+      \multicolumn{1}{c|}{}                         & \texttt{value\_type}        & \makecell[l]{Type of the image's value.                                              \\ Cannot be constant or reference} & Models the concept \texttt{Value}. \\
+      \multicolumn{1}{c|}{}                         & \texttt{domain\_type}       & Type of the image's domain.                    & Models the concept \texttt{Domain}. \\
+      \multicolumn{1}{c|}{}                         & \texttt{reference}          & \makecell[l]{Type used to mutate an image                                            \\ pixel's value if non-const} & \makecell[l]{Models the concept \\ \texttt{std::indirectly\_writable} \\ if non-const.}                                   \\
+      \multicolumn{1}{c|}{}                         & \texttt{concrete\_type}     & Image concrete type (that holds data).         & Models the concept \texttt{Image}.  \\
+      \multicolumn{1}{c|}{}                         & \texttt{ch\_value\_type<V>} & \makecell{Facility to return a new image type.                                       \\ that casts the underlying \texttt{value\_type} \\into \texttt{V}} & Models the concept \texttt{Image}. \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: definitions (1)}
+    \label{table:concept.image.definitions.1}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                     & \thead{Expression}                          & \thead{Return Type}                         &
+      \thead{Description}                                                                                                                                                                           \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{7}{*}{Image}}         & \texttt{img.concretize()}                   & \makecell[l]{\texttt{std::convertible\_to<}                                               \\\texttt{concrete\_type>}} & \makecell[l]{Return a concrete image \\ that holds data.} \\
+      \multicolumn{1}{c|}{}                               & \texttt{img.ch\_value<V>()}                 & \makecell[l]{\texttt{std::convertible\_to<}                                               \\\texttt{ch\_value\_type<V> >}} & \makecell[l]{Return an image whose values \\ are casted to \texttt{V}.}  \\
+      \multicolumn{1}{c|}{}                               & \texttt{img.domain()}                       & \makecell[l]{\texttt{std::convertible\_to<}                                               \\\texttt{domain\_type>}} & Return the image's domain.  \\
+      \multicolumn{1}{c|}{}                               & \texttt{img.pixels()}                       & \multirow{2}{*}{\texttt{MDRange}}           & \makecell[l]{Return a range that yields     \\ all the image pixels.} \\
+      \multicolumn{1}{c|}{}                               & \texttt{img.values()}                       &                                             & \makecell[l]{Return a range that yields     \\ all the image values.} \\
+      \multicolumn{1}{c|}{}                               & \makecell[l]{\texttt{std::convertible\_to<}                                                                                             \\\texttt{std::ranges::ranges\_value\_t<} \\\texttt{decltype(img.pixels())>,} \\\texttt{pixel\_type>}} & \multirow{2}{*}{\texttt{std::true\_type}}     & \multirow{2}{*}{\makecell[l]{Ranges converts to compatible\\ element types.}} \\
+      \multicolumn{1}{c|}{}                               & \makecell[l]{\texttt{std::convertible\_to<}                                                                                             \\\texttt{std::ranges::ranges\_value\_t<} \\\texttt{decltype(img.values())>,} \\\texttt{value\_type>}} &      &  \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{WritableImage}} & \texttt{wimg.values()}                      & \texttt{OutputMDRange}                      & \makecell[l]{Return a range that yields all \\ the image values (mutable).} \\
+      \multicolumn{1}{c|}{}                               & \makecell[l]{\texttt{OutputPixel<}                                                                                                      \\\texttt{std::ranges::ranges\_value\_t<} \\\texttt{decltype(wimg.pixels())> >}} & \texttt{std::true\_type}     & \multirow{2}{*}{Ranges whose elements are mutable.} \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: expressions (1)}
+  \end{scriptsize}
+  \label{table:concept.image.expressions.1}
+\end{table}
+
+\paragraph{Concept code}
 
 \begin{minted}{c++}
 template <typename I>
@@ -353,8 +735,219 @@ concept InputImage = Image<I>;
 // ForwardImage
 template <typename I>
 concept ForwardImage = InputImage<I>;
+\end{minted}
+
+\paragraph{Archetype code}
+
+\begin{minted}{c++}
+namespace details
+{
+  template <class I>
+  struct AsImage : I, mln::details::Image<AsImage<I>>
+  {
+    using I::I;
+
+    using concrete_type = AsImage<typename I::concrete_type>;
+    concrete_type concretize() const;
 
 
+    template <typename V>
+    using ch_value_type = AsImage<typename I::template ch_value_type<V>>;
+
+    template <typename V>
+    ch_value_type<V> ch_value() const;
+  };
+
+
+  struct Image
+  {
+    using pixel_type = archetypes::Pixel;
+    using value_type     = pixel_value_t<mln::archetypes::Pixel>;
+    using reference      = pixel_reference_t<mln::archetypes::Pixel>;
+    using point_type     =  std::ranges::range_value_t<Domain>;
+    using domain_type    = Domain;
+    using category_type  = forward_image_tag;
+    using concrete_type  = Image;
+
+    template <class V>
+    using ch_value_type = Image;
+
+    // additional traits
+    using extension_category = mln::extension::none_extension_tag;
+    using indexable          = std::false_type;
+    using accessible         = std::false_type;
+    using view               = std::false_type;
+
+    Image()                     = default;
+    Image(const Image&) = default;
+    Image(Image&&)      = default;
+    Image& operator=(const Image&) = default;
+    Image& operator=(Image&&) = default;
+
+    domain_type domain() const;
+
+
+    struct pixel_range
+    {
+      const pixel_type* begin();
+      const pixel_type* end();
+    };
+    pixel_range pixels();
+
+
+    struct value_range
+    {
+      const value_type* begin();
+      const value_type* end();
+    };
+
+    value_range values();
+  };
+
+  struct OutputImage : Image
+  {
+    using pixel_type = archetypes::OutputPixel;
+    using reference  = pixel_reference_t<mln::archetypes::OutputPixel>;
+
+    struct pixel_range
+    {
+      const pixel_type* begin();
+      const pixel_type* end();
+    };
+
+    pixel_range pixels();
+
+    struct value_range
+    {
+      value_type* begin();
+      value_type* end();
+    };
+
+    value_range values();
+  };
+} // namespace details
+
+
+using Image         = details::AsImage<details::Image>;
+using ForwardImage  = Image;
+using WritableImage = details::AsImage<details::OutputImage>;
+\end{minted}
+
+
+\section{Advanced way to access image data}
+
+
+\subsection{Index}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      Index           & \texttt{Idx}          & $\emptyset$                   & \texttt{idx, idy}        \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                             & \thead{Expression}                   & \thead{Return Type}      &
+      \thead{Description}                                                                                             \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{Index}} & \texttt{std::signed\_integral<Idx>}  & \texttt{std::true\_type} &
+      Idx is a signed integral arithmetic type                                                                        \\
+      \multicolumn{1}{c|}{}                       & \texttt{idx + idy, idx - idy, \dots} & \texttt{Idx}             &
+      Supports all trivial arithmetical operations                                                                    \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Index: expressions}
+  \end{scriptsize}
+  \label{table:concept.index.expressions}
+\end{table}
+
+\paragraph{Concept code}
+
+\begin{minted}{c++}
+// Index
+template <typename Idx>
+concept Index = std::signed_integral<Idx>;
+\end{minted}
+
+\paragraph{Archetype code}
+
+\begin{minted}{c++}
+using Index = int;
+
+static_assert(mln::concepts::Index<Index>, "Index archetype does not model the Index concept!");
+\end{minted}
+
+
+\subsection{Indexable image}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}        & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      IndexableImage         & \texttt{IdxImg}       & Image                         & \texttt{idximg}          \\
+      WritableIndexableImage & \texttt{WIdxImg}      & IndexableImage, WritableImage & \texttt{widximg}         \\
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                     & \thead{Definition}   & \thead{Description}               & \thead{Requirement}                \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{IndexableImage} & \texttt{index\_type} & Type of the image's buffer index. & Models the concept \texttt{Index}. \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: definitions (2)}
+    \label{table:concept.image.definitions.2}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{lll}
+      \cline{1-2}
+      \thead{Type}                 & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{Img::value\_type}    & \texttt{val}             \\
+      \texttt{IdxImg::index\_type} & \texttt{k}               \\
+      \cline{1-2}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                     & \thead{Expression} & \thead{Return Type}               &
+      \thead{Description}                                                                                                                           \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{IndexableImage} & \texttt{idximg[k]} & \texttt{std::same\_as<reference>} & \makecell[l]{Access a value at a given index.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\makecell[l]{Writable                                                                                                     \\IndexableImage}} & \texttt{widximg[k] = val}                            & \texttt{void}                      & \makecell[l]{Mutate a value at a given index.} \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: expressions (2)}
+  \end{scriptsize}
+  \label{table:concept.image.expressions.2}
+\end{table}
+
+\paragraph{Concept code}
+
+\begin{minted}{c++}
 // IndexableImage
 template <typename I>
 concept IndexableImage =
@@ -379,7 +972,106 @@ namespace detail
       { ima[k] = v }
     };
 } // namespace detail
+\end{minted}
 
+\paragraph{Archetype code}
+
+\begin{minted}{c++}
+namespace details
+{
+    
+  struct IndexableImage : Image
+  {
+    using index_type = int;
+    using indexable  = std::true_type;
+
+    using concrete_type = IndexableImage;
+
+    template <class V>
+    using ch_value_type = IndexableImage;
+
+
+    reference operator[](index_type);
+  };
+
+  struct OutputIndexableImage : OutputImage
+  {
+    using index_type = int;
+    using indexable  = std::true_type;
+
+    using concrete_type = OutputIndexableImage;
+
+    template <class V>
+    using ch_value_type = OutputIndexableImage;
+
+    reference operator[](index_type);
+  };
+
+} // namespace details
+
+using IndexableImage              = details::AsImage<details::IndexableImage>;
+using WritableIndexableImage      = details::AsImage<details::OutputIndexableImage>;
+\end{minted}
+
+
+\subsection{Accessible image}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}         & \thead{Modeling type} & \thead{Inherit behavior from}  & \thead{Instance of type} \\
+      \cline{1-4}
+      AccessibleImage         & \texttt{AccImg}       & Image                          & \texttt{accimg}          \\
+      WritableAccessibleImage & \texttt{WAccImg}      & AccessibleImage, WritableImage & \texttt{waccimg}         \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: definitions (3)}
+    \label{table:concept.image.definitions.3}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{lll}
+      \cline{1-2}
+      \thead{Type}              & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{Img::point\_type} & \texttt{pnt}             \\
+      \cline{1-2}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                       & \thead{Expression}                          & \thead{Return Type}                 &
+      \thead{Description}                                                                                                                                                                         \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{AccessibleImage}} & \texttt{accimg(pnt)}                        & \texttt{std::same\_as<reference>}   & \makecell[l]{Access a value for a given point.} \\
+      \multicolumn{1}{c|}{}                                 & \texttt{accimg.at(pnt)}                     & \texttt{std::same\_as<reference>}   & \makecell[l]{Access a value for a given point.  \\ No bound checking.} \\
+      \multicolumn{1}{c|}{}                                 & \texttt{accimg.pixel(pnt)}                  & \texttt{std::same\_as<pixel\_type>} & \makecell[l]{Access a pixel for a given point.} \\
+      \multicolumn{1}{c|}{}                                 & \texttt{accimg.pixel\_at(pnt)}              & \texttt{std::same\_as<pixel\_type>} & \makecell[l]{Access a pixel for a given point.  \\ No bound checking.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Writable                                                                                                                                   \\AccessibleImage}}} & \texttt{img(pnt) = val}                            & \texttt{void}                      & \makecell[l]{Mutate a value at a given point.} \\
+      \multicolumn{1}{c|}{}                                 & \texttt{waccimg.at(pnt) = val}              & \texttt{void}                       & \makecell[l]{Mutate a value at a given point.   \\ No bound checking.} \\
+      \multicolumn{1}{c|}{}                                 & \makecell[l]{\texttt{OutputPixel<decltype(}                                                                                         \\\texttt{waccimg.pixel(pnt))>}}                            & \texttt{std::true\_type}                      & \makecell[l]{The returned pixel \\ models \texttt{OutputPixel}.} \\
+      \multicolumn{1}{c|}{}                                 & \makecell[l]{\texttt{OutputPixel<decltype(}                                                                                         \\\texttt{waccimg.pixel\_at(pnt))>}}                            & \texttt{std::true\_type}                      & \makecell[l]{The returned pixel \\ models \texttt{OutputPixel}. \\ No bound checking.} \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: expressions (3)}
+  \end{scriptsize}
+  \label{table:concept.image.expressions.3}
+\end{table}
+
+\paragraph{Concept code}
+
+\begin{minted}{C++}
 // AccessibleImage
 template <typename I>
 concept AccessibleImage =
@@ -408,7 +1100,89 @@ namespace detail
       requires OutputPixel<decltype(ima.pixel_at(p))>;
     };
 } // namespace detail
+\end{minted}
 
+\paragraph{Archetype code}
+\begin{minted}{C++}
+namespace details {  
+  struct OutputAccessibleImage : OutputImage
+  {
+    using accessible    = std::true_type;
+    using concrete_type = OutputAccessibleImage;
+
+    template <class V>
+    using ch_value_type = OutputAccessibleImage;
+
+
+    reference      operator()(point_type);
+    reference      at(point_type);
+    pixel_type pixel(point_type);
+    pixel_type pixel_at(point_type);
+  };
+
+
+  struct AccessibleImage : Image
+  {
+    using accessible    = std::true_type;
+    using concrete_type = AccessibleImage;
+
+    template <class V>
+    using ch_value_type = AccessibleImage;
+
+    reference      operator()(point_type);
+    reference      at(point_type);
+    pixel_type pixel(point_type);
+    pixel_type pixel_at(point_type);
+  };
+} // namespace details
+
+using AccessibleImage             = details::AsImage<details::AccessibleImage>;
+using WritableAccessibleImage     = details::AsImage<details::OutputAccessibleImage>;
+\end{minted}
+
+
+\subsection{Indexable and accessible image}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \makecell[l]{IndexableAnd                                                                          \\ AccessibleImage}         & \texttt{IdxAccImg}    & IndexableImage, AccessibleImage                                              & \texttt{idxaccimg}       \\
+      \makecell[l]{ WritableIndexable                                                                    \\ AndAccessibleImage} & \texttt{WIdxAccImg}   & \makecell[l]{IndexableAndAccessibleImage, \\ WritableIndexableImage, \\WritableAccessibleImage} & \texttt{widxaccimg}      \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: definitions (4)}
+    \label{table:concept.image.definitions.4}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}       & \thead{Expression}                       & \thead{Return Type}  &
+      \thead{Description}                                                                                                                    \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{3}{*}{\makecell[l]{IndexableAnd                                                                          \\AccessibleImage}}} & \texttt{img.point\_at\_index(k)}                            & \texttt{point\_type}                      & \makecell[l]{Get the point corresponding\\ to the given index.} \\
+      \multicolumn{1}{c|}{} & \texttt{idxaccimg.index\_of\_point(pnt)} & \texttt{index\_type} & \makecell[l]{Get the linear index (offset in \\ the buffer) of multi-dimensional point.} \\
+      \multicolumn{1}{c|}{} & \texttt{idxaccimg.delta\_index(pnt)}     & \texttt{index\_type} & \makecell[l]{Get the linear index offset     \\ for the given point.} \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: expressions (4)}
+  \end{scriptsize}
+  \label{table:concept.image.expressions.4}
+\end{table}
+
+\paragraph{Concept code}
+
+\begin{minted}{C++}
 // IndexableAndAccessibleImage
 template <typename I>
 concept IndexableAndAccessibleImage =
@@ -430,27 +1204,230 @@ namespace detail
     detail::WritableImage<I> &&
     detail::WritableIndexableImage<I>;
 } // namespace detail
+\end{minted}
 
-// BidirectionalImage (not in STL term)
-template <typename I>
-concept BidirectionalImage =
-  Image<I> &&
-  std::derived_from<image_category_t<I>, bidirectional_image_tag> &&
-  requires (I ima) {
-  { ima.pixels() }  -> mln::ranges::reversible_mdrange;
-  { ima.values() }  -> mln::ranges::reversible_mdrange;
-};
+\paragraph{Archetype code}
+
+\begin{minted}{C++}
+namespace details {
+  struct OutputIndexableAndAccessibleImage : OutputAccessibleImage
+  {
+    using index_type = int;
+    using indexable  = std::true_type;
+
+    using concrete_type = OutputIndexableAndAccessibleImage;
+
+    template <class V>
+    using ch_value_type = OutputIndexableAndAccessibleImage;
 
 
-namespace detail
-{
-  // WritableBidirectionalImage
+    reference  operator[](index_type);
+    point_type point_at_index(index_type) const;
+    index_type index_of_point(point_type) const;
+    index_type delta_index(point_type) const;
+  };
+
+  struct IndexableAndAccessibleImage : AccessibleImage
+  {
+    using index_type = int;
+    using indexable  = std::true_type;
+
+    using concrete_type = IndexableAndAccessibleImage;
+
+    template <class V>
+    using ch_value_type = IndexableAndAccessibleImage;
+
+    reference  operator[](index_type);
+    point_type point_at_index(index_type) const;
+    index_type index_of_point(point_type) const;
+    index_type delta_index(point_type) const;
+  };
+} // namespace details
+
+using IndexableAndAccessibleImage       = details::AsImage<details::IndexableAndAccessibleImage>;
+using WritableIndexableAndAccessibleImage = details::AsImage<details::OutputIndexableAndAccessibleImage>;
+\end{minted}
+
+
+\subsection{Bidirectional image}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}            & \thead{Modeling type} & \thead{Inherit behavior from}     & \thead{Instance of type} \\
+      \cline{1-4}
+      BidirectionalImage         & \texttt{BidirImg}     & Image                             & \texttt{bidirimg}        \\
+      WritableBidirectionalImage & \texttt{WBidirImg}    & BidirectionalImage, WritableImage & \texttt{wbidirimg}       \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: definitions (5)}
+    \label{table:concept.image.definitions.5}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{lll}
+      \cline{1-2}
+      \thead{Type}                 & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{Img::point\_type}    & \texttt{pnt}             \\
+      \texttt{Img::value\_type}    & \texttt{val}             \\
+      \texttt{IdxImg::index\_type} & \texttt{k}               \\
+      \texttt{int}                 & \texttt{dim}             \\
+      \cline{1-2}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                          & \thead{Expression}         & \thead{Return Type}                         &
+      \thead{Description}                                                                                                                                                                      \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{BidirectionalImage}} & \texttt{bidirimg.pixels()} & \multirow{2}{*}{\texttt{ReversibleMDRange}} & \makecell[l]{Return a reversible range that yields \\ all the image pixels.} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{bidirimg.values()} &                                             & \makecell[l]{Return a reversible range that yields \\ all the image values.} \\
+      \cline{1-4}
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: expressions (5)}
+  \end{scriptsize}
+  \label{table:concept.image.expressions.5}
+\end{table}
+
+\paragraph{Concept code}
+\begin{minted}{C++}
+  namespace detail
+  {
+    // WritableBidirectionalImage
+    template <typename I>
+    concept WritableBidirectionalImage =
+      WritableImage<I> &&
+      BidirectionalImage<I>;
+  } // namespace detail
+  
+  // RawImage (not contiguous, stride = padding)
   template <typename I>
-  concept WritableBidirectionalImage =
-    WritableImage<I> &&
-    BidirectionalImage<I>;
-} // namespace detail
+  concept RawImage =
+    IndexableAndAccessibleImage<I> &&
+    BidirectionalImage<I> &&
+    std::derived_from<image_category_t<I>, raw_image_tag> &&
+    requires (I ima, const I cima, int dim) {
+      { ima.data() }        -> std::convertible_to<const image_value_t<I>*>; // data() may be proxied by a view
+      { cima.stride(dim) } -> std::same_as<std::ptrdiff_t>;
+    };
+\end{minted}
 
+\paragraph{Archetype code}
+
+\begin{minted}{C++}
+namespace details {
+  struct BidirectionalImage : Image
+  {
+    using category_type = bidirectional_image_tag;
+
+    struct pixel_range
+    {
+      const pixel_type* begin();
+      const pixel_type* end();
+      pixel_range           reversed();
+    };
+
+    pixel_range pixels();
+
+    struct value_range
+    {
+      const value_type* begin();
+      const value_type* end();
+      value_range       reversed();
+    };
+
+    value_range values();
+  };
+
+  struct OutputBidirectionalImage : BidirectionalImage
+  {
+    using pixel_type = archetypes::OutputPixel;
+    using reference      = pixel_reference_t<mln::archetypes::OutputPixel>;
+
+    struct value_range
+    {
+      value_type* begin();
+      value_type* end();
+      value_range reversed();
+    };
+    value_range values();
+
+
+    struct pixel_range
+    {
+      const pixel_type* begin();
+      const pixel_type* end();
+      pixel_range           reversed();
+    };
+
+    pixel_range pixels();
+  };
+} // namespace details
+
+using BidirectionalImage = details::AsImage<details::BidirectionalImage>;
+using OutputBidirectionalImage = details::AsImage<details::OutputBidirectionalImage>;
+\end{minted}
+
+
+\subsection{Raw image}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}  & \thead{Modeling type} & \thead{Inherit behavior from}                  & \thead{Instance of type} \\
+      \cline{1-4}
+      RawImage         & \texttt{RawImg}       & \makecell[l]{IndexableAndAccessibleImage,                                 \\BidirectionalImage}                              & \texttt{rawimg}          \\
+      WritableRawImage & \texttt{WRawImg}      & \makecell[l]{RawImage, WritableIndexableImage,                            \\WritableBidirectionalImage}                 & \texttt{wrawimg}         \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: definitions (6)}
+    \label{table:concept.image.definitions.6}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                & \thead{Expression}                   & \thead{Return Type}                         &
+      \thead{Description}                                                                                                                                                                       \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{RawImage}} & \texttt{rawimg.data()}               & \makecell[l]{\texttt{std::convertible\_to<}                                                       \\\texttt{const value\_type*>}} & \makecell[l]{Get a constant pointer to \\ the first element of the domain.} \\
+      \multicolumn{1}{c|}{}                          & \texttt{rawimg.stride(dim)}          & \texttt{std::ptrdiff\_t}                    & \makecell[l]{Get the stride (in number of elements) \\ between two consecutive elements \\in the given \texttt{dim}.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{\makecell[l]{Writable                                                                                                                                 \\RawImage}}}           & \texttt{img.data()}                         & \makecell[l]{\texttt{std::convertible\_to<}\\\texttt{value\_type*>}} & \makecell[l]{Get a pointer to the first\\ element of the domain.} \\
+      \multicolumn{1}{c|}{}                          & \texttt{*(wrawimg.data() + k) = val} & \texttt{void}                               & \makecell[l]{Access an element from the data        \\buffer at index \texttt{k} and mutate it \\ to \texttt{val}.} \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\makecell[l]{WithExtension                                                                                                                                            \\Image}}           & \texttt{wextimg.extension()}                         & \makecell[l]{\texttt{std::convertible\_to<}\\\texttt{extension\_type>}} & \makecell[l]{Get the extension of the image.} \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: expressions (6)}
+  \end{scriptsize}
+  \label{table:concept.image.expressions.6}
+\end{table}
+
+\paragraph{Concept code}
+
+\begin{minted}{C++}
 // RawImage (not contiguous, stride = padding)
 template <typename I>
 concept RawImage =
@@ -476,280 +1453,233 @@ namespace detail
       { *(ima.data() + k) = v };
     };
 } // namespace detail
+\end{minted}
 
 
-// OutputImage
-// Usage: RawImage<I> && OutputImage<I>
-template <typename I>
-concept OutputImage =
-  (not Image<I> || (detail::WritableImage<I>)) &&
-  (not IndexableImage<I> || (detail::WritableIndexableImage<I>)) &&
-  (not AccessibleImage<I> || (detail::WritableAccessibleImage<I>)) &&
-  (not IndexableAndAccessibleImage<I> ||
-    (detail::WritableIndexableAndAccessibleImage<I>)) &&
-  (not BidirectionalImage<I> || (detail::WritableBidirectionalImage<I>)) &&
-  (not RawImage<I> || (detail::WritableRawImage<I>));
+\paragraph{Archetype code}
+
+\begin{minted}{C++}
+namespace details {
+  struct RawImage : IndexableAndAccessibleImage
+  {
+    using category_type = raw_image_tag;
+    using pixel_range   = BidirectionalImage::pixel_range;
+    using value_range   = BidirectionalImage::value_range;
+
+    pixel_range pixels();
+    value_range values();
 
 
-template <typename I>
-concept WithExtensionImage =
-  Image<I> &&
-  requires {
-    typename image_extension_t<I>;
-  } &&
-  Extension<image_extension_t<I>, image_point_t<I>> &&
-  not std::same_as<mln::extension::none_extension_tag, image_extension_category_t<I>> &&
-  requires (I ima, image_point_t<I> p) {
-    { ima.extension() } -> std::convertible_to<image_extension_t<I>>;
+    const value_type* data() const;
+    std::ptrdiff_t    strides(int) const;
   };
 
+  struct OutputRawImage : OutputIndexableAndAccessibleImage
+  {
+    using category_type = raw_image_tag;
+    using pixel_range   = OutputBidirectionalImage::pixel_range;
+    using value_range   = OutputBidirectionalImage::value_range;
 
-// ConcreteImage
-template <typename I>
-concept ConcreteImage =
-  Image<I> &&
-  std::semiregular<I> &&  // A concrete image is default constructible
-  not image_view_v<I>;
+    pixel_range pixels();
+    value_range values();
 
+    value_type*    data() const;
+    std::ptrdiff_t strides(int) const;
+  };
+} // namespace details
 
-// ViewImage
-template <typename I>
-concept ViewImage =
-  Image<I> &&
-  image_view_v<I>;
+using RawImage           = details::AsImage<details::RawImage>;
+using OutputRawImage     = details::AsImage<details::OutputRawImage>;
 \end{minted}
 
 
-\paragraph{Extension}
-
-\begin{minted}{c++}
-  template <typename Ext, typename Pnt>
-  concept Extension =
-    std::is_base_of_v<mln::Extension<Ext>, Ext> &&
-    requires {
-      typename Ext::support_fill;
-      typename Ext::support_mirror;
-      typename Ext::support_periodize;
-      typename Ext::support_clamp;
-      typename Ext::support_extend_with;
-    } &&
-    Value<typename Ext::value_type> &&
-    requires (const Ext cext,
-        mln::archetypes::StructuringElement<
-          Pnt,
-          mln::archetypes::Pixel> se) {
-      { cext.fit(se) }      -> std::same_as<bool>;
-      { cext.extent() }     -> std::same_as<int>;
-    };
-
-  template <typename Ext, typename Pnt>
-  concept FillableExtension =
-    Extension<Ext, Pnt> &&
-    std::convertible_to<typename Ext::support_fill, std::true_type> &&
-    requires {
-      typename Ext::value_type;
-    } &&
-    requires (Ext ext, const Ext cext, const typename Ext::value_type& v) {
-      { ext.fill(v) };
-      { cext.is_fill_supported() }  -> std::same_as<bool>;
-    };
-
-  template <typename Ext, typename Pnt>
-  concept MirrorableExtension =
-    Extension<Ext, Pnt> &&
-    std::convertible_to<typename Ext::support_mirror, std::true_type> &&
-    requires (Ext ext, const Ext cext) {
-      { ext.mirror() };
-      { cext.is_mirror_supported() }  -> std::same_as<bool>;
-    };
-
-  template <typename Ext, typename Pnt>
-  concept PeriodizableExtension =
-    Extension<Ext, Pnt> &&
-    std::convertible_to<typename Ext::support_periodize, std::true_type> &&
-    requires (Ext ext, const Ext cext) {
-      { ext.periodize() };
-      { cext.is_periodize_supported() }  -> std::same_as<bool>;
-    };
-
-  template <typename Ext, typename Pnt>
-  concept ClampableExtension =
-    Extension<Ext, Pnt> &&
-    std::convertible_to<typename Ext::support_clamp, std::true_type> &&
-    requires (Ext ext, const Ext cext) {
-      { ext.clamp() };
-      { cext.is_clamp_supported() }  -> std::same_as<bool>;
-    };
-
-  template <typename Ext, typename Pnt, typename U>
-  concept ExtendWithExtension =
-    Extension<Ext, Pnt> &&
-    std::convertible_to<typename Ext::support_extend_with, std::true_type> &&
-    InputImage<U> &&
-    requires {
-      typename Ext::point_type;
-    } &&
-    std::convertible_to<typename U::value_type, typename Ext::value_type> &&
-    std::convertible_to<typename Ext::point_type, typename U::point_type> &&
-    requires (Ext ext, const Ext cext, U u, typename Ext::point_type offset) {
-      { ext.extend_with(u, offset) };
-      { cext.is_extend_with_supported() }  -> std::same_as<bool>;
-    };
-\end{minted}
+\section{Local algorithm concepts: structuring elements and extensions}
 
 
+\subsection{Structuring element}
 
-\subsection{Archetypes}
+\paragraph{Concept table}
 
-\paragraph{Index}
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      StructuringElement             & \texttt{SE, Pnt}      & $\emptyset$, Point            & \texttt{se, pnt}         \\
+      DecomposableStructuringElement & \texttt{DSE, Pnt}     & StructuringElement, Point     & \texttt{dse}             \\
+      SeparableStructuringElement    & \texttt{SSE, Pnt}     & StructuringElement, Point     & \texttt{sse}             \\
+      IncrementalStructuringElement  & \texttt{ISE, Pnt}     & StructuringElement, Point     & \texttt{ise}             \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
 
-\begin{minted}{c++}
-using Index = int;
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                          & \thead{Definition}    & \thead{Description}                           &
+      \thead{Requirement}                                                                                                                                                                                   \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{3}{*}{StructuringElement}} & \texttt{incremental}  & \multirow{3}{*}{\texttt{std::bool\_constant}} & \multirow{3}{*}{\makecell[l]{\texttt{std::true\_type} if supported \\ \texttt{std::false\_false} otherwise.}} \\
+      \multicolumn{1}{c|}{}                                    & \texttt{decomposable} &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                                    & \texttt{separable}    &                                               &                                                                    \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
 
-static_assert(mln::concepts::Index<Index>, "Index archetype does not model the Index concept!");
-\end{minted}
+    \caption{Concepts Structuring Elements: definitions}
+    \label{table:concept.se.definitions}
+  \end{scriptsize}
+\end{table}
 
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{lll}
+      \cline{1-3}
+      \thead{Type} & \thead{Instance of type} & \thead{Requirement}                           \\
+      \cline{1-3}
+      \texttt{Pix} & \texttt{pix}             & \texttt{std::same\_as<Pix::point\_type, Pnt>} \\
+      \texttt{Pnt} & \texttt{pnt}             &                                               \\
+      \cline{1-3}
+    \end{tabular}
+    \smallskip
 
-\paragraph{Value}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                           & \thead{Expression}                                    & \thead{Return Type}                       &
+      \thead{Description}                                                                                                                                                                                     \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{11}{*}{StructuringElement}} & \multirow{2}{*}{\texttt{std::regular\_invocable<SE,
+      Pnt>}}                                                    & \multirow{4}{*}{\texttt{std::true\_type}}             &
+      \multirow{4}{*}{\makecell[l]{\texttt{se} can called using \text{std::invoke},                                                                                                                           \\ is equality preserving and \\
+      does not modify function object                                                                                                                                                                         \\ nor arguments.}} \\
+      \multicolumn{1}{c|}{}                                     &                                                       &
+                                                                &                                                                                                                                             \\
+      \multicolumn{1}{c|}{}                                     & \multirow{2}{*}{\texttt{std::regular\_invocable<SE,
+      Pix>}}                                                    &                                                       &
+      \\
+      \multicolumn{1}{c|}{}                                     &                                                       &                                           &                                         \\
+      \multicolumn{1}{c|}{}                                     & \texttt{se(pnt)}                                      & \texttt{std::forward\_range}              &
+      \makecell[l]{Return a range that yeilds the                                                                                                                                                             \\
+      neighboring points of \texttt{pnt}.}                                                                                                                                                                    \\
+      \multicolumn{1}{c|}{}                                     & \texttt{se.offsets()}                                 & \texttt{std::forward\_range}              &
+      \makecell[l]{Return a range that yeilds the                                                                                                                                                             \\
+      neighboring points,                                                                                                                                                                                     \\in relative coordinates.}                                                                                                                                                          \\
+      \multicolumn{1}{c|}{}                                     & \texttt{se(pix)}                                      & \texttt{std::forward\_range}              &
+      \makecell[l]{Return a range that yeilds the                                                                                                                                                             \\
+      neighboring pixels of \texttt{pix}.}                                                                                                                                                                    \\
+      \multicolumn{1}{c|}{}                                     & \texttt{se.radial\_extent()}                          & \texttt{int}                              &
+      \makecell[l]{Returns the radial extent                                                                                                                                                                  \\of the SE,
+      the radius                                                                                                                                                                                              \\of the disc (square).}                                                                                                                                                                      \\
+      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                 \\
+      \texttt{std::ranges::range\_value\_t<}                                                                                                                                                                  \\ \texttt{decltype(se(pnt))>, Pnt>}}      &
+      \multirow{3}{*}{\texttt{std::true\_type}}                 & \multirow{3}{*}{\makecell[l]{Converts to a compatible                                                                                       \\ point type}}
+      \\
+      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                 \\
+      \texttt{std::ranges::range\_value\_t<}                                                                                                                                                                  \\ \texttt{decltype(se.offsets())>, Pnt>}} & & \\
+      \multicolumn{1}{c|}{}                                     &
+      \makecell[l]{\texttt{Pixel<std::ranges::range\_value\_t<}
+      \\ \texttt{decltype(se(pix))> >}}                          &                                           & \makecell[l]{Is a range of compatible \\pixel type}                                                                                                                                                                \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Decomposable                                                                                                                                           \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if supported\\ \texttt{std::false\_false} otherwise.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{dse.decompose()}                              & \texttt{std::forward\_range}              & \makecell[l]{Return a range that yeilds \\ simpler structuring elements.}\\
+      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{StructuringElement<}                                                                                                   \\ \texttt{std::ranges::range\_value\_t<} \\ \texttt{decltype(dse.decompose())> >}}                            & \texttt{std::true\_type} & \makecell[l]{Is a range of compatible \\structuring elements types.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{dse.is\_decomposable()}                       & \texttt{bool}                             & \makecell[l]{Wether the decompose       \\ facility is supported}\\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Separable                                                                                                                                              \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if supported\\ \texttt{std::false\_false} otherwise.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{sse.separate()}                               & \texttt{std::forward\_range}              & \makecell[l]{Return a range that yeilds \\ simpler structuring elements.}\\
+      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{StructuringElement<}                                                                                                   \\ \texttt{std::ranges::range\_value\_t<} \\ \texttt{decltype(sse.separate())> >}}                            & \texttt{std::true\_type} & \makecell[l]{Is a range of compatible \\structuring elements types.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{sse.is\_separable()}                          & \texttt{bool}                             & \makecell[l]{Wether the separate        \\ facility is supported}\\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Incremental                                                                                                                                            \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if supported\\ \texttt{std::false\_false} otherwise.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{ise.inc()}                                    & \makecell[l]{\texttt{StructuringElement<}                                           \\\texttt{SE, Pnt>}} & \makecell[l]{Return the next            \\ simpler structuring elements.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{ise.dec()}                                    & \makecell[l]{\texttt{StructuringElement<}                                           \\\texttt{SE, Pnt>}} & \makecell[l]{Return the previous        \\ simpler structuring elements.}\\
+      \multicolumn{1}{c|}{}                                     & \texttt{ise.is\_incremental()}                        & \texttt{bool}                             & \makecell[l]{Wether the incremental     \\ facility is supported}\\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
 
-\begin{minted}{c++}
-struct Value
-{
-};
+    \caption{Concepts Structuring Elements: expressions}
+  \end{scriptsize}
+  \label{table:concept.se.expressions}
+\end{table}
 
-struct ComparableValue
-{
-};
-bool operator==(const ComparableValue&, const ComparableValue&);
-bool operator!=(const ComparableValue&, const ComparableValue&);
-
-
-struct OrderedValue
-{
-};
-bool operator==(const OrderedValue&, const OrderedValue&);
-bool operator!=(const OrderedValue&, const OrderedValue&);
-bool operator<(const OrderedValue&, const OrderedValue&);
-bool operator>(const OrderedValue&, const OrderedValue&);
-bool operator<=(const OrderedValue&, const OrderedValue&);
-bool operator>=(const OrderedValue&, const OrderedValue&);
-
-static_assert(mln::concepts::Value<Value>, "Value archetype does not model the Value concept!");
-static_assert(mln::concepts::ComparableValue<ComparableValue>, "ComparableValue archetype does not model the ComparableValue concept!");
-static_assert(mln::concepts::OrderedValue<OrderedValue>, "OrderedValue archetype does not model the OrderedValue concept!");
-\end{minted}
-
-
-\paragraph{Point}
-
-\begin{minted}{c++}
-struct Point final
-{
-};
-
-bool operator==(const Point&, const Point&);
-bool operator!=(const Point&, const Point&);
-bool operator<(const Point&, const Point&);
-bool operator>(const Point&, const Point&);
-bool operator<=(const Point&, const Point&);
-bool operator>=(const Point&, const Point&);
-
-static_assert(mln::concepts::Point<Point>, "Point archetype does not model the Point concept!");
-\end{minted}
-
-
-\paragraph{Pixel}
+\paragraph{Concept code}
 
 \begin{minted}{c++}
 namespace details
 {
-  template <class P, class V>
-  struct PixelT
-  {
-    using value_type = V;
-    using point_type = P;
-    using reference  = const value_type&;
+  template <typename SE>
+  concept DynamicStructuringElement =
+    requires (SE se) {
+    { se.radial_extent() }  -> std::same_as<int>;
+    };
 
-    PixelT()              = delete;
-    PixelT(const PixelT&) = default;
-    PixelT(PixelT&&)      = default;
-    PixelT& operator=(const PixelT&) = delete;
-    PixelT& operator=(PixelT&&) = delete;
+  constexpr bool implies(bool a, bool b) { return !a || b; }
+}
 
-    point_type point() const;
-    reference  val() const;
-    void       shift(const P& dp);
+template <typename SE, typename P>
+concept StructuringElement =
+  std::convertible_to<SE, mln::details::StructuringElement<SE>> &&
+  std::ranges::regular_invocable<SE, P> &&
+  std::ranges::regular_invocable<SE, mln::archetypes::PixelT<P>> &&
+  requires {
+    typename SE::category;
+    typename SE::incremental;
+    typename SE::decomposable;
+    typename SE::separable;
+  } &&
+  std::convertible_to<typename SE::category, mln::adaptative_neighborhood_tag> &&
+  details::implies(std::convertible_to<typename SE::category, mln::dynamic_neighborhood_tag>,
+                    details::DynamicStructuringElement<SE>) &&
+  requires (SE se, const SE cse, P p, mln::archetypes::PixelT<P> px) {
+    { se(p) }         -> std::ranges::forward_range;
+    { se(px) }        -> std::ranges::forward_range;
+    { cse.offsets() } -> std::ranges::forward_range;
+
+    requires std::convertible_to<std::ranges::range_value_t<decltype(se(p))>, P>;
+    requires std::Pixel<std::ranges::range_value_t<decltype(se(px))>>;
+    requires std::convertible_to<std::ranges::range_value_t<decltype(cse.offsets())>, P>;
   };
 
-  struct OutputPixel : PixelT<Point, Value>
-  {
-    using reference = Value&;
-    reference val() const;
+namespace details
+{
+  template <typename R, typename P>
+  concept RangeOfStructuringElement =
+    StructuringElement<std::ranges::range_value_t<R>, P>;
+}
+
+template <typename SE, typename P>
+concept DecomposableStructuringElement =
+  StructuringElement<SE, P> &&
+  std::convertible_to<typename SE::decomposable, std::true_type> &&
+  requires(const SE se) {
+    { se.is_decomposable() }  -> std::same_as<bool>;
+    { se.decompose() }        -> std::ranges::forward_range;
+    requires details::RangeOfStructuringElement<decltype(se.decompose()), P>;
   };
 
-
-  template <class Pix>
-  struct AsPixel : Pix, mln::details::Pixel<AsPixel<Pix>>
-  {
+template <typename SE, typename P>
+concept SeparableStructuringElement =
+  StructuringElement<SE, P> &&
+  std::convertible_to<typename SE::separable, std::true_type> &&
+  requires(const SE se) {
+    { se.is_separable() } -> std::same_as<bool>;
+    { se.separate() }     -> std::ranges::forward_range;
+    requires details::RangeOfStructuringElement<decltype(se.separate()), P>;
   };
-} // namespace details
 
-template <class P, class V = Value>
-using PixelT      = details::AsPixel<details::PixelT<P, V>>;
-using Pixel       = PixelT<Point, Value>;
-using OutputPixel = details::AsPixel<details::OutputPixel>;
-
-static_assert(mln::concepts::Pixel<Pixel>, "Pixel archetype does not model the Pixel concept!");
-static_assert(mln::concepts::OutputPixel<OutputPixel>, "OutputPixel archetype does not model the OutputPixel concept!");
+template <typename SE, typename P>
+concept IncrementalStructuringElement =
+  StructuringElement<SE, P> &&
+  std::convertible_to<typename SE::incremental, std::true_type> &&
+  requires(const SE se) {
+    { se.is_incremental() } -> std::same_as<bool>;
+    { se.inc() }  -> StructuringElement<SE, P>;
+    { se.dec() }  -> StructuringElement<SE, P>;
+  };
 \end{minted}
 
-
-\paragraph{Ranges}
-
-\begin{minted}{c++}
-  // TODO
-\end{minted}
-
-
-\paragraph{Domain}
-
-\begin{minted}{c++}
-struct Domain
-{
-  using value_type = Point;
-  using reference  = Point&;
-
-  value_type* begin();
-  value_type* end();
-
-  bool has(value_type) const;
-  bool empty() const;
-  int  dim() const;
-};
-
-static_assert(mln::concepts::Domain<Domain>, "Domain archetype does not model the Domain concept!");
-
-struct SizedDomain : Domain
-{
-  unsigned size() const;
-};
-
-static_assert(mln::concepts::SizedDomain<SizedDomain>,
-                          "SizedDomain archetype does not model the SizedDomain concept!");
-
-struct ShapedDomain final : SizedDomain
-{
-  static constexpr std::size_t  ndim = 1;
-  value_type                    shape() const;
-  std::array<std::size_t, ndim> extents() const;
-};
-
-static_assert(mln::concepts::ShapedDomain<ShapedDomain>,
-                          "ShapedDomain archetype does not model the ShapedDomain concept!");
-\end{minted}
-
-
-\paragraph{Structuring Element}
+\paragraph{Achetype code}
 
 \begin{minted}{c++}
 namespace details
@@ -763,10 +1693,10 @@ namespace details
     using decomposable = std::false_type;
     using separable    = std::false_type;
 
-     std::ranges::subrange<P*> operator()(P p);
+      std::ranges::subrange<P*> operator()(P p);
 
-     std::ranges::subrange<Pix*> operator()(Pix px);
-     std::ranges::subrange<P*>   offsets() const;
+      std::ranges::subrange<Pix*> operator()(Pix px);
+      std::ranges::subrange<P*>   offsets() const;
   };
 
 
@@ -824,310 +1754,365 @@ using IncrementalStructuringElement = details::AsSE<details::IncrementalStructur
 \end{minted}
 
 
-\paragraph{Neighborhood}
+\subsection{Neighborhood}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      Neighborhood    & \texttt{SE, Pnt}      & StructuringElement, Point     & \texttt{se, pnt}         \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Neighborhood: definitions}
+    \label{table:concept.nbh.definitions}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{lll}
+      \cline{1-3}
+      \thead{Type} & \thead{Instance of type} & \thead{Requirement}                           \\
+      \cline{1-3}
+      \texttt{Pix} & \texttt{pix}             & \texttt{std::same\_as<Pix::point\_type, Pnt>} \\
+      \texttt{Pnt} & \texttt{pnt}             &                                               \\
+      \cline{1-3}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                    & \thead{Expression}                          & \thead{Return Type}                           &
+      \thead{Description}                                                                                                                                                                                           \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{8}{*}{Neighborhood}} & \texttt{se.before(pnt)}                     & \multirow{4}{*}{\texttt{std::forward\_range}} & Return a range that yields the points before \texttt{pnt}. \\
+      \multicolumn{1}{c|}{}                              & \texttt{se.after(pnt)}                      &                                               & Return a range that yields the points after \texttt{pnt}.  \\
+      \multicolumn{1}{c|}{}                              & \texttt{se.before(pix)}                     &                                               & Return a range that yields the pixels before \texttt{pix}. \\
+      \multicolumn{1}{c|}{}                              & \texttt{se.after(pix)}                      &                                               & Return a range that yields the pixels after \texttt{pnt}.  \\
+      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.before(pnt))>, Pnt>}} & \multirow{4}{*}{\texttt{std::true\_type}}     & \multirow{2}{*}{Ranges converts to compatible element types.} \\
+      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.after(pnt))>, Pnt>}}  &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{Pixel<}                                                                                                                             \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.before(pix))>, Pix>}}                 &                                               & \multirow{2}{*}{Ranges that are of compatible element types.}      \\
+      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{Pixel<}                                                                                                                             \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.after(pix))>, Pix>}}                  &                                               &                                                                    \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Neighborhood: expressions}
+  \end{scriptsize}
+  \label{table:concept.nbh.expressions}
+\end{table}
+
+\paragraph{Concept code}
 
 \begin{minted}{c++}
-namespace details
-{
-  template <class P, class Pix>
-  requires mln::concepts::Point<P>&& mln::concepts::Pixel<Pix>
-  struct Neighborhood : StructuringElement<P, Pix>
-  {
-     std::ranges::iterator_range<P*>   before(P p);
-     std::ranges::iterator_range<P*>   after(P p);
-     std::ranges::iterator_range<Pix*> before(Pix px);
-     std::ranges::iterator_range<Pix*> after(Pix px);
+template <typename SE, typename P>
+concept Neighborhood =
+  StructuringElement<SE, P> &&
+  requires (SE se, P p, mln::archetypes::PixelT<P> px) {
+    { se.before(p) }  -> std::ranges::forward_range;
+    { se.after(p) }   -> std::ranges::forward_range;
+    { se.before(px) } -> std::ranges::forward_range;
+    { se.after(px) }  -> std::ranges::forward_range;
+
+    requires std::convertible_to<std::ranges::range_value_t<decltype(se.before(p))>, P>;
+    requires std::convertible_to<std::ranges::range_value_t<decltype(se.after(p))>, P>;
+    requires std::Pixel<std::ranges::range_value_t<decltype(se.before(px))>>;
+    requires std::Pixel<std::ranges::range_value_t<decltype(se.after(px))>>;
   };
+\end{minted}
 
-  template <class N>
-  struct AsNeighborhood : N, mln::details::Neighborhood<AsNeighborhood<N>>
+\paragraph{Archetype code}
+
+\begin{minted}{c++}
+  namespace details
   {
-  };
-
-} // namespace details
-
-template <class P = Point, class Pix = PixelT<P>>
-using Neighborhood = details::AsSE<details::Neighborhood<P, Pix>>;
+    template <class P, class Pix>
+    requires mln::concepts::Point<P>&& mln::concepts::Pixel<Pix>
+    struct Neighborhood : StructuringElement<P, Pix>
+    {
+       std::ranges::iterator_range<P*>   before(P p);
+       std::ranges::iterator_range<P*>   after(P p);
+       std::ranges::iterator_range<Pix*> before(Pix px);
+       std::ranges::iterator_range<Pix*> after(Pix px);
+    };
+  
+    template <class N>
+    struct AsNeighborhood : N, mln::details::Neighborhood<AsNeighborhood<N>>
+    {
+    };
+  
+  } // namespace details
+  
+  template <class P = Point, class Pix = PixelT<P>>
+  using Neighborhood = details::AsSE<details::Neighborhood<P, Pix>>;
 \end{minted}
 
 
-\paragraph{Image}
+\subsection{Extensions}
+
+\paragraph{Concept table}
+
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}       & \thead{Modeling type}  & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      Extension             & \texttt{Ext, Pnt}      & $\emptyset$, Point            & \texttt{ext, pnt}        \\
+      FillableExtension     & \texttt{FExt, Pnt}     & Extension, Point              & \texttt{fext}            \\
+      MirrorableExtension   & \texttt{MExt, Pnt}     & Extension, Point              & \texttt{mext}            \\
+      PeriodizableExtension & \texttt{PExt, Pnt}     & Extension, Point              & \texttt{pext}            \\
+      ClampableExtension    & \texttt{CExt, Pnt}     & Extension, Point              & \texttt{cext}            \\
+      ExtendWithExtension   & \texttt{EwExt, Pnt, U} & Extension, Point, Image       & \texttt{ewext, u}        \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                 & \thead{Definition}                     & \thead{Description}                           &
+      \thead{Requirement}                                                                                                                                                                                           \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{6}{*}{Extension}} & \texttt{value\_type}                   & \makecell[l]{Type of value
+      contained                                                                                                                                                                                                     \\ in the range.                                                                                                                                                                             Cannot be \\ constant
+      or reference.}                                  & Models the concept \texttt{Value}.                                                                                                                          \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_fill}                 & \multirow{5}{*}{\texttt{std::bool\_constant}} & \multirow{5}{*}{\makecell[l]{\texttt{std::true\_type} if supported \\ \texttt{std::false\_false} otherwise.}} \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_mirror}               &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_periodize}            &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_clamp}                &                                               &                                                                    \\
+      \multicolumn{1}{c|}{}                           & \texttt{support\_extend\_with}         &                                               &                                                                    \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{ExtendWithExtension}        & \texttt{point\_type}                   & \makecell[l]{Type of point in                                                                                      \\ the
+      extended image.}                                & \makecell[l]{Converts to the sub-image                                                                                                                      \\ points type.}                                                                                                            \\
+      \cline{1-4}
+    \end{tabular}
+  \end{scriptsize}
+  \smallskip
+
+  \caption{Concepts Extensions: definitions}
+  \label{table:concept.extensions.definitions}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{ll}
+      \cline{1-2}
+      \thead{Type}              & \thead{Instance of type} \\
+      \cline{1-2}
+      \texttt{SE<Pnt, Pix>}     & \texttt{se}              \\
+      \texttt{Ext::value\_type} & \texttt{val}             \\
+      \texttt{Ext::point\_type} & \texttt{offset}          \\
+      \cline{1-2}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                                              & \thead{Expression}                            & \thead{Return Type} &
+      \thead{Description}                                                                                                                                      \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{Extension}}              & \texttt{ext.fit(se)}                          & \texttt{bool}       & \makecell[l]{Wether
+      the extension fit                                                                                                                                        \\ the structuring element.}                                                                                                   \\
+      \multicolumn{1}{c|}{}                                        & \texttt{ext.extent()}                         & \texttt{int}        &
+      \makecell[l]{Extension's border width.                                                                                                                   \\
+      std::numeric\_limits<int>::max()                                                                                                                         \\ for infinite size.}                                                                                         \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{FillableExtension}}      & \texttt{fext.fill(val)}                       & \texttt{void}       &
+      \makecell[l]{Fill the extension with                                                                                                                     \\the value \texttt{val}.}                                                                                              \\
+      \multicolumn{1}{c|}{}                                        & \texttt{fext.is\_fill\_supported}             & \texttt{bool}       &
+      \makecell[l]{Wether the fill facility                                                                                                                    \\is supported.}                                                                                                                            \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{MirrorableExtension}}    & \texttt{mext.mirror()}                        & \texttt{void}       & \makecell[l]{Fill
+      the extension with                                                                                                                                       \\mirrored image's values.}                                                                                                  \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_mirror\_supported()}         &
+      \texttt{bool}                                                & \makecell[l]{Wether the mirror facility                                                   \\ is supported.}                                             \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{PeriodizeableExtension}} & \texttt{mext.periodize()}                     & \texttt{void}       &
+      \makecell[l]{Fill the extension with                                                                                                                     \\periodic copies of image's values.}                                                                                   \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_periodize\_supported()}      &
+      \texttt{bool}                                                & \makecell[l]{Wether the mirror facility                                                   \\is supported.}                                      \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{2}{*}{ClampableExtension}}     & \texttt{mext.clamp()}                         & \texttt{void}       & \makecell[l]{Fill
+      the extension by                                                                                                                                         \\extending image's values \\at extremities.}                                                                                    \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_clamp\_supported()}          &
+      \texttt{bool}                                                & \makecell[l]{Wether the clamp facility                                                    \\is supported.}                                       \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\multirow{3}{*}{ExtendWithExtension}}    &
+      \makecell[l]{\texttt{std::convertible\_to<point\_type,}                                                                                                  \\\texttt{U::point\_type>}} & \texttt{std::true\_type} &
+      \makecell[l]{Converts to the sub-image                                                                                                                   \\ points type.}                                                                                                       \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.extend\_with(u, offset)}         &
+      \texttt{void}                                                & \makecell[l]{Fill the extension with                                                      \\sub-image      \texttt{u}'s values  starting \\ from \texttt{offset}.} \\
+      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_extent\_with\_supported()}   &
+      \texttt{bool}                                                & \makecell[l]{Wether the extend-with-sub-image                                             \\ facility is
+      supported.}                                                                                                                                              \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Extensions: expressions}
+  \end{scriptsize}
+  \label{table:concept.extensions.expressions}
+\end{table}
+
+\paragraph{Concept code}
 
 \begin{minted}{c++}
-namespace details
-{
-  template <class I>
-  struct AsImage : I, mln::details::Image<AsImage<I>>
-  {
-    using I::I;
-
-    using concrete_type = AsImage<typename I::concrete_type>;
-    concrete_type concretize() const;
-
-
-    template <typename V>
-    using ch_value_type = AsImage<typename I::template ch_value_type<V>>;
-
-    template <typename V>
-    ch_value_type<V> ch_value() const;
+template <typename Ext, typename Pnt>
+concept Extension =
+  std::is_base_of_v<mln::Extension<Ext>, Ext> &&
+  requires {
+    typename Ext::support_fill;
+    typename Ext::support_mirror;
+    typename Ext::support_periodize;
+    typename Ext::support_clamp;
+    typename Ext::support_extend_with;
+  } &&
+  Value<typename Ext::value_type> &&
+  requires (const Ext cext,
+      mln::archetypes::StructuringElement<
+        Pnt,
+        mln::archetypes::Pixel> se) {
+    { cext.fit(se) }      -> std::same_as<bool>;
+    { cext.extent() }     -> std::same_as<int>;
   };
 
-
-  struct ConcreteImage
-  {
-    using pixel_type = archetypes::Pixel;
-    using value_type     = pixel_value_t<mln::archetypes::Pixel>;
-    using reference      = pixel_reference_t<mln::archetypes::Pixel>;
-    using point_type     =  std::ranges::range_value_t<Domain>;
-    using domain_type    = Domain;
-    using category_type  = forward_image_tag;
-    using concrete_type  = ConcreteImage;
-
-    template <class V>
-    using ch_value_type = ConcreteImage;
-
-    // additional traits
-    using extension_category = mln::extension::none_extension_tag;
-    using indexable          = std::false_type;
-    using accessible         = std::false_type;
-    using view               = std::false_type;
-
-    ConcreteImage()                     = default;
-    ConcreteImage(const ConcreteImage&) = default;
-    ConcreteImage(ConcreteImage&&)      = default;
-    ConcreteImage& operator=(const ConcreteImage&) = default;
-    ConcreteImage& operator=(ConcreteImage&&) = default;
-
-    domain_type domain() const;
-
-
-    struct pixel_range
-    {
-      const pixel_type* begin();
-      const pixel_type* end();
-    };
-    pixel_range pixels();
-
-
-    struct value_range
-    {
-      const value_type* begin();
-      const value_type* end();
-    };
-
-    value_range values();
+template <typename Ext, typename Pnt>
+concept FillableExtension =
+  Extension<Ext, Pnt> &&
+  std::convertible_to<typename Ext::support_fill, std::true_type> &&
+  requires {
+    typename Ext::value_type;
+  } &&
+  requires (Ext ext, const Ext cext, const typename Ext::value_type& v) {
+    { ext.fill(v) };
+    { cext.is_fill_supported() }  -> std::same_as<bool>;
   };
 
-
-  struct ViewImage : ConcreteImage
-  {
-    using view = std::true_type;
-
-    ViewImage()                 = delete;
-    ViewImage(const ViewImage&) = default;
-    ViewImage(ViewImage&&)      = default;
-    ViewImage& operator=(const ViewImage&) = delete;
-    ViewImage& operator=(ViewImage&&) = delete;
+template <typename Ext, typename Pnt>
+concept MirrorableExtension =
+  Extension<Ext, Pnt> &&
+  std::convertible_to<typename Ext::support_mirror, std::true_type> &&
+  requires (Ext ext, const Ext cext) {
+    { ext.mirror() };
+    { cext.is_mirror_supported() }  -> std::same_as<bool>;
   };
 
-  using Image = ViewImage;
-
-
-  struct OutputImage : Image
-  {
-    using pixel_type = archetypes::OutputPixel;
-    using reference      = pixel_reference_t<mln::archetypes::OutputPixel>;
-
-    struct pixel_range
-    {
-      const pixel_type* begin();
-      const pixel_type* end();
-    };
-
-    pixel_range pixels();
-
-    struct value_range
-    {
-      value_type* begin();
-      value_type* end();
-    };
-
-    value_range values();
+template <typename Ext, typename Pnt>
+concept PeriodizableExtension =
+  Extension<Ext, Pnt> &&
+  std::convertible_to<typename Ext::support_periodize, std::true_type> &&
+  requires (Ext ext, const Ext cext) {
+    { ext.periodize() };
+    { cext.is_periodize_supported() }  -> std::same_as<bool>;
   };
 
-
-  struct OutputIndexableImage : OutputImage
-  {
-    using index_type = int;
-    using indexable  = std::true_type;
-
-    using concrete_type = OutputIndexableImage;
-
-    template <class V>
-    using ch_value_type = OutputIndexableImage;
-
-    reference operator[](index_type);
+template <typename Ext, typename Pnt>
+concept ClampableExtension =
+  Extension<Ext, Pnt> &&
+  std::convertible_to<typename Ext::support_clamp, std::true_type> &&
+  requires (Ext ext, const Ext cext) {
+    { ext.clamp() };
+    { cext.is_clamp_supported() }  -> std::same_as<bool>;
   };
 
-
-  struct IndexableImage : Image
-  {
-    using index_type = int;
-    using indexable  = std::true_type;
-
-    using concrete_type = OutputIndexableImage;
-
-    template <class V>
-    using ch_value_type = OutputIndexableImage;
-
-
-    reference operator[](index_type);
+template <typename Ext, typename Pnt, typename U>
+concept ExtendWithExtension =
+  Extension<Ext, Pnt> &&
+  std::convertible_to<typename Ext::support_extend_with, std::true_type> &&
+  InputImage<U> &&
+  requires {
+    typename Ext::point_type;
+  } &&
+  std::convertible_to<typename U::value_type, typename Ext::value_type> &&
+  std::convertible_to<typename Ext::point_type, typename U::point_type> &&
+  requires (Ext ext, const Ext cext, U u, typename Ext::point_type offset) {
+    { ext.extend_with(u, offset) };
+    { cext.is_extend_with_supported() }  -> std::same_as<bool>;
   };
+\end{minted}
 
-  struct OutputAccessibleImage : OutputImage
-  {
-    using accessible    = std::true_type;
-    using concrete_type = OutputAccessibleImage;
+\paragraph{Archetype code}
 
-    template <class V>
-    using ch_value_type = OutputAccessibleImage;
+\begin{minted}{c++}
+  // TODO
+\end{minted}
 
 
-    reference      operator()(point_type);
-    reference      at(point_type);
-    pixel_type pixel(point_type);
-    pixel_type pixel_at(point_type);
+\subsection{Extended image}
+
+\paragraph{Concept table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}    & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
+      \cline{1-4}
+      WithExtensionImage & \texttt{WExtImg}      & Image                         & \texttt{wextimg}         \\
+      ConcreteImage      & \texttt{CImg}         & Image                         & \texttt{cimg}            \\
+      ViewImage          & \texttt{VImg}         & Image                         & \texttt{vimg}            \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept}                         & \thead{Definition}       & \thead{Description}            & \thead{Requirement}                    \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{WithExtensionImage} & \texttt{extension\_type} & Type of the image's extension. & Models the concept \texttt{Extension}. \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: definitions (7)}
+    \label{table:concept.image.definitions.7}
+  \end{scriptsize}
+\end{table}
+
+\begin{table}[!htbp]
+  \begin{scriptsize}
+    \begin{tabular}{llll}
+      \cline{1-4}
+      \thead{Concept} & \thead{Expression} & \thead{Return Type} &
+      \thead{Description}                                          \\
+      \cline{1-4}
+      \multicolumn{1}{c|}{\makecell[l]{WithExtension               \\Image}}           & \texttt{wextimg.extension()}                         & \makecell[l]{\texttt{std::convertible\_to<}\\\texttt{extension\_type>}} & \makecell[l]{Get the extension of the image.} \\
+      \cline{1-4}
+    \end{tabular}
+    \smallskip
+
+    \caption{Concepts Image: expressions (7)}
+  \end{scriptsize}
+  \label{table:concept.image.expressions.7}
+\end{table}
+
+\paragraph{Concept code}
+
+\begin{minted}{c++}
+template <typename I>
+concept WithExtensionImage =
+  Image<I> &&
+  requires {
+    typename image_extension_t<I>;
+  } &&
+  Extension<image_extension_t<I>, image_point_t<I>> &&
+  not std::same_as<mln::extension::none_extension_tag, image_extension_category_t<I>> &&
+  requires (I ima, image_point_t<I> p) {
+    { ima.extension() } -> std::convertible_to<image_extension_t<I>>;
   };
+\end{minted}
 
+\paragraph{Archetype code}
 
-  struct AccessibleImage : Image
-  {
-    using accessible    = std::true_type;
-    using concrete_type = OutputAccessibleImage;
-
-    template <class V>
-    using ch_value_type = OutputAccessibleImage;
-
-    reference      operator()(point_type);
-    reference      at(point_type);
-    pixel_type pixel(point_type);
-    pixel_type pixel_at(point_type);
-  };
-
-
-  struct OutputIndexableAndAccessibleImage : OutputAccessibleImage
-  {
-    using index_type = int;
-    using indexable  = std::true_type;
-
-    using concrete_type = OutputIndexableAndAccessibleImage;
-
-    template <class V>
-    using ch_value_type = OutputIndexableAndAccessibleImage;
-
-
-    reference  operator[](index_type);
-    point_type point_at_index(index_type) const;
-    index_type index_of_point(point_type) const;
-    index_type delta_index(point_type) const;
-  };
-
-
-  struct IndexableAndAccessibleImage : AccessibleImage
-  {
-    using index_type = int;
-    using indexable  = std::true_type;
-
-    using concrete_type = OutputIndexableAndAccessibleImage;
-
-    template <class V>
-    using ch_value_type = OutputIndexableAndAccessibleImage;
-
-    reference  operator[](index_type);
-    point_type point_at_index(index_type) const;
-    index_type index_of_point(point_type) const;
-    index_type delta_index(point_type) const;
-  };
-
-
-  struct BidirectionalImage : Image
-  {
-    using category_type = bidirectional_image_tag;
-
-    struct pixel_range
-    {
-      const pixel_type* begin();
-      const pixel_type* end();
-      pixel_range           reversed();
-    };
-
-    pixel_range pixels();
-
-    struct value_range
-    {
-      const value_type* begin();
-      const value_type* end();
-      value_range       reversed();
-    };
-
-    value_range values();
-  };
-
-
-  struct OutputBidirectionalImage : BidirectionalImage
-  {
-    using pixel_type = archetypes::OutputPixel;
-    using reference      = pixel_reference_t<mln::archetypes::OutputPixel>;
-
-    struct value_range
-    {
-      value_type* begin();
-      value_type* end();
-      value_range reversed();
-    };
-    value_range values();
-
-
-    struct pixel_range
-    {
-      const pixel_type* begin();
-      const pixel_type* end();
-      pixel_range           reversed();
-    };
-
-    pixel_range pixels();
-  };
-
-
-  struct RawImage : IndexableAndAccessibleImage
-  {
-    using category_type = raw_image_tag;
-    using pixel_range   = BidirectionalImage::pixel_range;
-    using value_range   = BidirectionalImage::value_range;
-
-    pixel_range pixels();
-    value_range values();
-
-
-    const value_type* data() const;
-    std::ptrdiff_t    strides(int) const;
-  };
-
-
-  struct OutputRawImage : OutputIndexableAndAccessibleImage
-  {
-    using category_type = raw_image_tag;
-    using pixel_range   = OutputBidirectionalImage::pixel_range;
-    using value_range   = OutputBidirectionalImage::value_range;
-
-    pixel_range pixels();
-    value_range values();
-
-    value_type*    data() const;
-    std::ptrdiff_t strides(int) const;
-  };
-
-
+\begin{minted}{c++}
+namespace details {
   struct WithExtensionImage : Image
   {
     struct Extension : ::mln::Extension<Extension>
@@ -1141,7 +2126,7 @@ namespace details
       bool fit(mln::archetypes::StructuringElement<image_point_t<Image>, mln::archetypes::Pixel> se) const;
       int extent() const;
     };
-
+  
     using extension_type = Extension;
 
     using extension_category = mln::extension::custom_extension_tag;
@@ -1150,36 +2135,45 @@ namespace details
   };
 } // namespace details
 
-
-using Image         = details::AsImage<details::Image>;
-using ConcreteImage = details::AsImage<details::ConcreteImage>;
-using ViewImage     = details::AsImage<details::ViewImage>;
-
-using ForwardImage       = Image;
-using BidirectionalImage = details::AsImage<details::BidirectionalImage>;
-using RawImage           = details::AsImage<details::RawImage>;
-
-using InputImage                  = Image;
-using IndexableImage              = details::AsImage<details::IndexableImage>;
-using AccessibleImage             = details::AsImage<details::AccessibleImage>;
-using IndexableAndAccessibleImage = details::AsImage<details::IndexableAndAccessibleImage>;
-
-
-using OutputImage              = details::AsImage<details::OutputImage>;
-using OutputForwardImage       = OutputImage;
-using OutputBidirectionalImage = details::AsImage<details::OutputBidirectionalImage>;
-using OutputRawImage           = details::AsImage<details::OutputRawImage>;
-
-using OutputIndexableImage              = details::AsImage<details::OutputIndexableImage>;
-using OutputAccessibleImage             = details::AsImage<details::OutputAccessibleImage>;
-using OutputIndexableAndAccessibleImage = details::AsImage<details::OutputIndexableAndAccessibleImage>;
-
 using WithExtensionImage = details::AsImage<details::WithExtensionImage>;
 \end{minted}
 
 
-\paragraph{Extension}
+\subsection{Output image}
+
+\paragraph{Concept table}
+
+\begin{figure}[!htbp]
+  \begin{scriptsize}
+    \begin{equation}
+      \begin{aligned}
+        OutputImage ={} & (Image \implies WritableImage) \wedge                                             \\
+                        & (IndexableImage \implies WritableIndexableImage) \wedge                           \\
+                        & (AccessibleImage \implies WritableAccessibleImage) \wedge                         \\
+                        & (IndexableAndAccessibleImage \implies WritableIndexableAndAccessibleImage) \wedge \\
+                        & (BidirectionalImage \implies WritableBidirectionalImage) \wedge                   \\
+                        & (RawImage \implies WritableRawImage)
+      \end{aligned}
+    \end{equation}
+    \smallskip
+
+    \caption{Concepts OutputImage: definition}
+  \end{scriptsize}
+  \label{table:concept.image.expressions.8}
+\end{figure}
+
+\paragraph{Concept code}
 
 \begin{minted}{c++}
-  // TODO
+// OutputImage
+// Usage: RawImage<I> && OutputImage<I>
+template <typename I>
+concept OutputImage =
+  (not Image<I> || (detail::WritableImage<I>)) &&
+  (not IndexableImage<I> || (detail::WritableIndexableImage<I>)) &&
+  (not AccessibleImage<I> || (detail::WritableAccessibleImage<I>)) &&
+  (not IndexableAndAccessibleImage<I> ||
+    (detail::WritableIndexableAndAccessibleImage<I>)) &&
+  (not BidirectionalImage<I> || (detail::WritableBidirectionalImage<I>)) &&
+  (not RawImage<I> || (detail::WritableRawImage<I>));
 \end{minted}

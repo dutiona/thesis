@@ -281,7 +281,7 @@ library has chosen this approach due to the obvious maintenance issue induced.
 
 \paragraph{Generalization approach} consists in finding a common denominator to all the image types. Once designed, this
 common denominator, also called supertype, can store informations about all the supported image types by the library.
-This supertyp allows the library developer to write all the algorithms only once: for the supertype. The processing
+This supertype allows the library developer to write all the algorithms only once: for the supertype. The processing
 pipeline will then consist in three steps. First convert the input image type into the supertype, second process the
 supertype into the algorithm pipeline requested by the user, finally convert back the resulting image into the specific
 image type the user is expecting. This approach offers the advantage of being maintainable. Adding a new image type is

@@ -1,17 +1,20 @@
 \chapter{Taxonomy of Images and Algorithms}
 \label{chap:image.algorithms.taxonomy}
 
-In this thesis, we researched how to apply all those new generic facilities from the C++ language into the Image
+In this thesis, we researches how to apply all those new generic facilities from the C++ language into the Image
 processing area. This allows us to test them in a practical way on our predilection area while remembering our past
 work, both success and failures in this matter. However, as we saw in the previous chapter~\ref{chap:genericity},
 birthing concepts from code is something that is done in an emerging way. Henceforth, the first work will be to do an
 inventory of all existing image algorithms as well as an inventory of all image processing algorithms (both basic and
 more complex) we can think of. This way, we will notice behavior patterns emerging from similar image types or similar
-algorithms. First we will study how to extract behavioral pattern from an algorithm in order to refine it into one or
-multiple concepts. We will then study the set theory behind images types, their conjunctions, disjunctions and the
-implications. We will then study behavioral pattern related to algorithms, as well as their specific problematics
-related to heterogeneous computation. Finally, we will propose show the result of this emerging inventory in the form of
-a taxonomy indexing a framework of concepts about image processing.
+algorithms. We will then be able to extract behavioral patterns from this inventory in order to produce a full taxonomy
+in the form of a framework of concepts related to image processing. This chapter is structured as followed. First we
+will study how to extract behavioral pattern from a simple algorithm in order to refine it into one or multiple
+concepts. Second we will study the theory set behind images types, their conjunctions, disjunctions. We will also
+produce an inventory of image processing algorithms limited to mathematical morphologies that we can leverage for the
+final step. Third, we will study the intrinsic genericity of algorithms to produce canvas taking advantage of
+properties. Finally, we will then study behavioral pattern related to the inventory in the form of a taxonomy indexing a
+framework of concepts about image processing.
 
 \section{Rewriting an algorithm to extract a concept}
 \label{sec:rewriting}
@@ -186,8 +189,6 @@ this paper.
 \subsection{Concept definition}
 \label{subsec:concept}
 
-
-
 The more algorithms we analyze to extract their requirements, the clearer the \emph{concepts} become. They are slowly
 appearing. Let us now attempt to formalize them. The formalization of the \emph{concept Image} from the information and
 requirements we have now is shown in~\cref{table:concept.definitions} for the required type definitions and
@@ -354,7 +355,7 @@ concept Decomposable =
 \end{figure}
 
 
-\section{Images types viewed as Sets: version \& specialization}
+\section{Images types viewed as Sets: version, specialization \& inventory}
 \label{sec:image.set}
 
 Achieving true genericity in a satisfactory way is a complex problem that has components of different levels. The first
@@ -367,7 +368,14 @@ Ease of use is always to be considered.
 
 Considering the available options to achieve our goal, the parametric polymorphism approach is the way to go. This
 allows the implementer to design image types and algorithms with behavior in mind. To illustrate this remark, let us
-consider the set of supported set of image types shown in figure~\ref{fig:image.version}.
+consider the set of supported set of image types shown in figure~\ref{fig:image.version}. We usually refer to different
+image families as sub-type. Indeed, an image with a LUT is sub-type of the (global) Image type. This notion of
+sub-typing is important because it may be abstracted behind an interface. A user can manipulate an image type without
+knowing its specific sub-type. This induces that the sub-typing facility may be handled internally in the library with
+dynamic dispatching code (with run-time overhead). Each image processing library has its own way of handling sub-typing.
+More generally, the model used to handle it is previously described in~\cref{subsec:different.approaches}. Indeed,
+sub-types are handled the same way as their super-type but the fact that they have additional properties the algorithms
+can take advantage of.
 
 \begin{figure}[tbh]
   \centering
@@ -380,7 +388,8 @@ To implement a basic image algorithm such as \texttt{fill} there really are two 
 set of images type whose data type is encoded into each pixel, one must traverse the image and set each pixel's color
 to the new one. However, for the set of images type whose data type is encoded in a look-up table, one only has to
 traverse the look-up table to set each color to the new one. This translates into two distinct algorithms shown
-in~\cref{fig:traverse.vs.LUT}:
+in~\cref{fig:traverse.vs.LUT}. We can represent the diagram outlining that those two algorithms are two distinct version
+in~\cref{fig:fill.version.diagram}.
 
 \begin{figure}[tbh]
   \centering
@@ -397,6 +406,13 @@ in~\cref{fig:traverse.vs.LUT}:
   \label{fig:traverse.vs.LUT}
 \end{figure}
 
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.5\linewidth]{figs/fill_version_diagram.pdf}
+  \caption{Diagram of the two versions of the fill algorithm.}
+  \label{fig:fill.version.diagram}
+\end{figure}
+
 More generally, we consider that the set of image type is formed of several subset of image types. In the example there
 are two subsets: images whose pixel are writable and images whose data type are ordered in a look-up table. \emph{For
   each one of these subsets, if there is a way to implement an algorithm then we have a \emph{version} of this algorithm}.
@@ -410,8 +426,8 @@ to a single pass with a large dilation disc is really significant (illustrated i
 code in~\ref{code:decomp.dilate} illustrate how an algorithm can be written to take advantage of the structuring
 element's decomposability property. The algorithm will first decompose the structuring element into smaller 1D periodic
 lines. It will then recursively call itself with those lines to do the multi-pass and thanks to known optimizations on
-periodic lines~\cite{vanherk.1992.localminmax}, it will be much faster.
-
+periodic lines~\cite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram outlining the different
+specialization of the dilation algorithm used is shown in~\cref{fig:dilation.specialization.diagram}.
 
 \begin{figure}[tbh]
   \centering
@@ -434,6 +450,13 @@ periodic lines~\cite{vanherk.1992.localminmax}, it will be much faster.
   \label{code:decomp.dilate}
 \end{figure}
 
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.5\linewidth]{figs/dilation_specialization_diagram.pdf}
+  \caption{Diagram of the specialization used to implement the dilation algorithm.}
+  \label{fig:dilation.specialization.diagram}
+\end{figure}
+
 The figure~\ref{fig:image.specialization} shows how an algorithm specialization may exists in a set of algorithms
 version. In this figure there exists a specialization of algorithms when it is known that the data buffer has the
 following property: its memory is contiguous. This implies that, for example, an algorithm like \texttt{fill} can be
@@ -446,8 +469,24 @@ implemented using low level and fast primitives such as \texttt{memset} to incre
   \label{fig:image.specialization}
 \end{figure}
 
-There are more details that go in depth when considering the distinction between runtime dispatch (dynamic) and
-compile time dispatch (static) that we saw earlier in this manuscript in~\cref{subsec:simplifying}.
+Making a full inventory of images types is not possible as there are many families of image types, each family may
+intersect with each other, images may have some particular properties at some points, those properties may appear in
+several family of image types. Furthermore, this image type inventory does not help when it comes to designing an image
+processing library. Instead, what helps is making an inventory of image processing algorithms as well as what properties
+those algorithms can leverage to speed up their execution.
+
+By making the Inventory of image processing algorithms (limited to mathematical morphology), we distinguish three main
+types of image processing algorithms. The first one are the pixel-wise algorithms. Those algorithms are the basic
+pixel-wise transformation. They are the base of any image processing toolkit. Indeed, being able to extract the green or
+red color channel of an image is mandatory. Thresholding as well as the previously seen gamma correction algorithm is
+such an algorithm. The second one are the local algorithms. Those algorithms algorithms perform transformations by
+considering all the neighboring pixels around a given pixel. In order to operate, those algorithms need additional data
+in the form of image's extension (defining border's behavior) and structuring element (disc, rectangle around the
+considered pixel). Such algorithms are widely used in mathematical morphology. Dilation, erosion, closing, opening are
+local algorithms. In mathematical morphology we will also have the union find, the max tree, the skeletonize algorithms.
+Finally, the third set of image processing algorithms is the global one. This set contains algorithms where computing
+the current pixel requires to know what was previously computed on the previous pixels as a prerequisite. Champfer
+distance transform, labeling, watershed, hierarchy structures related algorithms are in this category.
 
 
 \section{Generic aspect of algorithm: canvas}
@@ -482,7 +521,7 @@ minimize the number of back and forth copies from the RAM.
 
 \paragraph{Deep learning} is a huge deal in image processing these last years as well. As deep neural networks are just
 a combinations of successive MapReduce~\parencite{dean.2008.mapreduce}, it can be offloaded onto onto executions units
-that can be cluster of computers through network (cloud), or local available computers, or directly localy available GPU
+that can be cluster of computers through network (cloud), or local available computers, or directly locally available GPU
 hardware.
 
 In every case there is a notion of pipeline where the user pipe algorithms into each others in order to achieve a
@@ -783,42 +822,6 @@ code is as fast as a non-generic handwritten dilation.
 \section{Library concepts: listing and explanation}
 \label{sec:library.concepts}
 
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/concepts/pixel.pdf}
-  \caption{Pixel concept.}
-  \label{fig:concept.pixel}
-\end{figure}
-
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/concepts/domain.pdf}
-  \caption{Domain concept.}
-  \label{fig:concept.domain}
-\end{figure}
-
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/concepts/image.pdf}
-  \caption{Image concept.}
-  \label{fig:concept.image}
-\end{figure}
-
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/concepts/images_all.pdf}
-  \caption{All images concepts.}
-  \label{fig:concept.images}
-\end{figure}
-
-
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/concepts/se_extension.pdf}
-  \caption{Structuring element and Extension concepts.}
-  \label{fig:concept.se_extension}
-\end{figure}
-
 Let us now delve into concepts related to the Image Processing area. Indeed, this domain has his specificities and we
 want to improve generic image processing library design by learning from our past experiments and working with new
 techniques. The most basic usage of an image is the famous algebraic formula $y = f(x)$ where $y$ is a \emph{value}
@@ -834,88 +837,9 @@ First, let us introduce the fundamental concepts deriving from the basis notion.
 into three distincts one in~\cref{table:concept.value.expressions}. There are the basic \emph{Value} but also the
 \emph{ComparableValue} and the \emph{OrderedValue} which are useful when it comes to comparison or ordering algorithms.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type}      \\
-      \cline{1-4}
-      Value           & \texttt{Val}          & $\emptyset$                   & \texttt{val}                  \\
-      ComparableValue & \texttt{CmpVal}       & Value                         & \texttt{cmp\_val1, cmp\_val2} \\
-      OrderedValue    & \texttt{OrdVal}       & ComparableValue               & \texttt{ord\_val1, ord\_val2} \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                       & \thead{Expression}                                                   & \thead{Return
-      Type}                                                 & \thead{Description}                                                                     \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{Value}                            & \texttt{std::semiregular<Val>}                                       &
-      \texttt{std::true\_type}                              & \makecell[l]{\texttt{Val} is a semiregular type. It can be:                             \\
-      copied, moved, swapped,                                                                                                                         \\ and default constructed.}                                                                                                    \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{ComparableValue}} & \texttt{std::regular<CmpVal>}                                        &
-      \texttt{std::true\_type}                              & \makecell[l]{\texttt{CmpVal} is a regular type. It is a semiregular                     \\
-      type that is equality comparable.}                                                                                                              \\
-      \multicolumn{1}{c|}{}                                 & \texttt{cmp\_val1 == cmp\_val2}                                      & \texttt{boolean}
-                                                            & Supports equality comparison                                                            \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{OrderedValue}}    & \texttt{std::totally\_ordered<OrdVal>}                               &
-      \texttt{std::true\_type}                              & \makecell[l]{\texttt{CmpVal} is a totally ordered as well as                            \\
-      a regular type. Additionally the expressions                                                                                                    \\ must be equality preserving.}                                                                                           \\
-      \multicolumn{1}{c|}{}                                 & \texttt{ord\_val1 < ord\_val2}                                       & \texttt{boolean}
-                                                            & \multicolumn{1}{l}{\multirow{2}{*}{Supports inequality comparisons}}                    \\
-      \multicolumn{1}{c|}{}                                 & \texttt{ord\_val1 <= ord\_val2, \dots}                               & \texttt{boolean}
-                                                            & \multicolumn{1}{l}{}                                                                    \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Value: expressions}
-  \end{scriptsize}
-  \label{table:concept.value.expressions}
-\end{table}
-
 Then we have the concept of \emph{Point}, detailed in~\cref{table:concept.point.expressions} which is a bit more
 constrained as it must be totally ordered. Indeed, when accessing a value stored in an image, wether it be reading of
 mutating, it is important that there is only one accessed value.
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      Point           & \texttt{Pnt}          & $\emptyset$                   & \texttt{pnt1, pnt2}      \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                             & \thead{Expression}                     & \thead{Return Type}      &
-      \thead{Description}                                                                                               \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{Point}} & \texttt{std::regular<Pnt>}             & \texttt{std::true\_type} &
-      \makecell[l]{\texttt{Pnt} is a regular type. It can be:                                                           \\ copied, moved, swapped, and default
-      constructed.                                                                                                      \\ It also is equality comparable.} \\
-      \multicolumn{1}{c|}{}                       & \texttt{std::totally\_ordered<OrdVal>} & \texttt{std::true\_type} &
-      \makecell[l]{\texttt{Pnt} is a totally ordered as well as a regular type.                                         \\ Additionally the expressions must be \\
-      equality preserving.}                                                                                             \\
-      \multicolumn{1}{c|}{}                       & \texttt{pnt1 < pnt2}                   & \texttt{boolean}         &
-      \multicolumn{1}{l}{\multirow{2}{*}{supports inequality comparisons}}                                              \\
-      \multicolumn{1}{c|}{}                       & \texttt{pnt1 <= pnt2, \dots}           & \texttt{boolean}         &
-      \multicolumn{1}{l}{}                                                                                              \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Point: expressions}
-  \end{scriptsize}
-  \label{table:concept.point.expressions}
-\end{table}
 
 Now we introduce an abstract way to represent this relation $Value * Point$: the Pixel. This is a well known notion in
 image processing and it represent a couple $(point, value)$. This facility is easy to move around and contains
@@ -923,78 +847,17 @@ facilities to read and mutate the pixel's value if possible. Indeed, not all pix
 the pixel is yielded by an image that only generate values on the fly then it cannot be mutated. Henceforth, we
 introduce two new concepts: \emph{Pixel} and \emph{OutputPixel} in~\cref{table:concept.pixel.definitions}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      Pixel           & \texttt{Pix}          & $\emptyset$                   & \texttt{pix}             \\
-      OutputPixel     & \texttt{OPix}         & Pixel                         & \texttt{opix}            \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                             & \thead{Definition}       & \thead{Description}            &
-      \thead{Requirement}                                                                                       \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \texttt{value\_type}     & \makecell[l]{Type of the value
-      contained in the pixel.                                                                                   \\ Cannot be constant or reference.}       & Models
-      the concept \texttt{Value}.                                                                               \\
-      \multicolumn{1}{c|}{}                       & \texttt{reference\_type} & \makecell[l]{Type used to
-      mutate the pixel's value                                                                                  \\ if non-const. Can be a proxy.}       & \makecell[l]{Models the concept \\
-      \texttt{std::indirectly\_writable} if non-const.}                                                         \\
-      \multicolumn{1}{c|}{}                       & \texttt{point\_type}     & Type of the pixel's point.     &
-      Models the concept \texttt{Point}                                                                         \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Pixel: definitions}
-  \end{scriptsize}
-  \label{table:concept.pixel.definitions}
-\end{table}
-
 Those two concepts have a very similar interface described in~\cref{table:concept.pixel.expressions}. They can both
 access the stored informations: the point and the value. On top of that, the \emph{OutputPixel} can mutate the value.
 
+We show how those concepts interact with each other in the diagram~\cref{fig:concept.pixel}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{ll}
-      \cline{1-2}
-      \thead{Type}              & \thead{Instance of type} \\
-      \cline{1-2}
-      \texttt{Pix::value\_type} & \texttt{val}             \\
-      \texttt{Pix::point\_type} & \texttt{pnt}             \\
-      \cline{1-2}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                             & \thead{Expression}        & \thead{Return Type}           &
-      \thead{Description}                                                                                              \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{Pixel}} & \texttt{pix.val()}        & \texttt{Pix::reference\_type} &
-      \makecell[l]{Access the pixel's value for read and/or write purpose.}                                            \\
-      \multicolumn{1}{c|}{}                       & \texttt{pix.point()}      & \texttt{Pix::point\_type}     &
-      \makecell[l]{Read the pixel's point.}                                                                            \\
-      \multicolumn{1}{c|}{}                       & \texttt{pix.shift(pnt)}   & \texttt{void}                 & Shift
-      pixel's point coordinate base on \texttt{pnt}'s coordinates.                                                     \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{OutputPixel}            & \texttt{opix.val() = val} & \texttt{void}                 & Mutate
-      pixel's value.                                                                                                   \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Pixel: expressions}
-  \end{scriptsize}
-  \label{table:concept.pixel.expressions}
-\end{table}
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/concepts/pixel.pdf}
+  \caption{Pixel concept.}
+  \label{fig:concept.pixel}
+\end{figure}
 
 Now we need a helper concept: the ranges.
 Ranges~\parencite{niebler.2014.ranges,niebler.2018.ranges,niebler.2018.deepranges,niebler.2018.mergingranges} are a set
@@ -1028,218 +891,47 @@ multi-dimensional ranges as an image processing extension for performance. They 
 in~\cref{table:concept.ranges.definitions} and their interface is the same as standard ranges, as seen
 in~\cref{table:concept.ranges.expressions}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}   & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      MDRange           & \texttt{MDRng}        & $\emptyset$                   & \texttt{mdrng}           \\
-      OutputMDRange     & \texttt{OMDRng}       & MDRange                       & \texttt{omdrng}          \\
-      ReversibleMDRange & \texttt{RMDRng}       & MDRange                       & \texttt{rmdrng}          \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                               & \thead{Definition}       & \thead{Description}                      &
-      \thead{Requirement}                                                                                                   \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}} & \texttt{value\_type}     & \makecell[l]{Type of the value contained
-      in the range.                                                                                                         \\ Cannot be constant or reference.} &  Models the concept \texttt{Value}. \\
-      \multicolumn{1}{c|}{}                         & \texttt{reference\_type} & \makecell[l]{Type used to mutate the
-      pixel's value                                                                                                         \\if non-const.                                                                                            Can be a proxy.}    & \makecell[l]{Models the concept \\
-      \texttt{std::indirectly\_writable} if non-const.}                                                                     \\
-      \cline{1-4}
-    \end{tabular}
-
-    \smallskip
-
-    \caption{Concepts Ranges: definitions}
-  \end{scriptsize}
-  \label{table:concept.ranges.definitions}
-\end{table}
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{ll}
-      \cline{1-2}
-      \thead{Type}                                 & \thead{Instance of type} \\
-      \cline{1-2}
-      \texttt{std::ranges::range\_value\_t<MDRng>} & \texttt{val}             \\
-      \cline{1-2}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                         & \thead{Expression}                              &
-      \thead{Return Type}                                     & \thead{Description}                                                                            \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{MDRange}}           & \texttt{mdrng.begin()}                          &
-      \texttt{unspecified}                                    & \makecell[l]{Return a forward iterator allowing                                                \\ a traversing of the range.} \\
-      \multicolumn{1}{c|}{}                                   & \texttt{mdrng.end()}                            &
-      \texttt{unspecified}                                    & \makecell[l]{Return a sentinel allowing to                                                     \\know when the end is reached.} \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{OutputMDRange}                      & \makecell[l]{\texttt{auto it = omdrng.begin()}                                                 \\
-      \texttt{*it++ = val}}                                   & \texttt{void}                                   & \makecell[l]{Mutate a value inside the range \\
-      then increment the iterator's position}                                                                                                                  \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{ReversibleMDRange}} & \texttt{rmdrng.rbegin()}                        &
-      \texttt{unspecified}                                    & \makecell[l]{Return a forward iterator allowing                                                \\ a traversing of the range \\ starting from
-      the end.}                                                                                                                                                \\
-      \multicolumn{1}{c|}{}                                   & \texttt{rmdrng.rend()}                          &
-      \texttt{unspecified}                                    & \makecell[l]{Return a sentinel allowing to                                                     \\ know when the end is reached.} \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Ranges: expressions}
-  \end{scriptsize}
-  \label{table:concept.ranges.expressions}
-\end{table}
-
-
 From an algebraic point of view, the definition of an image is not complete without considering a definition domain on
 which it is defined. In image processing, the same rule applies. We cannot consider an image without considering the set
 of points that are valid for this image. Henceforth we must define the concept of \emph{Domain}
 in~\emph{table:concept.domain.definitions}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      Domain          & \texttt{MDRng}        & MDRange                       & \texttt{dom}             \\
-      SizedDomain     & \texttt{OMDRng}       & Domain                        & \texttt{sdom}            \\
-      ShapedDomain    & \texttt{RMDRng}       & SizedDomain                   & \texttt{shdom}           \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Domain: definitions}
-    \label{table:concept.domain.definitions}
-  \end{scriptsize}
-\end{table}
-
 The \emph{Domain} concept is refined into two sub-concepts which are \emph{SizedDomain} and \emph{ShapedDomain}. This
 emphasis the possibility of existence of possible infinite domain and domains that may be defined over non-continuous
 intervals in space. This allows algorithms to requires the domain to have certain shape if needed. The domain behavior
-is described in~\cref{table:concept.domain.expressions}
+is described in~\cref{table:concept.domain.expressions}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{ll}
-      \cline{1-2}
-      \thead{Type}              & \thead{Instance of type} \\
-      \cline{1-2}
-      \texttt{Dom::value\_type} & \texttt{pnt}             \\
-      \cline{1-2}
-    \end{tabular}
-    \smallskip
+We show how the concept Domain flows from the previous concepts in the diagram shown in~\cref{fig:concept.domain}.
 
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                              & \thead{Expression}               & \thead{Return Type}          &
-      \thead{Description}                                                                                              \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{Domain}} & \texttt{Point<Dom::value\_type>} & \texttt{std::true\_type}     &
-      \makecell[l]{Domain's value models the \texttt{Point} concept}                                                   \\
-      \multicolumn{1}{c|}{}                        & \texttt{dom.has(pnt)}            & \texttt{bool}                &
-      \makecell[l]{Check if a points is included in the domain.}                                                       \\
-      \multicolumn{1}{c|}{}                        & \texttt{dom.empty()}             & \texttt{void}                &
-      \makecell[l]{Read the pixel's point.}                                                                            \\
-      \multicolumn{1}{c|}{}                        & \texttt{dom.dim()}               & \texttt{void}                &
-      Returns the domain's dimension.                                                                                  \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{SizedDomain}             & \texttt{sdom.size()}             & \texttt{unsigned int}        &
-      Returns the number of points inside the domain.                                                                  \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{ShapedDomain}            & \texttt{shdom.extends()}         & \texttt{std::forward\_range} &
-      \makecell[l]{Return a range that yields the number                                                               \\ of elements for each dimension.}
-      \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Domain: expressions}
-  \end{scriptsize}
-  \label{table:concept.domain.expressions}
-\end{table}
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/concepts/domain.pdf}
+  \caption{Domain concept.}
+  \label{fig:concept.domain}
+\end{figure}
 
 Now we have all the tools to introduce our main concept: \emph{Image}. As for \emph{Pixel}, we have the distinction over
 image whose value can be mutated in a sub-concept named \emph{WritableImage}. These concepts are defined
 in~\cref{table:concept.image.definitions.1}.
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      \makecell[l]{Image (InputImage,                                                                    \\ ForwardImage)}    & \texttt{Img}          & $\emptyset$                                                                  & \texttt{img}             \\
-      WritableImage   & \texttt{WImg}         & Image                         & \texttt{wimg}            \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                               & \thead{Definition}          & \thead{Description}                            & \thead{Requirement}                 \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{117}{*}{Image}} & \texttt{pixel\_type}        & Type of the image's pixel.                     & Models the concept \texttt{Pixel}.  \\
-      \multicolumn{1}{c|}{}                         & \texttt{point\_type}        & Type of the image's point.                     & Models the concept \texttt{Point}.  \\
-      \multicolumn{1}{c|}{}                         & \texttt{value\_type}        & \makecell[l]{Type of the image's value.                                              \\ Cannot be constant or reference} & Models the concept \texttt{Value}. \\
-      \multicolumn{1}{c|}{}                         & \texttt{domain\_type}       & Type of the image's domain.                    & Models the concept \texttt{Domain}. \\
-      \multicolumn{1}{c|}{}                         & \texttt{reference}          & \makecell[l]{Type used to mutate an image                                            \\ pixel's value if non-const} & \makecell[l]{Models the concept \\ \texttt{std::indirectly\_writable} \\ if non-const.}                                   \\
-      \multicolumn{1}{c|}{}                         & \texttt{concrete\_type}     & Image concrete type (that holds data).         & Models the concept \texttt{Image}.  \\
-      \multicolumn{1}{c|}{}                         & \texttt{ch\_value\_type<V>} & \makecell{Facility to return a new image type.                                       \\ that casts the underlying \texttt{value\_type} \\into \texttt{V}} & Models the concept \texttt{Image}. \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: definitions (1)}
-    \label{table:concept.image.definitions.1}
-  \end{scriptsize}
-\end{table}
 
 In addition to this definition we can infer the behavior described in~\cref{table:concept.image.expressions.1}. There
 are complicated requirements written in template metaprogramming code. But in the end it is just to requires the ranges
 returned by the member functions \texttt{pixels()} and \texttt{values()} to iterate over element whose type are the same
 as those declared in the parent image.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                     & \thead{Expression}                          & \thead{Return Type}                         &
-      \thead{Description}                                                                                                                                                                           \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{7}{*}{Image}}         & \texttt{img.concretize()}                   & \makecell[l]{\texttt{std::convertible\_to<}                                               \\\texttt{concrete\_type>}} & \makecell[l]{Return a concrete image \\ that holds data.} \\
-      \multicolumn{1}{c|}{}                               & \texttt{img.ch\_value<V>()}                 & \makecell[l]{\texttt{std::convertible\_to<}                                               \\\texttt{ch\_value\_type<V> >}} & \makecell[l]{Return an image whose values \\ are casted to \texttt{V}.}  \\
-      \multicolumn{1}{c|}{}                               & \texttt{img.domain()}                       & \makecell[l]{\texttt{std::convertible\_to<}                                               \\\texttt{domain\_type>}} & Return the image's domain.  \\
-      \multicolumn{1}{c|}{}                               & \texttt{img.pixels()}                       & \multirow{2}{*}{\texttt{MDRange}}           & \makecell[l]{Return a range that yields     \\ all the image pixels.} \\
-      \multicolumn{1}{c|}{}                               & \texttt{img.values()}                       &                                             & \makecell[l]{Return a range that yields     \\ all the image values.} \\
-      \multicolumn{1}{c|}{}                               & \makecell[l]{\texttt{std::convertible\_to<}                                                                                             \\\texttt{std::ranges::ranges\_value\_t<} \\\texttt{decltype(img.pixels())>,} \\\texttt{pixel\_type>}} & \multirow{2}{*}{\texttt{std::true\_type}}     & \multirow{2}{*}{\makecell[l]{Ranges converts to compatible\\ element types.}} \\
-      \multicolumn{1}{c|}{}                               & \makecell[l]{\texttt{std::convertible\_to<}                                                                                             \\\texttt{std::ranges::ranges\_value\_t<} \\\texttt{decltype(img.values())>,} \\\texttt{value\_type>}} &      &  \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{WritableImage}} & \texttt{wimg.values()}                      & \texttt{OutputMDRange}                      & \makecell[l]{Return a range that yields all \\ the image values (mutable).} \\
-      \multicolumn{1}{c|}{}                               & \makecell[l]{\texttt{OutputPixel<}                                                                                                      \\\texttt{std::ranges::ranges\_value\_t<} \\\texttt{decltype(wimg.pixels())> >}} & \texttt{std::true\_type}     & \multirow{2}{*}{Ranges whose elements are mutable.} \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: expressions (1)}
-  \end{scriptsize}
-  \label{table:concept.image.expressions.1}
-\end{table}
-
 In addition, we introduce two facilities which are the member function \texttt{concretize()} and
 \texttt{ch\_value<V>()}. The first is a way to turn a view into a concrete type. This will be seen more in-depth
 in~\cref{chap:image_views}. The last is a way to cast values from one type to another. It forms a new image type whose
 underlying values will be returned after being casted to a new value type.
+
+We show the diagram building up the image concept from the previous concepts in~\cref{fig:concept.image}.
+
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/concepts/image.pdf}
+  \caption{Image concept.}
+  \label{fig:concept.image}
+\end{figure}
 
 
 \subsection{Advanced way to access image data}
@@ -1249,333 +941,54 @@ Being able to iterate over ranges of pixels or values is good and all but we are
 access an element directly from the image. First we need to define the concept of \emph{Index}
 in~\cref{table:concept.index.expressions} which we will use afterwards.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      Index           & \texttt{Idx}          & $\emptyset$                   & \texttt{idx, idy}        \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                             & \thead{Expression}                   & \thead{Return Type}      &
-      \thead{Description}                                                                                             \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{Index}} & \texttt{std::signed\_integral<Idx>}  & \texttt{std::true\_type} &
-      Idx is a signed integral arithmetic type                                                                        \\
-      \multicolumn{1}{c|}{}                       & \texttt{idx + idy, idx - idy, \dots} & \texttt{Idx}             &
-      Supports all trivial arithmetical operations                                                                    \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Index: expressions}
-  \end{scriptsize}
-  \label{table:concept.index.expressions}
-\end{table}
-
 The first fundamental tool is represented as an \emph{IndexableImage}. An element can be accessed simply by providing
-its index number. This concept is defined in~\cref{table:concept.image.definitions.2}.
+its index number. This concept is defined in~\cref{table:concept.image.definitions.2}. This introduces a simple
+behavioral pattern described in~\cref{table:concept.image.expressions.2}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}        & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      IndexableImage         & \texttt{IdxImg}       & Image                         & \texttt{idximg}          \\
-      WritableIndexableImage & \texttt{WIdxImg}      & IndexableImage, WritableImage & \texttt{widximg}         \\
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                     & \thead{Definition}   & \thead{Description}               & \thead{Requirement}                \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{IndexableImage} & \texttt{index\_type} & Type of the image's buffer index. & Models the concept \texttt{Index}. \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: definitions (2)}
-    \label{table:concept.image.definitions.2}
-  \end{scriptsize}
-\end{table}
-
-This introduces a simple behavioral pattern described in~\cref{table:concept.image.expressions.2}.
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{lll}
-      \cline{1-2}
-      \thead{Type}                 & \thead{Instance of type} \\
-      \cline{1-2}
-      \texttt{Img::value\_type}    & \texttt{val}             \\
-      \texttt{IdxImg::index\_type} & \texttt{k}               \\
-      \cline{1-2}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                     & \thead{Expression} & \thead{Return Type}               &
-      \thead{Description}                                                                                                                           \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{IndexableImage} & \texttt{idximg[k]} & \texttt{std::same\_as<reference>} & \makecell[l]{Access a value at a given index.} \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\makecell[l]{Writable                                                                                                     \\IndexableImage}} & \texttt{widximg[k] = val}                            & \texttt{void}                      & \makecell[l]{Mutate a value at a given index.} \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: expressions (2)}
-  \end{scriptsize}
-  \label{table:concept.image.expressions.2}
-\end{table}
-
-Additionally we want to be able to access a value by providing a point, the same way as in the algebraic definition $val = image(point)$.
-To do so, we introduce the concept of accessibility through \emph{AccessibleImage}. This concept is defined in~\cref{table:concept.image.definitions.3}.
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}         & \thead{Modeling type} & \thead{Inherit behavior from}  & \thead{Instance of type} \\
-      \cline{1-4}
-      AccessibleImage         & \texttt{AccImg}       & Image                          & \texttt{accimg}          \\
-      WritableAccessibleImage & \texttt{WAccImg}      & AccessibleImage, WritableImage & \texttt{waccimg}         \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: definitions (3)}
-    \label{table:concept.image.definitions.3}
-  \end{scriptsize}
-\end{table}
+Additionally we want to be able to access a value by providing a point, the same way as in the algebraic definition $val
+  = image(point)$. To do so, we introduce the concept of accessibility through \emph{AccessibleImage}. This concept is
+defined in~\cref{table:concept.image.definitions.3}.
 
 This introduces new behavior that is described in~\cref{table:concept.image.expressions.3}. We can notice facilities
 specifically including bound checking. Indeed, we suppose, for fast access, that the user is always picking element from
 the image's domain but it is possible to bound check elements if needed on access for specific usages.
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{lll}
-      \cline{1-2}
-      \thead{Type}              & \thead{Instance of type} \\
-      \cline{1-2}
-      \texttt{Img::point\_type} & \texttt{pnt}             \\
-      \cline{1-2}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                       & \thead{Expression}                          & \thead{Return Type}                 &
-      \thead{Description}                                                                                                                                                                         \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{AccessibleImage}} & \texttt{accimg(pnt)}                        & \texttt{std::same\_as<reference>}   & \makecell[l]{Access a value for a given point.} \\
-      \multicolumn{1}{c|}{}                                 & \texttt{accimg.at(pnt)}                     & \texttt{std::same\_as<reference>}   & \makecell[l]{Access a value for a given point.  \\ No bound checking.} \\
-      \multicolumn{1}{c|}{}                                 & \texttt{accimg.pixel(pnt)}                  & \texttt{std::same\_as<pixel\_type>} & \makecell[l]{Access a pixel for a given point.} \\
-      \multicolumn{1}{c|}{}                                 & \texttt{accimg.pixel\_at(pnt)}              & \texttt{std::same\_as<pixel\_type>} & \makecell[l]{Access a pixel for a given point.  \\ No bound checking.} \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Writable                                                                                                                                   \\AccessibleImage}}} & \texttt{img(pnt) = val}                            & \texttt{void}                      & \makecell[l]{Mutate a value at a given point.} \\
-      \multicolumn{1}{c|}{}                                 & \texttt{waccimg.at(pnt) = val}              & \texttt{void}                       & \makecell[l]{Mutate a value at a given point.   \\ No bound checking.} \\
-      \multicolumn{1}{c|}{}                                 & \makecell[l]{\texttt{OutputPixel<decltype(}                                                                                         \\\texttt{waccimg.pixel(pnt))>}}                            & \texttt{std::true\_type}                      & \makecell[l]{The returned pixel \\ models \texttt{OutputPixel}.} \\
-      \multicolumn{1}{c|}{}                                 & \makecell[l]{\texttt{OutputPixel<decltype(}                                                                                         \\\texttt{waccimg.pixel\_at(pnt))>}}                            & \texttt{std::true\_type}                      & \makecell[l]{The returned pixel \\ models \texttt{OutputPixel}. \\ No bound checking.} \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: expressions (3)}
-  \end{scriptsize}
-  \label{table:concept.image.expressions.3}
-\end{table}
 
 Once we know that an image is both \emph{indexable} and \emph{accessible} we can deduce new behaviors (described
 in~\cref{table:concept.image.expressions.4}) that we put behind the concept of \emph{IndexableAndAccessibleImage}
 defined in~\emph{table:concept.image.definitions.4}. This behavior is related to accessing index from points and vise
 versa.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \makecell[l]{IndexableAnd                                                                          \\ AccessibleImage}         & \texttt{IdxAccImg}    & IndexableImage, AccessibleImage                                              & \texttt{idxaccimg}       \\
-      \makecell[l]{ WritableIndexable                                                                    \\ AndAccessibleImage} & \texttt{WIdxAccImg}   & \makecell[l]{IndexableAndAccessibleImage, \\ WritableIndexableImage, \\WritableAccessibleImage} & \texttt{widxaccimg}      \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: definitions (4)}
-    \label{table:concept.image.definitions.4}
-  \end{scriptsize}
-\end{table}
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}       & \thead{Expression}                       & \thead{Return Type}  &
-      \thead{Description}                                                                                                                    \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{\makecell[l]{IndexableAnd                                                                          \\AccessibleImage}}} & \texttt{img.point\_at\_index(k)}                            & \texttt{point\_type}                      & \makecell[l]{Get the point corresponding\\ to the given index.} \\
-      \multicolumn{1}{c|}{} & \texttt{idxaccimg.index\_of\_point(pnt)} & \texttt{index\_type} & \makecell[l]{Get the linear index (offset in \\ the buffer) of multi-dimensional point.} \\
-      \multicolumn{1}{c|}{} & \texttt{idxaccimg.delta\_index(pnt)}     & \texttt{index\_type} & \makecell[l]{Get the linear index offset     \\ for the given point.} \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: expressions (4)}
-  \end{scriptsize}
-  \label{table:concept.image.expressions.4}
-\end{table}
-
 Additionally we assume that an image can be traversed in a forward way as well as in a backward way. This may not be
 true for all images so this notion needs to be refined into a new concept \emph{BidirectionalImage}. This concept is
 defined in~\cref{table:concept.image.definitions.5} and its behavior is described
 in~\cref{table:concept.image.expressions.5}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}            & \thead{Modeling type} & \thead{Inherit behavior from}     & \thead{Instance of type} \\
-      \cline{1-4}
-      BidirectionalImage         & \texttt{BidirImg}     & Image                             & \texttt{bidirimg}        \\
-      WritableBidirectionalImage & \texttt{WBidirImg}    & BidirectionalImage, WritableImage & \texttt{wbidirimg}       \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
+Now we need a way, when possible, to iterate over a continuous data buffer for very fast and optimized calculation. That
+is what the concept of \emph{RawImage} is for: an image whose data buffer can be accessed, as well as its mutable
+counterpart. It is defined defined in~\cref{table:concept.image.definitions.6}.
 
-    \caption{Concepts Image: definitions (5)}
-    \label{table:concept.image.definitions.5}
-  \end{scriptsize}
-\end{table}
+Having a raw image whose data buffer can be accessed allow ust to expose two more member function to access the data
+buffer and its strides for correct pointer arithmetic. They behave as described
+in~\cref{table:concept.image.expressions.6}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{lll}
-      \cline{1-2}
-      \thead{Type}                 & \thead{Instance of type} \\
-      \cline{1-2}
-      \texttt{Img::point\_type}    & \texttt{pnt}             \\
-      \texttt{Img::value\_type}    & \texttt{val}             \\
-      \texttt{IdxImg::index\_type} & \texttt{k}               \\
-      \texttt{int}                 & \texttt{dim}             \\
-      \cline{1-2}
-    \end{tabular}
-    \smallskip
+We show how those concepts are defined from one another in the diagram shown i~\cref{fig:concept.images}.
 
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                          & \thead{Expression}         & \thead{Return Type}                         &
-      \thead{Description}                                                                                                                                                                      \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{BidirectionalImage}} & \texttt{bidirimg.pixels()} & \multirow{2}{*}{\texttt{ReversibleMDRange}} & \makecell[l]{Return a reversible range that yields \\ all the image pixels.} \\
-      \multicolumn{1}{c|}{}                                    & \texttt{bidirimg.values()} &                                             & \makecell[l]{Return a reversible range that yields \\ all the image values.} \\
-      \cline{1-4}
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: expressions (5)}
-  \end{scriptsize}
-  \label{table:concept.image.expressions.5}
-\end{table}
-
-Now we need a way, when possible, to iterate over a continuous data buffer for very fast and optimized
-calculation. That is what the concept of \emph{RawImage} is for: an image whose data buffer can be accessed, as well as its
-mutable counterpart. It is defined defined in~\cref{table:concept.image.definitions.6}.
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}  & \thead{Modeling type} & \thead{Inherit behavior from}                  & \thead{Instance of type} \\
-      \cline{1-4}
-      RawImage         & \texttt{RawImg}       & \makecell[l]{IndexableAndAccessibleImage,                                 \\BidirectionalImage}                              & \texttt{rawimg}          \\
-      WritableRawImage & \texttt{WRawImg}      & \makecell[l]{RawImage, WritableIndexableImage,                            \\WritableBidirectionalImage}                 & \texttt{wrawimg}         \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: definitions (6)}
-    \label{table:concept.image.definitions.6}
-  \end{scriptsize}
-\end{table}
-
-Having a raw image whose data buffer can be accessed allow ust to expose two more member function to access the
-data buffer and its strides for correct pointer arithmetic. They behave as described in~\cref{table:concept.image.expressions.6}.
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                & \thead{Expression}                   & \thead{Return Type}                         &
-      \thead{Description}                                                                                                                                                                       \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{RawImage}} & \texttt{rawimg.data()}               & \makecell[l]{\texttt{std::convertible\_to<}                                                       \\\texttt{const value\_type*>}} & \makecell[l]{Get a constant pointer to \\ the first element of the domain.} \\
-      \multicolumn{1}{c|}{}                          & \texttt{rawimg.stride(dim)}          & \texttt{std::ptrdiff\_t}                    & \makecell[l]{Get the stride (in number of elements) \\ between two consecutive elements \\in the given \texttt{dim}.} \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{\makecell[l]{Writable                                                                                                                                 \\RawImage}}}           & \texttt{img.data()}                         & \makecell[l]{\texttt{std::convertible\_to<}\\\texttt{value\_type*>}} & \makecell[l]{Get a pointer to the first\\ element of the domain.} \\
-      \multicolumn{1}{c|}{}                          & \texttt{*(wrawimg.data() + k) = val} & \texttt{void}                               & \makecell[l]{Access an element from the data        \\buffer at index \texttt{k} and mutate it \\ to \texttt{val}.} \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\makecell[l]{WithExtension                                                                                                                                            \\Image}}           & \texttt{wextimg.extension()}                         & \makecell[l]{\texttt{std::convertible\_to<}\\\texttt{extension\_type>}} & \makecell[l]{Get the extension of the image.} \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: expressions (6)}
-  \end{scriptsize}
-  \label{table:concept.image.expressions.6}
-\end{table}
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/concepts/images_all.pdf}
+  \caption{All images concepts.}
+  \label{fig:concept.images}
+\end{figure}
 
 
 \subsection{Local algorithm concepts: structuring elements and extensions}
 \label{subsec:local.se.ext}
-
 
 From the beginning concepts are emerging from behavioral patterns extracted from algorithms. In image processing, there
 is a family of algorithms called the \emph{local algorithms}. They work by considering a specific pixel as well as all
 the pixels among a window having a specific shape centered in this first pixel. The window is called the
 \emph{structuring element} and the pixels considered by this window are called the \emph{neighborhood}. This leads us to
 introduce the concept of \emph{StructuringElement} which is defined in~\cref{table:concept.se.definitions}.
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      StructuringElement             & \texttt{SE, Pnt}      & $\emptyset$, Point            & \texttt{se, pnt}         \\
-      DecomposableStructuringElement & \texttt{DSE, Pnt}     & StructuringElement, Point     & \texttt{dse}             \\
-      SeparableStructuringElement    & \texttt{SSE, Pnt}     & StructuringElement, Point     & \texttt{sse}             \\
-      IncrementalStructuringElement  & \texttt{ISE, Pnt}     & StructuringElement, Point     & \texttt{ise}             \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                          & \thead{Definition}    & \thead{Description}                           &
-      \thead{Requirement}                                                                                                                                                                                   \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{StructuringElement}} & \texttt{incremental}  & \multirow{3}{*}{\texttt{std::bool\_constant}} & \multirow{3}{*}{\makecell[l]{\texttt{std::true\_type} if supported \\ \texttt{std::false\_false} otherwise.}} \\
-      \multicolumn{1}{c|}{}                                    & \texttt{decomposable} &                                               &                                                                    \\
-      \multicolumn{1}{c|}{}                                    & \texttt{separable}    &                                               &                                                                    \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Structuring Elements: definitions}
-    \label{table:concept.se.definitions}
-  \end{scriptsize}
-\end{table}
 
 This concept is refined into three subconcepts that are related to properties the structuring element can offer. Those
 properties are:
@@ -1592,132 +1005,9 @@ properties are:
 \end{itemize}
 The behavioral for those concepts is discribed in~\cref{table:concept.se.expressions}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{lll}
-      \cline{1-3}
-      \thead{Type} & \thead{Instance of type} & \thead{Requirement}                           \\
-      \cline{1-3}
-      \texttt{Pix} & \texttt{pix}             & \texttt{std::same\_as<Pix::point\_type, Pnt>} \\
-      \texttt{Pnt} & \texttt{pnt}             &                                               \\
-      \cline{1-3}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                           & \thead{Expression}                                    & \thead{Return Type}                       &
-      \thead{Description}                                                                                                                                                                                     \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{11}{*}{StructuringElement}} & \multirow{2}{*}{\texttt{std::regular\_invocable<SE,
-      Pnt>}}                                                    & \multirow{4}{*}{\texttt{std::true\_type}}             &
-      \multirow{4}{*}{\makecell[l]{\texttt{se} can called using \text{std::invoke},                                                                                                                           \\ is equality preserving and \\
-      does not modify function object                                                                                                                                                                         \\ nor arguments.}} \\
-      \multicolumn{1}{c|}{}                                     &                                                       &
-                                                                &                                                                                                                                             \\
-      \multicolumn{1}{c|}{}                                     & \multirow{2}{*}{\texttt{std::regular\_invocable<SE,
-      Pix>}}                                                    &                                                       &
-      \\
-      \multicolumn{1}{c|}{}                                     &                                                       &                                           &                                         \\
-      \multicolumn{1}{c|}{}                                     & \texttt{se(pnt)}                                      & \texttt{std::forward\_range}              &
-      \makecell[l]{Return a range that yeilds the                                                                                                                                                             \\
-      neighboring points of \texttt{pnt}.}                                                                                                                                                                    \\
-      \multicolumn{1}{c|}{}                                     & \texttt{se.offsets()}                                 & \texttt{std::forward\_range}              &
-      \makecell[l]{Return a range that yeilds the                                                                                                                                                             \\
-      neighboring points,                                                                                                                                                                                     \\in relative coordinates.}                                                                                                                                                          \\
-      \multicolumn{1}{c|}{}                                     & \texttt{se(pix)}                                      & \texttt{std::forward\_range}              &
-      \makecell[l]{Return a range that yeilds the                                                                                                                                                             \\
-      neighboring pixels of \texttt{pix}.}                                                                                                                                                                    \\
-      \multicolumn{1}{c|}{}                                     & \texttt{se.radial\_extent()}                          & \texttt{int}                              &
-      \makecell[l]{Returns the radial extent                                                                                                                                                                  \\of the SE,
-      the radius                                                                                                                                                                                              \\of the disc (square).}                                                                                                                                                                      \\
-      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                 \\
-      \texttt{std::ranges::range\_value\_t<}                                                                                                                                                                  \\ \texttt{decltype(se(pnt))>, Pnt>}}      &
-      \multirow{3}{*}{\texttt{std::true\_type}}                 & \multirow{3}{*}{\makecell[l]{Converts to a compatible                                                                                       \\ point type}}
-      \\
-      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                 \\
-      \texttt{std::ranges::range\_value\_t<}                                                                                                                                                                  \\ \texttt{decltype(se.offsets())>, Pnt>}} & & \\
-      \multicolumn{1}{c|}{}                                     &
-      \makecell[l]{\texttt{Pixel<std::ranges::range\_value\_t<}
-      \\ \texttt{decltype(se(pix))> >}}                          &                                           & \makecell[l]{Is a range of compatible \\pixel type}                                                                                                                                                                \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Decomposable                                                                                                                                           \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if supported\\ \texttt{std::false\_false} otherwise.}\\
-      \multicolumn{1}{c|}{}                                     & \texttt{dse.decompose()}                              & \texttt{std::forward\_range}              & \makecell[l]{Return a range that yeilds \\ simpler structuring elements.}\\
-      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{StructuringElement<}                                                                                                   \\ \texttt{std::ranges::range\_value\_t<} \\ \texttt{decltype(dse.decompose())> >}}                            & \texttt{std::true\_type} & \makecell[l]{Is a range of compatible \\structuring elements types.}\\
-      \multicolumn{1}{c|}{}                                     & \texttt{dse.is\_decomposable()}                       & \texttt{bool}                             & \makecell[l]{Wether the decompose       \\ facility is supported}\\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Separable                                                                                                                                              \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if supported\\ \texttt{std::false\_false} otherwise.}\\
-      \multicolumn{1}{c|}{}                                     & \texttt{sse.separate()}                               & \texttt{std::forward\_range}              & \makecell[l]{Return a range that yeilds \\ simpler structuring elements.}\\
-      \multicolumn{1}{c|}{}                                     & \makecell[l]{\texttt{StructuringElement<}                                                                                                   \\ \texttt{std::ranges::range\_value\_t<} \\ \texttt{decltype(sse.separate())> >}}                            & \texttt{std::true\_type} & \makecell[l]{Is a range of compatible \\structuring elements types.}\\
-      \multicolumn{1}{c|}{}                                     & \texttt{sse.is\_separable()}                          & \texttt{bool}                             & \makecell[l]{Wether the separate        \\ facility is supported}\\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{4}{*}{\makecell[l]{Incremental                                                                                                                                            \\StructuringElement}}} & \texttt{dse.is\_decomposable()} & \texttt{std::bool\_constant} & \makecell[l]{\texttt{std::true\_type} if supported\\ \texttt{std::false\_false} otherwise.}\\
-      \multicolumn{1}{c|}{}                                     & \texttt{ise.inc()}                                    & \makecell[l]{\texttt{StructuringElement<}                                           \\\texttt{SE, Pnt>}} & \makecell[l]{Return the next            \\ simpler structuring elements.}\\
-      \multicolumn{1}{c|}{}                                     & \texttt{ise.dec()}                                    & \makecell[l]{\texttt{StructuringElement<}                                           \\\texttt{SE, Pnt>}} & \makecell[l]{Return the previous        \\ simpler structuring elements.}\\
-      \multicolumn{1}{c|}{}                                     & \texttt{ise.is\_incremental()}                        & \texttt{bool}                             & \makecell[l]{Wether the incremental     \\ facility is supported}\\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Structuring Elements: expressions}
-  \end{scriptsize}
-  \label{table:concept.se.expressions}
-\end{table}
-
 Additionally, we introduce the concept of \emph{Neighborhood} in~\cref{table:concept.nbh.definitions}. This concept has
 facilities to know what points/pixels are placed before or after another point/pixel inside the window of a specific
 structuring element. It behaves as described in~\cref{table:concept.nbh.expressions}.
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      Neighborhood    & \texttt{SE, Pnt}      & StructuringElement, Point     & \texttt{se, pnt}         \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Neighborhood: definitions}
-    \label{table:concept.nbh.definitions}
-  \end{scriptsize}
-\end{table}
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{lll}
-      \cline{1-3}
-      \thead{Type} & \thead{Instance of type} & \thead{Requirement}                           \\
-      \cline{1-3}
-      \texttt{Pix} & \texttt{pix}             & \texttt{std::same\_as<Pix::point\_type, Pnt>} \\
-      \texttt{Pnt} & \texttt{pnt}             &                                               \\
-      \cline{1-3}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                    & \thead{Expression}                          & \thead{Return Type}                           &
-      \thead{Description}                                                                                                                                                                                           \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{8}{*}{Neighborhood}} & \texttt{se.before(pnt)}                     & \multirow{4}{*}{\texttt{std::forward\_range}} & Return a range that yields the points before \texttt{pnt}. \\
-      \multicolumn{1}{c|}{}                              & \texttt{se.after(pnt)}                      &                                               & Return a range that yields the points after \texttt{pnt}.  \\
-      \multicolumn{1}{c|}{}                              & \texttt{se.before(pix)}                     &                                               & Return a range that yields the pixels before \texttt{pix}. \\
-      \multicolumn{1}{c|}{}                              & \texttt{se.after(pix)}                      &                                               & Return a range that yields the pixels after \texttt{pnt}.  \\
-      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.before(pnt))>, Pnt>}} & \multirow{4}{*}{\texttt{std::true\_type}}     & \multirow{2}{*}{Ranges converts to compatible element types.} \\
-      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{std::convertible\_to<}                                                                                                              \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.after(pnt))>, Pnt>}}  &                                               &                                                                    \\
-      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{Pixel<}                                                                                                                             \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.before(pix))>, Pix>}}                 &                                               & \multirow{2}{*}{Ranges that are of compatible element types.}      \\
-      \multicolumn{1}{c|}{}                              & \makecell[l]{\texttt{Pixel<}                                                                                                                             \\\texttt{std::ranges::ranges\_value\_t<}\\\texttt{decltype(se.after(pix))>, Pix>}}                  &                                               &                                                                    \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Neighborhood: expressions}
-  \end{scriptsize}
-  \label{table:concept.nbh.expressions}
-\end{table}
-
 And the last side concept to introduce to our current galaxy is the extension. Indeed, extension management is very
 important when dealing with local algorithm as pixels on the border need to be processed and the behavior near the
 border of the image must be defined and well-specified. There are several strategies when it comes to borders and extension.
@@ -1733,181 +1023,25 @@ We refine concept for each strategy we identified:
 Those concepts are defined in~\cref{table:concept.extensions.definitions} and their behavior is described
 in~\cref{table:concept.extensions.expressions}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}       & \thead{Modeling type}  & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      Extension             & \texttt{Ext, Pnt}      & $\emptyset$, Point            & \texttt{ext, pnt}        \\
-      FillableExtension     & \texttt{FExt, Pnt}     & Extension, Point              & \texttt{fext}            \\
-      MirrorableExtension   & \texttt{MExt, Pnt}     & Extension, Point              & \texttt{mext}            \\
-      PeriodizableExtension & \texttt{PExt, Pnt}     & Extension, Point              & \texttt{pext}            \\
-      ClampableExtension    & \texttt{CExt, Pnt}     & Extension, Point              & \texttt{cext}            \\
-      ExtendWithExtension   & \texttt{EwExt, Pnt, U} & Extension, Point, Image       & \texttt{ewext, u}        \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                 & \thead{Definition}                     & \thead{Description}                           &
-      \thead{Requirement}                                                                                                                                                                                           \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{6}{*}{Extension}} & \texttt{value\_type}                   & \makecell[l]{Type of value
-      contained                                                                                                                                                                                                     \\ in the range.                                                                                                                                                                             Cannot be \\ constant
-      or reference.}                                  & Models the concept \texttt{Value}.                                                                                                                          \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_fill}                 & \multirow{5}{*}{\texttt{std::bool\_constant}} & \multirow{5}{*}{\makecell[l]{\texttt{std::true\_type} if supported \\ \texttt{std::false\_false} otherwise.}} \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_mirror}               &                                               &                                                                    \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_periodize}            &                                               &                                                                    \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_clamp}                &                                               &                                                                    \\
-      \multicolumn{1}{c|}{}                           & \texttt{support\_extend\_with}         &                                               &                                                                    \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{ExtendWithExtension}        & \texttt{point\_type}                   & \makecell[l]{Type of point in                                                                                      \\ the
-      extended image.}                                & \makecell[l]{Converts to the sub-image                                                                                                                      \\ points type.}                                                                                                            \\
-      \cline{1-4}
-    \end{tabular}
-  \end{scriptsize}
-  \smallskip
-
-  \caption{Concepts Extensions: definitions}
-  \label{table:concept.extensions.definitions}
-\end{table}
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{ll}
-      \cline{1-2}
-      \thead{Type}              & \thead{Instance of type} \\
-      \cline{1-2}
-      \texttt{SE<Pnt, Pix>}     & \texttt{se}              \\
-      \texttt{Ext::value\_type} & \texttt{val}             \\
-      \texttt{Ext::point\_type} & \texttt{offset}          \\
-      \cline{1-2}
-    \end{tabular}
-    \smallskip
-
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                                              & \thead{Expression}                            & \thead{Return Type} &
-      \thead{Description}                                                                                                                                      \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{Extension}}              & \texttt{ext.fit(se)}                          & \texttt{bool}       & \makecell[l]{Wether
-      the extension fit                                                                                                                                        \\ the structuring element.}                                                                                                   \\
-      \multicolumn{1}{c|}{}                                        & \texttt{ext.extent()}                         & \texttt{int}        &
-      \makecell[l]{Extension's border width.                                                                                                                   \\
-      std::numeric\_limits<int>::max()                                                                                                                         \\ for infinite size.}                                                                                         \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{FillableExtension}}      & \texttt{fext.fill(val)}                       & \texttt{void}       &
-      \makecell[l]{Fill the extension with                                                                                                                     \\the value \texttt{val}.}                                                                                              \\
-      \multicolumn{1}{c|}{}                                        & \texttt{fext.is\_fill\_supported}             & \texttt{bool}       &
-      \makecell[l]{Wether the fill facility                                                                                                                    \\is supported.}                                                                                                                            \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{MirrorableExtension}}    & \texttt{mext.mirror()}                        & \texttt{void}       & \makecell[l]{Fill
-      the extension with                                                                                                                                       \\mirrored image's values.}                                                                                                  \\
-      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_mirror\_supported()}         &
-      \texttt{bool}                                                & \makecell[l]{Wether the mirror facility                                                   \\ is supported.}                                             \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{PeriodizeableExtension}} & \texttt{mext.periodize()}                     & \texttt{void}       &
-      \makecell[l]{Fill the extension with                                                                                                                     \\periodic copies of image's values.}                                                                                   \\
-      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_periodize\_supported()}      &
-      \texttt{bool}                                                & \makecell[l]{Wether the mirror facility                                                   \\is supported.}                                      \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{2}{*}{ClampableExtension}}     & \texttt{mext.clamp()}                         & \texttt{void}       & \makecell[l]{Fill
-      the extension by                                                                                                                                         \\extending image's values \\at extremities.}                                                                                    \\
-      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_clamp\_supported()}          &
-      \texttt{bool}                                                & \makecell[l]{Wether the clamp facility                                                    \\is supported.}                                       \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\multirow{3}{*}{ExtendWithExtension}}    &
-      \makecell[l]{\texttt{std::convertible\_to<point\_type,}                                                                                                  \\\texttt{U::point\_type>}} & \texttt{std::true\_type} &
-      \makecell[l]{Converts to the sub-image                                                                                                                   \\ points type.}                                                                                                       \\
-      \multicolumn{1}{c|}{}                                        & \texttt{mext.extend\_with(u, offset)}         &
-      \texttt{void}                                                & \makecell[l]{Fill the extension with                                                      \\sub-image      \texttt{u}'s values  starting \\ from \texttt{offset}.} \\
-      \multicolumn{1}{c|}{}                                        & \texttt{mext.is\_extent\_with\_supported()}   &
-      \texttt{bool}                                                & \makecell[l]{Wether the extend-with-sub-image                                             \\ facility is
-      supported.}                                                                                                                                              \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Extensions: expressions}
-  \end{scriptsize}
-  \label{table:concept.extensions.expressions}
-\end{table}
-
-
 This allows us to introduce the final refined image concepts: \emph{WithExtensionImage} as well as \emph{ConcreteImage}
 and \emph{ViewImage}. Those two last will be seen in detail in the next chapter~\ref{chap:image_views}. Those concepts
 are defined in~\cref{table:concept.image.definitions.7}. Their behavior is described
 in~\cref{table:concept.image.expressions.7}.
 
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}    & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
-      \cline{1-4}
-      WithExtensionImage & \texttt{WExtImg}      & Image                         & \texttt{wextimg}         \\
-      ConcreteImage      & \texttt{CImg}         & Image                         & \texttt{cimg}            \\
-      ViewImage          & \texttt{VImg}         & Image                         & \texttt{vimg}            \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
+We show how those three concepts (structuring elements, neighborhood and extension) interact with each other in the
+diagram shown in~\cref{fig:concept.se_extension}.
 
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept}                         & \thead{Definition}       & \thead{Description}            & \thead{Requirement}                    \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{WithExtensionImage} & \texttt{extension\_type} & Type of the image's extension. & Models the concept \texttt{Extension}. \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: definitions (7)}
-    \label{table:concept.image.definitions.7}
-  \end{scriptsize}
-\end{table}
-
-\begin{table}[!htbp]
-  \begin{scriptsize}
-    \begin{tabular}{llll}
-      \cline{1-4}
-      \thead{Concept} & \thead{Expression} & \thead{Return Type} &
-      \thead{Description}                                          \\
-      \cline{1-4}
-      \multicolumn{1}{c|}{\makecell[l]{WithExtension               \\Image}}           & \texttt{wextimg.extension()}                         & \makecell[l]{\texttt{std::convertible\_to<}\\\texttt{extension\_type>}} & \makecell[l]{Get the extension of the image.} \\
-      \cline{1-4}
-    \end{tabular}
-    \smallskip
-
-    \caption{Concepts Image: expressions (7)}
-  \end{scriptsize}
-  \label{table:concept.image.expressions.7}
-\end{table}
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/concepts/se_extension.pdf}
+  \caption{Structuring element and Extension concepts.}
+  \label{fig:concept.se_extension}
+\end{figure}
 
 Finally, we introduce a helper concept to centralize the detection of the "writability" of an image. Indeed, we do not
 want the user to have to use the writable counterpart of each concept for each and every case. That is why we introduce
 this final concept, \emph{OutputImage} in~\cref{table:concept.image.expressions.8}, that will tell the user if an image
 is well-specified.
-
-\begin{figure}[!htbp]
-  \begin{scriptsize}
-    \begin{equation}
-      \begin{aligned}
-        OutputImage ={} & (Image \implies WritableImage) \wedge                                             \\
-                        & (IndexableImage \implies WritableIndexableImage) \wedge                           \\
-                        & (AccessibleImage \implies WritableAccessibleImage) \wedge                         \\
-                        & (IndexableAndAccessibleImage \implies WritableIndexableAndAccessibleImage) \wedge \\
-                        & (BidirectionalImage \implies WritableBidirectionalImage) \wedge                   \\
-                        & (RawImage \implies WritableRawImage)
-      \end{aligned}
-    \end{equation}
-    \smallskip
-
-    \caption{Concepts OutputImage: definition}
-  \end{scriptsize}
-  \label{table:concept.image.expressions.8}
-\end{figure}
 
 The correct way to use it is:
 \begin{minted}{c++}
