@@ -478,15 +478,15 @@ those algorithms can leverage to speed up their execution.
 By making the Inventory of image processing algorithms (limited to mathematical morphology), we distinguish three main
 types of image processing algorithms. The first one are the pixel-wise algorithms. Those algorithms are the basic
 pixel-wise transformation. They are the base of any image processing toolkit. Indeed, being able to extract the green or
-red color channel of an image is mandatory. Thresholding as well as the previously seen gamma correction algorithm is
-such an algorithm. The second one are the local algorithms. Those algorithms algorithms perform transformations by
-considering all the neighboring pixels around a given pixel. In order to operate, those algorithms need additional data
-in the form of image's extension (defining border's behavior) and structuring element (disc, rectangle around the
-considered pixel). Such algorithms are widely used in mathematical morphology. Dilation, erosion, closing, opening are
-local algorithms. In mathematical morphology we will also have the union find, the max tree, the skeletonize algorithms.
-Finally, the third set of image processing algorithms is the global one. This set contains algorithms where computing
-the current pixel requires to know what was previously computed on the previous pixels as a prerequisite. Champfer
-distance transform, labeling, watershed, hierarchy structures related algorithms are in this category.
+red color channel of an image is mandatory. Thresholding as well as the previously seen gamma correction are such
+algorithm. The second one are the local algorithms. Those algorithms algorithms perform transformations by considering
+all the neighboring pixels around a given pixel. In order to operate, those algorithms need additional data in the form
+of image's extension (defining border's behavior) and structuring element (disc, rectangle around the considered pixel).
+Such algorithms are widely used in mathematical morphology. Dilation, erosion, closing, opening are local algorithms. In
+mathematical morphology we will also have the union find, the max tree, the skeletonize algorithms. Finally, the third
+set of image processing algorithms is the global one. This set contains algorithms where computing the current pixel
+requires to know what was previously computed on the previous pixels as a prerequisite. Champfer distance transform,
+labeling, watershed, hierarchy structures related algorithms are in this category.
 
 
 \section{Generic aspect of algorithm: canvas}
@@ -519,10 +519,13 @@ Halide~\parencite{ragankelley.2013.halide}). Processing will happen concurrently
 concents inside those GPU from the RAM memory. It's then preferred to design pipeline on those tiles directly to
 minimize the number of back and forth copies from the RAM.
 
-\paragraph{Deep learning} is a huge deal in image processing these last years as well. As deep neural networks are just
-a combinations of successive MapReduce~\parencite{dean.2008.mapreduce}, it can be offloaded onto onto executions units
-that can be cluster of computers through network (cloud), or local available computers, or directly locally available GPU
-hardware.
+\paragraph{Cloud computing} is a huge deal in image processing these last years as well, especially used in Deep
+learning applications. As deep neural networks are usually executed on cluster of computer through network (cloud) and
+thus are leveraging combinations of successive MapReduce~\parencite{dean.2008.mapreduce} under the hood. They can also
+be offloaded onto or local available computers, or directly locally available GPU hardware thanks to frameworks that are
+dynamically dispatching the workload (such as
+Tensorflow/Keras~\parencite{tensorflow.2015.whitepaper,chollet.2015.keras,gulli.2017.deep},
+PyTorch~\parencite{paszke.2019.pytorch}, etc.).
 
 In every case there is a notion of pipeline where the user pipe algorithms into each others in order to achieve a
 result. Those algorithms can leverage all the heterogenous ressources (cloud, GPU, CPU) they can to \emph{map} the input
