@@ -482,11 +482,11 @@ red color channel of an image is mandatory. Thresholding as well as the previous
 algorithm. The second one are the local algorithms. Those algorithms algorithms perform transformations by considering
 all the neighboring pixels around a given pixel. In order to operate, those algorithms need additional data in the form
 of image's extension (defining border's behavior) and structuring element (disc, rectangle around the considered pixel).
-Such algorithms are widely used in mathematical morphology. Dilation, erosion, closing, opening are local algorithms. In
-mathematical morphology we will also have the union find, the max tree, the skeletonize algorithms. Finally, the third
-set of image processing algorithms is the global one. This set contains algorithms where computing the current pixel
-requires to know what was previously computed on the previous pixels as a prerequisite. Champfer distance transform,
-labeling, watershed, hierarchy structures related algorithms are in this category.
+Such algorithms are widely used in mathematical morphology. Dilation, erosion, closing, opening, gradient, rank filter
+are local algorithms. In mathematical morphology we will also have the union find, the max tree, the skeletonize
+algorithms. Finally, the third set of image processing algorithms is the global one. This set contains algorithms where
+computing the current pixel requires to know what was previously computed on the previous pixels as a prerequisite.
+Champfer distance transform, labeling, watershed, hierarchy structures related algorithms are in this category.
 
 
 \section{Generic aspect of algorithm: canvas}
@@ -502,10 +502,10 @@ However, very quickly we learned that the \emph{run} aspect can be a combination
 \end{itemize}
 How do we decide what is the most efficient way to do? There is no simple answer to this question but we can start by
 studying the morphology of algorithms with two goals in mind: (i) find what can be parallelized/distributed and (ii)
-find one or several algorithms abstraction. Indeed, in image processing there are a lot of common patterns when looking
-at algorithms, the most famous being \emph{for all pixel of image, do something to pixel}. But there are other more
-high-level similarities that we can leverage to have more generic algorithm. Let us first study the different
-programmatic model there are to process an image.
+find one or several algorithms abstraction. Indeed, in image processing there are a lot of common patterns when one
+looks at algorithms implementations, the most famous being \emph{for all pixels of an image, do something to each
+  pixel}. But there are other more high-level similarities that we can leverage to have more generic algorithm. Let us
+first study the different programmatic model there are commonly used to process images.
 
 \paragraph{The pipeline} is the classic way of doing the work. It consists of an imbrication of different operators
 (algorithms) taking as input one or several image, maybe additional data as well (such as labels, adjacency map, etc.)
@@ -516,11 +516,11 @@ useless copies, locality, etc.)
 \paragraph{Kernels and tiling} is the trendy way of the last decade. It consists in breaking the original image into
 small tiles in order to feed those tiles into a massively multicore GPU (via CUDA,
 Halide~\parencite{ragankelley.2013.halide}). Processing will happen concurrently on those core, but it is costly to swap
-concents inside those GPU from the RAM memory. It's then preferred to design pipeline on those tiles directly to
-minimize the number of back and forth copies from the RAM.
+concents inside those GPU from the RAM memory. It's then preferred to design pipeline for those tiles so that the work
+directly happens on each core to minimize the number of back and forth copies from the RAM.
 
 \paragraph{Cloud computing} is a huge deal in image processing these last years as well, especially used in Deep
-learning applications. As deep neural networks are usually executed on cluster of computer through network (cloud) and
+learning applications. Deep neural networks are usually executed on cluster of computer through network (cloud) and
 thus are leveraging combinations of successive MapReduce~\parencite{dean.2008.mapreduce} under the hood. They can also
 be offloaded onto or local available computers, or directly locally available GPU hardware thanks to frameworks that are
 dynamically dispatching the workload (such as
@@ -550,7 +550,12 @@ code of such algorithm is naively be given in figure~\ref{code:erode.dilate}.
 
 The algorithms are almost written the same way. The only change is the operation \emph{min} and \emph{max} when
 selecting the value to keep. As such, we can easily see a way to factorize code by passing the operator as an argument.
-The algorithms can then be rewritten as shown in figure~\ref{code:erode.dilate.factorized}.
+The algorithms can then be rewritten as shown in figure~\ref{code:erode.dilate.factorized}. In this last example, we
+have one piece of code which is in charge of abstracting the way an image is traversed: it is the canvas. We also have
+other pieces of code which carry the logic of the operations, calling the canvas an providing the logic to apply from
+within the canvas. This way of decomposing the code enables the possibility of writing more specific heterogeneous logic
+for the traversing code so that the other parts of the code that carry the operator logic remains unaware and unburdened
+of possible implementation details.
 
 \begin{figure}[tbh]
   \centering
@@ -573,21 +578,13 @@ The algorithms can then be rewritten as shown in figure~\ref{code:erode.dilate.f
 \subsection{Taxonomy and canvas}
 \label{subsec.taxonomy.canvas}
 
-This approach leads to question a way to classify algorithm in families where this factorization can be possible, more
-broadly. In essence there are three big families of algorithm when looking at the state of the art of image processing
-today. The first is the point-wise family. In essence those algorithms only need to know the current pixel to do the
-work. Those are the most basic algorithm. Some useful point-wise algorithms are: gamma correction, thresholding,
-contrast correction projection. The second family consists in all the local algorithm. To work they need to know a
-structuring element which is the window to consider around a pixel. Those algorithms introduce several very important
-notions: neighborhood (of a pixel), separability and decomposability (of a structuring element) and border management.
-Some useful local algorithms are: dilation, erosion, gradient, rank filter, median filter or hit or miss. Finally, the
-third family consists in all the algorithm that propagate their computation while traversing the image. The chamfer
-distance tranform is such an algorithm. Those algorithms are less friendly to factorization of code.
-
-For the first family of algorithm, one can write them all with views so that factorizing code is hardly an issue. The
-second family of algorithm may be abstracted behind an algorithm canvas where the user provides the work to do at each
-point of the algorithm. For instance, a single pass local algorithm will always have shape given
-in~\ref{code:local.algorithm.canvas}:
+This approach is very much compatible with the inventory of the algorithms we did in the previous~\cref{sec:image.set}.
+Indeed, for the point-wise family of algorithms, it is hardly an issue as they can all be written in term of
+views~\cref{chap:image_views}. For the second family, which consists in all the local algorithm, they may be abstracted
+behind an algorithm canvas where the user provides the work to do at each point of the algorithm. For instance, a single
+pass local algorithm will always have shape given in~\ref{code:local.algorithm.canvas}. Finally for third family which
+consists in all the algorithm that propagate their computation while traversing the image. It is way less easy to
+provide an algorithmic canvas as each algorithm has its own way to propagate changes curing its computation.
 
 \begin{figure}[tbh]
   \centering
@@ -646,7 +643,7 @@ def dilate(img, out, se):
 This way of thinking algorithms is far less readable than the classic way. The user does not see the loops happening and
 it can becomes very messy when several passes are happening (closing, opening, hit or miss, etc.)
 
-\vspace{1cm}
+%\FIXME{Add union find example?}
 
 
 \subsection{Heterogeneous computing: a partial solution, canvas}
@@ -654,10 +651,14 @@ it can becomes very messy when several passes are happening (closing, opening, h
 
 One of the key aspect driving genericity is performance. We still have the following mantra: \blockquote{write once,
   work for every types, run everywhere}. However when considering the \emph{run} aspect, one has a lot to do. Indeed,
-nowadays, exploiting the available resources to their maximum is long standing issue. There are many ongoing work on the
-subject, such as SyCL~\cite{brown.2019.heterogeneous,wong.2019.heterogeneous}, Boost.SIMD~\cite{esterie.2014.boostsimd}
-or even VCL~\cite{fog.2013.vcl}. After taking some distance to study the subject, we can infer that there are three main
-aspects to consider when optimizing performance.
+nowadays, leveraging the available resources to their maximum is long standing issue. There are many ongoing work on
+the subject, such as SyCL~\cite{brown.2019.heterogeneous,wong.2019.heterogeneous} which is a standard for
+heterogeneous computing model edited by Kronos. This standard currently has four implementations: Codeplay's
+ComputeCpp~\parencite{codeplay.2019.computecpp}, Intel’s LLVM/clang implementation~\parencite{intel-llvm.2019.sycl},
+triSYCL~\parencite{xilinx.2019.triSYCL} led by Xilinx and hipSYCL~\parencite{aksel.2020.hipsycl} led by Heidelberg
+University. There also exists smaller libraries such as Boost.SIMD~\cite{esterie.2014.boostsimd} or even
+VCL~\cite{fog.2013.vcl} for easing how to write SIMD code. After taking some distance to study the subject, we can
+infer that there are three main aspects to consider when optimizing performance.
 
 The first one, the most important one is the algorithm to use in function of certain set of data. This aspect is covered
 by the C++ language and its builtin genericity tool: template metaprogramming. Indeed, we select the most optimized
@@ -669,7 +670,8 @@ recent assembly instructions to use wide vectorized registries (AVX512). The use
 help much needed.
 
 Finally, the third aspect is not as trivial as the first two ones. It consists in studying the structure of an algorithm
-to allow distributed computation. Sometimes algorithm are friendly to be distributed on several processing units that
+to allow distributed computation. It also consists in studying the different architectures to select the most efficient
+algorithm for a given architecture. Sometimes algorithm are friendly to be distributed on several processing units that
 compute a part of the result concurrently. This is what we call parallelism. There exists several way to take advantage
 of parallelism. First there is the use of several CPU units on the host computer. Then there is the use of GPU units
 working in combination with the CPU units to take advantage of the massive amount of core a graphic card can provide.
@@ -684,12 +686,13 @@ working with it.
 
 There is one true issue when studying parallel algorithm: it is whether they can be parallelized or not. Not all
 algorithms can be parallelized. Some just intrinsically cannot, typically, algorithms that immediately need the result
-at the previous iteration to compute the next iteration. There are still way to parallelize those one but it is not
-trivial and will not be treated in this paper. What interest us are the algorithms whose structure is an accumulation
-over a data type that can be defined as a monoid. We assert that every algorithm that can be rewritten as an
-accumulation over a monoid can be parallelized and/or distributed. This model that consists in distributing computation
-like an accumulation over a monoid data structure is also call the map-reduce. This model has two steps: the
-distribution (map) and then the accumulation (reduce).
+at the previous iteration to compute the next iteration. There may exist specific ways to re-arrange a specific
+algorithm, for instance, taking advantage of some algebraic property, in order to rewrite it in a parallelisable way,
+but it is not trivial (on a per-algorithm basis), and not generic. As such, it is out of the scope of this thesis. What
+interest us are the algorithms whose structure is an accumulation over a data type that can be defined as a monoid. We
+assert that every algorithm that can be rewritten as an accumulation over a monoid can be parallelized and/or
+distributed. This model that consists in distributing computation like an accumulation over a monoid data structure is
+also call the map-reduce. This model has two steps: the distribution (map) and then the accumulation (reduce).
 
 The map step will dispatch computation on sub-units with small set of data. The reduce step will retrieve and accumulate
 all those resulting data, as soon as they are ready.
@@ -839,21 +842,30 @@ our work and will drive the entire design.
 First, let us introduce the fundamental concepts deriving from the basis notion. The \emph{Value} concept is refined
 into three distincts one in~\cref{table:concept.value.expressions}. There are the basic \emph{Value} but also the
 \emph{ComparableValue} and the \emph{OrderedValue} which are useful when it comes to comparison or ordering algorithms.
+The need behind those three concepts derives from the algorithms who need an ordering relation in order to function
+properly. Most of mathematical morphology requires it. For instance, the ordering relation for a gray-scale image is
+trivial whereas it is a field of research for coloured (rgb-8bits) images.
 
-Then we have the concept of \emph{Point}, detailed in~\cref{table:concept.point.expressions} which is a bit more
-constrained as it must be totally ordered. Indeed, when accessing a value stored in an image, wether it be reading of
-mutating, it is important that there is only one accessed value.
+The second fundamental brick is the concept of \emph{Point}, detailed in~\cref{table:concept.point.expressions} which is
+a bit less open than the concept \emph{Value} as it must be totally ordered. Indeed, when accessing a value stored in an
+image, wether it is about reading or mutating, it is important that there is only one accessed value.
 
 Now we introduce an abstract way to represent this relation $Value * Point$: the Pixel. This is a well known notion in
-image processing and it represent a couple $(point, value)$. This facility is easy to move around and contains
+image processing and it represent a couple $(point, value)$. This abstraction layer is easy to move around and contains
 facilities to read and mutate the pixel's value if possible. Indeed, not all pixel are able to mutate their value. If
-the pixel is yielded by an image that only generate values on the fly then it cannot be mutated. Henceforth, we
-introduce two new concepts: \emph{Pixel} and \emph{OutputPixel} in~\cref{table:concept.pixel.definitions}.
+the pixel is yielded by an image that only generates values on the fly then it cannot be mutated. Henceforth, we
+introduce two new concepts: \emph{Pixel} and \emph{OutputPixel} in~\cref{table:concept.pixel.definitions}. Those two
+concepts have a very similar interface described in~\cref{table:concept.pixel.expressions}. They can both access the
+stored informations: the point and the value. On top of that, the \emph{OutputPixel} can mutate the value. When
+interacting with pixels, the user will want to be able to write code as followed:
+\begin{minted}{C++}
+  auto pix = Pixel();     // Get a pixel
+  auto val = pix.val();   // yield the pixel value
+  auto pnt = pix.point(); // yield the pixel point
+  pix.val() = 42;         // Assign a value
+\end{minted}
 
-Those two concepts have a very similar interface described in~\cref{table:concept.pixel.expressions}. They can both
-access the stored informations: the point and the value. On top of that, the \emph{OutputPixel} can mutate the value.
-
-We show how those concepts interact with each other in the diagram~\cref{fig:concept.pixel}.
+We show how those three fundamental concepts interact with each other in the diagram~\cref{fig:concept.pixel}.
 
 \begin{figure}[tbh]
   \centering
@@ -887,24 +899,39 @@ void my_algorithm(Range rng)
 
 In image processing, we refine further this concept by introducing multi-dimensional ranges (\emph{MDRange}). Indeed, in
 image processing the user is used to write double loop to iterate over a bi-dimensional image. And abstracting away this
-aspect under standard ranges induce performance loss. That is why we needed this concept to exist. A multi-dimentional
+aspect under standard ranges induces performance loss. That is why we needed this concept to exist. A multi-dimensional
 range can be split with a library function, \texttt{mln::ranges::rows(mdrng)} to fit the double-loop pattern and keep
 its performance. This topic is tackle in-depth later in~\cref{sec.range.traversing}. For now, let us consider
-multi-dimensional ranges as an image processing extension for performance. They are defined
-in~\cref{table:concept.ranges.definitions} and their interface is the same as standard ranges, as seen
-in~\cref{table:concept.ranges.expressions}.
+multi-dimensional ranges as an image processing extension for performance for the image traversing pattern. They are
+defined in~\cref{table:concept.ranges.definitions} and their interface is the same as standard ranges, as seen
+in~\cref{table:concept.ranges.expressions}. They are designed so that the user code looks like this:
+\begin{minted}{C++}
+  auto mdrng = MDRange(); // Get a multi-dimensional range of values
+  auto rows = mln::ranges::rows(mdrng);
+  for(auto row : rows) // double loop pattern
+    for(auto val : row)
+      // use(val)
+\end{minted}
 
 From an algebraic point of view, the definition of an image is not complete without considering a definition domain on
 which it is defined. In image processing, the same rule applies. We cannot consider an image without considering the set
 of points that are valid for this image. Henceforth we must define the concept of \emph{Domain}
-in~\emph{table:concept.domain.definitions}.
+in~\emph{table:concept.domain.definitions}. The \emph{Domain} concept is refined into two sub-concepts which are
+\emph{SizedDomain} and \emph{ShapedDomain}. This emphasis the possibility of existence of possible infinite domain as
+well as domains that may be defined over non-continuous intervals in space. This enables algorithms to require the
+domain to have certain shape if needed. The domain behavior is described in~\cref{table:concept.domain.expressions}.
 
-The \emph{Domain} concept is refined into two sub-concepts which are \emph{SizedDomain} and \emph{ShapedDomain}. This
-emphasis the possibility of existence of possible infinite domain and domains that may be defined over non-continuous
-intervals in space. This allows algorithms to requires the domain to have certain shape if needed. The domain behavior
-is described in~\cref{table:concept.domain.expressions}.
+In practice, a domain is used to get informations about the points constituting the image. Indeed, we can write code
+like this:
+\begin{minted}{C++}
+  auto dom = Domain(); // Get a domain
+  auto pnt = Point(..., ...); // Get a random point
+  bool ret = dom.has(pnt); // Check wether the domain contains the point
+  bool is_empty = dom.empty(); // Check wether the domain is empty
+  auto dim = dom.dim(); // Yield the domain's dimension information
+\end{minted}
 
-We show how the concept Domain flows from the previous concepts in the diagram shown in~\cref{fig:concept.domain}.
+We show how the concept \emph{Domain} flows from the previous concepts in the diagram shown in~\cref{fig:concept.domain}.
 
 \begin{figure}[tbh]
   \centering
@@ -915,17 +942,28 @@ We show how the concept Domain flows from the previous concepts in the diagram s
 
 Now we have all the tools to introduce our main concept: \emph{Image}. As for \emph{Pixel}, we have the distinction over
 image whose value can be mutated in a sub-concept named \emph{WritableImage}. These concepts are defined
-in~\cref{table:concept.image.definitions.1}.
+in~\cref{table:concept.image.definitions.1}. In addition to this definition we can infer the behavior described
+in~\cref{table:concept.image.expressions.1}. There are complicated requirements written in template metaprogramming
+code. But in the end it is just to requires the ranges returned by the member functions \texttt{pixels()} and
+\texttt{values()} to iterate over element whose type are the same as those declared in the parent image. In addition, we
+introduce two facilities which are the member function \texttt{concretize()} and \texttt{ch\_value<V>()}. The first is a
+way to turn a view into a concrete type. This will be seen more in-depth in~\cref{chap:image_views}. The last is a way
+to cast values from one type to another. It forms a new image type whose underlying values will be returned after being
+casted to a new value type. This last facility is extremely useful when one only wants to mutate the underlying type
+while keeping all the other details about one type (such as the dimension). For instance, when working with labeling
+algorithm, we know our algorithm will return an image similar to the input one with the exception of the underlying type
+which will be the type of the label. The following code shows how it is applied:
+\begin{minted}{C++}
+  using label_t = int; // label type
 
-In addition to this definition we can infer the behavior described in~\cref{table:concept.image.expressions.1}. There
-are complicated requirements written in template metaprogramming code. But in the end it is just to requires the ranges
-returned by the member functions \texttt{pixels()} and \texttt{values()} to iterate over element whose type are the same
-as those declared in the parent image.
-
-In addition, we introduce two facilities which are the member function \texttt{concretize()} and
-\texttt{ch\_value<V>()}. The first is a way to turn a view into a concrete type. This will be seen more in-depth
-in~\cref{chap:image_views}. The last is a way to cast values from one type to another. It forms a new image type whose
-underlying values will be returned after being casted to a new value type.
+  template <class I> // Input image of type I
+  auto my_labeling_algorithm(I input_image)
+    -> image_ch_value_t<I, label_t> // Output image is Input image (I)
+                                    // whose underlying type is label_t
+  {
+    // ...
+  }
+\end{minted}
 
 We show the diagram building up the image concept from the previous concepts in~\cref{fig:concept.image}.
 
@@ -940,39 +978,91 @@ We show the diagram building up the image concept from the previous concepts in~
 \subsection{Advanced way to access image data}
 \label{subsec:advanced}
 
-Being able to iterate over ranges of pixels or values is good and all but we are still lacking fundamental facilities to
-access an element directly from the image. First we need to define the concept of \emph{Index}
-in~\cref{table:concept.index.expressions} which we will use afterwards.
-
-The first fundamental tool is represented as an \emph{IndexableImage}. An element can be accessed simply by providing
-its index number. This concept is defined in~\cref{table:concept.image.definitions.2}. This introduces a simple
-behavioral pattern described in~\cref{table:concept.image.expressions.2}.
+While being able to iterate over ranges of pixels or values is good, we are still lacking fundamental facilities to
+access an element directly from the image. In order to solve this predicament, first we need to define the concept of
+\emph{Index} in~\cref{table:concept.index.expressions} which we will use afterwards. This is a very simple concept that
+encapsulate an integral value. This value can be negative as we want to be able to do negative indexing in case our
+image has an extension, cf.~\cref{subsec:advanced}. The first advanced tool is represented as an \emph{IndexableImage}.
+An element can be accessed simply by providing its index number. This concept is defined
+in~\cref{table:concept.image.definitions.2}. This introduces a simple behavioral pattern described
+in~\cref{table:concept.image.expressions.2}. With this concept, we are able to write code as followed:
+\begin{minted}{C++}
+  auto ima = IndexableImage(); // Get an indexable image
+  int k = 15; // Get an index
+  auto val = ima[k]; // Get the element at the index
+  ima[k] = 255; // Mutate the element at the index
+\end{minted}
+Being able to traverse an image through indexes is especially useful for algorithms that are aware of the number of
+elements in the image.
 
 Additionally we want to be able to access a value by providing a point, the same way as in the algebraic definition $val
   = image(point)$. To do so, we introduce the concept of accessibility through \emph{AccessibleImage}. This concept is
-defined in~\cref{table:concept.image.definitions.3}.
+defined in~\cref{table:concept.image.definitions.3}. This introduces new behavior that is described
+in~\cref{table:concept.image.expressions.3}. We can notice facilities specifically including bound checking. Indeed,
+we suppose, for fast access, that the user is always picking element from the image's domain but it is possible to
+bound check elements if needed on access for specific usages. With this concept, we are now able to write code as
+followed:
+\begin{minted}{C++}
+  auto ima = AccessibleImage(); // Get an accessible image
+  auto p = Point(); // Get a point
+  auto val = ima(p); // Get a value from a point
+  auto val = ima.at(p) // Same with no bound checking
+  auto pix = ima.pixel(p) // Get a pixel from a point
+  auto pix = ima.pixel_at(p) // Same with no bound checking
+  ima(p) = 42; // Assign a value from a point
+  ima.at(p) = 42; // Same with no bound checking
+  ima.pixel(p).val() = 42; // Assign a pixel value from a point
+  ima.pixel_at(p).val() = 42; // Same with no bound checking
+\end{minted}
+Being able to traverse an image through points is especially useful for algorithms relying on restricting/expanding
+definition domain that are exclusively yielding points.
 
-This introduces new behavior that is described in~\cref{table:concept.image.expressions.3}. We can notice facilities
-specifically including bound checking. Indeed, we suppose, for fast access, that the user is always picking element from
-the image's domain but it is possible to bound check elements if needed on access for specific usages.
-
-Once we know that an image is both \emph{indexable} and \emph{accessible} we can deduce new behaviors (described
+Once we know that an image is both \emph{indexable} and \emph{accessible} we can introduce new behaviors (described
 in~\cref{table:concept.image.expressions.4}) that we put behind the concept of \emph{IndexableAndAccessibleImage}
 defined in~\emph{table:concept.image.definitions.4}. This behavior is related to accessing index from points and vise
-versa.
+versa. Indeed, it is possible to now write such code:
+\begin{minted}{C++}
+  auto pnt = ima.point_at_index(k); // Get the point from an index
+  auto k = ima.index_of_point(pnt); // Get the index from a point
+  // Get the index difference for a shift of delta_point
+  auto delta_idx = ima.delta_index(delta_pnt);
+\end{minted}
 
-Additionally we assume that an image can be traversed in a forward way as well as in a backward way. This may not be
-true for all images so this notion needs to be refined into a new concept \emph{BidirectionalImage}. This concept is
-defined in~\cref{table:concept.image.definitions.5} and its behavior is described
-in~\cref{table:concept.image.expressions.5}.
+Additionally it useful, for propagating algorithms, to be able to traverse images in both a forward way and a backward
+way. As it may not be possible for all images, this notion needs to be refined into a new concept
+\emph{BidirectionalImage}. This concept is defined in~\cref{table:concept.image.definitions.5} and its behavior is
+described in~\cref{table:concept.image.expressions.5}. Thanks to this concept, we are able to write code as followed:
+\begin{minted}{C++}
+  template <class I>
+  my_algorithm(I input)
+  {
+    // forward pass
+    for(auto pix : input.pixels())
+      // ...
 
-Now we need a way, when possible, to iterate over a continuous data buffer for very fast and optimized calculation. That
-is what the concept of \emph{RawImage} is for: an image whose data buffer can be accessed, as well as its mutable
-counterpart. It is defined defined in~\cref{table:concept.image.definitions.6}.
+    auto backward = std::views::reverse(input.pixels())
+    for(auto pix : backward)
+      // ...
+  }
+\end{minted}
 
-Having a raw image whose data buffer can be accessed allow ust to expose two more member function to access the data
-buffer and its strides for correct pointer arithmetic. They behave as described
-in~\cref{table:concept.image.expressions.6}.
+Finally, we need a way, when possible, to iterate over a continuous data buffer for very fast and optimized calculation.
+That is what the concept of \emph{RawImage} is for: an image whose data buffer can be accessed, as well as its mutable
+counterpart. It is defined defined in~\cref{table:concept.image.definitions.6}. Having a raw image whose data buffer can
+be accessed allow ust to expose two more member function to access the data buffer and its strides for correct pointer
+arithmetic. They behave as described in~\cref{table:concept.image.expressions.6}. This enables writing code as followed:
+\begin{minted}{C++}
+  auto ima = Image(); // Image of int
+  const int* data = ima.data(); // Access the underlying buffer
+  auto dim = ima.domain().dim(); // Get the dimension of the image
+  // Retrieve informations about strides
+  auto strides = std::vector<std::ptrdiff_t>(0, dim)
+  for (int i = 0; i < dim; ++i)
+    strides[i] = ima.stride(i)
+
+  // Now use data and strides to traverse the raw buffer
+  // ...
+\end{minted}
 
 We show how those concepts are defined from one another in the diagram shown i~\cref{fig:concept.images}.
 
@@ -993,43 +1083,66 @@ the pixels among a window having a specific shape centered in this first pixel. 
 \emph{structuring element} and the pixels considered by this window are called the \emph{neighborhood}. This leads us to
 introduce the concept of \emph{StructuringElement} which is defined in~\cref{table:concept.se.definitions}.
 
-This concept is refined into three subconcepts that are related to properties the structuring element can offer. Those
+This concept is refined into three sub-concepts that are related to properties the structuring element can offer. Those
 properties are:
 \begin{itemize}
   \item decomposability: ability to split a complex structuring element into several smaller and simpler structuring
         element. There is an equivalence in behavior when the algorithm is recursively run for each smaller structuring
-        element one after another, in a multipass way.
+        element one after another, in a multi-pass way.
   \item separability: ability to split a complex structuring element into several smaller and simpler structuring
-        element. There is an equivalence in behavior when the convolution is recursively run for each smaller structuring
-        element one after another, in a precise order, in a multipass way.
+        element. There is an equivalence in behavior when the convolution is recursively run for each smaller
+        structuring element one after another, in a precise order, in a multi-pass way.
   \item incremental: ability to tell the points that are added to or removed from the range when the structuring element
-        is shifted by a basic displacement (e.g. for a \emph{2D point}, the basic deplacement is $(0,1)$). Usually used to
-        compute attributes over a sliding structuring element in linear time.
+        is shifted by a basic displacement (e.g. for a \emph{2D point}, the basic displacement is $(0,1)$). Usually used
+        to compute attributes over a sliding structuring element in linear time.
 \end{itemize}
-The behavioral for those concepts is discribed in~\cref{table:concept.se.expressions}.
+The behavioral for those concepts is described in~\cref{table:concept.se.expressions}. Being able to manipulate
+structuring element allows us to write the following code:
+\begin{minted}{C++}
+  auto se = se::disc(.radius=3); // get a structuring element
+  for(auto pix : ima.pixels())   // traverse image
+    for(auto nb : se(pix))       // traverse neighboring pixels
+      // ...
+\end{minted}
 
 Additionally, we introduce the concept of \emph{Neighborhood} in~\cref{table:concept.nbh.definitions}. This concept has
 facilities to know what points/pixels are placed before or after another point/pixel inside the window of a specific
-structuring element. It behaves as described in~\cref{table:concept.nbh.expressions}.
-And the last side concept to introduce to our current galaxy is the extension. Indeed, extension management is very
-important when dealing with local algorithm as pixels on the border need to be processed and the behavior near the
-border of the image must be defined and well-specified. There are several strategies when it comes to borders and extension.
-We refine concept for each strategy we identified:
+structuring element. It behaves as described in~\cref{table:concept.nbh.expressions}. This concept is useful when one
+wants to only consider a certain part of the neighboring pixels within a structuring element. This allow to write the following code:
+\begin{minted}{C++}
+  auto se = se::disc(.radius=3); // get a structuring element
+  for(auto pix : ima.pixels())   // traverse image
+    for(auto nb : se.before(pix))// traverse neighboring pixels located before pix
+      // ...
+\end{minted}
+
+And the last concept we need to introduce is the extension. Indeed, extension management is very important when dealing
+with local algorithm as pixels on the border need to be processed too, and the behavior near the border of the image
+must be defined and well-specified. There are several strategies when it comes to borders and extension. We refine
+concept for each strategy we identified:
 \begin{itemize}
   \item fillable: fill the border with a specific value.
   \item mirrorable: mirror the image as if there was an axial symmetry, with the border being the axis.
-  \item periodizeable: repeat the image, as if a modulo size wasa applied to the coordinates.
+  \item periodizeable: repeat the image, as if a modulo size was applied to the coordinates.
   \item clampable: extend the value at the image's border into the extension.
-  \item extent with: used when tiling. it consider the current image as a subimage of another bigger image and pick the
+  \item extent with: used when tiling. it consider the current image as a sub-image of another bigger image and pick the
         extension values there.
 \end{itemize}
 Those concepts are defined in~\cref{table:concept.extensions.definitions} and their behavior is described
-in~\cref{table:concept.extensions.expressions}.
-
-This allows us to introduce the final refined image concepts: \emph{WithExtensionImage} as well as \emph{ConcreteImage}
-and \emph{ViewImage}. Those two last will be seen in detail in the next chapter~\ref{chap:image_views}. Those concepts
-are defined in~\cref{table:concept.image.definitions.7}. Their behavior is described
-in~\cref{table:concept.image.expressions.7}.
+in~\cref{table:concept.extensions.expressions}. All those concepts allow us to introduce the final refined image
+concepts: \emph{WithExtensionImage} as well as \emph{ConcreteImage} and \emph{ViewImage}. Those two last will be seen in
+detail in the next chapter~\ref{chap:image_views}. Those concepts are defined
+in~\cref{table:concept.image.definitions.7}. Their behavior is described in~\cref{table:concept.image.expressions.7}. It
+is now possible to write the following code:
+\begin{minted}{C++}
+  template <class I, class SE>
+  my_local_algorithm(I input, SE se) {
+    // if the extension is large enough to function with the passed structuring element
+    if(input.extension().fit(se)) {
+      // ...
+    }
+  }
+\end{minted}
 
 We show how those three concepts (structuring elements, neighborhood and extension) interact with each other in the
 diagram shown in~\cref{fig:concept.se_extension}.
@@ -1051,6 +1164,14 @@ The correct way to use it is:
 template <class Img>
 requires RawImage<Img> && OutputImage<Img>
 void my_algorithm(Img img) {
-    // ...
+    // write data in img ...
   }
 \end{minted}
+
+\section{Summary}
+
+In this chapter, we have demonstrated how it is possible to extract concepts from algorithms. We have then offered a
+taxonomy of image processing algorithms in order to extract those concepts. We then discuss and dig further the generic
+aspects of algorithms by introducing the notion of canvas which enables taking advantage of opportunities to do
+heterogeneous computation while remaining user friendly. Finally, we offer and justify a detailed taxonomy of concepts
+related to image processing area.

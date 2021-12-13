@@ -386,7 +386,7 @@ are interested in.
 \end{table}
 
 
-\FIXME{Discussion à propos du tableaux : motivé avec des exemples les principaux points}
+%\FIXME{Discussion à propos du tableaux : motivé avec des exemples les principaux points}
 
 \subsection{Unjustified limitations}
 \label{subsec:limitations}
@@ -481,7 +481,8 @@ OpenCV decomposed its square into smaller sub square (and not periodic lines), i
 \begin{figure}[htb]
   \centering
   \includegraphics[width=3.8in]{figs/bench_disc_rect_by_SE}
-  \caption{Benchmark: dilation of a 2D image (3128x3128 \eqmark 10Mpix) with a 2D square and a 2D disc. \FIXME{Légende image (noms, espace)}}
+  %\caption{Benchmark: dilation of a 2D image (3128x3128 \eqmark 10Mpix) with a 2D square and a 2D disc. \FIXME{Légende image (noms, espace)}}
+  \caption{Benchmark: dilation of a 2D image (3128x3128 \eqmark 10Mpix) with a 2D square and a 2D disc.}
   \label{fig:gen.bench.square.disc}
 \end{figure}
 
@@ -493,8 +494,8 @@ These results show that Pylene's attempt to decompose each structuring element i
 slightly slower for smaller structuring elements whereas it is much more regular and faster when the structuring element
 start to be of a certain size.
 
-\FIXME{Rajouter arbre de décision de l'algorithme final qui tourne sur chaque bibliothèque avec note sur les méthodes de
-  décisions (statiques ou dynamique)}
+%\FIXME{Rajouter arbre de décision de l'algorithme final qui tourne sur chaque bibliothèque avec note sur les méthodes de
+%  décisions (statiques ou dynamique)}
 
 \subsubsection{Limitations regarding static types in a dynamic world}
 
@@ -508,8 +509,14 @@ any type and not jst a specified set of pre-compiled types. Being able to break 
 in-depth in~\cref{chap:static_dynamic_bridge}.
 
 
-\FIXME{Conclusion vis-à-vis de la généricité: un algo générique est plus rapide ? La généricité ne nuit pas aux
-  performances ? La généricité permet de dispatcher plus facilement ?}
+\subsection{Summary}
+
+To conclude, a generic algorithm will not be faster after it is first written, but will provide acceptable performances
+for most cases. However, a generic algorithm provide opportunities for the implementer to take advantage of some
+properties from input types in order to be faster. The main advantage is that once those optimisation opportunities are
+written once, they are available for every input types (that match the property). Genericity enables code dispatching
+very easily based on type property which may induce almost no runtime overhead, depending on which generic strategy was
+chosen in the library.
 
 
 \section{Genericity within programming language}
@@ -732,7 +739,7 @@ min_value(const Ima& ima) {
 \subsubsection{SFINAE: Substitution-Failure-Is-Not-An-Error}
 \label{subsec:sfinae}
 
-Additionnaly, another feature related to metaprogramming  allowed the developer to design generic libraries: the
+Additionally, another feature related to metaprogramming  allowed the developer to design generic libraries: the
 SFINAE~\parencite{vandevoorde.2002.c++} (substitution-failure-is-not-an-error) technique that leads to the
 popularization of the usage of the \texttt{std::enable\_if} metaprogramming construct. The SFINAE technique relies on a
 feature of the C++ programming language. Indeed, when standardizing how the compiler should resolve and select function
@@ -749,10 +756,8 @@ could not find an overload that was not ill-formed. If this happens, the compile
 overloads it tried, to list all the template substitution it tried and finally to list why it failed. This mechanism is
 the very reason of the unpopularity of this technique because it leads to situation where the compiler can output
 \emph{several Mos} of error message for one single file. Error messages become incomprehensible very fast and programs
-are hard to debug because everythFor instance, here is some real-world example extracted from generic image prcessing
-code that allows implementing the \emph{fill} algorithm in two very different ways depending on how behaves the input
-image type:ing happens at compile-time. But still, it was the only technique we had to perform any kind of detections on
-types at compile time to require some any given constraints on them.
+are hard to debug because everything happens at compile-time. But still, it was the only technique we had to perform any
+kind of detections on types at compile time to require some any given constraints on them.
 
 For instance, here is some real-world example extracted from generic image processing code that allows implementing the
 \emph{fill} algorithm in two very different ways depending on how behaves the input image type. First we need to write
@@ -838,7 +843,7 @@ Here, no hard error occur. Both overload are dispatched according to the constra
 we can talk about \emph{constrained genericity} in C++.
 
 
-\subsection{CRTP: Curiously Recurring Template Pattern}
+\subsubsection{CRTP: Curiously Recurring Template Pattern}
 \label{subsec:crtp}
 
 Another features that precede C++11 and was available in C++98~\parencite{iso.1998.cpp} and
@@ -983,7 +988,7 @@ Stepanov~\parencite{musser.1988.generic,musser.1994.algorithm,dehnert.1998.funda
 Stroustrup~\parencite{stroustrup.1995.design,stroustrup.1999.hot,stroustrup.2003.concepts,stroustrup.2007.hopl} for
 years with the coming of Concepts, and all the new possibilities it brings to the programmer.
 
-\section{Genericity in post C++11 (C++20 and Concepts)}
+\subsection{Genericity in post C++11 (C++20 and Concepts)}
 \label{sec:postcpp11}
 
 \begin{figure}[tbh]
@@ -1019,7 +1024,7 @@ there have been a long work to introduce them that goes back from
 standard~\cite{voutilainen.2017.concepts} (referred as C++20~\parencite{iso.2011.cpp}). This allows us, as of today, to
 write code leveraging this facility.
 
-\subsection{Conceptification}
+\subsubsection{Conceptification}
 \label{subsec:conceptification}
 
 C++ is a multi-paradigm language that enables the developer to write code that can be \emph{object oriented},
@@ -1128,7 +1133,7 @@ This new notion of concept is very important because it decorrelate the requirem
 algorithms from the way the data structures are designed. One wan always wrap a specific data structure so that it can
 behave properly into an algorithm, without needing to rewrite that algorithm.
 
-\subsection{Simplifying code}
+\subsubsection{Simplifying code}
 \label{subsec:simplifying}
 
 The main advantage brought by using modern C++ as the implementation language for an image processing library is to be
@@ -1344,4 +1349,13 @@ Finally, Xeus-cling is a Jupyter~\parencite{kluyver.2016.jupyter} kernel allowin
 Jupyter notebook. Like Cppyy, it is based on LLVM/Cling. Those three projects are very promising and improve greatly the
 scope of possibilities for the future.
 
-\FIXME{Conclusion}
+
+\section{Summary}
+
+In this chapter we have presented the origine of generic programming, which goes as far
+as~\citedate[year]{musser.1988.generic}. We then proceeds to demonstrate how genericity can be achieved within libraries
+and what programming languages features enables it. Second, we discuss how true generic facilities are builtin
+programming languages thanks to template metaprogramming techniques in a first time. In a second time, we discuss how
+new builtin programming language features such as concepts are finally reaching a state of generic programming as
+describe in~\parencite{dehnert.1998.fundamentals}. Finally we discuss how the current state of generic programming via
+template metaprogramming, which is bound to the static world, interacts with the dynamic world.
