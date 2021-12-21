@@ -8,16 +8,17 @@
 \begin{forest}
   for tree={font=\tt, shape=rectangle, rounded corners, draw,
   align=center, top color=white, bottom color=gray!20}
-  [$+$
-    [$*$
-      [$ima1$]
-      [$alpha$]
-    ]
-    [$*$
-      [$ima2$]
-      [$1-alpha$]
+  [$i$, content={$i = view::tranform$}
+    [$gamma$]
+    [$max\_val$]
+    [$h$, content={$h = view::filter$}
+      [$g$, content={$g = view::tranform$}
+        [$f$, content={$f = view::transform$}
+          [$ima1$]
+        ]
+        [$ima2$]
+      ]
     ]
   ]
 \end{forest}
 \end{document}
-

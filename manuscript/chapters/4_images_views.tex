@@ -1,47 +1,97 @@
 \chapter{Image views}
 \label{chap:image_views}
 
-\section{The Genesis of a new abstraction layers: Views}
-
 This concept of views is not new and naturally appeared in Image processing with Milena under the name of
 morphers~\parencite{levillain.2009.ismm, geraud.2012.hdr}. It was always useful to be able to project an image through a
 prism that could extract specific information about it without the need to copy the underlying data buffer. In modern
-days, the language C++ (20) also introduce this mechanism with the ranges~\parencite{niebler.2014.ranges} facility for
-\emph{non-owning collections}. It is named \emph{views} and allows the user to access a container's content (vector,
-map) through a prism. In Pylene, we decided to align the naming system after what was decided in C++20 in order not to
-confuse the user. This way, a \texttt{transform} view in image processing will do the same thing on an image that the
-transform view in the standard range library does on a container. \emph{Views} feature the following properties:
+days, the language C++ (20) also introduces this mechanism with the ranges~\parencite{niebler.2014.ranges} facilities
+for \emph{non-owning collections}. It is named \emph{views} and allows the user to access the content of a container
+(vector, map) through a prism. In Pylene, we decided to align the naming system after what was decided in C++20 in order
+not to confuse the user. This way, a \texttt{transform} view in image processing will do the same thing on an image that
+the transform view in the standard range library does on a container. \emph{Views} feature the following properties:
 \emph{cheap to copy}, \emph{non-owner} (does not \emph{own} any data buffer), \emph{lazy evaluation} (accessing the
 value of a pixel may require computations) and \emph{composition}. When chained, the compiler builds a \emph{tree of
-  expressions} (or \emph{expression template} as used in many scientific computing libraries such as
+expressions} (or \emph{expression template} as used in many scientific computing libraries such as
 Eigen~\cite{guennebaud.2010.eigen}), thus it knows at compile-time the type of the composition and ensures a 0-overhead
-at evaluation.
+at evaluation. We will first motivate the usage of \emph{views} in image processing. We will then present the main views
+used in image processing. Then will be discussed how image views differ from the one used in C++'s ranges and their main
+properties (especially how they keep/discard the properties from the parent image) through a concrete example: the
+management of border and extension policies. Finally, we will discuss the limitations of such a design.
 
-There are four fundamental kind of views, inspired by functional programming paradigm: \texttt{transform(input, f)}
+\section{The Genesis of a new abstraction layers: Views}
+\label{sec:genesis_of_views}
+
+In image processing an algorithm is naively written by taking one or several inputs data (among which is the input image(s)),  by performing work on this input data and then by returning the resulting data (or an error). Let us take for example the alpha blending example which can be implemented in naive C++ code as followed:
+\begin{minted}{C++}
+  void blend_inplace(const uint8_t* ima1, uint8_t* ima2, float alpha,
+  int width, int height, int stride1, int stride2) {
+    for (int y = 0; y < height; ++y) {
+      const uint8_t* iptr = ima1 + y * stride1;
+      uint8_t* optr = ima2 + y * stride2;
+      for (int x = 0; x < width; ++x)
+        optr[x] = iptr[x] * alpha + optr[x] * (1-alpha);
+    }
+  }
+\end{minted}
+
+This code has several flaws. It makes strong hypothesis about the input images: its data buffer contiguity and its shape (2D). Let us suppose that our user now wants to restrict the algorithm to a specific region inside the image. The maintainer would have then to provide a version of the algorithm with one additional input argument corresponding to the region of interest. Let us suppose that the user now wants to support manipulate 3D images. The maintainer would now have to provide two additional with an additional stride argument (one for the base algorithm, one for the region of interest-restricted algorithm). Let us now suppose that the user only wants to manipulate the red color channel. Now the maintainer must support and additional versions of the algorithm for each channel and/or color type. The complexity increases manyfold for each kind of customization points the maintainer wants to offer to the user. Of course, it is possible to prevent code duplication through clever usage of computer engineering techniques (code factorization etc.) but the complexity would still leak through the API anyway. That is way the other solution is to make the user able to perform those restriction upstream from the algorithm transparently so that the downstream algorithm is easy to write, understand and maintain. In order to achieve this, we need to raise the abstraction level around images by one layer so that we can work at the image level. The alpha blending algorithm would then be written as shown in~\cref{fig.view.alphablend}.
+
+\begin{figure}[tbh]
+  \centering
+  \includestandalone[mode=image, scale=0.4]{figs/alphablend}
+
+  \caption{Alpha-blending algorithm written at image level.}
+  \label{fig.view.alphablend}
+\end{figure}
+
+This way to express an algorithm is achieved by introducing \emph{views} to image processing. An image now is a view and can be restricted/projected/manipulated however the user need before feeding it to an algorithm. Even the whole alpha blending algorithm can be rewritten in terms of views entirely, as shown in~\cref{fig.new.alphablend}.
+
+\begin{figure}[tbh]
+  \centering
+  \begin{minipage}[b]{5.5cm}
+    \includestandalone[mode=image, scale=1.0]{figs/view_ast2}
+  \end{minipage}
+  \begin{minipage}[b]{5.5cm}
+    \begin{minted}{c++}
+    auto alphablend = [](auto ima1, auto ima2, float alpha) {
+        return alpha * ima1 + (1 - alpha) * ima2;
+      };
+    \end{minted}
+    \bigskip
+    \bigskip
+    \bigskip
+  \end{minipage}
+  \caption{Alpha-blending, generic implementation with views, expression tree.}
+  \label{fig.new.alphablend}
+\end{figure}
+
+Being able to perform powerful manipulation on images before feeding them to algorithms completely nullify the initial problem of having several versions of the same algorithm while maintaining and documenting all the associated optional arguments. Indeed, in order to perform the alpha blending transformation on the base input image, all that the user must do is:
+\begin{minted}{C++}
+  auto ima1, ima2 = /* ... */;
+  auto ima_blended = alphablend(ima1, ima2, 0.2); 
+\end{minted}
+If the user wants to restrict the region to be blended, or the color channel to work on, he just has to write the following modification:
+\begin{minted}{C++}
+  auto roi = /* ... */;
+  auto blended_roi = alphablend(view::clip(ima1, roi), view::clip(ima2, roi), 0.2);
+  auto blended_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
+\end{minted}
+The restriction is done upstream from the algorithm and propagated downstream without increasing the code complexity. This way, view greatly increase what the user can do by writting less code.
+
+\section{Views for image processing}
+\label{sec:viws_for_ip}
+
+There are four fundamental kinds of views, inspired by functional programming paradigm: \texttt{transform(input, f)}
 applies the transformation $f$ on each pixel of the image \emph{input}, \texttt{filter(input, pred)} keeps the pixels of
 \emph{input} that satisfy the predicate \emph{pred}, \texttt{clip(input, domain)} keeps the pixels of \emph{input}
-that are in the domain \emph{domain}, \texttt{zip($input_1$, $input_2$, \ldots, $input_n$)} allows to pack several pixel
-of several image to iterate on them all at the same time. From those four fundamentals come out more very useful views
+that are in the \emph{domain}, \texttt{zip($input_1$, $input_2$, \ldots, $input_n$)} allows to pack several pixels
+of several images to iterate on them all at the same time. From those four fundamentals come out more very useful views
 such as \texttt{cast<T>(input)} or \texttt{mask(input, msk)} that are more specific to the image processing area.
 
-In Pylena, the fractionner can use a large array of views. Those views comes into different form and allow the
-practitioner to seamlessly use arithmetic or logic operators on images like he would using expression template.
+In Pylena, the practitioner can use a large array of views. Those views come into different form and allow the
+practitioner to seamlessly use arithmetic or logic operators on images like he would when using expression template. We separate the available views in two main families: the views that perform a restriction of the domain (clip, filter) and the views that transform the values (transform, zip).
 
-\paragraph{The transform view} is the most important view of all. It consists in applying a function to each image's
-pixel. For instance, writing the grayscale algorithm with a transform view is as simple as the following code:
-\begin{minted}{C++}
-  auto grayscale_transform = [](mln::rgb8 val) -> uint8_t {
-    return 0.2126 * v[0]    // red
-           + 0.7152 * v[0]  // green
-           + 0.0722 * v[0]; // blue
-  };
-  mln::image2d<mln::rgb8> ima_rgb = /* ... */;
-  mln::image2d<uint8_t>   ima_grayscale = mln::view::transform(ima_rgb, grayscale_transform);
-\end{minted}
-There is no loop in this code, just the pixel-wise transformation function. Furthermore, the code will not compute the
-resulting image. The computation will happen on-the-fly each time a value from \texttt{ima\_grayscale} is yielded.
-This view allows the practitioner to quickly write and adapt any pixel-wise algorithm he needs for his more complex
-calculation in an efficient way.
+\subsection{Domain-restricting views}
 
 \paragraph{The filter view} is also a fundamental view which consists in keeping only the values that satisfy a
 predicate. This is very useful when working with thresholds as shown in the following code:
@@ -62,26 +112,56 @@ certain algorithms may be limited.
 
 \paragraph{The clip view} is a convenient way to extract a sub-image from a base image. This view essentially redefine
 the domain of definition to restrict it into a smaller one. It does not change anything else which means it proxies
-every access to the image. For instance, we make use of this view to easily process tiles in an efficient way in the
-following code:
+every access to the image. For instance, we make use of this view to easily subdivide a 2D-image into 4 tiles as shown in the code below:
 \begin{minted}{C++}
   mln::image2d<mln::rgb8> large_image = /* ... */;
   point2d shape = large_image.domain().shape();
-  auto chunk_size = 1024;
-  auto nb_tile_x = shape.x() / chunks_size + 1;
-  auto nb_tile_y = shape.y() / chunks_size + 1;
-  for (int x = 0; x < nb_tile_x; ++x)
-    for(int y = 0; y < nb_tile_y; ++y) {
-      point2D tile_tl { large_image.domain().tl().x() + x*chunk_size,
-                        large_image.domain().tl().y() + y*chunk_size };
-      point2D tile_bl { large_image.domain().tl().x() + (x+1)*chunk_size,
-                        large_image.domain().tl().y() + (y+1)*chunk_size };
-      auto tile_domain = mln::box2d{tile_tl,
-            tile_bl <= large_image.domain().bl() ? tile_bl : large_image.domain().bl()};
-      auto tile = mln::view:clip(ima, tile_domain);
-      process_tile(tile);
-    }
+  auto middle_pnt = point2d{shape.x() / 2, shape.y() / 2};
+  auto tl = large_image.domain().tl(); // top-left point
+  auto br = large_image.domain().br(); // bottom-right point
+  auto four_tiles = std::tuple{
+    mln::view::clip(ima, mln::box2d{tl, middle_pnt}),   // top-left tile
+    mln::view::clip(ima, mln::box2d{                    // top-right tile
+      point2d{middle_pnt.x(), tl.y()},
+      point2d{br.x(), middle_pnt.y()}
+      }),
+    mln::view::clip(ima, mln::box2d{                    // bottom-left tile
+      point2d{tl.x(), middle_point.y()},
+      point2d{middle_pnt.x(), br.y()}
+    }),
+    mln::view::clip(ima, mln::box2d{middle_pnt, br})   // bottom-right tile
+  };
 \end{minted}
+
+\paragraph{The mask view} is very image-processing oriented as it allows the practitioner to provide a boolean image the
+same size as the original image to select only the pixels whose corresponding value in the mask is true. Its usage is
+shown in the following code:
+\begin{minted}{C++}
+  mln::image2d<mln::rgb8> ima = /* ... */;
+  auto mask = ima > 127;
+  mln::fill(mln::view::mask(ima, mask), 255);
+\end{minted}
+This code set all the values that are superior to 127 to the max value 255. It shows that it can both be used with read
+and write access.
+
+
+\subsection{Value-transforming views}
+
+\paragraph{The transform view} is the most important view of all. It consists in applying a function to each image's
+pixel. For instance, writing the grayscale algorithm with a transform view is as simple as the following code:
+\begin{minted}{C++}
+  auto grayscale_transform = [](mln::rgb8 val) -> uint8_t {
+    return 0.2126 * v[0]    // red
+           + 0.7152 * v[0]  // green
+           + 0.0722 * v[0]; // blue
+  };
+  mln::image2d<mln::rgb8> ima_rgb = /* ... */;
+  mln::image2d<uint8_t>   ima_grayscale = mln::view::transform(ima_rgb, grayscale_transform);
+\end{minted}
+There is no loop in this code, just the pixel-wise transformation function. Furthermore, the code will not compute the
+resulting image. The computation will happen on-the-fly each time a value from \texttt{ima\_grayscale} is yielded.
+This view allows the practitioner to quickly write and adapt any pixel-wise algorithm he needs for his more complex
+calculation in an efficient way.
 
 \paragraph{The zip view} is one of the most useful view and allow the practitioner to iterate over a set of image at the
 same time. The basic use-case consists in iterating over a set of input image and the output image to be able to
@@ -95,17 +175,6 @@ code:
     v_out = v_in < 145 ? 0 : 255; // binarisation
 \end{minted}
 This code is another example of how to compute a binary threshold image.
-
-\paragraph{The mask view} is very image-processing oriented as it allows the practitioner to provide a boolean image the
-same size as the original image to select only the pixels whose corresponding value in the mask is true. Its usage is
-shown in the following code:
-\begin{minted}{C++}
-  mln::image2d<mln::rgb8> ima = /* ... */;
-  auto mask = ima > 127;
-  mln::fill(mln::view::mask(ima, mask), 255);
-\end{minted}
-This code set all the values that are superior to 127 to the max value 255. It shows that it can both be used with read
-and write access.
 
 \paragraph{The channel/RGB views} is a projector to access a specific color channel of an image. There exists image with
 many more channels than just the standard red/green/blue ones, from the astrophysics or medical area for instances. This
@@ -177,96 +246,76 @@ Is equivalent to calling:
 \end{minted}
 
 
-\section{Upgrading the way to design IP algorithms}
+\section{View properties}
+\label{sec:views_properties}
 
-As seen in~\cref{chap:image.algorithms.taxonomy}, there are three main categories of algorithms. First there are the
-\emph{pixel-wise} algorithms which perform operations for each pixel without knowing about the other pixels. Second,
-there are the \emph{local} algorithms which perform an operation on a pixel with the knowledge of a window of pixels
-around this pixel. Finally, there are \emph{global} algorithms which perform an operation on a pixel with the knowledge
-of the whole image. \emph{Views} introduce an abstraction layer that is able to completely handle the first case:
-pixel-wise algorithm. Indeed, every pixel-wise loop can be rewritten using the four fundamental views. This is not the
-case for local and global algorithms though.
+Views feature interesting properties, especially how they keep/discard the properties of the concrete image they are based on. However, before talking about those properties, it is important to draw the line and point the main differences between the C++20 ranges views and our image views.
 
-Another key point to note is the lazy-evaluation. Indeed, often an IP practitioner will transform a whole image and
-only make use of a small subpart of it. Thanks to the lazy-evaluation property, only the exploited subimage will be
-transformed on-the-fly at the call site. However, if there are several call site browsing the view the same way, it can
-incur a performance loss as the same calculation is performed several time, each time the image is browsed. In this
-case, it is better to create a temporary concrete subimage (with a data buffer) that contains the values that will be
-asked several times.
+\subsection{Differences between C++20 ranges views and image views}
+\label{subsec:C++20_views_vs_image_views}
 
-The other key part about \emph{views} is the composability. Image processing is an area in which a practitioner design
-pipelines which, by nature compose several operations on top of each other. Views have the ability to be composable with
-each others to get the wanted result.
-
-Finally, a view is a \emph{non-owning} and \emph{cheap-to-copy} image, and that design has consequences on its usage.
+C++20 ranges views are a new abstraction layer introduced on top of the already existing iterators. This means that a view is created from an existing container from its iterators. There are also special views such as \texttt{std::views::iota} that are able to generate an infinite sequence of number. Those last are the generator views and are designed to be used the same way as a container, except that they do not own any data. In C++20 the views are mainly constructed from a container such as \texttt{std::vector}, \texttt{std::map} or \texttt{std::list}. For instance, the way to create a view featuring all the elements of a container is shown in the following code:
+\begin{minted}{C++}
+  auto vec = std::vector { /* ... */ };
+  auto vec_vw = std::views::all(vec);
+\end{minted}
+This induces issues regarding dangling references when passing temporary views or when the container owning the data expires. To summarize the model of ranges in C++20, they are a new abstraction layer much more friendly and powerful than iterators and can construct non-owning, cheap-to-copy views from an owning container.
 
 \subsection{Data ownership}
 
 The concept of \emph{View} brought to us a fundamental issue when dealing with images: \blockquote{\emph{What is an
-    image?}}. More precisely: should an image always be the owner of its data buffer? Should we have a shared ownership of
+image?}}. More precisely: should an image always be the owner of its data buffer? Should we have a shared ownership of
 the data buffer between all the images using it? Then what happens when the data changes? The issue about the semantic
 of an image is crucial but also very similar to the issue there is to differentiate a \emph{container} (such as
-\texttt{std::vector}, that is to say the data buffer) and a \emph{view} on this container in the \emph{Ranges TS}.
+\texttt{std::vector}, that is to say the data buffer) and a \emph{view}, as seen in~\cref{subsec:C++20_views_vs_image_views}.
 
 From here we have considered two approaches. The first one is to have \emph{shared ownership} of the data buffer for the
-image and its derived views. However this does not allow the differentiation between an already computed image and a
+image and its derived views. However, this does not allow the differentiation between an already computed image and a
 lazy image. To be able to make this differentiation is crucial in an \emph{Image Processing library} as we want to make
-the most out of the data we already have and we do not want to compute data we do not need. Also, we cannot distinguish
+the most out of the data we already have, and we do not want to compute data we do not need. Also, we cannot distinguish
 when the \emph{copyability} property is required. This is the main reason why we did not adopt this approach.
 
 The second one is to make the differentiation between a \emph{concrete image} which owns the data (like the standard
-containers) and the \emph{views} that are lightweight cheap-to-copy objects. Not all \emph{concrete image} may be
-\emph{copyable}, but all \emph{views} are. This is a very important property as it simplify greatly the reasoning when
-performance is needed. It also enables us to have a library design similar to the standard library which the user is
-familiar with and, why not, have standard algorithm and standard view work on our images types. All of these are the
-main reason why we decided to adopt this design. Henceforth from now on the \emph{Image} concept is similar to the
-\emph{View} concept from which we refines a \emph{ConcreteImage} concept that requires a specific behavior as it owns
-data.
+containers) and the \emph{views} that are lightweight cheap-to-copy objects. This is a very important property as it
+simplify greatly the reasoning when performance is needed. It also enables us to have a library design similar to the
+C++'s standard library which the user is familiar with and, why not, have standard algorithm and standard view work on
+our images types. All of these are the main reason why we decided to adopt this design. However, unlike the standard
+library, as we are not required to work with iterator due to backward compatibility. This is why the views and the
+concrete image we introduce for image processing are different. Indeed, we assert that all image are cheap-to-copy, even
+the concrete images. This allows the user to pass his images everywhere without worrying about dangling data buffer
+expiring around the corner. Finally, there is a way to distinguish a view (cheap-to-copy, possibly-owner) from a
+concrete image (cheap-to-copy, owner). To emphasis this difference we introduce two concepts \texttt{ViewImage} and
+\texttt{ConcreteImage} which are defined by the following code:
+\begin{minted}{C++}
+template <typename I>
+concept ConcreteImage =
+  Image<I> &&
+  std::concepts::semiregular<I> &&  // A concrete image is default constructible
+  not image_view_v<I>;
 
+template <typename I>
+concept ViewImage =
+  Image<I> &&
+  image_view_v<I>;
+\end{minted}
 
-In (subsec.gen.concept), we saw that what is truly important is the behavior: an algorithm will require its input to be
-able to behave a certain way, and if those requirements are fulfilled, then the algorithm can be used with this set of
-inputs. This enables non-standard type of image to be input in algorithms, providing they still behave correctly. The
-way how we can check if the required behavior is satisfied is a new C++20 feature called \emph{concept} (the authors
-show how to leverage them in~\cite{roynard.2019.rrpr}) that will not be presented in this paper. Additionally to
-concepts, C++20 introduces a new library facility called
-\emph{ranges}~\cite{niebler.2018.deepranges,niebler.2018.mergingranges} which includes a non-owning lightweight
-container called \emph{views} whose design is very similar to that of \emph{morphers}, introduced in
-Milena~\cite{levillain.2009.ismm,geraud.2012.hdr}. Views are completely transferable to the image processing world.
-Also, views feature interesting properties that an image processing practitioner will find to his taste.
+In our design, all images are lightweight (cheap-to-copy) objects with shared ownership over the data. A view image is a non-owning image that only stores pointers, as shown in~\cref{fig.view.threshold}. A concrete image stores the data. The only difference between a view and a concrete image is given by a trait \texttt{image\_view} which will check the
+\texttt{view} property of the given image to tell whether it is a concrete owning image type or not. Compared to the
+C++20 ranges views model, mechanism prevent errors resulting from dangling references and confusing ownership of data.
+It is especially adapted to image processing as the user generally wants to avoid deep copy of its data. When the user
+wants to deep-copy his image (clone) he wants to do it explicitly.
 
-A view is a \emph{lightweight object} that behaves exactly the same as an image: let $V$ be a view of an image defined
-on $\mathcal{D}$ then we have $\forall{p}\in\mathcal{D}, v = V(p)$. It can be a random generator that yields a random
-number each time $V(p)$ is called; a proxy to the underlying image that records the number of times each pixel is
-accessed in order, for instance, to compare algorithm performance; a projection to a specific color channel; applying an
-automatic gamma correction; restricting the definition domain $\mathcal{D}$; and so on.
-
-A view is a \emph{non-owning}, \emph{cheap-to-copy} lightweight object that basically only \emph{records an
-  operation} and stores a pointer to an image. For instance, let us consider the view transform defined as follow $v =
-  transform(u_1, u_2, \cdots, u_n, f)$ where $u_i$ are input images and $h$ a n-ary function. $transform$ returns an image
-generated from the other image(s) as show in~\cref{fig.view.threshold}. Also, we can see that the view itself does not
-own any image but just stores pointers as well as the operation ($h$). This means that, for instance, modifying the
-original values of the image(s) will impact the values yield by the view. Finally, as the view is cheap-to-copy, it
-features a pointer semantic that help the practitioner passing around his images by copy to his algorithms without
-worrying about heavy buffer copies in the background.
-
-\begin{figure}[tbh]
-  \centering
-  \begin{minipage}{\linewidth}
-    \includestandalone[mode=image, width=.9\linewidth]{figs/transform_thresholding}
-  \end{minipage}
-  \caption{An image view performing a thresholding.}
-  \label{fig.view.threshold}
-\end{figure}
+This design induces one major property which is the lazy-evaluation of the view.
 
 \subsection{Lazy evaluation, composability and piping}
 \label{subsec:image.views.lazy.eval}
 
-Another key point of views is the lazy evaluation. When an image is piped through a view, no computation is done. The
-computation happens when the practitioner requests a value by doing $val = V(p)$. The implications are multiples: an
-image can be piped into several computation-heavy views, some of which can be discarded later on, it won't impact the
-performance. Also, when processing large images, applying a transformation on a part of the image is as simple as
-restricting the domain with a view and applying the transformation to this resulting sub-image.
+The key point of views is the lazy evaluation. When a concrete image is piped through a view, no computation is done.
+The computation happens when the practitioner requests a value by doing $val = V(p)$. The implications are multiples: an
+image can be piped into several computation-heavy views, some of which can be discarded later on, and it will not impact
+the performance. Also, when processing large images, applying a transformation on a part of the image (such as clipping
+or filtering) is as simple as restricting the domain with a view and applying the transformation to this resulting
+sub-image.
 
 \emph{Lazy-evaluation} combined with the view \emph{chaining} allows the user to write clear and very efficient code
 whose evaluation is delayed till very last moment as shown in~\cref{fig.lazy} (see \cite{geraud.2018.gtgdmm} for
@@ -280,7 +329,7 @@ image2d<rgb8>  ima1 = /* ... */;
 image2d<uint8_t> ima2 = /* ... */;
 
 // Projection: project the red channel value
-auto f = view::transform(ima, [](auto v) {
+auto f = view::transform(ima1, [](auto v) {
   return v.r;
 });
 
@@ -308,7 +357,7 @@ constexpr float gamma = 2.2f;
 constexpr auto max_val =
   std::numeric_limits<value_t>::max();
 auto i = view::transform(h,
-  [gamma_corr = 1 / gamma] (auto value) {
+  [gamma_corr = 1 / gamma, max_val] (auto value) {
     return std::pow(value / max_val,
              gamma_corr) * max_val;
 });
@@ -322,7 +371,8 @@ auto i = view::transform(h,
 \noindent The tree of type resulting from this view chaining is illustrated by~\cref{fig.viewAST}.
 
 \begin{figure}[htb]
-  \includegraphics[height=2cm]{figs/viewAST.png}
+  \centering
+  \includegraphics[width=8cm]{figs/viewAST2.pdf}
   \caption{Abstract Syntax Tree of the types chained by the code above}
   \label{fig.viewAST}
 \end{figure}
@@ -418,7 +468,7 @@ accessible and indexable. Those properties echo to the concepts seen in~\cref{se
 forward and a backward way. It is \emph{raw} when its data buffer can is contiguous and can directly be accessed with
 information about strides. It is \emph{writable} when the values are mutable. It is accessible whenever it allows to
 access the value associated to a point (i.e. it allows to write the expression $v = ima(p)$). Finally, an image is
-\emph{indexable} whenever its values can be accessed through an index localisator (i.e. it allows to write the
+\emph{indexable} whenever its values can be accessed through an index localizer (i.e. it allows to write the
 expression $v = ima[idx]$). Usually, accessing through an index is faster than accessing by a point. The
 table~\cref{table:views.properties} present all the views and how they conserve the base properties of a concrete image.
 
@@ -556,7 +606,7 @@ medium structuring elements with a known size which will yield a lot of out-of-i
 required, this method is a de facto standard.
 
 \paragraph{Bound checking}
-Assuming there is no border and we are not allowed to access out-of-image's-bound values, a bound check is required when
+Assuming there is no border, and we are not allowed to access out-of-image's-bound values, a bound check is required when
 accessing each values. Another way to do would be to decorate the facility that yields the neighbors of a pixel: do not
 yield out-of-image's-bound pixels. This removes the need to bound check for each pixel's value which is relatively
 faster. The caveats of this method are that it induces a slight slow down when yielding the pixel's neighbors from the
@@ -564,7 +614,7 @@ structuring element, and that it is not always viable: some algorithms do need t
 produce proper results.
 
 \paragraph{Image decoration}
-The border is infinite and we make a view of our image to decorate it with the required extension. This method has the
+The border is infinite, and we make a view of our image to decorate it with the required extension. This method has the
 advantage to \textit{always work}. Given any structuring element of any size, any algorithm will work. The disadvantage
 is that we need to check for out-of-bound access at the image level, and lazily compute the value in case of
 out-of-image's-bound access. The slowness induced is not negligible and should be weighted carefully.
@@ -645,7 +695,7 @@ figure~\ref{fig:border.clamp} shows an image whose border is filled with clamped
 
 \paragraph{Image} Enforces all points out of the current image's domain are to be picked inside another image. A basic
 use-case is preparing tiles from a large image. The position of our image can be offset in the image acting as an
-extension which ease the ease of usage. The figure~\ref{fig:border.image} shows how a subimage (tile) can consider the
+extension which ease the ease of usage. The figure~\ref{fig:border.image} shows how a sub-image (tile) can consider the
 base image as its border.
 
 \begin{figure}[tbh]
@@ -671,7 +721,7 @@ As a consequence the usage of a local algorithm becomes very simple:
   local_algorithm(ima, disc_se, bm); // will handle the border for you
 \end{minted}
 
-The border manager \texttt{bm} is set with the method fill (with value 0) and policy \texttt{auto} (wich is the default
+The border manager \texttt{bm} is set with the method fill (with value 0) and policy \texttt{auto} (which is the default
 policy). To use the policy \texttt{native}, one would write \texttt{extension::bm::native::fill(0)} instead.
 
 In the implementation of the local algorithm, a dispatch is made with the pattern \emph{visitor}, relying on the
@@ -698,8 +748,8 @@ We can rewrite it leveraging the border manager facility this way :
 \end{minted}
 The overhead is kept minimal thanks to using \texttt{std::variant} and \texttt{std::visit} and the algorithm implementer
 delegate the border management to the border manager. This is made possible thanks to the views. Indeed, under the hood
-the border manager may pipe the orginal image into a view that will behave accordingly to the policy chosen by the user.
-This will be transparent from both practitioner and maintener points of views.
+the border manager may pipe the original image into a view that will behave accordingly to the policy chosen by the user.
+This will be transparent from both practitioner and maintainer points of views.
 
 
 \section{Performance discussion}
@@ -739,7 +789,7 @@ the algorithm with.
 \end{figure}
 
 We have run benchmarks on this set comparing multiple ways of achieving this result, both using Pylene and OpenCV as
-well as varying the size and the shape of the structuring element window.The breakdown of these benchmarks are presented
+well as varying the size and the shape of the structuring element window. The breakdown of these benchmarks are presented
 in the figures~\ref{fig:bg_sub.castle.benchmarks} and~\ref{fig:bg_sub.castle.benchmarks.plnonly}.
 
 \begin{figure}[tbh]
@@ -758,7 +808,7 @@ in the figures~\ref{fig:bg_sub.castle.benchmarks} and~\ref{fig:bg_sub.castle.ben
   \label{fig:bg_sub.castle.benchmarks.plnonly}
 \end{figure}
 
-\paragraph{Set \#2: garden} We have also run the algorithm on another another original set of images presented in
+\paragraph{Set \#2: garden} We have also run the algorithm on another original set of images presented in
 figure~\ref{fig:bg_sub.garden.restults}.
 
 \begin{figure}[tbh]
@@ -871,12 +921,12 @@ when the size of the structuring elements increase, so does the execution time, 
 shaped as discs. We can see that the way OpenCV decomposes its structuring elements is not efficient for a disc whereas
 it is very efficient for a rectangle. Pylene, on the other hand has a starting cost higher even for small structuring
 elements but is extremely stable over the increase of structuring elements' size. Indeed, the only variation is seen
-when we are working with the disc shape and this variation stabilise for larger size. For a disc whose $radius > 25$,
-Pyelene will be faster than OpenCV.
+when we are working with the disc shape and this variation stabilize for larger size. For a disc whose $radius > 25$,
+Pylene will be faster than OpenCV.
 
-When looking at the performance of algorithms expressed in term of views, we can see that expressing an algorithm in
-term of view incurs a very small overhead that stays constant and stable over the increase of structuring elements'
-radius. Furthermore, it does not show on the graphics but the memory consumption is reduced when using views. Indeed,
+When looking at the performance of algorithms expressed in terms of views, we can see that expressing an algorithm in
+terms of view incurs a very small overhead that stays constant and stable over the increase of structuring elements'
+radius. Furthermore, it does not show on the graphics, but the memory consumption is reduced when using views. Indeed,
 more computation is done on the fly and the image is copied less during the algorithm. This implies that caching values
 is harder when using views which may explain the overhead.
 

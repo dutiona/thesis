@@ -71,6 +71,7 @@ Timeline (annoncée) :
 ## Planning
 
 On peut tenter 3 soumissions:
+
 * ICPE ou SIGAPP
 * ICIP ou ICPR
 * GPCE
