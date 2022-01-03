@@ -913,32 +913,56 @@ when regions of interest are foreground objects. The pipeline components include
 threshold, erode and dilate, as shown in~\ref{fig.view.comp.sub_bg}.
 
 \begin{figure}[tbh]
-  \begin{minipage}{\linewidth}
-    \includestandalone[mode=image, scale=0.59]{figs/pipeline_bg_sub_comp}
-  \end{minipage}
+  \centering
+  \includegraphics[width=0.7]{figs/pipeline_bg_sub_comp}
   \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
     \colorbox{thistle}{views}.}
   \label{fig.view.comp.sub_bg}
 \end{figure}
 
-We have decided to run the algorithm on an original set of image to detect a changing foreground. Here are the 10 sets
-we have considered.
+The first thing that we notice is that the implementation of the pipeline using views is transcribed very explicitly in
+the code, as shown in~\cref{fig.view.comp.sub_bg.view_code}. There is a direct correspondence between the graphic
+pipeline and the code.
 
-\paragraph{Set \#1: castle} The figure~\ref{fig:bg_sub.castle.restults} presents the first candidate set we have run
-the algorithm with.
+\begin{figure}
+  \begin{minted}[highlightlines={3-4,6,8},highlightcolor=thistle]{c++}
+  float kThreshold = 150; float kVSigma = 10;
+  float kHSigma = 10;  int kOpeningRadius = 32;
+  auto img_grey = view::transform(img_color, to_gray);
+  auto bg_grey  = view::transform(bg_color, to_gray);
+  auto bg_blurred = gaussian2d(bg_grey,  kHSigma, kVSigma);
+  auto tmp_grey = img_grey - bg_blurred; /
+  auto thresholdf = [](auto x) { return x < kThreshold; };
+  auto tmp_bin = view::transform(tmp_grey, thresholdf); /
+  auto ero = erosion(tmp_bin, disc(kOpeningRadius));
+  dilation(ero, disc(kOpeningRadius), output);
+  \end{minted}
+  \caption{Pipeline implementation with \colorbox{thistle}{\emph{views}}. Highlighted code uses \emph{views} by
+    prefixing operators with the namespace \texttt{view}.}
+  \label{fig.view.comp.sub_bg.view_code}
+\end{figure}
+
+For our benchmark, we have decided to run the algorithm on an original set of image to detect a changing foreground.
+We have considered 10 data set. We present in~\cref{fig:bg_sub.dataset_samples} three of them for the sake of brevity.
 
 \begin{figure}[tbh]
   \centering
   \begin{tabular}{cccc}
     Background
-                                                                                     & Candidate & Result \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/castle_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/castle_fg_1.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}}
+                                                                                      & Candidate & Result                    \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/castle_bg.png}}    &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/castle_fg_1.png}}  &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}} \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}    &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_1.png}}  &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}} \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_1.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}}
   \end{tabular}
 
-  \caption{Background detection: castle results.}
-  \label{fig:bg_sub.castle.restults}
+  \caption{Background detection: data set samples.}
+  \label{fig:bg_sub.dataset_samples}
 \end{figure}
 
 We have run benchmarks on this set comparing multiple ways of achieving this result, both using Pylene and OpenCV as
@@ -947,127 +971,88 @@ in the figures~\ref{fig:bg_sub.castle.benchmarks} and~\ref{fig:bg_sub.castle.ben
 
 \begin{figure}[tbh]
   \centering
-  \includegraphics[width=.7\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0}
-
-  \caption{Background detection: castle benchmark.}
-  \label{fig:bg_sub.castle.benchmarks}
-\end{figure}
-
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=.7\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0}
-
-  \caption{Background detection: castle benchmark, Pylene only.}
-  \label{fig:bg_sub.castle.benchmarks.plnonly}
-\end{figure}
-
-\paragraph{Set \#2: garden} We have also run the algorithm on another original set of images presented in
-figure~\ref{fig:bg_sub.garden.restults}.
-
-\begin{figure}[tbh]
-  \centering
   \begin{tabular}{cccc}
-    Background
-                                                                                     & Candidate & Result                     \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_1.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}} \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_2.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_2.png}} \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_3.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_3.png}} \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_4.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_4.png}} \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_5.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_5.png}}
-  \end{tabular}
-
-  \caption{Background detection: garden results.}
-  \label{fig:bg_sub.garden.restults}
-\end{figure}
-
-The breakdown of the benchmarks corresponding to this original set is presented in the
-figures~\ref{fig:bg_sub.garden.benchmarks}.
-
-\begin{figure}[tbh]
-  \centering
-  \begin{tabular}{cccc}
-    Result                                                                                                                    & Benchmark & Benchmark Pln only \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_1.pdf}}                                          &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_1.pdf}}                                                                       \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_2.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_2.pdf}}                                          &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_2.pdf}}                                                                       \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_3.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_3.pdf}}                                          &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_3.pdf}}                                                                       \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_4.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_4.pdf}}                                          &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_4.pdf}}                                                                       \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_5.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_5.pdf}}                                          &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_5.pdf}}
+    Result                                                                                                                      & Benchmark & Benchmark Pln only \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0.pdf}}                                            &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_0.pdf}}                                                                         \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}}   &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_1.pdf}}                                            &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_1.pdf}}                                                                         \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}} &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_6.pdf}}                                            &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_6.pdf}}
   \end{tabular}
 
   \caption{Background detection: garden results.}
   \label{fig:bg_sub.garden.benchmarks}
 \end{figure}
 
-\paragraph{Set \#3: pathway} Finally, we have run our algorithm on a last original set of image presented in
-figure~\ref{fig:bg_sub.pathway.restults}.
 
-\begin{figure}[tbh]
-  \centering
-  \begin{tabular}{cccc}
-    Background
-                                                                                      & Candidate & Result                      \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_1.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}} \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_2.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_2.png}} \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_3.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_3.png}} \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_4.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_4.png}}
+To highlight the interest of GP and views in the context of performance-sensitive applications, we study the impact on a
+simple but real case image processing pipeline aiming at extracting objects from a background as depicted on
+\ref{fig.view.comp.sub_bg}. Simply said, it computes the difference between an image and a registered image. The gaussian
+blur and the morphological opening allow some robustness to noise.  The pipeline is implemented with (1) OpenCV, (2) our
+library (Pylene) where each step is a computing operator, (3) our library where the purple blocks are views.
+This pipeline actually produced interesting results, as shown in~\ref{fig.result.bgsub}. In~\cref{tbl.perf}, we
+benchmark the computation time and the memory usage~\footnote{Memory usage is computed with \emph{valgring/massif} as
+  the difference between the memory peak of the run and the memory peak without any computation (just setup and image
+  loading)}of these implementations (all single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
+minimum of many runs is kept).
+
+\newcommand{\mystd}[1]{{\itshape ($\pm$ #1)}}
+\newcommand{\mydelta}[1]{{\itshape\bfseries #1\%}}
+
+\begin{table}
+  \begin{tabular}{@{}lp{2cm}p{1cm}p{1.3cm}}
+    \toprule
+    Framework          & Compute Time        & Memory usage & $\Delta{}$Memory usage \\ \midrule
+    Pylene (w/o views) & 2.11s \mystd{144ms} & 106 MB       & \mydelta{+0}           \\
+    OpenCV             & 2.41s \mystd{134ms} & 59 MB        & \mydelta{-44}          \\
+    Pylene (views)     & 2.13s \mystd{164ms} & 51 MB        & \mydelta{-52}          \\
+    \bottomrule
   \end{tabular}
+  \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average
+    computation time and memory usage of implementations with/without \emph{views} and with OpenCV as a baseline.}
+  \label{tbl.perf}
+  %\vspace{-1em}
+\end{table}
 
-  \caption{Background detection: pathway results.}
-  \label{fig:bg_sub.pathway.restults}
-\end{figure}
+The results should not be misunderstood. They do not say that OpenCV is faster or slower but shows that implementations
+all have the same order of processing time (the algorithms used in our implementation are not the same as those used in
+OpenCV for blur and dilation/erosion) so that the comparison makes sense. It allows us to validate experimentally the
+advantages of views in pipelines. First, we have to be cautious about the real benefit in terms of processing time.
+Here, most of the time is spent in algorithms that are not eligible for view transformation. Thus, depending on the
+operations of the pipeline, views may not improve processing time. Nevertheless, using views does not degrade
+performance neither (only 1\% in this experiment). It seems to show that using views does not introduce performance
+penalties and may even be beneficial in lightweight pipelines as the one in~\cref{sec.views}. On the memory side, views
+reduce drastically the memory usage which is beneficial when developing applications which are memory constrained. From
+the developer standpoint, it requires only few changes in the code as shown in~\cref{fig.view.comp.sub_bg.view_code} — the implementation
+of the algorithms remain the same — which is a real advantage for software maintenance.
 
-The breakdown of the benchmarks corresponding to this original set is presented in the
-figures~\ref{fig:bg_sub.pathway.benchmarks}.
 
-\begin{figure}[tbh]
-  \centering
-  \begin{tabular}{cccc}
-    Result                                                                                                                      & Benchmark & Benchmark Pln only \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_6.pdf}}                                            &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_6.pdf}}                                                                         \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_2.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_7.pdf}}                                            &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_7.pdf}}                                                                         \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_3.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_8.pdf}}                                            &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_8.pdf}}                                                                         \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_4.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_9.pdf}}                                            &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_9.pdf}}
-  \end{tabular}
 
-  \caption{Background detection: pathway results.}
-  \label{fig:bg_sub.pathway.benchmarks}
-\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 For small structuring elements ($radius < 15$), OpenCV is faster thanks to its handwritten code optimization. However,
 when the size of the structuring elements increase, so does the execution time, especially for structuring elements
