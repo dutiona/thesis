@@ -197,11 +197,11 @@ in~\cref{table:concept.expressions} for the required valid expressions.
 \begin{table}[htbp]
 
   \begin{scriptsize}
-    \texttt{Let \emph{Ima} be a type that models the concept \emph{Image}. Let \emph{WIma} be a type that models the concept
-      \emph{WritableImage}. Then \emph{WIma} inherits all types defined for \emph{Image}. Let \emph{SE} be a type that models
-      the concept \emph{StructuringElement} . Let \emph{DSE} be a type that models the concept \emph{Decomposable}. Then
-      \emph{DSE} inherits all types defined for \emph{StructuringElement}. Let \emph{Pix} be a type that models the concept
-      \emph{Pixel}. Then we can define:}
+    \texttt{Let \emph{Ima} be a type that models the concept \emph{Image}. Let \emph{WIma} be a type that models the
+      concept \emph{WritableImage}. Then \emph{WIma} inherits all types defined for \emph{Image}. Let \emph{SE} be a
+      type that models the concept \emph{StructuringElement} . Let \emph{DSE} be a type that models the concept
+      \emph{Decomposable}. Then \emph{DSE} inherits all types defined for \emph{StructuringElement}. Let \emph{Pix} be a
+      type that models the concept \emph{Pixel}. Then we can define:}
 
     \smallskip
     \begin{tabular}{l|l|l|l|}
@@ -731,7 +731,7 @@ all be written in the form of an accumulation over the pixels of an image. The f
 operation processed by the algorithm is often quite trivial led us to the idea of canvas. A canvas is a standard way to
 write an iteration over an image which abstracts the underlying data structure. A canvas is a tool for the user to
 provide its computation model based on events such as: \blockquote{entering inner loop} or \blockquote{exiting inner
-loop}. The user can then provide its operations as if he was writing his algorithm himself (restricted to the
+  loop}. The user can then provide its operations as if he was writing his algorithm himself (restricted to the
 accumulation model). As the maintainer of the library provides the canvas of execution, he can know also make change to
 take advantage of it. For instance, computing a CUDA kernel at one point and dispatching it on GPU units is totally
 within scope and transparent for the user of the library. Although there is a caveat: rewriting our algorithm in an
@@ -901,7 +901,7 @@ In image processing, we refine further this concept by introducing multidimensio
 image processing the user is used to write double loop to iterate over a bi-dimensional image. And abstracting away this
 aspect under standard ranges induces performance loss. That is why we needed this concept to exist. A multidimensional
 range can be split with a library function, \texttt{mln::ranges::rows(mdrng)} to fit the double-loop pattern and keep
-its performance. This topic is tackle in-depth later in~\cref{sec.range.traversing}. For now, let us consider
+its performance. This topic is tackle in-depth later in~\cref{subsec.range.traversing}. For now, let us consider
 multidimensional ranges as an image processing extension for performance for the image traversing pattern. They are
 defined in~\cref{table:concept.ranges.definitions} and their interface is the same as standard ranges, as seen
 in~\cref{table:concept.ranges.expressions}. They are designed so that the user code looks like this:
@@ -1107,7 +1107,8 @@ structuring element allows us to write the following code:
 Additionally, we introduce the concept of \emph{Neighborhood} in~\cref{table:concept.nbh.definitions}. This concept has
 facilities to know what points/pixels are placed before or after another point/pixel inside the window of a specific
 structuring element. It behaves as described in~\cref{table:concept.nbh.expressions}. This concept is useful when one
-wants to only consider a certain part of the neighboring pixels within a structuring element. This allow to write the following code:
+wants to only consider a certain part of the neighboring pixels within a structuring element. This allow to write the
+following code:
 \begin{minted}{C++}
   auto se = se::disc(.radius=3); // get a structuring element
   for(auto pix : ima.pixels())   // traverse image
