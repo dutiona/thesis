@@ -914,7 +914,7 @@ threshold, erode and dilate, as shown in~\ref{fig.view.comp.sub_bg}.
 
 \begin{figure}[tbh]
   \centering
-  \includegraphics[width=0.7]{figs/pipeline_bg_sub_comp}
+  \includegraphics[width=0.7\linewidth]{figs/pipeline_bg_sub_comp}
   \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
     \colorbox{thistle}{views}.}
   \label{fig.view.comp.sub_bg}
@@ -966,8 +966,11 @@ We have considered 10 data set. We present in~\cref{fig:bg_sub.dataset_samples} 
 \end{figure}
 
 We have run benchmarks on this set comparing multiple ways of achieving this result, both using Pylene and OpenCV as
-well as varying the size and the shape of the structuring element window. The breakdown of these benchmarks are presented
-in the figures~\ref{fig:bg_sub.castle.benchmarks} and~\ref{fig:bg_sub.castle.benchmarks.plnonly}.
+well as varying the size and the shape of the structuring element window. The breakdown of these benchmarks are
+presented in~\cref{fig:bg_sub.benchmarks}. In~\cref{tbl.perf}, we benchmark the computation time and the memory
+usage~\footnote{Memory usage is computed with \emph{valgring/massif} as the difference between the memory peak of the
+  run and the memory peak without any computation (just setup and image loading)}of these implementations (all
+single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the minimum of many runs is kept).
 
 \begin{figure}[tbh]
   \centering
@@ -985,20 +988,8 @@ in the figures~\ref{fig:bg_sub.castle.benchmarks} and~\ref{fig:bg_sub.castle.ben
   \end{tabular}
 
   \caption{Background detection: garden results.}
-  \label{fig:bg_sub.garden.benchmarks}
+  \label{fig:bg_sub.benchmarks}
 \end{figure}
-
-
-To highlight the interest of GP and views in the context of performance-sensitive applications, we study the impact on a
-simple but real case image processing pipeline aiming at extracting objects from a background as depicted on
-\ref{fig.view.comp.sub_bg}. Simply said, it computes the difference between an image and a registered image. The gaussian
-blur and the morphological opening allow some robustness to noise.  The pipeline is implemented with (1) OpenCV, (2) our
-library (Pylene) where each step is a computing operator, (3) our library where the purple blocks are views.
-This pipeline actually produced interesting results, as shown in~\ref{fig.result.bgsub}. In~\cref{tbl.perf}, we
-benchmark the computation time and the memory usage~\footnote{Memory usage is computed with \emph{valgring/massif} as
-  the difference between the memory peak of the run and the memory peak without any computation (just setup and image
-  loading)}of these implementations (all single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
-minimum of many runs is kept).
 
 \newcommand{\mystd}[1]{{\itshape ($\pm$ #1)}}
 \newcommand{\mydelta}[1]{{\itshape\bfseries #1\%}}
@@ -1025,48 +1016,11 @@ advantages of views in pipelines. First, we have to be cautious about the real b
 Here, most of the time is spent in algorithms that are not eligible for view transformation. Thus, depending on the
 operations of the pipeline, views may not improve processing time. Nevertheless, using views does not degrade
 performance neither (only 1\% in this experiment). It seems to show that using views does not introduce performance
-penalties and may even be beneficial in lightweight pipelines as the one in~\cref{sec.views}. On the memory side, views
-reduce drastically the memory usage which is beneficial when developing applications which are memory constrained. From
-the developer standpoint, it requires only few changes in the code as shown in~\cref{fig.view.comp.sub_bg.view_code} — the implementation
-of the algorithms remain the same — which is a real advantage for software maintenance.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-For small structuring elements ($radius < 15$), OpenCV is faster thanks to its handwritten code optimization. However,
-when the size of the structuring elements increase, so does the execution time, especially for structuring elements
-shaped as discs. We can see that the way OpenCV decomposes its structuring elements is not efficient for a disc whereas
-it is very efficient for a rectangle. Pylene, on the other hand has a starting cost higher even for small structuring
-elements but is extremely stable over the increase of structuring elements' size. Indeed, the only variation is seen
-when we are working with the disc shape and this variation stabilize for larger size. For a disc whose $radius > 25$,
-Pylene will be faster than OpenCV.
-
-When looking at the performance of algorithms expressed in terms of views, we can see that expressing an algorithm in
-terms of view incurs a very small overhead that stays constant and stable over the increase of structuring elements'
-radius. Furthermore, it does not show on the graphics, but the memory consumption is reduced when using views. Indeed,
-more computation is done on the fly and the image is copied less during the algorithm. This implies that caching values
-is harder when using views which may explain the overhead.
+penalties and may even be beneficial in lightweight pipelines as the one in~\cref{fig.view.pipeline}. On the memory
+side, views reduce drastically the memory usage (also seen in~\cref{fig.legacy.vs.view}) which is beneficial when
+developing applications which are memory constrained. From the developer standpoint, it requires only few changes in the
+code as shown in~\cref{fig.view.comp.sub_bg.view_code} — the implementation of the algorithms remain the same — which is
+a real advantage for software maintenance.
 
 
 \section{Summary}
