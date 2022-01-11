@@ -1,6 +1,6 @@
-@String{pub-ISO:adr = "Geneva, Switzerland"}
-
 @String{pub-ISO     = "International Organization for Standardization"}
+
+@String{pub-ISO:adr = "Geneva, Switzerland"}
 
 @inproceedings{abrahams.2000.exceptions-generic,
   abstract  = {This paper represents the knowledge accumulated in response to a real-world need: that the C++ Standard
@@ -221,6 +221,25 @@
   year      = {2006}
 }
 
+@article{boehm.1984.economics,
+  abstract = {This paper summarizes the current state of the art and recent trends in software engineering economics. It
+              provides an overview of economic analysis techniques and their applicability to software engineering and
+              management. It surveys the field of software cost estimation, including the major estimation techniques
+              available, the state of the art in algorithmic cost models, and the outstanding research issues in
+              software cost estimation.},
+  author   = {Boehm, Barry W.},
+  doi      = {10.1109/TSE.1984.5010193},
+  issn     = {1939-3520},
+  journal  = {IEEE Transactions on Software Engineering},
+  keywords = {},
+  month    = {Jan},
+  number   = {1},
+  pages    = {4-21},
+  title    = {Software Engineering Economics},
+  volume   = {SE-10},
+  year     = {1984}
+}
+
 @software{boost.2021,
   author  = {Boost},
   date    = {2021-04-16},
@@ -228,8 +247,6 @@
   url     = {https://www.boost.org/},
   version = {1.76.0}
 }
-
-
 
 @book{bourbaki.1970.theorie,
   author    = {Bourbaki, Nicolas},
@@ -662,7 +679,7 @@
   publisher = {Springer Berlin Heidelberg},
   title     = {Vector Morphological Operators for Colour Images},
   year      = {2005}
-}
+} 
 
 @software{dionne.2021.metabench,
   author  = {Louis Dionne},
@@ -670,7 +687,7 @@
   title   = {Metabench},
   url     = {https://github.com/ldionne/metabench/},
   version = {head}
-} 
+}
 
 @article{dosries.2066.specifying.art,
   abstract   = {C++ templates are key to the design of current successful mainstream libraries and systems. They are the
@@ -1152,6 +1169,7 @@
   year      = {2017}
 }
 
+
 @inproceedings{hanus.1995.curry,
   abstract  = {Functional and logic programming are the most important declarative programming paradigms, and interest
                in combining them has grown over the last decade. However, integrated functional logic languages are
@@ -1172,7 +1190,6 @@
   volume    = {95},
   year      = {1995}
 }
-
 
 @article{haralick.1977.imageaccessprotocol,
   abstract = {During the past decade a number of multiimage picture processing software packages have been put together.
@@ -1588,6 +1605,17 @@
   year   = {2011}
 }
 
+@article{kwame.2017.qualitative,
+  author    = {Kwame, Ampomah Ernest and Martey, Ezekiel Mensah and Chris, Abilimi Gilbert},
+  journal   = {Communications},
+  number    = {7},
+  pages     = {8--13},
+  publisher = {Foundation of Computer Science (FCS), NY, USA},
+  title     = {Qualitative assessment of compiled, interpreted and hybrid programming languages},
+  volume    = {7},
+  year      = {2017}
+}
+
 @software{lemire.2021.simdjson,
   author  = {Daniel Lemire and Geoff Langdale and John Keiser},
   date    = {2021-09-08},
@@ -1975,7 +2003,6 @@
   url       = {https://doi.org/10.1145/317500.317529},
   year      = {1987}
 }
-
 @inproceedings{musser.1988.generic,
   author       = {David R. Musser and Alexander A. Stepanov},
   booktitle    = {Intl. Symp. on Symbolic and Algebraic Computation},
@@ -1984,6 +2011,7 @@
   title        = {Generic programming},
   year         = {1988}
 }
+
 @book{musser.1989.ada,
   author    = {Musser, David R and Stepanov, Alexander A},
   publisher = {Springer-Verlag},
@@ -2097,6 +2125,35 @@
   url       = {https://books.google.fr/books?id=9FUlX8YrRvMC},
   year      = {2013}
 }
+
+@inproceedings{nanz.2015.comparative,
+  abstract  = {Sometimes debates on programming languages are more religious than scientific. Questions about which
+               language is more succinct or efficient, or makes developers more productive are discussed with fervor,
+               and their answers are too often based on anecdotes and unsubstantiated beliefs. In this study, we use the
+               largely untapped research potential of Rosetta Code, a code repository of solutions to common programming
+               tasks in various languages, which offers a large data set for analysis. Our study is based on 7'087
+               solution programs corresponding to 745 tasks in 8 widely used languages representing the major
+               programming paradigms (procedural: C and Go, object-oriented: C# and Java, functional: F# and Haskell,
+               scripting: Python and Ruby). Our statistical analysis reveals, most notably, that: functional and
+               scripting languages are more concise than procedural and object-oriented languages, C is hard to beat
+               when it comes to raw speed on large inputs, but performance differences over inputs of moderate size are
+               less pronounced and allow even interpreted languages to be competitive, compiled strongly-typed
+               languages, where more defects can be caught at compile time, are less prone to runtime failures than
+               interpreted or weakly-typed languages. We discuss implications of these results for developers, language
+               designers, and educators.},
+  author    = {Nanz, Sebastian and Furia, Carlo A.},
+  booktitle = {2015 IEEE/ACM 37th IEEE International Conference on Software Engineering},
+  doi       = {10.1109/ICSE.2015.90},
+  issn      = {1558-1225},
+  keywords  = {},
+  month     = {May},
+  number    = {},
+  pages     = {778-788},
+  title     = {A Comparative Study of Programming Languages in Rosetta Code},
+  volume    = {1},
+  year      = {2015}
+}
+
 
 @misc{niebler.2014.ranges,
   author = {Eric Niebler, Sean Parent, Andrew Sutton},
@@ -2356,6 +2413,28 @@
   year      = {2000}
 }
 
+@article{prechelt.2000.comparison,
+  abstract = {Often heated, debates regarding different programming languages' effectiveness remain inconclusive because
+              of scarce data and a lack of direct comparisons. The author addresses that challenge, comparatively
+              analyzing 80 implementations of the phone-code program in seven different languages (C, C++, Java, Perl,
+              Python, Rexx and Tcl). Further, for each language, the author analyzes several separate implementations by
+              different programmers. The comparison investigates several aspects of each language, including program
+              length, programming effort, runtime efficiency, memory consumption, and reliability. The author uses
+              comparisons to present insight into program language performance.},
+  author   = {Prechelt, L.},
+  doi      = {10.1109/2.876288},
+  issn     = {1558-0814},
+  journal  = {Computer},
+  keywords = {},
+  month    = {Oct},
+  number   = {10},
+  pages    = {23-29},
+  title    = {An empirical comparison of seven programming languages},
+  volume   = {33},
+  year     = {2000}
+}
+
+
 @software{ptc.2019.mathcad,
   author  = {{PTC}},
   date    = {2019-10-01},
@@ -2395,7 +2474,7 @@
   title     = {The MATLAB{\textregistered} 5 Handbook},
   year      = {2012}
 }
-
+  
 @article{ritter.1990.cvgi,
   author    = {Gerhard X. Ritter and Joseph N. Wilson and Jennifer L. Davidson},
   journal   = {Computer Vision, Graphics, and Image Processing},
@@ -2406,7 +2485,7 @@
   volume    = 49,
   year      = 1990
 }
-  
+
 @article{roman.1998.digital,
   abstract = {This paper presents a class library dedicated to digital image processing which provides resources for
               essential digital image processing operations. Besides its practical value, the class library is used to
@@ -2482,6 +2561,8 @@
   year      = {2019}
 }
 
+  
+
 @software{scilab.2020,
   author  = {{Scilab Enterprises}},
   date    = {2020-02-25},
@@ -2491,7 +2572,6 @@
 }
 
   
-
 @misc{seymour.2009.concepts,
   author       = {Bill Seymour},
   key          = {N2929},
@@ -2503,6 +2583,7 @@
 }
 
   
+
 @inproceeding{siek.2001.boostgraph,
   author    = {Jeremy Siek, Lie-Quan Lee, Andrew Lumsdaine},
   publisher = {Addison-Wesley},
@@ -2510,8 +2591,6 @@
   url       = {http://cds.cern.ch/record/1518180/files/0201729148_TOC.pdf},
   year      = {2001}
 }
-
-  
 
 @book{stepanov.1987.higher,
   author    = {Stepanov, Alexander A and Kershenbaum, Aaron and Musser, David R},
@@ -2539,13 +2618,13 @@
   year      = {2003}
 }
 
+
 @book{stepanov.2004.notes,
   author    = {Stepanov, Alexander A and Marcus, Matthew A},
   publisher = {Citeseer},
   title     = {Notes on the Foundations of Programming},
   year      = {2004}
 }
-
 
 @book{stepanov.2009.elements,
   author    = {Alexander Stepanov and Paul McJones},
@@ -2563,6 +2642,7 @@
   year      = {2014}
 }
 
+
 @book{stroustrup.1995.design,
   address   = {New York, NY, USA},
   author    = {Stroustrup, Bjarne},
@@ -2571,7 +2651,6 @@
   title     = {The Design and Evolution of {C}++},
   year      = {1994}
 }
-
 
 @inbook{stroustrup.1996.history,
   abstract  = {This paper outlines the history of the C++ programming language. The emphasis is on the ideas,
@@ -2592,6 +2671,7 @@
   year      = {1996}
 }
 
+% First appearence of the expression "generic programming"
 @article{stroustrup.1999.hot,
   author    = {Bjarne Stroustrup},
   journal   = {Handbook of Object Technology},
@@ -2600,7 +2680,6 @@
   year      = {1999}
 }
 
-% First appearence of the expression "generic programming"
 @misc{stroustrup.2003.concepts,
   author       = {Bjarne Stroustrup and Gabriel Dos Reis},
   key          = {N1522},
@@ -2620,6 +2699,7 @@
   volume  = {23},
   year    = {2005}
 }
+
 
 @inproceedings{stroustrup.2007.evolving,
   abstract  = {This paper outlines the history of the C++ programming language from the early days of its ISO
@@ -2647,7 +2727,7 @@
   year      = {2007}
 }
 
-
+% first appearence of "concept" and "regular type"
 @inproceedings{stroustrup.2007.hopl,
   address      = {New York, USA},
   author       = {Bjarne Stroustrup},
@@ -2665,7 +2745,6 @@
   year         = {2007}
 }
 
-% first appearence of "concept" and "regular type"
 @article{stroustrup.2012.concept,
   author  = {Stroustrup, Bjarne and Sutton, Andrew and Voufo, L and Zalewski, M},
   journal = {C++ Standards Committee Papers, Technical Report N},
@@ -2837,6 +2916,7 @@
   year     = {1992}
 }
 
+
 @inproceedings{vassilev.2012.cling,
   author    = {Vassilev,V. and Canal,Ph. and Naumann,A. and Moneta,L. and Russo,P.},
   doi       = {10.1088/1742-6596/396/5/052071},
@@ -2850,7 +2930,6 @@
   volume    = {396},
   year      = 2012
 }
-
 
 @article{veldhuizen.1995.expression,
   author  = {Veldhuizen, Todd},
@@ -2922,7 +3001,7 @@
   year         = {2017}
 }
 
-@article{wagner.2005.generic,
+ @article{wagner.2005.generic,
   author  = {Wagner, S and Affenzeller, M},
   journal = {Adaptive and Natural Computing Algorithms, Springer Computer Science},
   pages   = {538--541},
@@ -2930,7 +3009,7 @@
   year    = {2005}
 }
 
- @inproceedings{welsh.2002.transferring,
+@inproceedings{welsh.2002.transferring,
   abstract  = {We introduce a general technique for "colorizing" grayscale images by transferring color between a
                source, color image and a destination, grayscale image. Although the general problem of adding chromatic
                values to a grayscale image has no exact, objective solution, the current approach attempts to provide a
