@@ -84,7 +84,7 @@ history of algorithms and ties the history of mathematics with the history of ge
 already gave a lecture in 2003~\parencite{stepanov.2003.gcm} where he traces in particular the history of the algorithm
 of gcd/gcm for 2500 years and explain how successive generation of mathematicians improved on by always looking for more
 generic ways to solve the same problem. In essence, the book present the world view of the generic programming is an
-extension of mathematical algorithms' evolution over time. In this book, Alex is also reclaiming the term of
+extension of mathematical algorithms' evolution over time. In this book, Stepanov is also reclaiming the term of
 \emph{generic programming} and differentiate it from template metaprogramming once and for all.
 
 In this book Stepanov states that ``Generic programming is about abstracting and classifying algorithms and data
@@ -367,19 +367,22 @@ are interested in.
   \begin{threeparttable}
     \caption{Genericity approaches: pros. \& cons.}
     \begin{tabular}[width=0.8\linewidth]{l|ccccc}
-      Paradigm             & TC      & CS      & E       & One IA & EA      \\
+      Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
       \hline
-      Code Duplication     & \cmark  & \xmark  & \cmark  & \xmark & \xmark  \\
-      Code Generalization  & \xmark  & \eqmark & \eqmark & \cmark & \xmark  \\
-      Object-Orientation   & \eqmark & \cmark  & \xmark  & \cmark & \cmark  \\
-      Generic Programming: &         &         &         &        &         \\
-      \quad with C++11     & \cmark  & \eqmark & \cmark  & \cmark & \eqmark \\
-      \quad with C++17     & \cmark  & \cmark  & \cmark  & \cmark & \eqmark \\
-      \quad with C++20     & \cmark  & \cmark  & \cmark  & \cmark & \cmark  \\
+      Code Duplication     & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
+      Code Generalization  & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
+      Object-Orientation   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
+      Generic Programming: &             &             &            &                 &             \\
+      \quad with C++11     & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
+      \quad with C++17     & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
+      \quad with C++20     & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
     \end{tabular}
     \begin{tablenotes}
-      \item TC: type checking; CS: code simplicity; E: efficiency
-      \item One IA: one implementation per algorithm; EA: explicit abstractions / constrained genericity
+      \item[1] TC: type checking.
+      \item[2] CS: code simplicity.
+      \item[3] E: efficiency.
+      \item[4] One IA: one implementation per algorithm.
+      \item[4] EA: explicit abstractions / constrained genericity.
     \end{tablenotes}
     \label{table:gen.approaches}
   \end{threeparttable}

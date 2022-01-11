@@ -1,6 +1,6 @@
-@String{pub-ISO     = "International Organization for Standardization"}
-
 @String{pub-ISO:adr = "Geneva, Switzerland"}
+
+@String{pub-ISO     = "International Organization for Standardization"}
 
 @inproceedings{abrahams.2000.exceptions-generic,
   abstract  = {This paper represents the knowledge accumulated in response to a real-world need: that the C++ Standard
@@ -157,7 +157,7 @@
                 program termination, metacomposition, applicative state transition systems, program correctness,
                 programming languages, program transformation, functional programming, von Neumann languages,
                 von Neumann computers, applicative computing systems},
-  month      = aug,
+  month      = {08},
   number     = {8},
   numpages   = {29},
   pages      = {613-641},
@@ -190,6 +190,14 @@
   title    = {Cython: The Best of Both Worlds},
   volume   = {13},
   year     = {2011}
+}
+
+@misc{behnel.2022.cython-template,
+  author       = {Behnel, S. and Bradshaw, R. and Seljebotn, D.S. and Dalcin, L.},
+  howpublished = {Readthedoc},
+  note         = {Available at \url{https://cython.readthedocs.io/en/latest/src/userguide/wrapping_CPlusPlus.html#templates}},
+  title        = {Using C++ in Cython > templates},
+  year         = {2022}
 }
 
 @article{bentley.1983.programming,
@@ -232,7 +240,7 @@
   issn     = {1939-3520},
   journal  = {IEEE Transactions on Software Engineering},
   keywords = {},
-  month    = {Jan},
+  month    = {01},
   number   = {1},
   pages    = {4-21},
   title    = {Software Engineering Economics},
@@ -333,7 +341,7 @@
   lrdenewsdate = {2003-10-29},
   lrdepaper    = {http://www.lrde.epita.fr/dload/papers/mpool03-abstract.pdf},
   lrdeprojects = {Olena},
-  month        = oct,
+  month        = {10},
   title        = {A static {C++} object-oriented programming ({SCOOP}) paradigm mixing benefits of traditional {OOP} and
                   generic programming},
   year         = 2003
@@ -342,7 +350,7 @@
 @techreport{c++.2020.stddraftN4849,
   author       = {Richard Smith},
   institution  = {International Organization for Standardization},
-  month        = jan,
+  month        = {01},
   note         = {{\small\url{https://wg21.link/n4849}}},
   optpublisher = {WG21},
   title        = {{N4849}: Working Draft, Standard for Programming Language {C++}},
@@ -447,7 +455,7 @@
                 Stabilizer forces executions to sample the space of memory configurations by repeatedly re-randomizing
                 layouts of code, stack, and heap objects at runtime. Stabilizer thus makes it possible to control for
                 layout effects. Re-randomization also ensures that layout effects follow a Gaussian distribution,
-                enabling the use of statistical tests like ANOVA. We demonstrate Stabilizer's efficiency (< 7% median
+                enabling the use of statistical tests like ANOVA. We demonstrate Stabilizer's efficiency (< 7\% median
                 overhead) and its effectiveness by evaluating the impact of LLVM's optimizations on the SPEC CPU2006
                 benchmark suite. We find that, while -O2 has a significant impact relative to -O1, the performance
                 impact of -O3 over -O2 optimizations is indistinguishable from random noise.},
@@ -458,7 +466,7 @@
   issue_date = {March 2013},
   journal    = {SIGARCH Comput. Archit. News},
   keywords   = {measurement bias, performance evaluation, randomization},
-  month      = mar,
+  month      = {03},
   number     = {1},
   numpages   = {10},
   pages      = {219-228},
@@ -485,7 +493,7 @@
                Stabilizer forces executions to sample the space of memory configurations by repeatedly re-randomizing
                layouts of code, stack, and heap objects at runtime. Stabilizer thus makes it possible to control for
                layout effects. Re-randomization also ensures that layout effects follow a Gaussian distribution,
-               enabling the use of statistical tests like ANOVA. We demonstrate Stabilizer's efficiency (< 7% median
+               enabling the use of statistical tests like ANOVA. We demonstrate Stabilizer's efficiency (< 7\% median
                overhead) and its effectiveness by evaluating the impact of LLVM's optimizations on the SPEC CPU2006
                benchmark suite. We find that, while -O2 has a significant impact relative to -O1, the performance
                impact of -O3 over -O2 optimizations is indistinguishable from random noise.},
@@ -520,8 +528,8 @@
                as running that line faster, thus "virtually" speeding it up. We present Coz, a causal profiler, which we
                evaluate on a range of highly-tuned applications: Memcached, SQLite, and the PARSEC benchmark suite. Coz
                identifies previously unknown optimization opportunities that are both significant and targeted. Guided
-               by Coz, we improve the performance of Memcached by 9%, SQLite by 25%, and accelerate six PARSEC
-               applications by as much as 68%; in most cases, these optimizations involve modifying under 10 lines of
+               by Coz, we improve the performance of Memcached by 9\%, SQLite by 25\%, and accelerate six PARSEC
+               applications by as much as 68\%; in most cases, these optimizations involve modifying under 10 lines of
                code.},
   address   = {New York, NY, USA},
   author    = {Curtsinger, Charlie and Berger, Emery D.},
@@ -568,7 +576,7 @@
   author       = {J\'er\^ome Darbon and Thierry G\'eraud and Alexandre Duret-Lutz},
   booktitle    = {Mathematical Morphology, Proceedings of the 6th International Symposium (ISMM)},
   lrdeprojects = {Olena},
-  month        = apr,
+  month        = {04},
   pages        = {175--184},
   publisher    = {CSIRO Publishing},
   title        = {Generic implementation of morphological image operators},
@@ -587,7 +595,7 @@
   booktitle    = {Proceedings of the ECOOP Workshop for PhD Students},
   lrdenewsdate = {2004-03-10},
   lrdeprojects = {Olena},
-  month        = jun,
+  month        = {06},
   title        = {Generic algorithmic blocks dedicated to image processing},
   year         = 2004
 }
@@ -679,7 +687,7 @@
   publisher = {Springer Berlin Heidelberg},
   title     = {Vector Morphological Operators for Colour Images},
   year      = {2005}
-} 
+}
 
 @software{dionne.2021.metabench,
   author  = {Louis Dionne},
@@ -709,7 +717,7 @@
   issue_date = {January 2006},
   journal    = {SIGPLAN Not.},
   keywords   = {C++ concepts, C++ templates, separate compilation, generic programming, type systems},
-  month      = jan,
+  month      = {01},
   number     = {1},
   numpages   = {14},
   pages      = {295-308},
@@ -850,7 +858,7 @@
   booktitle   = {{IPOL 2012 Meeting on Image Processing Libraries}},
   hal_id      = {hal-00907378},
   hal_version = {v1},
-  month       = Jun,
+  month       = {06},
   title       = {{MegaWave}},
   url         = {https://hal.archives-ouvertes.fr/hal-00907378},
   year        = {2012}
@@ -887,7 +895,7 @@
   lrdekeywords = {Software engineering},
   lrdepaper    = {http://www.lrde.epita.fr/dload/papers/europlop00.pdf},
   lrdeprojects = {Software},
-  month        = jul,
+  month        = {07},
   pages        = {283--294},
   publisher    = {UVK, Univ. Verlag, Konstanz},
   title        = {Generic programming redesign of patterns},
@@ -909,7 +917,7 @@
                   Jean-Fran\c{c}ois Mangin},
   booktitle    = {Proceedings of the 15th International Conference on Pattern Recognition (ICPR)},
   lrdeprojects = {Olena},
-  month        = sep,
+  month        = {09},
   pages        = {816--819},
   publisher    = {IEEE Computer Society},
   title        = {Obtaining genericity for image processing and pattern recognition algorithms},
@@ -920,7 +928,7 @@
 @misc{geraud.2006.scoop-pres,
   author       = {Thierry G\'eraud},
   howpublished = {\url{http://www.lrde.epita.fr/people/theo/pub/olena/olena-06-jan.pdf}},
-  month        = jan,
+  month        = {01},
   project      = {Olena},
   title        = {Advanced Static Object-Oriented Programming Features: A Sequel to {SCOOP}},
   urllrde      = {200601-TR},
@@ -952,7 +960,7 @@
   lrdenewsdate = {2008-05-26},
   lrdepaper    = {http://www.lrde.epita.fr/dload/papers/geraud.08.mpool.pdf},
   lrdeprojects = {Olena},
-  month        = jul,
+  month        = {07},
   title        = {Semantics-Driven Genericity: A Sequel to the Static {C++} Object-Oriented Programming Paradigm
                   ({SCOOP 2})},
   year         = 2008
@@ -965,7 +973,7 @@
   editor       = {Laurent Najman and Hugues Talbot},
   isbn         = {978-1-84821-215-2},
   lrdekeywords = {Image},
-  month        = jul,
+  month        = {07},
   pages        = {323--353},
   publisher    = {Wiley-ISTE},
   title        = {Algorithms for Mathematical Morphology},
@@ -978,7 +986,7 @@
   lrdepaper   = {http://www.lrde.epita.fr/~theo/papers/geraud.2012.hdr.pdf},
   lrdeproject = {Olena},
   lrdeslides  = {http://www.lrde.epita.fr/~theo/slides/geraud.2012.hdr_slides.pdf},
-  month       = jun,
+  month       = {06},
   note        = {In French},
   school      = {Universit\'e Paris-Est},
   title       = {Outil logiciel pour le traitement d'images: Biblioth\`eque, paradigmes, types et algorithmes},
@@ -989,7 +997,7 @@
 @misc{geraud.2012.ipolmeeting,
   author       = {Thierry G\'eraud and Roland Levillain and Guillaume Lazzara},
   howpublished = {{IPOL} meeting, {ENS} Cachan, France},
-  month        = {June},
+  month        = {06},
   title        = {The {M}ilena Image Processing Library},
   url          = {https://www.lrde.epita.fr/~theo/talks/geraud.2012.ipol_talk.pdf},
   year         = {2012}
@@ -1050,7 +1058,7 @@
   issn     = {1939-3520},
   journal  = {IEEE Transactions on Software Engineering},
   keywords = {},
-  month    = {Sep.},
+  month    = {09},
   number   = {5},
   pages    = {528-543},
   title    = {Parameterized Programming},
@@ -1097,7 +1105,7 @@
   issue_date = {October 2006},
   journal    = {SIGPLAN Not.},
   keywords   = {C++ templates, C++0x, constrained generics, parametric polymorphism, concepts, generic programming},
-  month      = oct,
+  month      = {10},
   number     = {10},
   numpages   = {20},
   pages      = {291-310},
@@ -1134,7 +1142,7 @@
   keywords  = {concepts, parametric polymorphism, C++ templates, constrained generics, C++0x, generic programming},
   location  = {Portland, Oregon, USA},
   numpages  = {20},
-  pages     = {291–310},
+  pages     = {291-310},
   publisher = {Association for Computing Machinery},
   series    = {OOPSLA '06},
   title     = {Concepts: Linguistic Support for Generic Programming in C++},
@@ -1169,6 +1177,16 @@
   year      = {2017}
 }
 
+@phdthesis{halli.2016.java-hpc,
+  url    = {http://www.theses.fr/2016GREAM047},
+  title  = {Optimisation de code pour application Java haute-performance},
+  author = {Halli, Abderrahmane Nassim},
+  year   = {2016},
+  note   = {Thèse de doctorat dirigée par Méhaut, Jean-François et Charles, Henri-Pierre Informatique Université
+            Grenoble Alpes (ComUE) 2016},
+  note   = {2016GREAM047},
+  url    = {http://www.theses.fr/2016GREAM047/document}
+}
 
 @inproceedings{hanus.1995.curry,
   abstract  = {Functional and logic programming are the most important declarative programming paradigms, and interest
@@ -1205,7 +1223,7 @@
               Image segmentation; Data structures; Spatial resolution; Software packages; Communication standards;
               Laboratories; Image resolution; Electromagnetic launching; Digital image processing; image processing;
               software},
-  month    = {March},
+  month    = {03},
   number   = {2},
   pages    = {190-192},
   title    = {Image Access Protocol for Image Processing Software},
@@ -1228,10 +1246,10 @@
   journal    = {Commun. ACM},
   keywords   = {program documentation, formal language definition, programming language design,
                 machine-independent programming, theory of programming' proofs of programs, axiomatic method},
-  month      = oct,
+  month      = {10},
   number     = {10},
   numpages   = {5},
-  pages      = {576–-580},
+  pages      = {576-580},
   publisher  = {Association for Computing Machinery},
   title      = {An Axiomatic Basis for Computer Programming},
   url        = {https://doi.org/10.1145/363235.363259},
@@ -1486,7 +1504,7 @@
   issue_date = {June 2006},
   journal    = {SIGPLAN Not.},
   keywords   = {concepts, constrained generics, generic programming, parametric polymorphism, specialization},
-  month      = jun,
+  month      = {06},
   number     = {6},
   numpages   = {11},
   pages      = {272--282},
@@ -1605,6 +1623,44 @@
   year   = {2011}
 }
 
+@article{kotzmann.2008.hotspot,
+  author     = {Kotzmann, Thomas and Wimmer, Christian and M\"{o}ssenb\"{o}ck, Hanspeter and Rodriguez,
+                Thomas and Russell, Kenneth and Cox, David},
+  title      = {Design of the Java HotSpot\textsuperscript{\texttrademark} Client Compiler for Java 6},
+  year       = {2008},
+  issue_date = {May 2008},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {5},
+  number     = {1},
+  issn       = {1544-3566},
+  url        = {https://doi.org/10.1145/1369396.1370017},
+  doi        = {10.1145/1369396.1370017},
+  abstract   = {Version 6 of Sun Microsystems' Java HotSpot\textsuperscript{\texttrademark} VM ships with a redesigned
+                version of the client just-in-time compiler that includes several research results of the last years.
+                The client compiler is at the heart of the VM configuration used by default for interactive desktop
+                applications. For such applications, low startup and pause times are more important than peak
+                performance. This paper outlines the new architecture of the client compiler and shows how it interacts
+                with the VM. It presents the intermediate representation that now uses static single-assignment (SSA)
+                form and the linear scan algorithm for global register allocation. Efficient support for exception
+                handling and deoptimization fulfills the demands that are imposed by the dynamic features of the Java
+                programming language. The evaluation shows that the new client compiler generates better code in less
+                time. The popular SPECjvm98 benchmark suite is executed 45\% faster, while the compilation speed is also
+                up to 40\% better. This indicates that a carefully selected set of global optimizations can also be
+                integrated in just-in-time compilers that focus on compilation speed and not on peak performance. In
+                addition, the paper presents the impact of several optimizations on execution and compilation speed. As
+                the source code is freely available, the Java HotSpot\textsuperscript{\texttrademark} VM and the client
+                compiler are the ideal basis for experiments with new feedback-directed optimizations in a
+                production-level Java just-in-time compiler. The paper outlines research projects that add fast
+                algorithms for escape analysis, automatic object inlining, and array bounds check elimination.},
+  journal    = {ACM Trans. Archit. Code Optim.},
+  month      = {05},
+  articleno  = {7},
+  numpages   = {32},
+  keywords   = {deoptimization, intermediate representation, register allocation, Java, compiler,
+                just-in-time compilation, optimization}
+}
+
 @article{kwame.2017.qualitative,
   author    = {Kwame, Ampomah Ernest and Martey, Ezekiel Mensah and Chris, Abilimi Gilbert},
   journal   = {Communications},
@@ -1640,7 +1696,7 @@
   lrdepaper    = {http://www.lrde.epita.fr/dload/papers/levillain.09.ismm.pdf},
   lrdeprojects = {Olena},
   lrdeslides   = {http://www.lrde.epita.fr/dload/papers/levillain.09.ismm.slides.pdf},
-  month        = aug,
+  month        = {08},
   pages        = {295--306},
   publisher    = {Springer Berlin / Heidelberg},
   series       = {Lecture Notes in Computer Science},
@@ -1663,7 +1719,7 @@
   lrdepaper    = {http://www.lrde.epita.fr/dload/papers/levillain.10.icip.pdf},
   lrdeposter   = {http://www.lrde.epita.fr/dload/papers/levillain.10.icip.poster.pdf},
   lrdeprojects = {Olena},
-  month        = sep,
+  month        = {09},
   pages        = {1941--1944},
   title        = {Why and How to Design a Generic and Efficient Image Processing Framework: The Case of the {Milena}
                   Library},
@@ -1685,7 +1741,7 @@
   lrdepaper    = {http://www.lrde.epita.fr/dload/papers/levillain.10.wadgmm.pdf},
   lrdeprojects = {Olena},
   lrdeslides   = {http://www.lrde.epita.fr/dload/papers/levillain.10.wadgmm.slides.pdf},
-  month        = aug,
+  month        = {08},
   pages        = {96--100},
   title        = {Writing Reusable Digital Geometry Algorithms in a Generic Image Processing Framework},
   url          = {http://mdigest.jrc.ec.europa.eu/wadgmm2010/},
@@ -1715,7 +1771,7 @@
   lrdepaper    = {http://www.lrde.epita.fr/dload/papers/levillain.11.gretsi.pdf},
   lrdeposter   = {http://www.lrde.epita.fr/dload/papers/levillain.11.gretsi.poster.pdf},
   lrdeprojects = {Olena},
-  month        = sep,
+  month        = {09},
   note         = {In French.},
   title        = {Une approche g\'en\'erique du logiciel pour le traitement d'images pr\'eservant les performances},
   year         = 2011
@@ -1740,7 +1796,7 @@
   author       = {Roland Levillain},
   lrdepaper    = {http://www.lrde.epita.fr/~roland/phd/levillain-phd.pdf},
   lrdeprojects = {Olena},
-  month        = nov,
+  month        = {11},
   school       = {Universit\'e Paris-Est},
   title        = {Towards a Software Architecture for Generic Image Processing},
   year         = 2011
@@ -1796,7 +1852,7 @@
   lrdepaper    = {http://www.lrde.epita.fr/dload/papers/levillain.14.ciarp.pdf},
   lrdeprojects = {Olena},
   lrdeslides   = {http://www.lrde.epita.fr/dload/papers/levillain.14.ciarp.slides.pdf},
-  month        = nov,
+  month        = {11},
   pages        = {70--79},
   publisher    = {Springer-Verlag},
   series       = {Lecture Notes in Computer Science},
@@ -1846,7 +1902,7 @@
   issn       = {0362-1340},
   issue_date = {March 1993},
   journal    = {SIGPLAN Not.},
-  month      = mar,
+  month      = {03},
   number     = {3},
   numpages   = {15},
   pages      = {133-147},
@@ -1918,7 +1974,7 @@
   abstract  = {In order to fill gap of growing demand for high efficient image and video processing, open source
                computer vision library (OpenCv) is way to deals with this task. Hence, this paper is about basic
                algorithm for image processing and their CPU time consumption in Matlab comparing with OpenCv.
-               Algorithms are tested on images with resolution 3264×2448, 1920×1080, 1024×768 and 220×260.
+               Algorithms are tested on images with resolution 3264x2448, 1920x1080, 1024x768 and 220x260.
                Multi-processors computer and multi-threading programs are used to improve processing efficiency.},
   author    = {S. {Matuska} and R. {Hudec} and M. {Benco}},
   booktitle = {2012 ELEKTRO},
@@ -1949,7 +2005,7 @@
   issn     = {1558-0814},
   journal  = {Computer},
   keywords = {},
-  month    = {Oct},
+  month    = {10},
   number   = {10},
   pages    = {40-51},
   title    = {Applying 'design by contract'},
@@ -1967,7 +2023,6 @@
   volume    = {5720},
   year      = {2009}
 }
-
 @article{moisan.2005.modeling,
   author  = {Moisan, Lionel},
   journal = {Lecture Notes of ENS Cachan edition},
@@ -2003,6 +2058,8 @@
   url       = {https://doi.org/10.1145/317500.317529},
   year      = {1987}
 }
+
+% First appearence of the expression "generic programming"
 @inproceedings{musser.1988.generic,
   author       = {David R. Musser and Alexander A. Stepanov},
   booktitle    = {Intl. Symp. on Symbolic and Algebraic Computation},
@@ -2072,7 +2129,7 @@
   issue_date = {March 2009},
   journal    = {SIGPLAN Not.},
   keywords   = {bias, performance, measurement},
-  month      = mar,
+  month      = {03},
   number     = {3},
   numpages   = {12},
   pages      = {265-276},
@@ -2127,33 +2184,18 @@
 }
 
 @inproceedings{nanz.2015.comparative,
-  abstract  = {Sometimes debates on programming languages are more religious than scientific. Questions about which
-               language is more succinct or efficient, or makes developers more productive are discussed with fervor,
-               and their answers are too often based on anecdotes and unsubstantiated beliefs. In this study, we use the
-               largely untapped research potential of Rosetta Code, a code repository of solutions to common programming
-               tasks in various languages, which offers a large data set for analysis. Our study is based on 7'087
-               solution programs corresponding to 745 tasks in 8 widely used languages representing the major
-               programming paradigms (procedural: C and Go, object-oriented: C# and Java, functional: F# and Haskell,
-               scripting: Python and Ruby). Our statistical analysis reveals, most notably, that: functional and
-               scripting languages are more concise than procedural and object-oriented languages, C is hard to beat
-               when it comes to raw speed on large inputs, but performance differences over inputs of moderate size are
-               less pronounced and allow even interpreted languages to be competitive, compiled strongly-typed
-               languages, where more defects can be caught at compile time, are less prone to runtime failures than
-               interpreted or weakly-typed languages. We discuss implications of these results for developers, language
-               designers, and educators.},
   author    = {Nanz, Sebastian and Furia, Carlo A.},
   booktitle = {2015 IEEE/ACM 37th IEEE International Conference on Software Engineering},
   doi       = {10.1109/ICSE.2015.90},
   issn      = {1558-1225},
   keywords  = {},
-  month     = {May},
+  month     = {05},
   number    = {},
   pages     = {778-788},
   title     = {A Comparative Study of Programming Languages in Rosetta Code},
   volume    = {1},
   year      = {2015}
 }
-
 
 @misc{niebler.2014.ranges,
   author = {Eric Niebler, Sean Parent, Andrew Sutton},
@@ -2188,7 +2230,7 @@
 
 @misc{niebler.2018.ranges,
   author       = {Eric Niebler and Casey Carter},
-  month        = may,
+  month        = {05},
   note         = {{\small\url{https://wg21.link/p1037r0}}},
   optpublisher = {WG21},
   title        = {{P1037R0}: {D}eep Integration of the Ranges {TS}},
@@ -2219,7 +2261,7 @@
               concrete type; abstract data type; user interface; view clusters; partial evaluation;
               direct manipulation editor; Concrete; Software algorithms; Clustering algorithms; Programming profession;
               Object oriented programming; User interfaces; Application software; Costs; Production; Libraries},
-  month    = {July},
+  month    = {07},
   number   = {7},
   pages    = {401-417},
   title    = {Software reuse by specialization of generic procedures through views},
@@ -2246,7 +2288,7 @@
   doi       = {},
   issn      = {null},
   keywords  = {},
-  month     = {Sep.},
+  month     = {09},
   number    = {},
   pages     = {1-10},
   title     = {A Highly Efficient and Comprehensive Image Processing Library for C++-based High-Level Synthesis},
@@ -2272,7 +2314,7 @@
 }
 
 @misc{opencv.bg_sub,
-  month = dec,
+  month = {12},
   note  = {{\small\url{https://docs.opencv.org/3.4/d1/dc5/tutorial_background_subtraction.html}}},
   title = {Background Subtraction},
   year  = 2018
@@ -2426,14 +2468,13 @@
   issn     = {1558-0814},
   journal  = {Computer},
   keywords = {},
-  month    = {Oct},
+  month    = {10},
   number   = {10},
   pages    = {23-29},
   title    = {An empirical comparison of seven programming languages},
   volume   = {33},
   year     = {2000}
 }
-
 
 @software{ptc.2019.mathcad,
   author  = {{PTC}},
@@ -2474,7 +2515,7 @@
   title     = {The MATLAB{\textregistered} 5 Handbook},
   year      = {2012}
 }
-  
+
 @article{ritter.1990.cvgi,
   author    = {Gerhard X. Ritter and Joseph N. Wilson and Jennifer L. Davidson},
   journal   = {Computer Vision, Graphics, and Image Processing},
@@ -2510,7 +2551,7 @@
               image compression; image analysis; image synthesis; Digital images; Software libraries;
               Software engineering; Application software; Digital filters; Gabor filters; Image edge detection;
               Image segmentation; Fast Fourier transforms; Discrete cosine transforms},
-  month    = {Nov},
+  month    = {11},
   number   = {4},
   pages    = {331-333},
   title    = {Digital image processing-an object-oriented approach},
@@ -2561,8 +2602,6 @@
   year      = {2019}
 }
 
-  
-
 @software{scilab.2020,
   author  = {{Scilab Enterprises}},
   date    = {2020-02-25},
@@ -2571,7 +2610,6 @@
   version = {6.1.0}
 }
 
-  
 @misc{seymour.2009.concepts,
   author       = {Bill Seymour},
   key          = {N2929},
@@ -2581,8 +2619,6 @@
   url          = {https://wg21.link/n2929},
   year         = {2009}
 }
-
-  
 
 @inproceeding{siek.2001.boostgraph,
   author    = {Jeremy Siek, Lie-Quan Lee, Andrew Lumsdaine},
@@ -2618,7 +2654,6 @@
   year      = {2003}
 }
 
-
 @book{stepanov.2004.notes,
   author    = {Stepanov, Alexander A and Marcus, Matthew A},
   publisher = {Citeseer},
@@ -2635,13 +2670,13 @@
   year      = {2009}
 }
 
+% Reclaiming of the expression "generic programming"
 @book{stepanov.2014.mathematics,
   author    = {Stepanov, Alexander A and Rose, Daniel E},
   publisher = {Pearson Education},
   title     = {From mathematics to generic programming},
   year      = {2014}
 }
-
 
 @book{stroustrup.1995.design,
   address   = {New York, NY, USA},
@@ -2671,7 +2706,6 @@
   year      = {1996}
 }
 
-% First appearence of the expression "generic programming"
 @article{stroustrup.1999.hot,
   author    = {Bjarne Stroustrup},
   journal   = {Handbook of Object Technology},
@@ -2680,6 +2714,7 @@
   year      = {1999}
 }
 
+% first appearence of "concept" and "regular type"
 @misc{stroustrup.2003.concepts,
   author       = {Bjarne Stroustrup and Gabriel Dos Reis},
   key          = {N1522},
@@ -2699,7 +2734,6 @@
   volume  = {23},
   year    = {2005}
 }
-
 
 @inproceedings{stroustrup.2007.evolving,
   abstract  = {This paper outlines the history of the C++ programming language from the early days of its ISO
@@ -2727,7 +2761,6 @@
   year      = {2007}
 }
 
-% first appearence of "concept" and "regular type"
 @inproceedings{stroustrup.2007.hopl,
   address      = {New York, USA},
   author       = {Bjarne Stroustrup},
@@ -2792,7 +2825,7 @@
   journal    = {Proc. ACM Program. Lang.},
   keywords   = {C++, concurrency and parallelism, generic programming, programming language design and evolution,
                 resource management, simplification of language use, standardization},
-  month      = jun,
+  month      = {06},
   number     = {HOPL},
   numpages   = {168},
   publisher  = {Association for Computing Machinery},
@@ -2867,7 +2900,7 @@
   hal_version = {v1},
   keywords    = {Image Processing; C++ Library; Template-based programming; Genericity; Straightforwardness;
                  Script language},
-  month       = Jun,
+  month       = {06},
   pages       = {4 pp},
   pdf         = {https://hal.archives-ouvertes.fr/hal-00927458/file/tschumperle_ipol2012.pdf},
   title       = {{The CImg Library}},
@@ -2916,7 +2949,6 @@
   year     = {1992}
 }
 
-
 @inproceedings{vassilev.2012.cling,
   author    = {Vassilev,V. and Canal,Ph. and Naumann,A. and Moneta,L. and Russo,P.},
   doi       = {10.1088/1742-6596/396/5/052071},
@@ -2962,7 +2994,7 @@
 @inproceedings{veldhuizen.2000.blitz,
   abstract  = {Blitz++ provides dense numeric arrays for C++ with performance on par with Fortran. It does so by using
                ''template techniques'' (expression templates and template metaprograms). In addition to fast
-               performance, Blitz++ arrays pro­vide many nice notations and features not available in Fortran 90.},
+               performance, Blitz++ arrays provide many nice notations and features not available in Fortran 90.},
   address   = {Berlin, Heidelberg},
   author    = {Veldhuizen, Todd L.},
   booktitle = {Advances in Software Tools for Scientific Computing},
@@ -3001,7 +3033,7 @@
   year         = {2017}
 }
 
- @article{wagner.2005.generic,
+@article{wagner.2005.generic,
   author  = {Wagner, S and Affenzeller, M},
   journal = {Adaptive and Natural Computing Algorithms, Springer Computer Science},
   pages   = {538--541},
@@ -3081,6 +3113,11 @@
   title     = {Distributed \& Heterogeneous Programming in C++ for HPC at SC17},
   url       = {http://doi.acm.org/10.1145/3204919.3204939},
   year      = {2018}
+}
+
+@article{xie.improving,
+  title  = {Improving Java Virtual Machine performance with SIMD technology},
+  author = {Xie, Danke and Wang, ChernHsi Jeffrey and Schimpf, Michael}
 }
 
 @software{xilinx.2021.triSYCL,

@@ -10,9 +10,15 @@ languages, such as Python, PHP, Lisp or Javascript. Finally, there are the hybri
 C\#, that have a fast compilation pass that compiles the source code into an intermediate bytecode. Then, this bytecode
 is interpreted via an interpreter on the host (runner) machine.
 
+
+\section{Introducing the static and dynamic bidge}
+
 Many studies have carried out to compare the advantages and disadvantages of each family of programming
 languages~\parencite{prechelt.2000.comparison,kwame.2017.qualitative,boehm.1984.economics}. In this thesis we focus
 mainly on comparing the burden that are shouldered by the maintainers and the end-user.
+
+
+\subsection{Languages types}
 
 \paragraph{Compiled languages} From the maintainer point of view, there is a lot of burden to shoulder. First is the
 binary generation which can be problematic in itself. Indeed, to generate a binary, there are many steps, as illustrated
@@ -30,10 +36,10 @@ that the binary can run? The burden of handling the dependencies is then shifted
 program.
 
 \begin{figure}[tbh]
-	\centering
-	\includegraphics[width=.6\linewidth]{figs/static_compiletime}
-	\caption{Compiled languages: compile-time}
-	\label{fig:static.dynamic.compiled.compiletime}
+  \centering
+  \includegraphics[width=.6\linewidth]{figs/static_compiletime}
+  \caption{Compiled languages: compile-time}
+  \label{fig:static.dynamic.compiled.compiletime}
 \end{figure}
 
 
@@ -42,17 +48,11 @@ and the programs works "out-of-the-box" once installed, as illustrated in~\cref{
 The downside is that the maintainer has to publish many bundles of his package where he wants it to be available.
 
 \begin{figure}[tbh]
-	\centering
-	\includegraphics[width=.6\linewidth]{figs/static_runtime}
-	\caption{Compiled languages: run-time}
-	\label{fig:static.dynamic.compiled.runtime}
+  \centering
+  \includegraphics[width=.6\linewidth]{figs/static_runtime}
+  \caption{Compiled languages: run-time}
+  \label{fig:static.dynamic.compiled.runtime}
 \end{figure}
-
-Finally, the \emph{compiled} languages usually have poor support of introspection facilities. At best, static reflection
-is available at compile-time, but dynamic reflection is not an option. The structure of the program does not change at
-runtime. Some flexibility exists when delving into the area of hot-swapping dynamic libraries at run-time, however this
-techniques comes with security-related issues that injecting possible foreign machine code into one's program may
-generate.
 
 \paragraph{Interpreted languages} From the maintainer point of view, this is the ideal standpoint. It is easier to
 distribute software via an interpreted language because only the source code and, a dependency tree and the assets are
@@ -74,34 +74,119 @@ IronPython and PyPy embed a Just-In-Time (JIT) compiler to generate resp. JVM by
 variety of bytecode format.
 
 \begin{figure}[tbh]
-	\centering
-	\includegraphics[width=.6\linewidth]{figs/dynamic_pipeline}
-	\caption{Interpreted languages: run-time}
-	\label{fig:static.dynamic.dynamic.pipeline}
+  \centering
+  \includegraphics[width=.6\linewidth]{figs/dynamic_pipeline}
+  \caption{Interpreted languages: run-time}
+  \label{fig:static.dynamic.dynamic.pipeline}
 \end{figure}
+
+\paragraph{Hybrid languages} The burden is shared evenly between the maintainer and the user, while remaining minimal.
+Indeed, languages such as Java or C\# are in this category. Those programming languages need a compiling pass which is
+designed to be fast, so that the feedback loop while prototyping remains fast. The result of the compilation is bytecode
+which is then executed on an hosting Virtual Machine (VM) that the user must install on his computer. The main
+advantages of this solution are the portability and the small distributed binary size. Indeed, in theory, any machine
+supporting the VM may also support the program. Also, the as the VM execute the bytecode and resolve system
+dependencies, the distributed binary does not need to embed any system dependency. Finally, the user has the advantage
+of running a compiled program which provides fast user experience. The goal of hybrid languages is to ally advantages of
+both compiled and interpreted languages; no dependency management for the user, one small binary to distribute for the
+maintainer, good execution performance, and fast feedback loop when prototyping (fast incremental compilation), while
+minimizing the downsides; usually a garbage collector is working inside the VM to handle memory allocations and
+de-allocations. In this regard, both Java and C\# manage to achieve this feat quite elegantly. In theory, VM can further
+increase performances by implementing hot code detection which would compile the bytecode into native optimized machine
+code. This area is still a field of research to this day (c.f. Java
+HotSpot~\parencite{xie.improving,kotzmann.2008.hotspot,halli.2016.java-hpc}).
+
+
+\subsection{Static and dynamic informations}
+
+Compiles programming languages usually have poor support of introspection facilities. At best, static reflection is
+available at compile-time, but dynamic reflection is not an option. The structure of the program does not change at
+runtime. Some flexibility exists when delving into the area of hot-swapping dynamic libraries at run-time, however this
+techniques drags alongside security-related issues that injecting possible foreign machine code into one's program may
+generate.
+Interpreted programming languages usually have very developed introspection facilities. Dynamic reflection at
+runtime is possible and some language, such as Common Lisp, even go further by allowing the developer to mutate the
+program Abstract Syntax Tree (AST) at runtime (macro). This allows very powerful integrations such as defining one's own
+DSL as if it was part of the core language itself.
+Hybrid programming languages usually offers very good static and dynamic introspection facility at both compile-time and
+runtime, even if it means that runtime facilities will hurt performances. Also, those languages are usually designed to
+be able to hot-swap code at runtime. It is then possible to have the application running, recompile part of the binary
+of the application, replace the old running binary by the new compiled one, all the while the application is running.
+
+The next important step is to classify what information is known at \emph{compile-time} (machine/bytecode code
+generation): we call it \emph{static} information; and what information is known at \emph{runtime} (program execution):
+we call it \emph{dynamic} information. In image processing, have the following static informations:
+\begin{itemize}
+  \item Image's value type (unit8, rgb8, complex, etc.),
+  \item Image's dimension size (1D, 2D, 3D, etc.),
+  \item Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.).
+\end{itemize}
+
+On the other hand, we have the following dynamic informations:
+\begin{itemize}
+  \item Image's actual values,
+  \item Image's actual size,
+  \item Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.).
+\end{itemize}
+
+We notice that the architecture hosting the program is both an information which is static and dynamic. This translates
+the complexity of this information. Indeed, the maintainer needs to guess the array of architectures he wants to support
+and generate binaries for them (static). Also, the program needs to detect at runtime (dynamically) on which hardware he
+is running to possibly take advantage of it to increase performances. This is an area of research on its own called
+heterogeneous computing~\parencite{wong.2019.heterogeneous,brown.2019.heterogeneous}.
+
+
+\subsection{Introducing our hybrid solution}
 
 Image processing communities like to have bridges with interpretable language such as Python or Matlab, to interface
 with their favorite tools, algorithms and/or facilities. As an example, with Python, the module
 NumPy~\cite{oliphant.2006.numpy} is a community standard which is heavily used. Henceforth, to broaden the usage of our
-library, we should be able to provide a way to communicate between our library and NumPy. However, here is a showstopper:
-we only distribute source code, we don't hand over binaries. Indeed, genericity in C++ is achieved via usage of template
-programming. One caveat of it is that the C++ compiler cannot generate a binary until it knows which type (of image,
-of value) will be used. But we don't know this information: the user (on Python's end) is not going to recompile our
-library each time he has another set of types to exercise. From here, there are still multiple ways to achieve our goal.
+library, we should be able to provide a way to communicate between our library and NumPy. There is always a need for
+genecity in both C++ and Python. Indeed, in C++ genericity is achieved via template programming, which is static,
+whereas in Python genericity is achieved via duck typing, which is dynamic, as shown
+in~\cref{fig:static.vs.dynamic.genericity}.
 
-First option is to embark a JIT (Just-in-time) compiler whose job would be to generate the binaries and bindings just as
-they are used. This solution brings speed (excluding the first run that includes the compilation time) and unrestrained
-genericity. However we are now bound to specificities of a compiler vendor and loose platform portability.
+\begin{figure}[tbh]
+  \centering
+  \subfloat[C++ static genericity]{
+    \includegraphics[width=1.64in]{figs/cpp_static_code}
+  }
+  \hfil
+  \subfloat[Python dynamic genericity]{
+    \includegraphics[width=1.64in]{figs/python_dynamic_code}
+  }
+  \caption{C++ Static (a) vs. Python Dynamic (b) genericity.}
+  \label{fig:static.vs.dynamic.genericity}
+\end{figure}
 
-Another option is to type-erase our types to enables the use of various concrete types through a single generic
-interface. This would translate into a class hierarchy whose concrete classes are on the leaves (thus, whose value type
-and dimension are known). This induces a non-negligible slow down but allow us to keep the genericity and portability at
-the cost of maintaining the class hierarchy.
+On the one hand, static polymorphism induces no indirection in the generated code as the type is known at compile-time.
+It is then possible to generate optimized code for specific types. It is not possible to add a new supported type at
+runtime as the code has already been compiled. On the other hand, the dynamic polymorphism implies that there will be
+indirections when executing the code. Indeed, the code first needs to dispatch onto the appropriate function handling
+the input types to perform the operation properly. Nevertheless, it is possible to add new supported type at runtime
+without recompiling the library binary.
 
-Type generalization can also be considered: cast everything into a super-type that is suitable for the vast majority of
-cases. For instance, we could say that we have a super-type \texttt{image4D<double>} into which we can easily cast
-sub-types such as \texttt{image2D<int>} or \texttt{image3D<float>}. Of course we would loose the generic aspect and
-induce non negligible speed cost. Although portability is kept.
+From the maintainer point of view, however, only distributing the C++ templated source code is a showstopper to the
+usability of his library by a Python user, because he does not hand over binaries. Indeed, one caveat of using C++
+template programming is that the C++ compiler cannot generate a binary until it knows which type (of image, of value)
+will be used. But the maintainer does not know this information and the user (on Python's end) does not want to
+recompile the generic library code each time he has another set of types to exercise against. From here, there are still
+multiple ways to achieve our goal.
+
+The first option is to embed and distribute, alongside the library, a JIT compiler whose job would be to generate the
+binaries and bindings just as they are used. This solution brings speed (excluding the first run that includes the
+compilation time) and unrestrained genericity. However it bounds both user and maintainer to the specificities of a
+compiler vendor and loose platform portability.
+
+Another option is to type-erase (dynamic polymorphism) our types to enables the use of various concrete types through a
+single generic interface. This would translate into a class hierarchy whose concrete classes are the leaves (thus, whose
+value-types and dimensions are known). This induces a non-negligible performance overhead but enables us to keep the
+genericity and portability at the cost of maintaining the class hierarchy.
+
+Type generalization can also be considered. It is possible to cast everything into a super-type that is suitable for the
+vast majority of cases. For instance, we could say that we have a super-type \texttt{image4D<double>} into which we can
+easily cast sub-types such as \texttt{image2D<int>} or \texttt{image3D<float>}. Of course we would loose the generic
+aspect and induce non negligible speed cost. Although portability is kept.
 
 And finally there is the dynamic dispatch. It consists in embedding dynamic information at runtime about types, and
 dispatch (think of switch/case) to the correct facility which can handle those types. The obvious caveat is the cost of
@@ -141,10 +226,10 @@ through the \texttt{ndimage\_buffer} into C++ for a correct instanciation. This 
 in~\cref{fig:type-erased.buffer}.
 
 \begin{figure}[tbh]
-	\centering
-	\includegraphics[width=.6\linewidth]{figs/type-erased_buffer}
-	\caption{Bridge from Python to C++ via Pybind11 and a type-erased C++ class.}
-	\label{fig:type-erased.buffer}
+  \centering
+  \includegraphics[width=.6\linewidth]{figs/type-erased_buffer}
+  \caption{Bridge from Python to C++ via Pybind11 and a type-erased C++ class.}
+  \label{fig:type-erased.buffer}
 \end{figure}
 
 From the point of view of a practitioner, the code on the call-site (python side) should be as follow:
@@ -294,7 +379,7 @@ Now that our python submodule and that our \texttt{binary\_threshold} operator a
 operator's implementation:
 
 \begin{minted}{C++}
-  mln::ndbuffer_image dilate(::py::buffer buffer)
+  mln::ndbuffer_image binary_threshold(::py::buffer buffer)
   {
     // grayscale image mandatory
     auto input = mln::py::ndimage_from_buffer(buffer);
@@ -438,8 +523,8 @@ struct dilate_operator_t {
 };
 \end{minted}
 
-Here we can see that we need a double dispatch. Also, the structuring element is no longue a variant and needs to be
-dispatched before instantiating this operator. Finally, there is an issue here because there are two template parameter
+Here we can see that we need a double dispatch. Also, the structuring element is no longer a variant and needs to be
+dispatched before instantiating this operator. Finally, there is an issue here because there are two template parameters
 and our dispatcher \texttt{dispatch\_v} does only handle one. We workaround this issue by writing another intermediate
 operator dispatcher \texttt{dilate\_operator\_intermediate\_t} serving as trampoline that will partially instantiate the
 final operator \texttt{dilate\_operator\_t} along the dimension template parameter to feed it to the last dispatcher,
@@ -833,7 +918,7 @@ class. Then the user implement the pure virtual member function with Python code
 possible to pass this child class back to a C++ function as if it was the C++ parent class. Whichever solution is
 selected, the performances remain equally bad as Python code do the work in both case.
 
-Indeed, While it works and enables the user to construct \texttt{numpy.array} of custom Python type and pass them to the
+Indeed, while it works and enables the user to construct \texttt{numpy.array} of custom Python type and pass them to the
 library with the corresponding value-set for it to "just work", the performance is greatly impacted. As a matter of
 fact, the computation is no longer done on the C++ side with optimized, vectorized instructions. Instead, a callback to
 Python is done in order to get the result. It is important that the user keep in mind that custom python types are be
@@ -922,15 +1007,15 @@ algorithm performed by Pylena allows the user to have very stable performances a
 algorithms.
 
 \begin{figure}[tbh]
-	\centering
-	\begin{tabular}{cccc}
-		Rectangle                                                                                          & Disc \\[5pt]
-		\fbox{\includegraphics[width=.45\linewidth]{figs/Dilation_SERect_Benchmarks__Time_vs_SE_size.png}} &
-		\fbox{\includegraphics[width=.45\linewidth]{figs/Dilation_SEDisc_Benchmarks__Time_vs_SE_size.png}}        \\[5pt]
-	\end{tabular}
+  \centering
+  \begin{tabular}{cccc}
+    Rectangle                                                                                          & Disc \\[5pt]
+    \fbox{\includegraphics[width=.45\linewidth]{figs/Dilation_SERect_Benchmarks__Time_vs_SE_size.png}} &
+    \fbox{\includegraphics[width=.45\linewidth]{figs/Dilation_SEDisc_Benchmarks__Time_vs_SE_size.png}}        \\[5pt]
+  \end{tabular}
 
-	\caption{Benchmark results: OpenCV vs. Scikit-image vs. Pylena (in a dilation).}
-	\label{fig:bench_python_restults}
+  \caption{Benchmark results: OpenCV vs. Scikit-image vs. Pylena (in a dilation).}
+  \label{fig:bench_python_restults}
 \end{figure}
 
 Indeed, the~\cref{fig:bench_python_restults_pln} shows the performance difference with the Pylena library when this one
@@ -939,15 +1024,15 @@ its performances heavily impacted. Also, the algorithm is no longer stable and g
 of the structuring elements.
 
 \begin{figure}[tbh]
-	\centering
-	\begin{tabular}{cccc}
-		Rectangle                                                                                             & Disc \\[5pt]
-		\fbox{\includegraphics[width=.45\linewidth]{figs/DilationPln_SERect_Benchmarks__Time_vs_SE_size.png}} &
-		\fbox{\includegraphics[width=.45\linewidth]{figs/DilationPln_SEDisc_Benchmarks__Time_vs_SE_size.png}}        \\[5pt]
-	\end{tabular}
+  \centering
+  \begin{tabular}{cccc}
+    Rectangle                                                                                             & Disc \\[5pt]
+    \fbox{\includegraphics[width=.45\linewidth]{figs/DilationPln_SERect_Benchmarks__Time_vs_SE_size.png}} &
+    \fbox{\includegraphics[width=.45\linewidth]{figs/DilationPln_SEDisc_Benchmarks__Time_vs_SE_size.png}}        \\[5pt]
+  \end{tabular}
 
-	\caption{Benchmark results: Pylena structuring elements decomposable vs. non-decomposable (in a dilation).}
-	\label{fig:bench_python_restults_pln}
+  \caption{Benchmark results: Pylena structuring elements decomposable vs. non-decomposable (in a dilation).}
+  \label{fig:bench_python_restults_pln}
 \end{figure}
 
 % TODO : bench with value_set callbacks to python
@@ -979,10 +1064,8 @@ The second solution is to use Cython~\parencite{behnel.2010.cython}. It is a tra
 a Python source code directly into C-language source code so that it can be compiled by a standard C compiler just by
 linking against the Python/C API. This remove the burden of writting the careful code-generation routine, system-calls
 to the C++ compiler and removes the need to resolve all the dependencies. This infrastructure takes care of everything
-for the user. Also, by transpiling it into C code, it is faster because a C compiler is faster than a C++ compiler. The
-big issue here is that C code has no support for templates. This means that instead of having to compile instanciated
-C++ templated code directly, we need to write some glue code to call templated C++ code from the generated C code from
-Python. Sadly the main issue here is not solved, just shifted.
+for the user. Also, by transpiling it into C code, it is faster because a C compiler is faster than a C++ compiler.
+Cython even support C++ template code~\parencite{behnel.2022.cython-template} which is mandatory for our use-case.
 
 The third solution consists in relying on recent projects that are all relying on the LLVM infrastructure. We can
 notably note Autowig~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy} and

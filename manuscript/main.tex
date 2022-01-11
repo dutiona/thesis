@@ -5,6 +5,9 @@
 % \usepackage[numbers]{natbib}
 \usepackage[mode=buildmissing]{standalone}
 \usepackage{tikz}
+\usepackage{float}
+%\usepackage{placeins}
+%\usepackage{refcheck}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{subcaption}
@@ -30,7 +33,12 @@
 \usepackage{svg}
 \usepackage{lettrine}
 %\usepackage[backend=biber,style=alphabetic,sorting=ynt]{biblatex}
-\usepackage[backend=biber,sorting=ynt]{biblatex}
+%\usepackage[backend=biber,sorting=ynt,style=numeric]{biblatex}
+%\usepackage[backend=biber,sorting=ynt,style=draft,backref=true]{biblatex}
+\usepackage[backend=biber,sorting=ynt,style=numeric,backref=true]{biblatex}
+
+\DeclareBibliographyCategory{cited}
+\AtEveryCitekey{\addtocategory{cited}{\thefield{entrykey}}}
 \addbibresource{bibliography.bib}
 
 \usepackage[section]{placeins}
@@ -76,14 +84,13 @@
 %  \email{michael.roynard@lrde.epita.fr}
 %}
 
-
 \maketitle
 
-\section{Acknowledgement}
+\section*{Acknowledgement}
 \label{sec:acknowledgement}
 
 
-\section{Abstract}
+\section*{Abstract}
 \label{sec:abstract}
 C++ is a multi-paradigm language that enables the programmer to set up efficient image processing algorithms easily.
 This language strength comes from many aspects. C++ is high-level, so this enables developing powerful abstractions and
@@ -102,18 +109,22 @@ We offer our own hybrid solution and benchmark its performances as well as discu
 with JIT technologies. Those three axes aim to address the issue of generic programming all the while remaining
 efficient and easy to use.
 
-C++ est un langage de programmation multi-paradigme qui permet au développeur de mettre au point des algorithmes de
-traitement d'image facilement. La force de langage se base sur plusieurs aspects. C++ est haut-niveau, cela signifie
-qu'il est possible de développer des abstractions puissantes mélangeant plusieurs styles de programmation pour faciliter
-le développement. En même temps, C++ est bas-niveau et peut pleinement tirer partie du matériel pour fournir un maximum
-de performances. Il est aussi portable et très compatible ce qui lui permet de se brancher à d'autres langages de haut
-niveau pour le prototypage rapide tel que Python ou Matlab. Un des aspects les plus fondamentaux où le C++ brille est la
-programmation générique. La programmation générique rend possible le développement et la réutilisation de brique
-logiciels comme des objets (images) de différentes natures (types) sans avoir de perte au niveau performance. Néanmoins,
-concilier la généricité, la performance et la simplicité d'utilisation tout en même temps n'est pas trivial. Le C++
-moderne (post-2011) amène de nouvelles fonctionnalités qui le rendent plus simple et plus puissant. Dans cette thèse,
-nous explorons en premier un aspect particulier du C++20 : les concepts, dans le but de construire une taxonomie des
-types relatifs au traitement d'image. Deuxièmement, nous explorons une autre addition au C++20, les ranges (et les
+\bigskip
+
+\bigskip
+
+\noindent C++ est un langage de programmation multi-paradigme qui permet au développeur de mettre au point des
+algorithmes de traitement d'image facilement. La force de langage se base sur plusieurs aspects. C++ est haut-niveau,
+cela signifie qu'il est possible de développer des abstractions puissantes mélangeant plusieurs styles de programmation
+pour faciliter le développement. En même temps, C++ est bas-niveau et peut pleinement tirer partie du matériel pour
+fournir un maximum de performances. Il est aussi portable et très compatible ce qui lui permet de se brancher à d'autres
+langages de haut niveau pour le prototypage rapide tel que Python ou Matlab. Un des aspects les plus fondamentaux où le
+C++ brille est la programmation générique. La programmation générique rend possible le développement et la réutilisation
+de brique logiciels comme des objets (images) de différentes natures (types) sans avoir de perte au niveau performance.
+Néanmoins, concilier la généricité, la performance et la simplicité d'utilisation tout en même temps n'est pas trivial.
+Le C++ moderne (post-2011) amène de nouvelles fonctionnalités qui le rendent plus simple et plus puissant. Dans cette
+thèse, nous explorons en premier un aspect particulier du C++20 : les concepts, dans le but de construire une taxonomie
+des types relatifs au traitement d'image. Deuxièmement, nous explorons une autre addition au C++20, les ranges (et les
 vues), et nous appliquons ce design au traitement d'image et aux types d'image dans le but résoudre les problèmes
 relatifs à la difficulté de customiser les algorithmes de traitement d'image. Enfin, nous explorons les possibilités
 concernant la façon dont il est possible de construire un pont entre du code C++ générique statique (compile-time) et du
@@ -122,8 +133,8 @@ discutons aussi les pistes qui peuvent être explorées dans le futur, notamment
 JIT. Ces trois axes visent à solutionner la problématique concernant la programmation générique tout en restant efficace
 et accessible.
 
-\section{Long abstract}
-\label{sec.:long_abstract}
+%\section*{Long abstract}
+%\label{sec.:long_abstract}
 
 
 \tableofcontents
@@ -182,7 +193,10 @@ et accessible.
 \chapter{Bibliography}
 \label{chap:bibliography}
 
-\printbibliography
+\nocite{*}
+
+\printbibliography[category=cited,heading=bibintoc,title={References}]
+\printbibliography[notcategory=cited,heading=bibintoc,title={Further reading}]
 
 \cleardoublepage
 
