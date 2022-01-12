@@ -149,11 +149,11 @@ in~\cref{fig:static.vs.dynamic.genericity}.
 \begin{figure}[tbh]
   \centering
   \subfloat[C++ static genericity]{
-    \includegraphics[width=1.64in]{figs/cpp_static_code}
+    \includegraphics[width=2in]{figs/cpp_static_code}
   }
   \hfil
   \subfloat[Python dynamic genericity]{
-    \includegraphics[width=1.64in]{figs/python_dynamic_code}
+    \includegraphics[width=2in]{figs/python_dynamic_code}
   }
   \caption{C++ Static (a) vs. Python Dynamic (b) genericity.}
   \label{fig:static.vs.dynamic.genericity}
@@ -329,7 +329,7 @@ This code forward informations about the buffer and handle the special case of m
 as 3D images.
 
 
-\section{Hybrid solution's second step: multi-dispatcher (a.k.a. $n*n$ dispatch)}
+\section{Hybrid solution's second step: multi-dispatcher (a.k.a. $\protect n*n$ dispatch)}
 
 The second step of our hybrid solution is to dispatch the type-erased code to efficient generic code. The naive way of
 doing so would be to include a gigantic switch-case clause in each algorithm implementation and dispatch to the correct
@@ -928,114 +928,20 @@ the C++ side when time comes to write production code.
 
 \section{Performances \& overhead}
 
-Performance-wise, the hybrid solution aims at being very competitive when comparing to the other "standard" libraries.
-We want to compare to \emph{OpenCV} but also \emph{scikit-image} which are both widely use in image processing. For our
-benchmark, we are simply calling a dilation on a sample image whose data are randomized but kept identical for all the
-libraries. In order to conduct this benchmark, we use the Python \emph{timeit} module to evaluate the calls. Here is the
-code which generate the randomized image for the benchmarks:
-\begin{minted}{python}
-import numpy as np
-import random as rnd
-
-def setup_test_img():
-  sizes = {"width": 3138, "height": 3138}  # 10Mo
-  number = 100
-  percent = 20
-  ref = np.zeros((sizes["width"], sizes["height"]), dtype="uint8")
-  rnd.seed(42)
-  for x in range(0, sizes["width"]):
-    for y in range(0, sizes["height"]):
-      ref[x, y] = rnd.randint(0, 255)
-  return ref
-\end{minted}
-
-Now that our base image is setup, let us what we are going to mesure. We want to first compare the dilation algorithm
-relative to the radius of the structuring element (disc or rectangle), as well as distinguish the shapes.
-
-For OpenCV, the benchmarked functions will be as follow:
-\begin{minted}{python}
-import cv2
-
-def bench_cv2_disc(ref, radius):
-  disc = cv2.getStructuringElement(
-    cv2.MORPH_ELLIPSE, (radius*2+1, radius*2+1))
-  cv2.dilate(ref, disc, iterations=1)
-
-def bench_cv2_rect(ref, width, height):
-  disc = cv2.getStructuringElement(
-    cv2.MORPH_RECT, (rect_width, rect_height))
-  cv2.dilate(ref, disc, iterations=1)
-\end{minted}
-
-Now, for scikit-image, the benchmarked functions will be as follow:
-\begin{minted}{python}
-import skimage.morphology as skimorph
-
-def bench_sckimage_disc(ref, radius):
-  disc = skimorph.disk(radius, dtype="uint8")
-  skimorph.dilation(ref, disc)
-
-def bench_sckimage_rect(ref, width, height):
-  rect = skimorph.rectangle(width, height, dtype="uint8")
-  skimorph.dilation(ref, rect)
-\end{minted}
-
-And finally, for Pylena, we will use benchmark the following code:
-\begin{minted}{python}
-import Pylena as pln
-
-def bench_pylena_rect(ref, width, height):
-  rect = pln.se.rect2d(width, height)
-  pln.morpho.dilate(ref, rect)
-
-def bench_pylena_disc(ref, radius):
-  disc = pln.se.disc(float(radius))
-  pln.morpho.dilate(ref, disc)
-\end{minted}
-
-The resulting performance are shown in~\cref{fig:bench_python_restults}. We can see notably that for tiny structuring
-elements (small radius), OpenCV is very fast thanks to hand-made optimization in the core code. Scikit-image which rely
-on NumPy and then SciPy is consistently slower than both Pylena and OpenCV. It also remains stable only for a rectangle
-structuring element. For a disc, the execution time grows alongside the radius of the disc. OpenCV does not remain
-stable the larger the structuring element is, both for a rectangle and a disc. This may be due to the incremental nature
-of the decomposition of the structuring element algorithm which decompose it in smaller 3x3 structuring elements.
-However, OpenCV remains faster than Scikit-image. This algorithm remain slow for large structuring elements. Finally,
-Pylena is very stable both for a rectangle and a disc. It also is consistently faster than Scikit-image image in both
-cases. Compared to OpenCV, it may be slower for very small structuring elements in the case of a disc but only gets
-faster than OpenCV for medium sized rectangle shaped structuring elements. We conclude that the strict decomposition
-algorithm performed by Pylena allows the user to have very stable performances accross the mathematical morphology
-algorithms.
-
-\begin{figure}[tbh]
-  \centering
-  \begin{tabular}{cccc}
-    Rectangle                                                                                          & Disc \\[5pt]
-    \fbox{\includegraphics[width=.45\linewidth]{figs/Dilation_SERect_Benchmarks__Time_vs_SE_size.png}} &
-    \fbox{\includegraphics[width=.45\linewidth]{figs/Dilation_SEDisc_Benchmarks__Time_vs_SE_size.png}}        \\[5pt]
+\begin{table}
+  \begin{tabular}{l|ccc}
+    \toprule
+    Dispatch type                        & Compute Time \\ \midrule
+    No dispatch (optimized C++)          & 0.0095sec    \\
+    Virtual dispatch                     & 0.1529sec    \\
+    C++ call Python code (for value-set) & 20.9870sec   \\
+    \bottomrule
   \end{tabular}
-
-  \caption{Benchmark results: OpenCV vs. Scikit-image vs. Pylena (in a dilation).}
-  \label{fig:bench_python_restults}
-\end{figure}
-
-Indeed, the~\cref{fig:bench_python_restults_pln} shows the performance difference with the Pylena library when this one
-does not the decomposability of its structuring elements. The algorithm using a non-decomposable structuring element has
-its performances heavily impacted. Also, the algorithm is no longer stable and grows slower and slower with the radius
-of the structuring elements.
-
-\begin{figure}[tbh]
-  \centering
-  \begin{tabular}{cccc}
-    Rectangle                                                                                             & Disc \\[5pt]
-    \fbox{\includegraphics[width=.45\linewidth]{figs/DilationPln_SERect_Benchmarks__Time_vs_SE_size.png}} &
-    \fbox{\includegraphics[width=.45\linewidth]{figs/DilationPln_SEDisc_Benchmarks__Time_vs_SE_size.png}}        \\[5pt]
-  \end{tabular}
-
-  \caption{Benchmark results: Pylena structuring elements decomposable vs. non-decomposable (in a dilation).}
-  \label{fig:bench_python_restults_pln}
-\end{figure}
-
-% TODO : bench with value_set callbacks to python
+  \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average
+    computation time and memory usage of implementations with/without \emph{views} and with OpenCV as a baseline.}
+  \label{table:static.dynamic.perfs}
+  %\vspace{-1em}
+\end{table}
 
 \section{JIT-based solutions: pros. and cons.}
 

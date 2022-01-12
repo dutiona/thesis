@@ -16,7 +16,6 @@
 \documentclass[border=10pt]{standalone} 
 
 \usepackage[utf8]{inputenc}
-\usepackage{verbatim}
 
 \usepackage{tikz}
 \tikzset{
@@ -36,16 +35,16 @@
     edge from parent/.style = {draw},
   ]
   \node [root] {Im = image2d\textless rgb8\textgreater}
-    child { node [env] {F = transformed<Im>}
-      edge from parent node [below] {view::transform} 
+  child { node [env] {F = transformed<Im>}
+      edge from parent node [below] {view::transform}
       child { node [env] {Z = zipped<F, image2d<uint8\_t>>}
-        edge from parent node [below] {view::zip} 
-        child { node [env] {G = transformed<Z>}
-          edge from parent node [below] {view::transform}
-          child { node [env] {H = filtered<G>}
-            edge from parent node [below] {view::filter} 
-            child { node [env] {I = transformed<H>}
-            edge from parent node [below] {view::transform} 
-          } } } } };
+          edge from parent node [below] {view::zip}
+          child { node [env] {G = transformed<Z>}
+              edge from parent node [below] {view::transform}
+              child { node [env] {H = filtered<G>}
+                  edge from parent node [below] {view::filter}
+                  child { node [env] {I = transformed<H>}
+                      edge from parent node [below] {view::transform}
+                    } } } } };
 \end{tikzpicture}
 \end{document}

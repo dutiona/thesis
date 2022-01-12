@@ -967,9 +967,9 @@ We have considered 10 data set. We present in~\cref{fig:bg_sub.dataset_samples} 
 
 We have run benchmarks on this set comparing multiple ways of achieving this result, both using Pylene and OpenCV as
 well as varying the size and the shape of the structuring element window. The breakdown of these benchmarks are
-presented in~\cref{fig:bg_sub.benchmarks}. In~\cref{tbl.perf}, we benchmark the computation time and the memory
+presented in~\cref{fig:bg_sub.benchmarks}. In~\cref{table:views.perf}, we benchmark the computation time and the memory
 usage~\footnote{Memory usage is computed with \emph{valgring/massif} as the difference between the memory peak of the
-  run and the memory peak without any computation (just setup and image loading)}of these implementations (all
+run and the memory peak without any computation (just setup and image loading)}of these implementations (all
 single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the minimum of many runs is kept).
 
 \begin{figure}[tbh]
@@ -995,7 +995,7 @@ single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
 \newcommand{\mydelta}[1]{{\itshape\bfseries #1\%}}
 
 \begin{table}
-  \begin{tabular}{@{}lp{2cm}p{1cm}p{1.3cm}}
+  \begin{tabular}{l|ccc}
     \toprule
     Framework          & Compute Time        & Memory usage & $\Delta{}$Memory usage \\ \midrule
     Pylene (w/o views) & 2.11s \mystd{144ms} & 106 MB       & \mydelta{+0}           \\
@@ -1005,7 +1005,7 @@ single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
   \end{tabular}
   \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average
     computation time and memory usage of implementations with/without \emph{views} and with OpenCV as a baseline.}
-  \label{tbl.perf}
+  \label{table:views.perf}
   %\vspace{-1em}
 \end{table}
 

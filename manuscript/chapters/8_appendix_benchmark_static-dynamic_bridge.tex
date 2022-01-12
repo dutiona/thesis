@@ -1,0 +1,1271 @@
+\chapter{Static-dynamic bridge}
+\label{appendix:static-dynamic-bridge}
+
+
+\section{Ndimage module}
+\label{appendix:static-dynamic-bridge.ndimage}
+
+Here is the code of the ndimage module, including the helpers for the type conversion.
+
+\paragraph{ndimage.hpp}
+
+\begin{minted}{C++}
+#include <mln/core/image/ndbuffer_image.hpp>
+
+#include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
+
+
+namespace mln::py
+{
+  mln::ndbuffer_image from_numpy(pybind11::array arr);
+
+  pybind11::object to_numpy(const mln::ndbuffer_image& img);
+
+  void init_pylena_numpy(pybind11::module& m);
+} // namespace mln::py
+
+namespace pybind11::detail
+{
+  template <>
+  struct type_caster<mln::ndbuffer_image>
+  {
+    PYBIND11_TYPE_CASTER(mln::ndbuffer_image, _("numpy.ndarray"));
+
+    bool load(handle h, bool)
+    {
+      pybind11::array arr = reinterpret_borrow<pybind11::array>(h);
+      value               = mln::py::from_numpy(arr);
+      return true;
+    }
+
+    static handle cast(const mln::ndbuffer_image& img, return_value_policy, handle)
+    {
+      return mln::py::to_numpy(img).inc_ref();
+    }
+  };
+} // namespace pybind11::detail
+\end{minted}
+
+\paragraph{ndimage.cpp}
+
+\begin{minted}{C++}
+#include "ndimage.hpp"
+
+#include <mln/core/image/ndimage.hpp>
+
+#include <fmt/core.h>
+#include <pybind11/cast.h>
+
+#include <cassert>
+#include <stdexcept>
+#include <string>
+
+
+namespace
+{
+
+  namespace details
+  {
+    template <mln::sample_type_id T>
+    static pybind11::dtype dtype_of()
+    {
+      return pybind11::dtype::of<typename mln::sample_type_id_traits<T>::type>();
+    }
+  } // namespace details
+
+  pybind11::dtype get_sample_type(mln::sample_type_id type)
+  {
+    switch (type)
+    {
+    case mln::sample_type_id::INT8:
+      return details::dtype_of<mln::sample_type_id::INT8>();
+    case mln::sample_type_id::INT16:
+      return details::dtype_of<mln::sample_type_id::INT16>();
+    case mln::sample_type_id::INT32:
+      return details::dtype_of<mln::sample_type_id::INT32>();
+    case mln::sample_type_id::INT64:
+      return details::dtype_of<mln::sample_type_id::INT64>();
+    case mln::sample_type_id::UINT8:
+      return details::dtype_of<mln::sample_type_id::UINT8>();
+    case mln::sample_type_id::UINT16:
+      return details::dtype_of<mln::sample_type_id::UINT16>();
+    case mln::sample_type_id::UINT32:
+      return details::dtype_of<mln::sample_type_id::UINT32>();
+    case mln::sample_type_id::UINT64:
+      return details::dtype_of<mln::sample_type_id::UINT64>();
+    case mln::sample_type_id::FLOAT:
+      return details::dtype_of<mln::sample_type_id::FLOAT>();
+    case mln::sample_type_id::DOUBLE:
+      return details::dtype_of<mln::sample_type_id::DOUBLE>();
+    case mln::sample_type_id::BOOL:
+      return details::dtype_of<mln::sample_type_id::BOOL>();
+    case mln::sample_type_id::RGB8:
+      return details::dtype_of<mln::sample_type_id::UINT8>();
+    default:
+      throw std::runtime_error("Invalid sample_type_id");
+    }
+    return pybind11::none();
+  }
+
+  mln::sample_type_id get_sample_type(const std::string& type_format)
+  {
+    pybind11::dtype type;
+    try
+    {
+      type = pybind11::dtype(type_format);
+    }
+    catch (const std::exception&)
+    {
+      return mln::sample_type_id::OTHER;
+    }
+    if (type.is(details::dtype_of<mln::sample_type_id::INT8>()))
+      return mln::sample_type_id::INT8;
+    else if (type.is(details::dtype_of<mln::sample_type_id::INT16>()))
+      return mln::sample_type_id::INT16;
+    else if (type.is(details::dtype_of<mln::sample_type_id::INT32>()))
+      return mln::sample_type_id::INT32;
+    else if (type.is(details::dtype_of<mln::sample_type_id::INT64>()))
+      return mln::sample_type_id::INT64;
+    else if (type.is(details::dtype_of<mln::sample_type_id::UINT8>()))
+      return mln::sample_type_id::UINT8;
+    else if (type.is(details::dtype_of<mln::sample_type_id::UINT16>()))
+      return mln::sample_type_id::UINT16;
+    else if (type.is(details::dtype_of<mln::sample_type_id::UINT32>()))
+      return mln::sample_type_id::UINT32;
+    else if (type.is(details::dtype_of<mln::sample_type_id::UINT64>()))
+      return mln::sample_type_id::UINT64;
+    else if (type.is(details::dtype_of<mln::sample_type_id::FLOAT>()))
+      return mln::sample_type_id::FLOAT;
+    else if (type.is(details::dtype_of<mln::sample_type_id::DOUBLE>()))
+      return mln::sample_type_id::DOUBLE;
+    else if (type.is(details::dtype_of<mln::sample_type_id::BOOL>()))
+      return mln::sample_type_id::BOOL;
+    return mln::sample_type_id::OTHER;
+  }
+} // namespace
+
+
+namespace mln::py
+{
+  mln::ndbuffer_image from_numpy(pybind11::array arr)
+  {
+    if (!pybind11::detail::check_flags(arr.ptr(), pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_))
+      throw std::invalid_argument("Array should be C contiguous");
+    auto                base = arr.base();
+    const auto          info = arr.request();
+    mln::sample_type_id type = get_sample_type(info.format);
+    if (type == mln::sample_type_id::OTHER)
+      throw std::invalid_argument(fmt::format(
+          "Invalid dtype argument (Got dtype format {} expected types: [u]int[8, 16, 32, 64], float, double or bool)",
+          info.format));
+    const bool is_rgb8 = info.ndim == 3 && info.shape[2] == 3 && type == mln::sample_type_id::UINT8;
+    const auto pdim    = info.ndim - (is_rgb8 ? 1 : 0);
+    if (pdim > mln::PYLENE_NDBUFFER_DEFAULT_DIM)
+      throw std::invalid_argument(
+          fmt::format("Invalid number of dimension from numpy array (Got {} but should be less than {})", pdim,
+                      mln::PYLENE_NDBUFFER_DEFAULT_DIM));
+    int            size[mln::PYLENE_NDBUFFER_DEFAULT_DIM]    = {0};
+    std::ptrdiff_t strides[mln::PYLENE_NDBUFFER_DEFAULT_DIM] = {0};
+    for (auto d = 0; d < pdim; d++)
+    {
+      size[d]    = info.shape[pdim - d - 1];
+      strides[d] = info.strides[pdim - d - 1];
+    }
+    const auto sample_type = is_rgb8 ? mln::sample_type_id::RGB8 : type;
+    auto       res =
+        mln::ndbuffer_image::from_buffer(reinterpret_cast<std::byte*>(info.ptr), sample_type, pdim, size, strides);
+    if (base && pybind11::isinstance<mln::internal::ndbuffer_image_data>(base))
+      res.__data() = pybind11::cast<std::shared_ptr<mln::internal::ndbuffer_image_data>>(base);
+    return res;
+  }
+
+
+  pybind11::object to_numpy(const mln::ndbuffer_image& img)
+  {
+    const auto&      api   = pybind11::detail::npy_api::get();
+    pybind11::object data  = pybind11::none();
+    int              flags = pybind11::detail::npy_api::NPY_ARRAY_WRITEABLE_;
+    if (img.__data())
+    {
+      data = pybind11::cast(img.__data());
+      assert(data.ref_count() > 0);
+    }
+
+    /* For the moment, restrict RGB8 image to 2D image */
+    const bool               is_rgb8 = img.pdim() == 2 && img.sample_type() == mln::sample_type_id::RGB8;
+    const auto               ndim    = img.pdim() + (is_rgb8 ? 1 : 0);
+    std::vector<std::size_t> strides(ndim, 1);
+    std::vector<std::size_t> shapes(ndim, 3);
+    auto                     descr = get_sample_type(img.sample_type());
+
+    for (auto d = 0; d < img.pdim(); d++)
+    {
+      strides[d] = img.byte_stride(img.pdim() - d - 1);
+      shapes[d]  = img.size(img.pdim() - d - 1);
+    }
+
+    auto res = pybind11::reinterpret_steal<pybind11::object>(api.PyArray_NewFromDescr_(
+        api.PyArray_Type_, descr.release().ptr(), ndim, reinterpret_cast<Py_intptr_t*>(shapes.data()),
+        reinterpret_cast<Py_intptr_t*>(strides.data()), reinterpret_cast<void*>(img.buffer()), flags, nullptr));
+
+    if (!res)
+      throw std::runtime_error("Unable to create the numpy array in ndimage -> array");
+    if (data)
+      // **Steal** a reference to data (https://numpy.org/devdocs/reference/c-api/array.html#c.PyArray_SetBaseObject)
+      api.PyArray_SetBaseObject_(res.ptr(), data.release().ptr());
+    return res;
+  }
+
+  void init_pylena_numpy(pybind11::module& m)
+  {
+    if (!pybind11::detail::get_global_type_info(typeid(mln::internal::ndbuffer_image_data)))
+    {
+      pybind11::class_<mln::internal::ndbuffer_image_data, std::shared_ptr<mln::internal::ndbuffer_image_data>>(
+          m, "ndbuffer_image_data");
+    }
+  }
+
+} // namespace mln::py
+\end{minted}
+
+
+\clearpage
+
+\section{Structuring element module}
+\label{appendix:static-dynamic-bridge.se}
+
+Here is the code of the structuring element module. This module defines what structuring elements available from Python.
+
+\paragraph{se.hpp}
+
+\begin{minted}{C++}
+#include <pybind11/pybind11.h>
+
+
+namespace mln::py
+{
+
+  void init_module_se(pybind11::module& m);
+
+}
+\end{minted}
+
+\paragraph{se.cpp}
+
+\begin{minted}{C++}
+#include "se.hpp"
+
+#include <mln/core/image/ndimage.hpp>
+#include <mln/core/se/disc.hpp>
+#include <mln/core/se/rect2d.hpp>
+
+#include <pybind11/pybind11.h>
+
+
+namespace mln::py
+{
+
+  void init_module_se(pybind11::module& m)
+  {
+    pybind11::class_<mln::se::disc_non_decomp>(m, "disc").def(
+        pybind11::init([](float radius) { return mln::se::disc_non_decomp{radius}; }));
+
+    pybind11::class_<mln::se::disc>(m, "disc_decomposable").def(pybind11::init([](float radius) {
+      return mln::se::disc{radius};
+    }));
+
+    pybind11::class_<mln::se::rect2d_non_decomp>(m, "rect2d").def(pybind11::init([](int width, int height) {
+      return mln::se::rect2d_non_decomp{width, height};
+    }));
+
+    pybind11::class_<mln::se::rect2d>(m, "rect2d_decomposable").def(pybind11::init([](int width, int height) {
+      return mln::se::rect2d{width, height};
+    }));
+  }
+
+} // namespace mln::py
+\end{minted}
+
+
+\clearpage
+
+\section{Mathematical morphology module}
+\label{appendix:static-dynamic-bridge.mm}
+
+This module defines the routines that are exposed and available from Python. It is divided in three sub-parts. First is
+the $n*n$ dispatcher code. Second is the value set mechanic. Third is the code exposing the mathematical morphology
+algorithms.
+
+\subsection{The $\protect n*n$ dispatcher}
+\label{appendix:static-dynamic-bridge.mm.nndispatcher}
+
+\paragraph{visit.hpp}
+
+\begin{minted}{C++}
+#include <mln/core/image/ndimage.hpp>
+
+#include <stdexcept>
+
+namespace mln::py
+{
+  template <template <typename> class F, typename... Args>
+  auto visit(mln::sample_type_id tid, Args&&... args)
+  {
+    switch (tid)
+    {
+    case (mln::sample_type_id::INT8):
+      return F<std::int8_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::INT16):
+      return F<std::int16_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::INT32):
+      return F<std::int32_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::INT64):
+      return F<std::int64_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT8):
+      return F<std::uint8_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT16):
+      return F<std::uint16_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT32):
+      return F<std::uint32_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT64):
+      return F<std::uint64_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::FLOAT):
+      return F<float>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::DOUBLE):
+      return F<double>{}(std::forward<Args>(args)...);
+    /*case (mln::sample_type_id::RGB8):
+      return F<mln::rgb8>{}(std::forward<Args>(args)...);*/
+    case (mln::sample_type_id::OTHER):
+      [[fallthrough]];
+    default:
+      throw std::runtime_error("Unhandled data type");
+    }
+  }
+
+  template <template <typename> class F, typename D, typename... Args>
+  auto visit_d(mln::sample_type_id tid, D&& d, Args&&... args)
+  {
+    switch (tid)
+    {
+    case (mln::sample_type_id::INT8):
+      return F<std::int8_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::INT16):
+      return F<std::int16_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::INT32):
+      return F<std::int32_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::INT64):
+      return F<std::int64_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT8):
+      return F<std::uint8_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT16):
+      return F<std::uint16_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT32):
+      return F<std::uint32_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::UINT64):
+      return F<std::uint64_t>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::FLOAT):
+      return F<float>{}(std::forward<Args>(args)...);
+    case (mln::sample_type_id::DOUBLE):
+      return F<double>{}(std::forward<Args>(args)...);
+    /*case (mln::sample_type_id::RGB8):
+      return F<mln::rgb8>{}(std::forward<Args>(args)...);*/
+    case (mln::sample_type_id::OTHER):
+      [[fallthrough]];
+    default:
+      return std::forward<D>(d);
+    }
+  }
+} // namespace mln::py
+\end{minted}
+
+
+\subsection{Value-set mechanics}
+\label{appendix:static-dynamic-bridge.mm.vs}
+
+\paragraph{value\_set.hpp}
+
+\begin{minted}{C++}
+#include <algorithm>
+#include <any>
+#include <cmath>
+#include <limits>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+
+
+namespace mln
+{
+
+  template <class T = void>
+  struct value_set
+  {
+    template <class U>
+    U cast(T v) const
+    {
+      return static_cast<U>(v);
+    }
+
+    T max() const noexcept { return std::numeric_limits<T>::max(); }
+    T min() const noexcept { return std::numeric_limits<T>::min(); }
+    T sup() const noexcept { return std::numeric_limits<T>::max(); }
+    T inf() const noexcept { return std::numeric_limits<T>::min(); }
+
+    T plus(T v) const noexcept { return +v; }
+    T minus(T v) const noexcept { return -v; }
+
+    auto max(T l, T r) const noexcept { return std::max(l, r); }
+    auto min(T l, T r) const noexcept { return std::min(l, r); }
+    auto add(T l, T r) const noexcept { return l + r; }
+    auto sub(T l, T r) const noexcept { return l - r; }
+    auto mult(T l, T r) const noexcept { return l * r; }
+    auto div(T l, T r) const noexcept { return l / r; }
+    auto mod(T l, T r) const noexcept { return l % r; }
+    auto pow(T l, T r) const noexcept { return std::pow(l, r); }
+  };
+
+  template <>
+  struct value_set<void>
+  {
+
+    template <class U, class T>
+    U cast(T&& t) const
+    {
+      return static_cast<U>(std::forward<T>);
+    }
+
+    template <class T>
+    T max() const noexcept
+    {
+      return std::numeric_limits<T>::max();
+    }
+    template <class T>
+    T min() const noexcept
+    {
+      return std::numeric_limits<T>::min();
+    }
+    template <class T>
+    T sup() const noexcept
+    {
+      return std::numeric_limits<T>::max();
+    }
+    template <class T>
+    T inf() const noexcept
+    {
+      return std::numeric_limits<T>::min();
+    }
+
+    template <class T>
+    T plus(T&& v) const noexcept
+    {
+      return +std::forward<T>(v);
+    }
+    template <class T>
+    T minus(T&& v) const noexcept
+    {
+      return -std::forward<T>(v);
+    }
+
+    template <class T, class U>
+    auto max(T&& l, T&& r) const noexcept
+    {
+      return std::max(std::forward<T>(l), std::forward<T>(r));
+    }
+    template <class T, class U>
+    auto min(T&& l, T&& r) const noexcept
+    {
+      return std::min(std::forward<T>(l), std::forward<T>(r));
+    }
+
+    template <class T, class U>
+    auto add(T&& l, U&& r) const noexcept
+    {
+      return std::forward<T>(l) + std::forward<T>(r);
+    }
+    template <class T, class U>
+    auto sub(T&& l, U&& r) const noexcept
+    {
+      return std::forward<T>(l) - std::forward<T>(r);
+    }
+    template <class T, class U>
+    auto mult(T&& l, U&& r) const noexcept
+    {
+      return std::forward<T>(l) * std::forward<T>(r);
+    }
+    template <class T, class U>
+    auto div(T&& l, U&& r) const noexcept
+    {
+      return std::forward<T>(l) / std::forward<T>(r);
+    }
+    template <class T, class U>
+    auto mod(T&& l, U&& r) const noexcept
+    {
+      return std::forward<T>(l) % std::forward<T>(r);
+    }
+    template <class T, class U>
+    auto pow(T&& l, U&& r) const noexcept
+    {
+      return std::pow(std::forward<T>(l), std::forward<T>(r));
+    }
+  };
+
+  struct abstract_value_set
+  {
+    /*
+    template <class U>
+    virtual std::any cast(std::any v) const = 0;
+    */
+
+    virtual std::any max() const = 0;
+    virtual std::any min() const = 0;
+    virtual std::any sup() const = 0;
+    virtual std::any inf() const = 0;
+
+    virtual std::any plus(const std::any& v) const  = 0;
+    virtual std::any minus(const std::any& v) const = 0;
+
+    virtual std::any max(std::any l, std::any r) const  = 0;
+    virtual std::any min(std::any l, std::any r) const  = 0;
+    virtual std::any add(std::any l, std::any r) const  = 0;
+    virtual std::any sub(std::any l, std::any r) const  = 0;
+    virtual std::any mult(std::any l, std::any r) const = 0;
+    virtual std::any div(std::any l, std::any r) const  = 0;
+    // virtual std::any mod(std::any l, std::any r) const  = 0;
+    virtual std::any pow(std::any l, std::any r) const = 0;
+  };
+
+  template <typename T>
+  struct concrete_value_set : abstract_value_set
+  {
+    template <class U>
+    std::any cast(std::any v) const /* override */
+    {
+      return {static_cast<U>(std::any_cast<T>(v))};
+    }
+
+    std::any max() const override { return {std::numeric_limits<T>::max()}; };
+    std::any min() const override { return {std::numeric_limits<T>::min()}; };
+    std::any sup() const override { return {std::numeric_limits<T>::max()}; };
+    std::any inf() const override { return {std::numeric_limits<T>::min()}; };
+
+    std::any plus(const std::any& v) const override { return {+std::any_cast<T>(v)}; };
+    std::any minus(const std::any& v) const override { return {-std::any_cast<T>(v)}; };
+
+    std::any max(std::any l, std::any r) const override
+    {
+      return {std::max(std::any_cast<T>(l), std::any_cast<T>(r))};
+    };
+    std::any min(std::any l, std::any r) const override
+    {
+      return {std::min(std::any_cast<T>(l), std::any_cast<T>(r))};
+    };
+    std::any add(std::any l, std::any r) const override { return {std::any_cast<T>(l) + std::any_cast<T>(r)}; };
+    std::any sub(std::any l, std::any r) const override { return {std::any_cast<T>(l) - std::any_cast<T>(r)}; };
+    std::any mult(std::any l, std::any r) const override { return {std::any_cast<T>(l) * std::any_cast<T>(r)}; };
+    std::any div(std::any l, std::any r) const override { return {std::any_cast<T>(l) / std::any_cast<T>(r)}; };
+    /*std::any mod(std::any l, std::any r) const override
+    {
+      return {std::any_cast<T>(l) % std::any_cast<T>(r)};
+    };*/
+    std::any pow(std::any l, std::any r) const override
+    {
+      return {std::pow(std::any_cast<T>(l), std::any_cast<T>(r))};
+    };
+  };
+} // namespace mln
+\end{minted}
+
+\paragraph{py\_value\_set.hpp}
+
+\begin{minted}{C++}
+#include <mln/core/value/value_set.hpp>
+#include <pybind11/pybind11.h>
+
+#include <cinttypes>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <typeinfo>
+
+
+namespace mln
+{
+
+  template <>
+  struct value_set<pybind11::object>
+  {
+    value_set(pybind11::object python_vs_instance);
+
+    template <typename U>
+    std::unique_ptr<U> cast(pybind11::object v) const;
+
+    pybind11::object max() const noexcept;
+    pybind11::object min() const noexcept;
+    pybind11::object sup() const noexcept;
+    pybind11::object inf() const noexcept;
+
+    pybind11::object plus(pybind11::object v) const;
+    pybind11::object minus(pybind11::object v) const;
+
+    pybind11::object max(pybind11::object l, pybind11::object r) const noexcept;
+    pybind11::object min(pybind11::object l, pybind11::object r) const noexcept;
+    pybind11::object add(pybind11::object l, pybind11::object r) const noexcept;
+    pybind11::object sub(pybind11::object l, pybind11::object r) const noexcept;
+    pybind11::object mult(pybind11::object l, pybind11::object r) const noexcept;
+    pybind11::object div(pybind11::object l, pybind11::object r) const noexcept;
+    pybind11::object mod(pybind11::object l, pybind11::object r) const noexcept;
+    pybind11::object pow(pybind11::object l, pybind11::object r) const noexcept;
+
+  private:
+    pybind11::object vs_instance_;
+  };
+
+} // namespace mln
+
+
+namespace details
+{
+
+  template <class U>
+  auto get_python_type()
+  {
+    // C++ type -> Python type
+    static std::unordered_map<std::type_index, std::string> type_names{
+        {std::type_index(typeid(bool{})), "bool"},         //
+        {std::type_index(typeid(int8_t{})), "int"},        //
+        {std::type_index(typeid(int16_t{})), "int"},       //
+        {std::type_index(typeid(int32_t{})), "int"},       //
+        {std::type_index(typeid(int64_t{})), "int"},       //
+        {std::type_index(typeid(uint8_t{})), "int"},       //
+        {std::type_index(typeid(uint16_t{})), "int"},      //
+        {std::type_index(typeid(uint32_t{})), "int"},      //
+        {std::type_index(typeid(uint64_t{})), "int"},      //
+        {std::type_index(typeid(float{})), "float"},       //
+        {std::type_index(typeid(double{})), "float"},      //
+        {std::type_index(typeid((char*){})), "str"},       //
+        {std::type_index(typeid((const char*){})), "str"}, //
+        {std::type_index(typeid(std::string{})), "str"}};
+    return type_names[std::type_index(typeid(U{}))];
+  }
+
+} // namespace details
+
+
+namespace mln
+{
+  template <typename U>
+  std::unique_ptr<U> value_set<pybind11::object>::cast(pybind11::object v) const
+  {
+    // if constexpr (std::is_arithmetic_v<U>) // bool, signed/unsigned int, floating point
+    if constexpr (std::is_same_v<U, bool>) // bool
+    {
+      pybind11::bool_ pyv  = vs_instance_.attr("cast")(v, ::details::get_python_type<U>());
+      bool            cppv = static_cast<U>(pyv);
+      return std::make_unique<bool>(cppv);
+    }
+    else if constexpr (std::is_integral_v<U>) // signed/unsigned int
+    {
+      pybind11::int_ pyv  = vs_instance_.attr("cast")(v, ::details::get_python_type<U>());
+      U              cppv = static_cast<U>(pyv);
+      return std::make_unique<U>(cppv);
+    }
+    else if constexpr (std::is_floating_point_v<U>) // floating point
+    {
+      pybind11::float_ pyv  = vs_instance_.attr("cast")(v, ::details::get_python_type<U>());
+      U                cppv = static_cast<U>(pyv);
+      return std::make_unique<U>(cppv);
+    }
+    else
+    {
+      pybind11::object ret = vs_instance_.attr("cast")(v, ::details::get_python_type<U>());
+      auto             ptr = std::unique_ptr<U>(ret.cast<U*>());
+      return ptr;
+    }
+  }
+
+} // namespace mln
+\end{minted}
+
+\paragraph{py\_value\_set.cpp}
+
+\begin{minted}{C++}
+#include "py_value_set.hpp"
+
+
+namespace mln
+{
+
+  value_set<pybind11::object>::value_set(pybind11::object python_vs_instance)
+    : vs_instance_(python_vs_instance)
+  {
+  }
+
+  pybind11::object value_set<pybind11::object>::max() const noexcept { return vs_instance_.attr("max")(); }
+
+  pybind11::object value_set<pybind11::object>::min() const noexcept { return vs_instance_.attr("min")(); }
+
+  pybind11::object value_set<pybind11::object>::sup() const noexcept { return vs_instance_.attr("sup")(); }
+
+  pybind11::object value_set<pybind11::object>::inf() const noexcept { return vs_instance_.attr("inf")(); }
+
+
+  pybind11::object value_set<pybind11::object>::plus(pybind11::object v) const { return vs_instance_.attr("plus")(v); }
+
+  pybind11::object value_set<pybind11::object>::minus(pybind11::object v) const
+  {
+    return vs_instance_.attr("minus")(v);
+  }
+
+
+  pybind11::object value_set<pybind11::object>::max(pybind11::object l, pybind11::object r) const noexcept
+  {
+    return vs_instance_.attr("max")(l, r);
+  }
+
+  pybind11::object value_set<pybind11::object>::min(pybind11::object l, pybind11::object r) const noexcept
+  {
+    return vs_instance_.attr("min")(l, r);
+  }
+
+  pybind11::object value_set<pybind11::object>::add(pybind11::object l, pybind11::object r) const noexcept
+  {
+    return vs_instance_.attr("add")(l, r);
+  }
+
+  pybind11::object value_set<pybind11::object>::sub(pybind11::object l, pybind11::object r) const noexcept
+  {
+    return vs_instance_.attr("sub")(l, r);
+  }
+
+  pybind11::object value_set<pybind11::object>::mult(pybind11::object l, pybind11::object r) const noexcept
+  {
+    return vs_instance_.attr("mult")(l, r);
+  }
+
+  pybind11::object value_set<pybind11::object>::div(pybind11::object l, pybind11::object r) const noexcept
+  {
+    return vs_instance_.attr("div")(l, r);
+  }
+
+  pybind11::object value_set<pybind11::object>::mod(pybind11::object l, pybind11::object r) const noexcept
+  {
+    return vs_instance_.attr("mod")(l, r);
+  }
+
+  pybind11::object value_set<pybind11::object>::pow(pybind11::object l, pybind11::object r) const noexcept
+  {
+    return vs_instance_.attr("pow")(l, r);
+  }
+
+} // namespace mln
+\end{minted}
+
+
+\subsection{Mathematical morphology routines}
+\label{appendix:static-dynamic-bridge.mm.algos}
+
+\paragraph{morpho.hpp}
+
+\begin{minted}{C++}
+#include <pybind11/pybind11.h>
+
+
+namespace mln::py
+{
+
+  void init_module_morpho(pybind11::module& m);
+
+}
+\end{minted}
+
+\paragraph{morpho.cpp}
+
+\begin{minted}{C++}
+#include "morpho.hpp"
+
+#include "ndimage.hpp"
+#include "py_value_set.hpp"
+#include "visit.hpp"
+
+#include <mln/core/algorithm/transform.hpp>
+#include <mln/core/image/ndimage.hpp>
+#include <mln/core/se/disc.hpp>
+#include <mln/core/se/rect2d.hpp>
+#include <mln/morpho/experimental/dilation.hpp>
+
+#include <fmt/core.h>
+
+#include <pybind11/stl.h>
+
+#include <algorithm>
+#include <string_view>
+#include <variant>
+
+
+namespace my
+{
+  template <class T>
+  mln::image2d<float> slow_stretch(const mln::image2d<T>& src, const mln::value_set<pybind11::object>& py_vs)
+  {
+    mln::image2d<float> res = mln::transform(src, [&py_vs](auto val) -> float {
+      auto pymax = py_vs.max();
+      auto pyval = pybind11::cast(val);
+      auto pyret = py_vs.div(pyval, pymax);
+
+      std::unique_ptr<float> ret = py_vs.template cast<float>(pyret);
+
+      return *ret;
+    });
+    return res;
+  }
+
+  template <class T>
+  mln::image2d<float> virtual_dispatch_stretch(const mln::image2d<T>& src)
+  {
+    auto                vs  = mln::concrete_value_set<T>{};
+    mln::image2d<float> res = mln::transform(src, [&vs](auto val) -> float {
+      auto max  = vs.max();
+      auto fval = vs.template cast<float>(val);
+      auto fmax = vs.template cast<float>(max);
+      auto vs_f = mln::concrete_value_set<float>{};
+      return std::any_cast<float>(vs_f.div(fval, fmax));
+    });
+    return res;
+  }
+
+  template <class T>
+  mln::image2d<float> fast_stretch(const mln::image2d<T>& src)
+  {
+    auto                vs  = src.get_value_set();
+    mln::image2d<float> res = mln::transform(src, [&vs](auto val) -> float {
+      auto max  = vs.max();
+      auto fval = vs.template cast<float>(val);
+      auto fmax = vs.template cast<float>(max);
+      auto vs_f = mln::value_set<float>{};
+      return vs_f.div(fval, fmax);
+    });
+    return res;
+  }
+} // namespace my
+
+namespace
+{
+
+  template <typename T>
+  struct stretch_operator_t
+  {
+    template <typename Img>
+    mln::ndbuffer_image operator()(Img&& img, const std::optional<pybind11::object>& py_vs) const
+    {
+      if (auto* image_ptr = std::forward<Img>(img).template cast_to<T, 2>(); image_ptr)
+      {
+        if (py_vs.has_value())
+        {
+          auto vs = mln::value_set<pybind11::object>{py_vs.value()};
+          return my::slow_stretch(*image_ptr, vs);
+        }
+        else
+        {
+          return my::fast_stretch(*image_ptr);
+        }
+      }
+      else
+      {
+        std::runtime_error("Unable to convert the image to the required type.");
+        return {};
+      }
+    }
+  };
+
+  mln::ndbuffer_image stretch(mln::ndbuffer_image input, std::optional<pybind11::object> py_vs)
+  {
+    if (input.pdim() == 2)
+    {
+      return mln::py::visit<stretch_operator_t>(input.sample_type(), input, py_vs);
+    }
+    else
+    {
+      std::runtime_error("Unsupported dimension.");
+      return {};
+    }
+  }
+
+  template <typename T>
+  struct stretch_virtual_dispatch_operator_t
+  {
+    template <typename Img>
+    mln::ndbuffer_image operator()(Img&& img) const
+    {
+      if (auto* image_ptr = std::forward<Img>(img).template cast_to<T, 2>(); image_ptr)
+      {
+        return my::virtual_dispatch_stretch(*image_ptr);
+      }
+      else
+      {
+        std::runtime_error("Unable to convert the image to the required type.");
+        return {};
+      }
+    }
+  };
+
+  mln::ndbuffer_image stretch_virtual_dispatch(mln::ndbuffer_image input)
+  {
+    if (input.pdim() == 2)
+    {
+      return mln::py::visit<stretch_virtual_dispatch_operator_t>(input.sample_type(), input);
+    }
+    else
+    {
+      std::runtime_error("Unsupported dimension.");
+      return {};
+    }
+  }
+
+  using se_t = std::variant<mln::se::disc, mln::se::disc_non_decomp, mln::se::rect2d, mln::se::rect2d_non_decomp>;
+
+  template <typename T>
+  struct dilate2d_operator_t
+  {
+    template <typename Img, typename SE>
+    mln::ndbuffer_image operator()(Img&& img, SE&& se) const
+    {
+      if (auto* image_ptr = std::forward<Img>(img).template cast_to<T, 2>(); image_ptr)
+      {
+        return mln::morpho::experimental::dilation(*image_ptr, std::forward<SE>(se));
+      }
+      else
+      {
+        std::runtime_error("Unable to convert the image to the required type.");
+        return {};
+      }
+    }
+  };
+
+  mln::ndbuffer_image dilate(mln::ndbuffer_image input, const se_t& se)
+  {
+    if (input.pdim() == 2)
+    {
+      return std::visit(
+          [&input](const auto& se_) { return mln::py::visit<dilate2d_operator_t>(input.sample_type(), input, se_); },
+          se);
+    }
+    else
+    {
+      std::runtime_error("Unsupported dimension.");
+      return {};
+    }
+  }
+
+} // namespace
+
+
+namespace mln::py
+{
+
+  using namespace pybind11::literals;
+
+  void init_module_morpho(pybind11::module& m)
+  {
+    m.def("dilate", dilate,
+          "Perform a morphological dilation.\n"
+          "\n"
+          "structuring element must be valid.",
+          "Input"_a, "se"_a)
+
+        .def("stretch", stretch,
+              "Perform a morphological stretch.\n"
+              "Input"_a,
+              "vs"_a = pybind11::none())
+
+        .def("stretch_virtual_dispatch", stretch_virtual_dispatch,
+              "Perform a morphological stretch.\n"
+              "Input"_a);
+  }
+
+} // namespace mln::py
+\end{minted}
+
+
+\clearpage
+
+\section{Exposed Pylena main module}
+\label{appendix:static-dynamic-bridge.pylena}
+
+\paragraph{pylena.cpp}
+
+\begin{minted}{C++}
+#include "morpho.hpp"
+#include "ndimage.hpp"
+#include "se.hpp"
+
+#include <pybind11/pybind11.h>
+
+
+PYBIND11_MODULE(pylena, m)
+{
+  mln::py::init_pylena_numpy(m);
+
+  auto mmorpho = m.def_submodule("morpho", "Mathematical morphology module.");
+  mln::py::init_module_morpho(mmorpho);
+
+  auto mse = m.def_submodule("se", "Structuring elements module.");
+  mln::py::init_module_se(mse);
+}
+\end{minted}
+
+
+\clearpage
+
+\section{Python value set module}
+\label{appendix:static-dynamic-bridge.python.vs}
+
+The module has the following directory structure:
+\begin{minted}{bash}
+  ValueSetExample/
+  | __init__.py
+  | BaseValueSet.py
+  | ExampleValueSet.py
+\end{minted}
+
+\paragraph{BaseValueSet.py}
+
+\begin{minted}{Python}
+from abc import ABC, abstractmethod
+from typing import Any
+
+
+class AbstractValueSet(ABC):
+
+    def __init__(self): pass
+
+    @abstractmethod
+    def cast(self, value: Any, type_):
+        if type_ in ["int", "float", "bool", "str"]:
+            import importlib
+            module = importlib.import_module('builtins')
+            cls = getattr(module, type_)
+            return cls(value)
+        raise ValueError()
+        # int
+        # float
+        # bool
+        # str
+        # object
+        #  cls = getattr(module, type_)
+        # try:
+        #  # Check if it's a builtin type
+        #  module = importlib.import_module('builtins')
+        #  cls = getattr(module, type_)
+        # except AttributeError:
+        #  # if not, separate module and class
+        #  module, type_ = type_.rsplit(".", 1)
+        #  module = importlib.import_module(module)
+        #  cls = getattr(module, type_)
+        # return cls(value)
+
+    @abstractmethod
+    def max(self):
+        import math
+        return math.inf
+
+    @abstractmethod
+    def min(self):
+        import math
+        return -math.inf
+
+    @abstractmethod
+    def sup(self):
+        import math
+        return math.inf
+
+    @abstractmethod
+    def inf(self):
+        import math
+        return -math.inf
+
+    @abstractmethod
+    def plus(self, value: Any) -> Any:
+        return + value
+
+    @abstractmethod
+    def minus(self, value: Any) -> Any:
+        return - value
+
+    @abstractmethod
+    def add(self, lhs: Any, rhs: Any) -> Any:
+        return lhs + rhs
+
+    @abstractmethod
+    def sub(self, lhs: Any, rhs: Any) -> Any:
+        return lhs - rhs
+
+    @abstractmethod
+    def mult(self, lhs: Any, rhs: Any) -> Any:
+        return lhs * rhs
+
+    @abstractmethod
+    def div(self, lhs: Any, rhs: Any) -> Any:
+        return lhs / rhs
+
+    @abstractmethod
+    def mod(self, lhs: Any, rhs: Any) -> Any:
+        return lhs % rhs
+
+    @abstractmethod
+    def pow(self, lhs: Any, rhs: Any) -> Any:
+        return lhs ** rhs
+\end{minted}
+
+\paragraph{ExampleStruct.py}
+
+\begin{minted}{Python}
+from typing import Any
+
+
+class MyStruct:
+    v_: Any
+
+    def __init__(self, v: Any):
+        self.v_ = v
+
+    def getV(self) -> Any:
+        return self.v_
+
+    def setV(self, v: Any):
+        self.v_ = v
+\end{minted}
+
+\paragraph{ExampleValueSet.py}
+
+\begin{minted}{Python}
+from ValueSetExample.ExampleStruct import MyStruct
+from ValueSetExample.BaseValueSet import AbstractValueSet
+
+from typing import Any
+
+
+class MyValueSet(AbstractValueSet):
+
+    def __init__(self): pass
+
+    def get_MyStruct__(self, v: Any):
+        return v.getV() if isinstance(v, MyStruct) else v
+
+    def cast(self, value: Any, type_):
+        v = self.get_MyStruct__(value)
+        return super().cast(v, type_)
+
+    def max(self):
+        return 255
+
+    def min(self):
+        return 0
+
+    def sup(self):
+        return 255
+
+    def inf(self):
+        return 0
+
+    def plus(self, value: Any) -> Any:
+        v = self.get_MyStruct__(value)
+        return MyStruct(super().plus(v))
+
+    def minus(self, value: Any) -> Any:
+        v = self.get_MyStruct__(value)
+        return MyStruct(super().minus(v))
+
+    def add(self, lhs: Any, rhs: Any) -> Any:
+        l = self.get_MyStruct__(lhs)
+        r = self.get_MyStruct__(rhs)
+        return MyStruct(super().add(l, r))
+
+    def sub(self, lhs: Any, rhs: Any) -> Any:
+        l = self.get_MyStruct__(lhs)
+        r = self.get_MyStruct__(rhs)
+        return MyStruct(super().sub(l, r))
+
+    def mult(self, lhs: Any, rhs: Any) -> Any:
+        l = self.get_MyStruct__(lhs)
+        r = self.get_MyStruct__(rhs)
+        return MyStruct(super().mult(l, r))
+
+    def div(self, lhs: Any, rhs: Any) -> Any:
+        l = self.get_MyStruct__(lhs)
+        r = self.get_MyStruct__(rhs)
+        return MyStruct(super().div(l, r))
+
+    def mod(self, lhs: Any, rhs: Any) -> Any:
+        l = self.get_MyStruct__(lhs)
+        r = self.get_MyStruct__(rhs)
+        return MyStruct(super().mod(l, r))
+
+    def pow(self, lhs: Any, rhs: Any) -> Any:
+        l = self.get_MyStruct__(lhs)
+        r = self.get_MyStruct__(rhs)
+        return MyStruct(super().pow(l, r))
+\end{minted}
+
+\paragraph{\_\_init\_\_.py}
+
+\begin{minted}{Python}
+from ValueSetExample.BaseValueSet import AbstractValueSet
+from ValueSetExample.ExampleStruct import MyStruct
+from ValueSetExample.ExampleValueSet import MyValueSet
+\end{minted}
+
+
+\clearpage
+
+\section{Benchmark source code}
+\label{appendix:static-dynamic-bridge.benchmark}
+
+\paragraph{benchmark.py}
+
+\begin{minted}{Python}
+import numpy as np
+import skimage
+import timeit
+import pylena as pln
+from ValueSetExample import MyValueSet, MyStruct
+
+grayscale = skimage.data.camera()
+
+vs = MyValueSet()
+
+
+def test_fast():
+    global grayscale
+    pln_ret = pln.morpho.stretch(grayscale)
+    return pln_ret
+
+
+def test_slow():
+    global grayscale, vs
+    pln_ret = pln.morpho.stretch(grayscale, vs)
+    return pln_ret
+
+
+def test_virtual_dispatch():
+    global grayscale
+    pln_ret = pln.morpho.stretch_virtual_dispatch(grayscale)
+    return pln_ret
+
+
+if __name__ == "__main__":
+    print("Benchmarking static-dynamic bridge...")
+    cpp_fast_ret = timeit.timeit("test_fast()", globals=locals(), number=10)
+    cpp_virtual_dispatch_ret = timeit.timeit(
+        "test_virtual_dispatch()", globals=locals(), number=10)
+    cpp_python_vs_ret = timeit.timeit(
+        "test_slow()", globals=locals(), number=10)
+    print("Benchmarking done.")
+
+    print(
+        "Forward (no dispatch) C++ algorithm: {0:.4f}sec".format(cpp_fast_ret))
+    print(
+        "Virtual dispatch C++ algorithm: {0:.4f}sec".format(cpp_virtual_dispatch_ret))
+    print(
+        "C++ algorithm with injected Python value set: {0:.4f}sec".format(cpp_python_vs_ret))
+\end{minted}
