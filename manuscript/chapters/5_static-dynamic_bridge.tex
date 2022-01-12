@@ -931,10 +931,10 @@ the C++ side when time comes to write production code.
 \begin{table}[htbp]
   \begin{tabular}{l|ccc}
     \toprule
-    Dispatch type                        & Compute Time \\ \midrule
-    No dispatch (optimized C++)          & $0.0095s$    \\
-    Virtual dispatch                     & $0.1529s$    \\
-    C++ call Python code (for value-set) & $20.9870s$   \\
+    Dispatch type                                      & Compute Time & $\Delta{}$Compute Time \\ \midrule
+    No dispatch (optimized C++, baseline)              & $0.0095s$    & $0$                    \\
+    C++ virtual dispatch (type-erased value-set)       & $0.1529s$    & $x16$                  \\
+    C++ virtual dispatch (injected Python's value-set) & $20.9870s$   & $x2208$                \\
     \bottomrule
   \end{tabular}
   \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average
