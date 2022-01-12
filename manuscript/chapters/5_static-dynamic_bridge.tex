@@ -35,7 +35,7 @@ Or should he state that the user has to install the dependencies on his system (
 that the binary can run? The burden of handling the dependencies is then shifted to the end-user when installing the
 program.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.6\linewidth]{figs/static_compiletime}
   \caption{Compiled languages: compile-time}
@@ -47,7 +47,7 @@ Usually the package manager, such as \emph{apt}, \emph{yum} or \emph{pacman}, so
 and the programs works "out-of-the-box" once installed, as illustrated in~\cref{fig:static.dynamic.compiled.runtime}.
 The downside is that the maintainer has to publish many bundles of his package where he wants it to be available.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.6\linewidth]{figs/static_runtime}
   \caption{Compiled languages: run-time}
@@ -73,7 +73,7 @@ CPython, PyPy, Jython or IronPython. CPython generate intermediate bytecode in \
 IronPython and PyPy embed a Just-In-Time (JIT) compiler to generate resp. JVM bytecode, CLR (.NET) bytecode, a large
 variety of bytecode format.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.6\linewidth]{figs/dynamic_pipeline}
   \caption{Interpreted languages: run-time}
@@ -146,7 +146,7 @@ genecity in both C++ and Python. Indeed, in C++ genericity is achieved via templ
 whereas in Python genericity is achieved via duck typing, which is dynamic, as shown
 in~\cref{fig:static.vs.dynamic.genericity}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \subfloat[C++ static genericity]{
     \includegraphics[width=2in]{figs/cpp_static_code}
@@ -225,7 +225,7 @@ explicitly say to the Python/C++ wrapper wether the image is multichannel or not
 through the \texttt{ndimage\_buffer} into C++ for a correct instanciation. This process is illustrated
 in~\cref{fig:type-erased.buffer}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.6\linewidth]{figs/type-erased_buffer}
   \caption{Bridge from Python to C++ via Pybind11 and a type-erased C++ class.}
@@ -928,13 +928,13 @@ the C++ side when time comes to write production code.
 
 \section{Performances \& overhead}
 
-\begin{table}
+\begin{table}[htbp]
   \begin{tabular}{l|ccc}
     \toprule
     Dispatch type                        & Compute Time \\ \midrule
-    No dispatch (optimized C++)          & 0.0095sec    \\
-    Virtual dispatch                     & 0.1529sec    \\
-    C++ call Python code (for value-set) & 20.9870sec   \\
+    No dispatch (optimized C++)          & $0.0095s$    \\
+    Virtual dispatch                     & $0.1529s$    \\
+    C++ call Python code (for value-set) & $20.9870s$   \\
     \bottomrule
   \end{tabular}
   \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average

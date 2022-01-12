@@ -51,7 +51,7 @@ understand and maintain. In order to achieve this, we need to raise the abstract
 that we can work at the image level. The alpha blending algorithm would then be written as shown
 in~\cref{fig.view.alphablend}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includestandalone[mode=image, scale=0.7]{figs/alphablend}
 
@@ -63,7 +63,7 @@ This way to express an algorithm is achieved by introducing \emph{views} to imag
 can be restricted/projected/manipulated however the user need before feeding it to an algorithm. Even the whole alpha
 blending algorithm can be rewritten in terms of views entirely, as shown in~\cref{fig.new.alphablend}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \begin{minipage}[b]{5.5cm}
     \includestandalone[mode=image, scale=1.0]{figs/view_ast2}
@@ -335,7 +335,7 @@ concept ViewImage =
   image_view_v<I>;
 \end{minted}
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \begin{minipage}{\linewidth}
     \includestandalone[mode=image, width=.7\linewidth]{figs/transform_thresholding}
@@ -441,7 +441,7 @@ image could then be blurred. The final step would have then been to copy the val
 into the green channel of the original image. The comparison, including the memory used, between the legacy way and the
 in-place way of doing this computation is shown in~\cref{fig.legacy.vs.view}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \subfloat[Legacy pipeline with copy]{
     \includegraphics[width=1.6in,align=t]{figs/blur_copy}
@@ -462,14 +462,14 @@ preserved. Indeed, one would need an inverse function that is able to deduce the
 level to be able to write back into the original image. This operation alone is a whole field of research on its
 own~\parencite{zhang.2016.colorful,levin.2004.colorization,welsh.2002.transferring}
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.7\linewidth]{figs/views/transform_grayscale}
   \caption{Usage of transform view: grayscale.}
   \label{fig.view.grayscale}
 \end{figure}
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \subfloat[Clip view]{
     \includegraphics[width=3in,align=t]{figs/clip}
@@ -490,7 +490,7 @@ that restricts the domain based on a predicate. All subsequent operations on tho
 pixels. In this case of restriction, the ability to write data back into the original image is preserved through the
 view.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.7]{figs/pipeline}
   \caption{Example of a simple image processing pipeline.}
@@ -506,7 +506,7 @@ to achieve the desired result. The second notion is the composition of \colorbox
 overlaps partially with the algorithm part. This express that part of the algorithm is performed lazily only when we
 perform the last part (C). Those two notions are illustrated by the~\cref{fig.view.comp}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.7]{figs/composition}
   \caption{Example of a simple image processing pipeline illustrating the difference between the composition of
@@ -525,7 +525,7 @@ a backward way. Finally, an image is \emph{raw} when its data buffer can is cont
 information about strides. The~\cref{table:views.properties} presents all the views and how they preserve the base
 properties of a concrete image.
 
-\begin{table}[tbh]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{threeparttable}
       \caption{Views: property conservation}
@@ -719,7 +719,7 @@ doing and do not touch nor decorate the given image in any way. Both policies le
 the structuring element fit and then forward the image as-is if it fits. An exception is raised if it does not.
 The~\cref{fig:border.all} illustrates all the other border policy mentioned.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \subfloat[Border \emph{None}]{
     \includegraphics[width=1.8in,align=t]{figs/extensions/none}
@@ -912,7 +912,7 @@ the background subtraction. It is used to detect changes in image sequences~\par
 when regions of interest are foreground objects. The pipeline components include: subtraction, Gaussian filtering,
 threshold, erode and dilate, as shown in~\ref{fig.view.comp.sub_bg}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\linewidth]{figs/pipeline_bg_sub_comp}
   \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
@@ -945,7 +945,7 @@ pipeline and the code.
 For our benchmark, we have decided to run the algorithm on an original set of image to detect a changing foreground.
 We have considered 10 data set. We present in~\cref{fig:bg_sub.dataset_samples} three of them for the sake of brevity.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \begin{tabular}{cccc}
     Background
@@ -969,10 +969,10 @@ We have run benchmarks on this set comparing multiple ways of achieving this res
 well as varying the size and the shape of the structuring element window. The breakdown of these benchmarks are
 presented in~\cref{fig:bg_sub.benchmarks}. In~\cref{table:views.perf}, we benchmark the computation time and the memory
 usage~\footnote{Memory usage is computed with \emph{valgring/massif} as the difference between the memory peak of the
-run and the memory peak without any computation (just setup and image loading)}of these implementations (all
+  run and the memory peak without any computation (just setup and image loading)}of these implementations (all
 single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the minimum of many runs is kept).
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \begin{tabular}{cccc}
     Result                                                                                                                      & Benchmark & Benchmark Pln only \\[5pt]
@@ -998,9 +998,9 @@ single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
   \begin{tabular}{l|ccc}
     \toprule
     Framework          & Compute Time        & Memory usage & $\Delta{}$Memory usage \\ \midrule
-    Pylene (w/o views) & 2.11s \mystd{144ms} & 106 MB       & \mydelta{+0}           \\
-    OpenCV             & 2.41s \mystd{134ms} & 59 MB        & \mydelta{-44}          \\
-    Pylene (views)     & 2.13s \mystd{164ms} & 51 MB        & \mydelta{-52}          \\
+    Pylene (w/o views) & $2.11s$ \mystd{144ms} & 106 MB       & \mydelta{+0}           \\
+    OpenCV             & $2.41s$ \mystd{134ms} & 59 MB        & \mydelta{-44}          \\
+    Pylene (views)     & $2.13s$ \mystd{164ms} & 51 MB        & \mydelta{-52}          \\
     \bottomrule
   \end{tabular}
   \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average

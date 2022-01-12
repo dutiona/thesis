@@ -377,7 +377,7 @@ More generally, the model used to handle it is previously described in~\cref{sub
 sub-types are handled the same way as their super-type but the fact that they have additional properties the algorithms
 can take advantage of.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.5\linewidth]{figs/image_version.pdf}
   \caption{Set of supported image type.}
@@ -391,7 +391,7 @@ traverse the look-up table to set each color to the new one. This translates int
 in~\cref{fig:traverse.vs.LUT}. We can represent the diagram outlining that those two algorithms are two distinct version
 in~\cref{fig:fill.version.diagram}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \subfloat[Writable image fill algorithm]{
     $fill(I, v)\colon \forall{p}\in\mathcal{D}, I(p) = v$
@@ -406,7 +406,7 @@ in~\cref{fig:fill.version.diagram}.
   \label{fig:traverse.vs.LUT}
 \end{figure}
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.5\linewidth]{figs/fill_version_diagram.pdf}
   \caption{Diagram of the two versions of the fill algorithm.}
@@ -429,7 +429,7 @@ lines. It will then recursively call itself with those lines to do the multi-pas
 periodic lines~\cite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram outlining the different
 specialization of the dilation algorithm used is shown in~\cref{fig:dilation.specialization.diagram}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \begin{minted}{c++}
   template <Image Img, StructuringElement SE>
@@ -450,7 +450,7 @@ specialization of the dilation algorithm used is shown in~\cref{fig:dilation.spe
   \label{code:decomp.dilate}
 \end{figure}
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.5\linewidth]{figs/dilation_specialization_diagram.pdf}
   \caption{Diagram of the specialization used to implement the dilation algorithm.}
@@ -462,7 +462,7 @@ version. In this figure there exists a specialization of algorithms when it is k
 following property: its memory is contiguous. This implies that, for example, an algorithm like \texttt{fill} can be
 implemented using low level and fast primitives such as \texttt{memset} to increase its efficiency.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.5\linewidth]{figs/image_version_specialization.pdf}
   \caption{Algorithm specialization within a set.}
@@ -535,7 +535,7 @@ logic. Both have their own specificities. In this thesis, we make a parallel, at
 pipeline logic and image processing algorithms. First let us study two basic algorithm: dilation and erosion. The python
 code of such algorithm is naively be given in figure~\ref{code:erode.dilate}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \subfloat[Dilation]{
     \includegraphics[width=1.64in]{figs/dilation_code}
@@ -557,7 +557,7 @@ within the canvas. This way of decomposing the code enables the possibility of w
 for the traversing code so that the other parts of the code that carry the operator logic remains unaware and unburdened
 of possible implementation details.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \subfloat[Local algorithm with custom operator]{
     \includegraphics[width=3.28in]{figs/local_op_code}
@@ -586,7 +586,7 @@ pass local algorithm will always have shape given in~\ref{code:local.algorithm.c
 consists in all the algorithm that propagate their computation while traversing the image. It is way less easy to
 provide an algorithmic canvas as each algorithm has its own way to propagate changes curing its computation.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \begin{minted}[linenos,xleftmargin=17pt,gobble=2]{python}
   def local_canvas(img, out, se):
@@ -615,7 +615,7 @@ default even if the user is not an area expert.
 Despite all these advantages, one big disadvantage is the readability of the algorithm user-side. For instance, the
 dilation algorithm is rewritten in figure~\ref{code:local.algorithm.dilate}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \begin{minted}{python}
 def dilate(img, out, se):
@@ -867,7 +867,7 @@ interacting with pixels, the user will want to be able to write code as followed
 
 We show how those three fundamental concepts interact with each other in the diagram~\cref{fig:concept.pixel}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{figs/concepts/pixel.pdf}
   \caption{Pixel concept.}
@@ -933,7 +933,7 @@ like this:
 
 We show how the concept \emph{Domain} flows from the previous concepts in the diagram shown in~\cref{fig:concept.domain}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{figs/concepts/domain.pdf}
   \caption{Domain concept.}
@@ -967,7 +967,7 @@ which will be the type of the label. The following code shows how it is applied:
 
 We show the diagram building up the image concept from the previous concepts in~\cref{fig:concept.image}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{figs/concepts/image.pdf}
   \caption{Image concept.}
@@ -1065,7 +1065,7 @@ arithmetic. They behave as described in~\cref{table:concept.image.expressions.6}
 
 We show how those concepts are defined from one another in the diagram shown i~\cref{fig:concept.images}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{figs/concepts/images_all.pdf}
   \caption{All images concepts.}
@@ -1147,7 +1147,7 @@ is now possible to write the following code:
 We show how those three concepts (structuring elements, neighborhood and extension) interact with each other in the
 diagram shown in~\cref{fig:concept.se_extension}.
 
-\begin{figure}[tbh]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{figs/concepts/se_extension.pdf}
   \caption{Structuring element and Extension concepts.}
