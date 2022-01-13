@@ -121,7 +121,6 @@ we call it \emph{dynamic} information. In image processing, have the following s
   \item Image's dimension size (1D, 2D, 3D, etc.),
   \item Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.).
 \end{itemize}
-
 On the other hand, we have the following dynamic informations:
 \begin{itemize}
   \item Image's actual values,
@@ -340,9 +339,10 @@ support 5 different structuring element shape, 10 underlying types and 6 dimensi
 statement will have 300 clauses to dispatch. And each algorithm will have to dispatch. This solution is not viable,
 defeat the purpose of genericity which is to write less code in the first place. We had to find a solution to have those
 dispatch while keeping our code short and efficient. The idea we took to solve this problem comes from the design of a
-C++ feature, the variant, and especially the visitor. We need to have a way to write the implementation of the algorithm
-once while enumerating all the possible cases. Also, if possible, the list of supported types should be written once at
-one place for maintenance purpose.
+C++ feature, the variant, and especially the visitor, applied to image processing, as
+in~\parencite{bourdev.2011.runtimedispatch}. We need to have a way to write the implementation of the algorithm once
+while enumerating all the possible cases. Also, if possible, the list of supported types should be written once at one
+place for maintenance purpose.
 
 We then had the idea of writing a dispatcher. This dispatcher list all the supported types and call the given callbacks
 forwarding the given arguments by instantiating a specific type. For instance, let us first expose the binary threshold

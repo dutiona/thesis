@@ -864,14 +864,15 @@ internals for a non-initiated user. Rewriting the algorithm using ranges results
 This code use the \emph{zip} view to iterate over two images (the input image and the resulting output image)
 simultaneously. This is native code, and it should, in theory, be efficient than the old version of the code (with
 macros) as it enables compiler optimizations such as vectorization or inner loops unrolling. But through benchmarking,
-we have learned that this solution does not mix well with the multidimensional nature of images. The issue originates
-from the fact that we have no way to explicitly say in the code that the multidimensional range is made of chunk of
-contiguous rows of memory. Indeed, for each element we have to compute an index originating from potentially $N$
-dimensions. This disables critical optimizations such as vectorization. We solved this problem by augmenting range-v3's
-ranges with our own multidimensional ranges. Indeed, we only need to have contiguity on the last dimension to provide
-the compiler code it can optimize. Which means that each for-loop that traverses the whole n-dimensional image can be
-transformed into a double for-loop whose inner loop is guaranteed to be a contiguous row. This way we have now an outer
-range as well as an inner range, as illustrated in~\cref{fig.inner.outer.range}.
+we have learned that this solution does not mix well~\parencite{austern.2000.segmented} with the multidimensional nature
+of images. The issue originates from the fact that we have no way to explicitly say in the code that the
+multidimensional range is made of chunk of contiguous rows of memory. Indeed, for each element we have to compute an
+index originating from potentially $N$ dimensions. This disables critical optimizations such as vectorization. We solved
+this problem by augmenting range-v3's ranges with our own multidimensional ranges. Indeed, we only need to have
+contiguity on the last dimension to provide the compiler code it can optimize. Which means that each for-loop that
+traverses the whole n-dimensional image can be transformed into a double for-loop whose inner loop is guaranteed to be a
+contiguous row. This way we have now an outer range as well as an inner range, as illustrated
+in~\cref{fig.inner.outer.range}.
 
 \begin{figure}[htbp]
   \centering
@@ -997,7 +998,7 @@ single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
 \begin{table}
   \begin{tabular}{l|ccc}
     \toprule
-    Framework          & Compute Time        & Memory usage & $\Delta{}$Memory usage \\ \midrule
+    Framework          & Compute Time          & Memory usage & $\Delta{}$Memory usage \\ \midrule
     Pylene (w/o views) & $2.11s$ \mystd{144ms} & 106 MB       & \mydelta{+0}           \\
     OpenCV             & $2.41s$ \mystd{134ms} & 59 MB        & \mydelta{-44}          \\
     Pylene (views)     & $2.13s$ \mystd{164ms} & 51 MB        & \mydelta{-52}          \\
