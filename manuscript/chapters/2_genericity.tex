@@ -661,7 +661,7 @@ header \texttt{<type\_traits>}), some in particular are used in every codebase: 
 \begin{minted}{C++}
   template<class T> struct remove_const                { using type = T; };
   template<class T> struct remove_const<const T>       { using type = T; };
-  
+
   template<class T> struct remove_volatile             { using type = T; };
   template<class T> struct remove_volatile<volatile T> { using type = T; };
 
@@ -811,7 +811,7 @@ type:
 
 \begin{minted}{C++}
   // Overload #1 : with lut
-  template <class Ima, 
+  template <class Ima,
   void fill(Ima& ima, typename image_value_type<Ima>::type val,
             typename enable_if<is_image_with_lut<Ima>::type::value, void*>::type = 0)
   { // Image with lut
@@ -823,7 +823,7 @@ type:
   }
 
   // Overload #2 : without lut
-  template <class Ima, 
+  template <class Ima,
   void fill(Ima& ima, typename image_value_type<Ima>::type val,
             typename enable_if<not is_image_with_lut<Ima>::type::value, void*>::type = 0)
   { // Image without lut
@@ -939,7 +939,7 @@ Then a simple cast routine would do the trick inside the algorithm:
 \begin{minted}{C++}
   #define EXACT(Ima) \
     typename Ima::exact_t
-    
+
   template <class Ima> // mutable routine
   EXACT(Ima)& exact(Ima& ima) { return static_cast<EXACT(Ima)&>(ima); }
 

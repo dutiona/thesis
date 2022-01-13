@@ -194,6 +194,9 @@ with the number of handled types. Which is not very generic. On the other hand t
 portability is guaranteed. Theoretical models exist that could bring solutions to lower the number of dispatcher to
 write, such as multi-method~\cite{pirkelbauer.2010.multimethods}. Unfortunately they are currently not part of C++.
 
+
+\section{Designing the hybrid solution}
+
 In Pylene we have chosen a hybrid solution between type-erasure and dynamic dispatch. The aim is to have a set of known
 types for which we have no speed cost as well as continuing to handle other types to remain generic.
 In~\cite{gossec.2019.pybind} we provide a facility to expose our generic code to Python. As seen in the previous
@@ -207,22 +210,21 @@ class whose template parameter are known. This requires, however, to enumerate a
 it has become possible to design $n*n$ dispatch without gigantic switch-case clauses.
 
 
-\section{Hybrid solution's first step: type-erasure}
+\subsection{First step: converting back and forth}
 
 The first step of our solution consists in designing a buffer class that holds all the informations about an image:
 dimension, underlying type, strides and pointer to data buffer. This class is named \texttt{ndimage\_buffer}. When
 interfacing with Python, it is necessary to convert the Python image which is a \texttt{NumpPy.array} into our image
-type. The purpose of this buffer image is to holds all the information from the \texttt{NumpPy.array} to then
-instantiate a concrete C++ type. The first pitfall here is due to a limitation from the abstraction interface used in
-Python. Indeed, when using for instance \emph{Scikit-Image}, it is not possible to differentiate a 2D multichannel image
-from a 3D grayscale image. Indeed, the image is always broken down to its most simple value and a 3D multichannel image
-is turned into a 3-dimensional \texttt{NumpPy.array} containing 8-bits values, the last dimension contains only 3
-elements at max but can theoretically contain more as there is no limitation from the used abstraction to prevent that.
-A 3D grayscale image will be broken down into a 3-dimensional \texttt{NumpPy.array} containing 8-bits values, the last
-dimension will contain many values as it is expected of a 3D-image. To prevent this confusion, there is a need to
-explicitly say to the Python/C++ wrapper wether the image is multichannel or not. This information must be carried
-through the \texttt{ndimage\_buffer} into C++ for a correct instanciation. This process is illustrated
-in~\cref{fig:type-erased.buffer}.
+type and vise versa, converting our C++ image type back into a pythonimage. The purpose of this buffer image is to holds
+all the information from the \texttt{NumpPy.array} to then instantiate a concrete C++ type. This process is illustrated
+in~\cref{fig:type-erased.buffer}. The first pitfall here is due to a limitation from the abstraction interface used in
+Python. Indeed, when using, for instance \emph{Scikit-Image}, it is not possible to differentiate a 2D multichannel
+image from a 3D grayscale image. Indeed, the image is always broken down to its most simple value and a 2D multichannel
+image is turned into a 3-dimensional \texttt{NumpPy.array} containing a single 8-bits channel, the last dimension
+contains only 3 elements at max but can theoretically contain more. Indeed, there is no limitation embed in the used
+abstraction which does not prevent that. To prevent this confusion, the C++ wrapper code may chose between two
+strategies; first is to consider all 3D/1-channel image as 2D/RGB images by default, second is to let the user give the
+information. For the sake of simplicity, we have chosen the first strategy.
 
 \begin{figure}[htbp]
   \centering
@@ -237,173 +239,99 @@ From the point of view of a practitioner, the code on the call-site (python side
   import numpy as np
   import Pylena as pln # our python binding
   img = data.astronaut() # 2D-rgb8 image -> Numpy.array(ndim=3, dtype='uint8')
-  pln_img = pln.ndimage(img, multichannel=True) # manualy point out multichannel information
-  # use(pln_img) for any pln.<algorithm> exposed to Python
+  # pln.<any_algorithm>(img)
 \end{minted}
 
-From the point of view of the library implementer, the code to expose the binding looks like this one:
-\begin{minted}{C++}
-  #include "ndimage.hpp"
-  #include <pybind11/pybind11.h>
+The C++ code contains lots of glue code necessary to expose the module to Python. In this thesis we have chosen to work
+with Pybin11~\parencite{jakob.2017.pybind11} which provides a modern API and is actively being maintained and improved.
+The glue code exposing the Python module from C++ is given in~\cref{appendix:static-dynamic-bridge.pylena}. In order to
+have a seamless interaction between Python's \texttt{numpy.array} and C++, we need to define a proper strategy to
+convert the Python type into the C++ type without copying all data around. Pybind offers us two possibilities to achieve
+this. The first one is to use the buffer protocol to pass around numpy's buffer information to C++ in way so that C++
+can properly bind the data into a proper C++ class. The second one is to use a custom type-caster to implicitly convert the python type
+into a C++ type each time it is needed.
 
-  // Expose pybind module
-  void init_class_ndimage(pybind11::module& m);
-  PYBIND11_MODULE(Pylena, m) { init_class_ndimage(m); }
-
-  // declare the conversion function
-  namespace mln::py {
-    mln::ndbuffer_image   ndimage_from_buffer(pybind11::buffer b, bool is_multichannel = false);
-    pybind11::buffer_info ndimage_to_buffer(const mln::ndbuffer_image& img);
-  }
-
-  // expose the python ndimage class with the conversion from/to py::buffer (numpy.array buffer)
-  void init_class_ndimage(py::module& m) {
-    using namespace pybind11::literals;
-
-    py::class_<mln::ndbuffer_image>(m, "ndimage", py::buffer_protocol(), "is_multichannel"_a = false)
-      .def(py::init(
-          [](py::buffer b, bool is_multichannel = false) {
-              return ndimage_from_buffer(b, is_multichannel); }))
-      .def_buffer(ndimage_to_buffer);
-  }
+With the first method, one would need to write the following code on python's side:
+\begin{minted}{python}
+  np_img = data.astronaut() # 2D-rgb8 image -> Numpy.array(ndim=3, dtype='uint8')
+  pln_img = pln.ndimage(np_img) # conversion into the C++ image type
+  pln_img_ret = pln.<any_algorithm>(pln_img) # call to algorithm
+  np_img_ret = pln_img.to_numpy(); # convert back into numpy.array
+  # use np.<...>(np_img_ret) # use resulting image with numpy
 \end{minted}
-
-This code declares a new module named \texttt{Pylena}. It then declares a class named \texttt{ndimage} which is a bridge
-to Python's \texttt{buffer\_protocol}. This \texttt{buffer\_protocol} is an abstraction to allow the usage of numpy's
-array. Finally, the code declares that the class is convertible to and from the \texttt{buffer\_protocol} thanks to
-provided callbacks. The code of those callbacks is as follow:
-
-\begin{minted}{C++}
-  // implement the conversion from Python to C++
-  mln::ndbuffer_image ndimage_from_buffer(::py::buffer b, bool is_multichannel) {
-    /* Request a buffer descriptor from Python */
-    ::py::buffer_info info = b.request();
-
-    std::ptrdiff_t      strides[16];
-    int                 dims[16];
-    int                 ndim = info.ndim - is_multichannel ? 1 : 0;
-    int                 bpp  = info.itemsize;
-
-    // convert the type information from Python to C++ (string to enum) for faster dispatch
-    mln::sample_type_id st   = get_sample_type(info.format, is_multichannel);
-
-    for (int i = 0; i < ndim; ++i) {
-      dims[i]    = info.shape[ndim - 1 - i];
-      strides[i] = info.strides[ndim - 1 - i];
-    }
-
-    if (strides[0] != bpp)
-      throw std::runtime_error("Unsupported image stride along the last dimension.");
-
-    // construct the type-erased image with all informations
-    return mln::ndbuffer_image::from_buffer(
-      reinterpret_cast<std::byte*>(info.ptr), st, ndim, dims, strides);
-  }
-
-  // implement the conversion from C++ to Python
-  ::py::buffer_info ndimage_to_buffer(const mln::ndbuffer_image& img)
-  {
-    // return the python format of the underlying type, as well as information about multichanneling
-    auto [ti, is_multichannel, channel_count, channel_stride] =
-            get_sample_type_id_traits(img.sample_type());
-
-    int ndim = img.pdim() + is_multichannel ? 1 : 0;
-
-    std::vector<ssize_t> dims(ndim);
-    std::vector<ssize_t> strides(ndim);
-
-    for (int i = 0; i < ndim; ++i) {
-      dims[i]    = img.size(ndim - 1 - i);
-      strides[i] = img.byte_stride(ndim - 1 - i);
-    }
-    dims[ndim - 1]    = channel_count;
-    strides[ndim - 1] = channel_stride;
-    // construct the python buffer with all the information
-    return ::py::buffer_info(img.buffer(), ti.size(),
-            get_sample_type(img.sample_type(), is_multichannel), ndim, dims, strides);
-  }
+Whereas the second method would require the user to write the following code on python's side:
+\begin{minted}{python}
+  np_img = data.astronaut() # 2D-rgb8 image -> Numpy.array(ndim=3, dtype='uint8')
+  np_img_ret = pln.<any_algorithm>(np_img) # implicit conversion with custom type-caster on C++ side
+  # use np.<...>(np_img_ret) # use resulting image with numpy
 \end{minted}
+Removing this conversion step is the major reason we have chosen the second method: the custom type-caster. The C++ code
+for this part is given in~\cref{appendix:static-dynamic-bridge.ndimage}.
 
-This code forward informations about the buffer and handle the special case of multichannel images which Python treat
-as 3D images.
+We are now all set and are able to convert back-and-forth a python image into a C++ image and vice versa.
+
+\subsection{Second step: multi-dispatcher (a.k.a. $\protect n*n$ dispatch)}
+
+The second step of our hybrid solution is to dispatch the abstract buffer type coming from Python to an efficient
+generic code. The naive way of doing so would be to include a gigantic switch-case clause in each algorithm
+implementation and dispatch to the correct instantiated generic algorithm from there. Aside from being a nightmare to
+maintain, the size of those clauses would grow several fold depending on the cardinality of the generic implementation.
+For instance, for a generic dilation, there are 3 axis of cardinality: the underlying type, the dimension and the
+structuring element shape. In the case where the library support 5 different structuring element shape, 10 underlying
+types and 6 dimension for the image, the switch-case statement would need to dispatch over 300 clauses. Also, each
+supported algorithm would need to have dispatcher. This solution defeat the purpose of genericity which is to write less
+code in the first place. We needed to design a solution to implement those dispatchers while keeping our code short and
+efficient. The idea we took to solve this problem comes from the design of a C++ feature, the variant, and especially
+the visitor, applied to image processing, as in~\parencite{bourdev.2011.runtimedispatch} for instance. We need to have a
+way to write the implementation of the algorithm once while enumerating all the possible cases. Also, if possible, the
+list of supported types should be written once at one place for maintenance purpose.
 
 
-\section{Hybrid solution's second step: multi-dispatcher (a.k.a. $\protect n*n$ dispatch)}
+\paragraph{Simple dispatcher}
 
-The second step of our hybrid solution is to dispatch the type-erased code to efficient generic code. The naive way of
-doing so would be to include a gigantic switch-case clause in each algorithm implementation and dispatch to the correct
-instantiated generic algorithm from there. Aside from being a nightmare to maintain, the size of those clause can grow
-several fold depending on the cardinality of the generic implementation. For instance, for a generic dilation, there are
-3 axis of cardinality: the underlying type, the dimension, the structuring element shape. In the case where the library
-support 5 different structuring element shape, 10 underlying types and 6 dimension for the image, the switch-case
-statement will have 300 clauses to dispatch. And each algorithm will have to dispatch. This solution is not viable,
-defeat the purpose of genericity which is to write less code in the first place. We had to find a solution to have those
-dispatch while keeping our code short and efficient. The idea we took to solve this problem comes from the design of a
-C++ feature, the variant, and especially the visitor, applied to image processing, as
-in~\parencite{bourdev.2011.runtimedispatch}. We need to have a way to write the implementation of the algorithm once
-while enumerating all the possible cases. Also, if possible, the list of supported types should be written once at one
-place for maintenance purpose.
-
-We then had the idea of writing a dispatcher. This dispatcher list all the supported types and call the given callbacks
-forwarding the given arguments by instantiating a specific type. For instance, let us first expose the binary threshold
-operator to Python. The Python call-site code will look like this:
-
+We then had the idea of writing a dispatcher. This dispatcher lists all the supported types and call the given callbacks
+forwarding the given arguments by instantiating a specific type. Let us try to expose to python, for instance, the
+generic existing algorithm for thresholding a binary image. The Python call-site code will look like this:
 \begin{minted}{python}
   img_grayscale = skimage.data.grass()
   pln.operators.binary_threshold(img_grayscale)
 \end{minted}
-
-On C++ side, we need to expose the function with this code:
+On the C++ side, we want to avoid writing code that looks like this:
 \begin{minted}{C++}
-  void init_module_operators(pybind11::module& m);
-
-  mln::ndbuffer_image binary_threshold(::py::buffer buffer)
-
-  void init_module_operators(::py::module& m) {
-    using namespace pybind11::literals;
-
-    m.def("binary_threshold", binary_threshold,
-          "Perform a binary threshold.\n",
-          "Input"_a);
-  }
-
-  PYBIND11_MODULE(Pylena, m) {
-    /* ... */
-
-    auto operators = m.def_submodule("operators", "Image processing operators.");
-    init_module_operators(operators);
+  mln::ndbuffer_image binary_threshold(mln::ndbuffer_image input) {
+    auto dim = input.dim();
+    auto tid = input.tid();
+    switch(dim) {
+      case 1: // 1D image
+        switch(tid) {
+          case UINT8:
+            if(auto* image_ptr = input.template cast_to<uint8_t, 1>(); image_ptr)
+              return mln::binary_threshold(*image_ptr);
+          case RGB8:
+            // error support only RGB8 images
+        }
+        break;
+      case 2: // 2D image
+        // ...
+        break;
+      // ... 3D, 4D, ...
+    }
   }
 \end{minted}
-
-Now that our python submodule and that our \texttt{binary\_threshold} operator are declared, let us have a look to the
-operator's implementation:
-
-\begin{minted}{C++}
-  mln::ndbuffer_image binary_threshold(::py::buffer buffer)
-  {
-    // grayscale image mandatory
-    auto input = mln::py::ndimage_from_buffer(buffer);
-
-    // dispatch along dimension (dimension is a valued template parameter, hence _v)
-    return dispatch_v<binary_threshold_operator_t>(input.pdim(), input);
-  }
-\end{minted}
-
-We have replaced the gigantic switch-case clause by a dispatcher templated by an operator. This operator will cast the
-input image into the concrete generic type and call the fast generic algorithm on it. Let us have a look to what this
-operator look like:
-
+Instead, it is possible to separate the dispatching code and the logical code entirely by using a templated operator,
+the same way we use lambdas in the pattern \texttt{std::variant}/\texttt{std::visit}. For our binary threshold example,
+the operator be implemented just by writing the following code:
 \begin{minted}{C++}
   // Operator templated by the dimension
   template <auto Dim>
-  struct binary_threshold_operator_t {
+  struct binary_threshold_op_t {
     // Function templated by the image type
     template <typename Img>
     mln::ndbuffer_image operator()(Img&& img) const {
       // Cast to a grayscale (information known) of the correct dimension
       if (auto* image_ptr = std::forward<Img>(img).template cast_to<std::uint8_t, Dim>(); image_ptr)
-        // call generic algorithm
-        return mln::operators::binary_threshold(*image_ptr);
+        // ACTUAL call to the generic algorithm
+        return mln::binary_threshold(*image_ptr);
       else {
         std::runtime_error("Unable to convert the image to the required type.");
         return {};
@@ -411,109 +339,56 @@ operator look like:
     }
   };
 \end{minted}
-
-This operator will attempt to cast the given image into a grayscale image of the correct dimension and then use the
-resulting concrete type to pass it the fast generic \texttt{binary\_threshold} operator. Now let us have a look at where
-the magic happen, at the dispatcher which list all the supported type.
-
+This code allows us to dispatch over any number of dimensions. We are required to pass a grayscale image for the
+algorithm so here the example is limited to dispatching over just one cardinality: the dimension. Let us now take a look
+at how we can implement the dispatcher for our example to work. The dispatcher must take the dimension as first
+parameter and any number of arguments to forward to the instantiated operator. The dispatcher then looks like the
+following code:
 \begin{minted}{C++}
-template <template <auto> class V, typename... Args>
+template <template <auto> class Op, typename... Args>
 auto dispatch_v(std::size_t dim, Args&&... args) {
-  switch (pdim) {
-  case (1):
-    return F<1>{}(std::forward<Args>(args)...);
-  case (2):
-    return F<2>{}(std::forward<Args>(args)...);
-  case (3):
-    return F<3>{}(std::forward<Args>(args)...);
-  case (4):
-    return F<4>{}(std::forward<Args>(args)...);
-  case (5):
-    return F<5>{}(std::forward<Args>(args)...);
-
-  /* ... */
-
-  case (0):
-    [[fallthrough]];
-  default:
-    throw std::runtime_error("Unsupported dimension.");
+  switch (dim) {
+    case (1):
+      return Op<1>{}(std::forward<Args>(args)...);
+    case (2):
+      return Op<2>{}(std::forward<Args>(args)...);
+    case (3):
+      return Op<3>{}(std::forward<Args>(args)...);
+    /* ... */
+  }
 }
 \end{minted}
+The operator \texttt{Op} is instantiate with the correct dimension number and the the \texttt{operator()} (parenthesis)
+is called while being forwarded the correct arguments. In our case, it will instantiate the type
+\texttt{binary\_threshold\_op\_t<2>} and then call the function
+\mintinline{c++}/binary_threshold_op_t<2>.operator()(input)/, forwarding the input image to the underlying algorithm.
+Indeed, using the dispatcher is as simple as writing \mintinline{c++}/dispatch_v<binary_threshold_op_t>(input.dim(),
+input);/
 
-The dispatcher is instantiate the given type by the correct dimension number and then call the operator parenthesis
-(function call) forwarding all the given parameters. In our case, it will instantiate the type
-\texttt{binary\_threshold\_operator\_t<2>} and then call the function
-\texttt{binary\_threshold\_operator\_t<2>.operator()(input)}, forwarding the input image to the underlying algorithm.
+The main advantage of this approach is that we respect all the requirements. First the logical code is bounded in the
+operator, second, the supported types are all listed in one place, once. Also, while our example is limited to one
+cardinality, any number of dispatcher can be piped to one after another to achieve the cardinality wanted.
 
-The main advantage of this approach is that all the supported features are to be listed only in one place, the
-dispatcher, while any number of dispatcher can be piped to achieve the cardinality wanted. Let us push our example to
-implement the mathematical morphology operator dilation. We now have two more generic axis to cover: the structuring
-element shape and the underlying datatype. First, let us expose the operator to the Python code. Here is what the Python call-site look like:
 
+\paragraph{Double dispatcher}
+
+Let us push our example to implement the mathematical morphology operator dilation. We now have two more generic axis to
+cover: the structuring element shape and the underlying datatype. First, let us take a look at what the Python code may
+look like:
 \begin{minted}{python}
-img_grayscale = skimage.data.grass()
-rect = pln.se.rect2d(width=3, height=3)
-pln.operators.dilate(img_grayscale, se)
+  img_grayscale = skimage.data.grass()
+  rect = pln.se.rect2d(width=3, height=3)
+  img_dil = pln.operators.dilate(img_grayscale, se)
 \end{minted}
-
-We need to expose the new structuring element's sub-module for usage in the dilation operator:
-
-\begin{minted}{C++}
-void init_module_se(pybind11::module& m);
-
-void init_module_se(::py::module& m) {
-  ::py::class_<mln::se::disc>(m, "disc").def(
-      ::py::init([](float radius) { return mln::se::disc{radius}; }));
-
-  ::py::class_<mln::se::sphere>(m, "sphere").def(::py::init([](float radius) {
-    return mln::se::sphere{radius};
-  }));
-
-  ::py::class_<mln::se::rect2d>(m, "rect2d").def(::py::init([](int width, int height) {
-    return mln::se::rect2d{width, height};
-  }));
-
-  ::py::class_<mln::se::rect3d>(m, "rect3d").def(::py::init([](int width, int height, int depth) {
-    return mln::se::rect3d{width, height, depth};
-  }));
-}
-
-PYBIND11_MODULE(Pylena, m) {
-  /* ... */
-
-  auto mse = m.def_submodule("se", "Structuring elements module.");
-  init_module_se(mse);
-}
-\end{minted}
-
-Now we need to expose the dilate function into the operator submodule:
-\begin{minted}{C++}
-// using std::variant
-using se_t = std::variant<mln::se::disc, mln::se::sphere,
-                          mln::se::rect2d, mln::se::cube>;
-
-mln::ndbuffer_image dilate(::py::buffer buffer, const se_t& se)
-
-void init_module_operators(::py::module& m) {
-  /* ... */
-
-  m.def("dilate", dilate,
-    "Perform a morphological dilation.\n"
-    "\n"
-    "structuring element must be valid.",
-    "Input"_a, "se"_a);
-}
-\end{minted}
-
-We are all set to now implement the dilation operator. First, let us have a look at the underlying operator that will be
-dispatched:
-
+The first thing to notice is the need to add additional bindings to expose our C++ structuring elements. The glue code
+to achieve this is given in~\cref{appendix:static-dynamic-bridge.se}. Let us take a look at our dilation operator:
 \begin{minted}{C++}
 template <auto Dim, typename T>
 struct dilate_operator_t {
   template <typename Img, typename SE>
   mln::ndbuffer_image operator()(Img&& img, SE se) const {
     if (auto* image_ptr = std::forward<Img>(img).template cast_to<T, Dim>(); image_ptr)
+      // ACTUAL call to the generic algorithm
       return mln::dilation(*image_ptr, se);
     else {
       std::runtime_error("Unable to convert the image to the required type.");
@@ -522,14 +397,15 @@ struct dilate_operator_t {
   }
 };
 \end{minted}
-
-Here we can see that we need a double dispatch. Also, the structuring element is no longer a variant and needs to be
-dispatched before instantiating this operator. Finally, there is an issue here because there are two template parameters
-and our dispatcher \texttt{dispatch\_v} does only handle one. We workaround this issue by writing another intermediate
-operator dispatcher \texttt{dilate\_operator\_intermediate\_t} serving as trampoline that will partially instantiate the
-final operator \texttt{dilate\_operator\_t} along the dimension template parameter to feed it to the last dispatcher,
+This operator needs double dispatch over two cardinalities: the dimension \texttt{Dim} and the value type \texttt{T}. We
+can skip the dispatch of the structuring element's shape as we have made a \texttt{std::variant} of all the supported
+structuring element supported for the sake of simplicity. Dispatching over the supported structuring elements can then
+be offloaded upstream from the call to the double dispatch, just by calling \texttt{std::visit}. We can immediately
+notice that there is an issue with our dilation operator. Indeed, there are two template parameters and our dispatcher
+\texttt{dispatch\_v} does only handle one. We solve this issue by writing another intermediate operator dispatcher
+\texttt{dilate\_operator\_intermediate\_t} serving as trampoline operator that will partially instantiate the final
+operator \texttt{dilate\_operator\_t} along the dimension template parameter to feed it to the last dispatcher,
 \texttt{dispatch\_t}:
-
 \begin{minted}{C++}
 template <auto Dim>
 struct dilate_operator_intermediate_t {
@@ -541,107 +417,105 @@ struct dilate_operator_intermediate_t {
   }
 };
 \end{minted}
-
-The final function implementation will look like this:
-
+Dispatching the operator alongside two cardinalities (even three including the structuring element handled by
+\texttt{std::variant}) would then become as simple as calling:
 \begin{minted}{C++}
-mln::ndbuffer_image dilate(::py::buffer buffer, const se_t& se) {
-  auto input = mln::py::ndimage_from_buffer(buffer);
-  // dispatch the structuring elements through using std::visit for std::variant 
-  return std::visit(
-      [&input](const auto& se_) {
-        return dispatch_v<dilate_operator_intermediate_t>(input.pdim(), input, se_);
-      }, se);
-}
+// dispatch the structuring elements through using std::visit for std::variant
+return std::visit(
+[&input](const auto& se_) { // dispatch over the trampoline
+    return dispatch_v<dilate_operator_intermediate_t>(input.dim(), input, se_);
+  }, se);
 \end{minted}
 
-The final piece of our puzzle would be the double dispatch function that will handle the last dispatch along the
-underlying data while forwarding the first dispatch along the dimension. Here is how we implemented our double dispatch:
-
+In order for this to work, we need to piece together the final part of our puzzle, which is the double dispatch function
+that will handle the last dispatch along the underlying data while forwarding the first dispatch along the dimension.
+This dispatcher works the same as the simple one (\texttt{dispatch\_v}) but take an additional template parameter (here
+\texttt{Dim}) that will be forwarded as-is to the given operator \texttt{Op}. The implementation then looks like this:
 \begin{minted}{C++}
-template <template <auto, typename> class F, auto Dim, typename... Args>
-auto double_dispatch_t(mln::sample_type_id tid, Args&&... args) {
+template <template <auto, typename> class Op, auto Dim, typename... Args>
+auto double_dispatch_t(type_id tid, Args&&... args) {
   switch (tid) {
-    case (mln::sample_type_id::INT8):
-      return F<Dim, std::int8_t>{}(std::forward<Args>(args)...);
-    case (mln::sample_type_id::INT16):
-      return F<Dim, std::int16_t>{}(std::forward<Args>(args)...);
-    case (mln::sample_type_id::INT32):
-      return F<Dim, std::int32_t>{}(std::forward<Args>(args)...);
-    case (mln::sample_type_id::UINT8):
-      return F<Dim, std::uint8_t>{}(std::forward<Args>(args)...);
-    case (mln::sample_type_id::UINT16):
-      return F<Dim, std::uint16_t>{}(std::forward<Args>(args)...);
-    case (sample_type_id::UINT32):
-      return F<Dim, std::uint32_t>{}(std::forward<Args>(args)...);
-    case (mln::sample_type_id::DOUBLE):
-      return F<Dim, double>{}(std::forward<Args>(args)...);
-
+    case (type_id::INT8):
+      return Op<Dim, std::int8_t>{}(std::forward<Args>(args)...);
+    case (type_id::UINT8):
+      return Op<Dim, std::uint8_t>{}(std::forward<Args>(args)...);
+    case (type_id::DOUBLE):
+      return Op<Dim, double>{}(std::forward<Args>(args)...);
       /* ... */
-
-    case (mln::sample_type_id::OTHER):
-      [[fallthrough]];
-    default:
-      throw std::runtime_error("Unhandled data type");
   }
 }
 \end{minted}
+We have now presented all the techniques and design required to build operators that are agnostic from the supported
+data-types, dimensions and/or additional data such as structuring elements. Indeed, the maintainer has gathered all the
+logic about listing the supported data types and dimension in one place: the custom dispatcher. He just needs to
+maintain those to enable full support for all exposed algorithm, by default. This hybrid solution mixes type-erasure and
+modern C++ facilities to allow maximum performance. Indeed, the dispatch is done before entering algorithms and the
+custom type-caster facility allows us to plug directly into the Python image without having any unnecessary copies. The
+only caveat would be the code bloat incurred by all the explicit instanciation leading to compiling a larger and larger
+binary the more algorithms are being exposed. This can lead to performances issues due to pre-fetching memory
+optimization missed and code locality issues~\parencite{badawy.2001.locality}. Another point not covered right now would
+be a way to support arbitrary data types, possibly injected from Python, into C++. Indeed, our hybrid solution only
+support the types provided by the library and listed in the dispatchers. It will instantiate all the code relative to
+them and support all of the combinations but the user may be tempted to plug a user-defined type from Python as an
+underlying image data-type. To allow this use-case, we introduce a new concept: the \emph{value-set}. The value-set is a
+standard way manipulate the underlying values. Through type-erasure, we can either manipulate known underlying value
+type with native facilities (near-zero overhead), or fallback to a virtual call that may report an error, or callback
+user-provided Python routine to manipulate unknown user values.
 
-Now we have all the pieces to build operators that are agnostic from the supported data-types. Indeed, the maintainer
-has gathered all the logic about listing supported data types and dimension into variant or custom dispatcher. He just
-need to maintain those to enable, by default, all exposed algorithm to support them. This hybrid solution mixes
-type-erasure and modern C++ facilities to allow maximum performance. Indeed, the dispatch is done before entering
-algorithms and the buffer protocol facility allows us to plug directly into the Python image without having any
-unnecessary copies. The only caveat would be the code bloat incurred by all the explicit instanciation leading to
-compiling a large binary. Another point not covered right now would be a way to inject Python types into C++. Indeed,
-our hybrid solution only support the types provided by the library. It will instantiate all the code relative to them
-and support all of the combinations. But the user may be tempted to plug a user-defined type from Python as an
-underlying data-type. To allow this use-case, we introduce a new concept: the \emph{value-set}. The value-set is a
-standard way manipulate the underlying values. Through type-erasure, we can either manipulate a known underlying value
-with native facilities (near-zero overhead) or fallback on a virtual call that may report an error or callback
-user-provided Python routine to manipulate an unknown user value.
 
+\subsection{Third and final step: type-erasure \& the value-set}
 
-\section{Hybrid solution's third and final step: the value-set}
+As common thread in this section, we will work on the morphological \emph{stretch} algorithm which is naively defined as
+followed:
+\begin{minted}{C++}
+template <class T>
+mln::image2d<float> naive_stretch(const mln::image2d<T>& src)
+{
+  mln::image2d<float> res  = mln::transform(src, [](auto val) -> float {
+    auto max = std::numeric_limits<T>::max();
+    return static_cast<float>(val) / static_cast<float>(max);
+  });
+  return res;
+}
+\end{minted}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/nxndispatch_pipeline}
+  \caption{Python to C++ pipeline algorithm through the $n*n$ dispatcher.}
+  \label{fig:static_dyn.nxndispatcher}
+\end{figure}
+
+We can represent the pipeline calling this algorithm from Python in~\cref{fig:static_dyn.nxndispatcher}.
+
+\paragraph{Introducing the value-set}
 
 The \emph{value-set} is an abstraction layer around common operations needed when implementing an image processing
 algorithm such as an addition, a multiplication, a type conversion, getting the maximum etc. It can be defined in C++ as
 a class template whose parameter is the manipulated type. The following code shows how to define a value-set:
-
 \begin{minted}{C++}
 template <class T = void>
 struct value_set {
   template <class U>
-  U cast(T&& v) const { return static_cast<U>(std::forward<T>(v)); }
+  U cast(T v) const { return static_cast<U>(v); }
 
   T max() const noexcept { return std::numeric_limits<T>::max(); }
   T min() const noexcept { return std::numeric_limits<T>::min(); }
   /* inf, sup, ... */
 
-  T plus(T&& v) const noexcept { return +std::forward<T>(v); }
-  T minus(T&& v) const noexcept { return -std::forward<T>(v); }
-
-  T add(T&& l, T&& r) const noexcept { return std::forward<T>(l) + std::forward<T>(r); }
-  T sub(T&& l, T&& r) const noexcept { return std::forward<T>(l) - std::forward<T>(r); }
+  T add(T l, T r) const noexcept { return l + r; }
+  T sub(T l, T r) const noexcept { return l - r; }
   /* mod, pow, min, max, ... */
 };
 \end{minted}
-
 We can see that the default parameter of the class template is \texttt{void}. Indeed, we are inspired by what was
 implemented in the standard library for \texttt{std:less} and providing a default (void) specialization in order to
 improve the usability. The following code shows how to implement this specialization:
-
 \begin{minted}{C++}
 template <>
 struct value_set<void> {
   template <class U, class T>
   U cast(T&& t) const { return static_cast<U>(std::forward<T>); }
-
-  template <class T>
-  T max() const noexcept { return std::numeric_limits<T>::max();}
-  template <class T>
-  T min() const noexcept { return std::numeric_limits<T>::min(); }
-  /* ... */
 
   template <class T, class U>
   auto add(T&& l, U&& r) const noexcept { return std::forward<T>(l) + std::forward<U>(r); }
@@ -650,17 +524,16 @@ struct value_set<void> {
   /* ... */
 };
 \end{minted}
-
-The template parameter is shifted from the class to the member functions. It is also important to note that the member
-function are not static, which requires to instantiate the \texttt{value-set} before using it. It may sound like a
-disadvantage at first glance but it can be turned into an advantage later on. Indeed, this design allows a subclass to
-hold member variables which will be crucial.
+The full code of the value-set is given in~\cref{appendix:static-dynamic-bridge.mm.vs}. The template parameter is
+shifted from the class to the member functions. It is also important to note that the member function are not static,
+which requires to instantiate the \texttt{value-set} before using it. It may sound like a disadvantage at first glance
+but it can be turned into an advantage later on. Indeed, this design allows a subclass to hold member variables which
+will be crucial for injecting user-types from python.
 
 Now that we have designed how our value-set is intended to work, we can deduce that an image is able to provide its own
 value-set. Indeed, an image knows what values it holds and thus is able to instantiate the proper value-set
-corresponding to this type. The member function returning the value-set in the class template ndimage<T, D> is then
-implemented as follow:
-
+corresponding to this type. The member function returning the value-set in the class template \texttt{ndimage<T, D>} is
+then implemented as follow:
 \begin{minted}{C++}
 template <class T, std::size_t D>
 class ndimage {
@@ -671,146 +544,267 @@ class ndimage {
 };
 \end{minted}
 
-For the sake of example, we are going to implement the linear stretch algorithm in order to augment the contrast. First
-this algorithm construct an histogram to get both actual minimum and maximum value in the image. Then the algorithm get
-the maximum and minimum values possible in the space, construct a ratio from these informations and then apply this
-ratio to the image. For the sake of simplicity, we restrict our example to mono channel image. Here is how it can be
-naively implemented:
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/naive_stretch}
+  \caption{Naive stretch algorithm, pipeline to perform operations on values.}
+  \label{fig:static_dyn.naive_stretch}
+\end{figure}
 
-\begin{minted}[linenos,highlightlines={4,9-11,14}]{C++}
-  template <class T = float, class V, std::size_t D>
-  mln::ndimage<T, D> stretch(mln::ndimage<V, D> img) {
-    // histogram
-    auto hist = std::vector<std::size_t>{std::numeric_limits<V>::max()+1, 0};
-    mln::for_each(img, [&hist](V v){ ++hist[v]; });
-    
-    // construct ratio
-    auto [m, M] = std::minmax_element(begin(hist), end(hist));
-    double min = (not std::is_floating_point_v<V>) ? static_cast<double>(std::numeric_limits<V>::min()) : 0.0;
-    double max = (not std::is_floating_point_v<V>) ? static_cast<double>(std::numeric_limits<V>::max()) : 1.0;
-    double ratio = (max - min) / (M - m);
-  
-    // construct and apply scaling functor
-    auto scale_fn = [m, x, r](double v) -> V { return static_cast<V>(x + (v - m) * r); };
-    return mln::transform(img, scale_fn);
-  }
+Let us recall our naive stretch algorithm presented earlier. The pipeline representing the operations on values inside
+the algorithm is presented in~\cref{fig:static_dyn.naive_stretch}. Typically, this algorithm performs three operations
+that are the responsibility of a value-set: getting the max, performing a cast, and performing a division. The first
+step is then to use the value set shown above to abstract away those operations. The algorithm then becomes:
+\begin{minted}[linenos,highlightlines={4-5,7,8-9,10}]{C++}
+template <class T>
+mln::image2d<float> fast_stretch(const mln::image2d<T>& src)
+{
+  auto                vs   = src.get_value_set();     // value-set for T
+  auto                vs_f = mln::value_set<float>{}; // fast value-set for float
+  mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
+    auto max  = vs.max();                     // returns T
+    auto fval = vs.template cast<float>(val); // returns float
+    auto fmax = vs.template cast<float>(max); // returns float
+    return vs_f.div(fval, fmax);              // div directly returns float
+  });
+  return res;
+}
 \end{minted}
 
-Now, we can see line 4 that we are gathering the maximum value of the input image's space. Then, line 9 and 10, we are
-gathering the maximum and minimum value of the input image's space. Finally, at lines 11 and 14, we are doing
-computation mixing input image's type and resulting image's type. In order to be agnostic from the way those
-computations are done, we can rewrite our algorithm using value-sets as in the following code:
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/fast_stretch}
+  \caption{Fast stretch algorithm, pipeline to perform operations on values.}
+  \label{fig:static_dyn.fast_stretch}
+\end{figure}
 
+We instantiates the value-set we will need (for \texttt{T} values and \texttt{float} values) on lines 4 and 5. Then the
+maximum value is obtained via the value-set of \texttt{T} on line 7. Then a cast is performed via the value-set to get
+floating point value on lines 8 and 9. Finally a floating point division is performed on line 10 via the formerly
+instantiates floating point value-set defined on line 5. Indeed, using the value-set instantiated for \texttt{T} would
+have performed an Euclidean division and which would have resulted in a bug. Calling this algorithm from python is as
+simple as \mintinline{python}/ret = pln.fast_stretch(input)/ once exposed. The pipeline representing the actual
+operations in the algorithm to access values is shown in~\cref{fig:static_dyn.fast_stretch}. The glue code to expose
+this algorithm is givenin~\cref{appendix:static-dynamic-bridge.mm.algos}.
+
+\paragraph{Type-erasure interface for value-set}
+
+Moving one step further, we ultimately want to be able to dynamically inject a value-set into our algorithm. In order to
+achieve this feat, we need to design an abstract value-set as an interface so that a user can sub-class it and provide
+his own value set. This abstract value-set needs to work with \texttt{std::any} as input value-type in order to provide
+a generic interface. Here, the genericity is achieved via type-erasure (the input value is type-erased into a
+\texttt{std::any}). The interface would look like (full code is given in~\cref{appendix:static-dynamic-bridge.mm.vs}):
 \begin{minted}{C++}
-template <class T = float, class V, std::size_t D>
-mln::ndimage<T, D> stretch(mln::ndimage<V, D> img) {
-  auto img_vs = img.get_value_set();
-  aut default_vs = value_set<>{}; // void specialization
+struct abstract_value_set {
+  virtual ~abstract_value_set() {}
 
-  // histogram
-  auto hist = std::vector<std::size_t>{img_vs.max()+1, 0};
-  mln::for_each(img, [&hist](V v){ ++hist[v]; });
-  
-  // construct ratio
-  auto [m, M] = std::minmax_element(begin(hist), end(hist));
-  double min = (not std::is_floating_point_v<V>) ?
-                  img_vs.template cast<double>(img_vs.min()) : 0.0;
-  double max = (not std::is_floating_point_v<V>) ?
-                  img_vs.template cast<double>(img_vs.max()) : 1.0;
-  // equiv to (max - min) / (M - m);
-  double ratio = default_vs.div(default_vs.sub(max, min), default_vs.sub(M, m));
+  virtual std::any max() const = 0;
+  /* min, sup, inf, ... */
 
-  // construct and apply scaling functor
-  auto scale_fn = [m, x, r, default_vs](double v) -> V {
-    // equiv to static_cast<V>(x + (v - m) * r)
-    return default_vs.template cast<V>(default_vs.add(x, default_vs.mult(default_vs.sub(v, m), r)));
-  };
-  return mln::transform(img, scale_fn);
+  virtual std::any add(const std::any& l, const std::any& r) const  = 0;
+  virtual std::any div(const std::any& l, const std::any& r) const  = 0;
+  /* sub, mult, ... */
+};
+\end{minted}
+The important part here is to notice that all values (returned and passed as argument) are now type-erased behind a
+\texttt{std::any}. From this interface, it is trivial to define the canonical sub-classes for trivial types. We do this
+by defining the class template \texttt{concrete\_value\_set} which is able to generate a concrete interface for every
+given template type. The implementation will look like this:
+\begin{minted}{C++}
+template <typename T>
+struct concrete_value_set : abstract_value_set {
+  ~concrete_value_set() override {}
+
+  template <class U>
+  std::any cast(std::any v) const { return {static_cast<U>(std::any_cast<T>(v))}; }
+
+  std::any max() const override { return {std::numeric_limits<T>::max()}; };
+  /* min, sup, inf, ... */
+
+  std::any add(const std::any& l, const std::any& r) const override {
+    return {std::any_cast<T>(l) + std::any_cast<T>(r)};
+  }
+  std::any div(const std::any& l, const std::any& r) const override {
+    return {std::any_cast<T>(l) / std::any_cast<T>(r)};
+  }
+  /* sub, mult, ... */
+};
+\end{minted}
+This concrete value-set implement simple dispatch via casting the type-erased \texttt{std::any} into the wanted value
+type to properly perform the operation. Thanks to this implementation, we are able to rewrite our stretch algorithm
+using this value-set to perform its operations. The new algorithm now looks like this:
+\begin{minted}[linenos,highlightlines={4-5,7,8-9,10}]{C++}
+template <class T>
+mln::image2d<float> virtual_dispatch_stretch(const mln::image2d<T>& src)
+{
+  auto                vs   = mln::concrete_value_set<T>{};     // value-set for T
+  auto                vs_f = mln::concrete_value_set<float>{}; // value-set for float
+  mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
+    auto anymax  = vs.max();                                 // returns std::any
+    auto fanyval = vs.template cast<float>(val);             // cast to float in std::any
+    auto fanymax = vs.template cast<float>(anymax);          // cast to float in std::any
+    return std::any_cast<float>(vs_f.div(fanyval, fanymax)); // div returns float
+  });
+  return res;
 }
 \end{minted}
 
-Despite loosing a little bit of expressivity (calling explicit function such as \texttt{vs.mult(..., ...)}) we are now
-completely agnostic from the underlying value-type when doing any computation. In this example we are using both the
-input image's value-set to gather informations about the value space limits as well as the default value-set in order to
-get the computations right. Now we are able to write an algorithm independently from its underlying type on the C++
-side. This feat enables one fundamental feature: type-injection from Python. Indeed, it is now possible to provide a
-value-set from Python. This feat is realized simply by specializing the base value-set class over the type
-\texttt{pybind::object} which is the generic way to refer to a non-trivially-convertible Python type. This
-specialization is able to call the operators on any input \texttt{pybind11::object} by using a value-set coming from
-Python at the construction of the image. Here is how this value-set specialization looks like on C++ side:
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/virtual_dispatch_stretch}
+  \caption{Virtual dispatch stretch algorithm, pipeline to perform operations on values.}
+  \label{fig:static_dyn.virtual_dispatch_stretch}
+\end{figure}
 
-\begin{minted}[linenos,highlightlines={9,13,16,21,23,29}]{C++}
+This algorithm uses two value sets (l.4 and l.5), one to get the maximum value with regard of the original underlying
+value type in the image \texttt{T} (l.7) and to properly cast the values into float values (l.8-9). The other one is
+used to perform the floating point division (l.10). This algorithm is almost identical to the one given for
+\texttt{fast\_stretch} earlier. Only the lines instantiating the value-set changes (l. 4-5) as well as the line handing
+over the result (l. 10) where we added a downcast from \texttt{std::any}. The pipeline presenting the operations needed
+to access values is presented in~\cref{fig:static_dyn.virtual_dispatch_stretch}.
+
+
+\paragraph{Going forward: type-erasing the value entirely}
+
+The need may arise where the user wants to handle images where the input value is abstracted away behind a type-erased
+type. This value-type would then embed its own value set able to perform operations (as a pointer for instance). This
+fallback would allow writing such code possible:
+\begin{minted}[highlightlines={10}]{C++}
+class type_erased_value {
+  type_erased_value add(const type_erased_value& rhs);
+  /* ... */
+};
+
+void my_algo(ndimage<type_erased_value, Dim> img1,
+              ndimage<type_erased_value, Dim> img2) {
+  ndimage<type_erased_value, Dim> img_out = /* ... */;
+  for (auto [v1, v2, out] : zip(img1.values(), img2.values(), img_out.values())) {
+    out = v1.add(v2); // the value knows how to perform the addition
+  }
+}
+\end{minted}
+
+This code enables fallback when all the supported values have been exhausted. For instance, when considering the
+previously defined \texttt{abstract\_value\_set}, when attempting to dispatch over all the supporting native C++ type
+unwrapped from the given \texttt{std::any}, if no type is matched, we can attempt one final unwrap to this type-erased
+value which is aware itself of how to perform the operation. In pseudo-code it breaks down to the following logic:
+\begin{minted}[linenos,highlightlines={3,4-5,6,9-10}]{C++}
+std::any value_set<type_erased_value>::add(const std::any& lhs, const std::any& rhs){
+  abstract_value_set* vs = lhs.get_embedded_vs();
+  if (lhs.type() == typeid(int) && rhs.type() == typeid(int)) {
+    auto ret = std::any_cast<int>(lhs) + std::any_cast<int>; // unwrap, do the work
+    return std::any{ret}; // rewrap with the vs
+  } else if (lhs.type() == typeid(float) && rhs.type() == typeid(float)) {
+    /* ... same ... */
+  } else {
+    auto te_lhs = std::any_cast<type_erased_value>(lhs); // last attempt
+    return lhs.add(rhs); // fallback on embedded value-set
+  }
+}
+\end{minted}
+First step is to conditionally attempt to cast the type-erased value over the supported native values (lines 3 and 6).
+When the type is supported then we unwrap it and perform the operation before rewrapping it in a \texttt{std::any} and
+returning it. If we could not unwrap the value into a supported value-type, we make a last attempt on line 9 into our
+type-erased value-type. If this attempt succeeds, we rely on the fact that this value-type is aware of its own value-set
+and embed it to perform the required operation on line 10. The full code of the implementation for this value-set aware value-type is given
+in~\cref{appendix:static-dynamic-bridge.mm.vs}. We have relied on metaprogramming techniques in order to efficiently
+write the code that will do the work.
+
+Thanks to this technique, we are able to write another version of our stretch algorithm, as followed:
+\begin{minted}[linenos,highlightlines={8-12,13-14,17-18,20,22,23}]{C++}
+template <class T>
+mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2d<T>& src)
+{
+  auto                vs   = mln::concrete_value_set<T>{};     // value-set for T
+  auto                vs_f = mln::concrete_value_set<float>{}; // value-set for float
+  mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
+    // simulate having an image<type_erased_value>
+    auto anyval = std::any{val}; // std::any of T
+                                  // type_erased_value of std::any of T aware of value-set of T
+    auto abs_anyval = mln::type_erased_value{anyval, vs};
+    // instantiate a value-set for type_erased_value
+    auto abs_vs = mln::value_set<mln::type_erased_value>{abs_anyval};
+    auto anyabs_anymax =
+        abs_vs.max(); // returns std::any of type_erased_value
+                      // cast underlying std::any of type_erased_value of std::any of T into
+                      // std::any of type_erased_value of std::any of float aware of value-set for float
+    auto anyabs_fanyval = abs_vs.template cast<T, float>(std::any{abs_anyval}, &vs_f);
+    auto anyabs_fanymax = abs_vs.template cast<T, float>(anyabs_anymax, &vs_f);
+    // dispatch on known type, find a type_erased_value, then call
+    // anyabs_fanyval.div(anyabs_fanymax) to perform division which will call
+    // the underlying value-set for float for this operation
+    auto anyabs_fanyret = abs_vs.div(anyabs_fanyval, anyabs_fanymax);
+    // convert result back into float for returning to the image
+    auto anyfret = std::any_cast<mln::type_erased_value>(anyabs_fanyret).val();
+    return std::any_cast<float>(anyfret);
+  });
+  return res;
+}
+\end{minted}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/virtual_dispatch_type_erased_value_stretch}
+  \caption{Virtual dispatch stretch algorithm with a type-erased value, pipeline to perform operations on values.}
+  \label{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}
+\end{figure}
+
+This version is verbose because we do not yet support mln::image2d<type_value_value> as a proper image type. Thus we
+need to first convert the value of type \texttt{T} into the value-set aware type-erased value type. This work is done on
+lines 8 to 12. Then on lines 13 to 20 we perform the actual work on the values. This is where the dispatch mechanic,
+whose pipeline is shown in detail in~\cref{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}, will happen.
+Finally, on lines 22 and 23, we unwrap the previously wrapped type-erased value into a float to return for the
+algorithm.
+
+
+\paragraph{Everything comes to a full circle: injecting a value-set from Python}
+
+We have seen how to write an algorithm independently from ths its underlying types on C++ side thanks to relying on an
+abstraction layer: the value-set. This enables one fundamental feature which is code injection from Python. Indeed, if
+we suppose every python value is a \texttt{pybind11::object}, which is the generic way to refer to a
+non-trivially-convertible Python type we can write a value-set handling this value type. The value-set handling python
+data-type would then provide the following interface:
+
+\begin{minted}[linenos,highlightlines={4,8,10,15-17,21-23,27}]{C++}
 template <>
-struct value_set<pybind11::object> {
-value_set(pybind11::object python_vs_instance)
-  : vs_instance_(python_vs_instance)
-{}
+struct value_set<pybind11::object> : abstract_value_set
+{
+  value_set(pybind11::object python_vs_instance): vs_instance_(python_vs_instance) {}
+  ~value_set() override {}
 
-template <typename U>
-pybind11::object cast(pybind11::object v) const {
-  return static_cast<U>(vs_instance_.attr("cast")(v, get_python_type<U>()));
-}
+  template <typename U>
+  std::any cast(const std::any& v) const { /* ... */ }
 
-pybind11::object max() const {
-  return vs_instance_.attr("max")();
-}
-pybind11::object min() const {
-  return vs_instance_.attr("min")();
-}
-/* ... */
+  std::any max() const override { {vs_instance_.attr("max")()}; }
+  /* min, sup, inf, ... */
 
-pybind11::object add(pybind11::object l, pybind11::object r) const {
-  return vs_instance_.attr("add")(l, r);
-}
-pybind11::object sub(pybind11::object l, pybind11::object r) const {
-  return vs_instance_.attr("sub")(l, r);
-}
-/* ... */
-
+  std::any add(const std::any& l, const std::any& r) const override
+  {
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("add")(pyl, pyr)};
+  }
+  std::any div(const std::any& l, const std::any& r) const override
+  {
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("div")(pyl, pyr)};
+  }
+  /* max, min, sub, mult, ... */
 private:
   pybind11::object vs_instance_;
 };
 \end{minted}
 
-In this code we can clearly see that line 27 we are storing our Python's value-set instance into our class. This is
-possible due to the fact that our value-set abstraction is not providing static class function but member function.
-Hence, it is possible to offload the work of the value-set to a member variable at lines 11, 14, 19 and 22 that will
-call the Python's value-set and get the wanted result. Also, at line 7 we use multiples techniques at once to get the
-correct resulting cast from a Python type. First we call a function \texttt{get\_python\_type} that will return a string
-containing the python-compatible representation of the resulting type we want to cast the variable into. This function
-can be implemented with the C++ facilites contained in the \texttt{typeinfo} header such as the \texttt{typeid} operator
-and the \texttt{std::type\_index} helper class as in the following code:
-
-\begin{minted}{C++}
-#include <cinttypes>
-#include <string>
-#include <typeinfo>
-
-template <class U>
-std::string get_python_type() {
-  // C++ type -> Python type
-  static std::unordered_map<std::type_index, std::string> type_names {
-    { std::type_index(typeid(bool{})),          "bool"  },
-    { std::type_index(typeid(int8_t{})),        "int"   },
-    { std::type_index(typeid(int16_t{})),       "int"   },
-    { std::type_index(typeid(int32_t{})),       "int"   },
-    { std::type_index(typeid(int64_t{})),       "int"   },
-    { std::type_index(typeid(uint8_t{})),       "int"   },
-    { std::type_index(typeid(uint16_t{})),      "int"   },
-    { std::type_index(typeid(uint32_t{})),      "int"   },
-    { std::type_index(typeid(uint64_t{})),      "int"   },
-    { std::type_index(typeid(float{})),         "float" },
-    { std::type_index(typeid(double{})),        "float" },
-    { std::type_index(typeid((char*){})),       "str"   },
-    { std::type_index(typeid((const char*){})), "str"   },
-    { std::type_index(typeid(std::string{})),   "str"   }
-  };
-  return type_names[std::type_index(typeid(U{}))];
-}
-\end{minted}
-
-This code perform the conversion between the type information extracted from \texttt{U} with \texttt{typeid} which is
-compiler specific and the corresponding Python type in order to very easily perform the type-cast on the Python side.
+In this code we can clearly see at lines 4 and 27 that we are storing our Python's value-set instance into our class.
+This is possible due to the fact that our value-set abstraction is not providing static class function but member
+function. Hence, it is possible to offload the work of the value-set to a member variable at lines 10, 15-17 and 21-23
+that will call the Python's value-set and get the wanted result. Also, at line 8 we use multiples techniques at once to
+get the correct resulting cast from a Python type. Indeed, the cast is done on Python side before being casted back into
+the corresponding C++ type. As such, we have to translate the wanted C++ type information into Python type information
+to request the cast. Once the cast is done, we need to unwrap the python type into the corresponding C++ type and rewrap
+it into our, now favorite, \textt{std::any}. The full implementation of this facility is given
+in~\cref{appendix:static-dynamic-bridge.mm.vs.py_value_set.hpp}.
 
 On this particular matter, the user will find a Python abstract class to implement in order for his value-set to be
 usable by the library. This abstract class is defined by the following Python code:
@@ -851,6 +845,8 @@ class AbstractValueSet(ABC):
 This abstract class provide a facility to cast a value into a given type from its representation as a string. It also
 provides default / standard way of computing values. Those methods needs to be overridden by a child class as they are
 all tagged with the \texttt{@abstractmethod} attribute.
+
+\FIXME{TODO, finish this part.}
 
 Now, let us make our own custom Python data structure containing a value. Let us name our class \texttt{MyStruct} as in
 the following code:
@@ -928,13 +924,19 @@ the C++ side when time comes to write production code.
 
 \section{Performances \& overhead}
 
+% Native value-set with native C++ value-type: 0.0093sec
+% Value-set with virtual dispatch with native C++ value-type: 0.1213sec
+% Value-set with virtual dispatch with C++ type-erased values: 1.0738sec
+% Injected Python value-set with native C++ value-type: 21.5444sec
+
 \begin{table}[htbp]
   \begin{tabular}{l|ccc}
     \toprule
-    Dispatch type                                      & Compute Time & $\Delta{}$Compute Time \\ \midrule
-    No dispatch (optimized C++, baseline)              & $0.0095s$    & $0$                    \\
-    C++ virtual dispatch (type-erased value-set)       & $0.1529s$    & $*16$                  \\
-    C++ virtual dispatch (injected Python's value-set) & $20.9870s$   & $*2208$                \\
+    Dispatch type                                               & Compute Time & $\Delta{}$Compute Time \\ \midrule
+    Native value-set with native C++ value-type                 & $0.0093s$    & $0$                    \\
+    Value-set with virtual dispatch with native C++ value-type  & $0.1213s$    & $\times 13$            \\
+    Value-set with virtual dispatch with C++ type-erased values & $1.0738s$    & $\times 115$           \\
+    Injected Python value-set with native C++ value-type        & $21.5444s$   & $\times 2316$          \\
     \bottomrule
   \end{tabular}
   \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average

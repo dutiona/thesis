@@ -994,7 +994,7 @@ namespace detail
 \begin{minted}{c++}
 namespace details
 {
-    
+
   struct IndexableImage : Image
   {
     using index_type = int;
@@ -1121,7 +1121,7 @@ namespace detail
 
 \paragraph{Archetype code}
 \begin{minted}{C++}
-namespace details {  
+namespace details {
   struct OutputAccessibleImage : OutputImage
   {
     using accessible    = std::true_type;
@@ -1332,7 +1332,7 @@ using WritableIndexableAndAccessibleImage = details::AsImage<details::OutputInde
       WritableImage<I> &&
       BidirectionalImage<I>;
   } // namespace detail
-  
+
   // RawImage (not contiguous, stride = padding)
   template <typename I>
   concept RawImage =
@@ -1868,14 +1868,14 @@ concept Neighborhood =
        std::ranges::iterator_range<Pix*> before(Pix px);
        std::ranges::iterator_range<Pix*> after(Pix px);
     };
-  
+
     template <class N>
     struct AsNeighborhood : N, mln::details::Neighborhood<AsNeighborhood<N>>
     {
     };
-  
+
   } // namespace details
-  
+
   template <class P = Point, class Pix = PixelT<P>>
   using Neighborhood = details::AsSE<details::Neighborhood<P, Pix>>;
 \end{minted}
@@ -2157,7 +2157,7 @@ namespace details {
       bool fit(mln::archetypes::StructuringElement<image_point_t<Image>, mln::archetypes::Pixel> se) const;
       int extent() const;
     };
-  
+
     using extension_type = Extension;
 
     using extension_category = mln::extension::custom_extension_tag;

@@ -89,7 +89,7 @@ arguments. Indeed, in order to perform the alpha blending transformation on the 
 do is:
 \begin{minted}{C++}
   auto ima1, ima2 = /* ... */;
-  auto ima_blended = alphablend(ima1, ima2, 0.2); 
+  auto ima_blended = alphablend(ima1, ima2, 0.2);
 \end{minted}
 If the user wants to restrict the region to be blended, or the color channel to work on, he just has to write the
 following modification:
@@ -608,9 +608,9 @@ template <class ValueType>
 struct FillExt {
   using support_fill = std::true_type; // Support the fill policy
   bool is_fill_supported() const { return true; }
-  
+
   using value_type = ValueType;        // Underlying value_type
-  
+
   // Always fit structuring element of any size
   template <class StructuringElement>
   bool fit(const StructuringElement& se) const { return true; }
@@ -780,7 +780,7 @@ template <class Ima, class SE, class BM>
 local_algorithm(Ima ima, SE se, BM bm)
 {
   auto [managed_ima, managed_se] = bm.manage(ima, se);
-  std::visit([&](auto&& ima_, auto&& se_) { 
+  std::visit([&](auto&& ima_, auto&& se_) {
     // use ima_ & se_ in loop
     }, managed_ima, managed_se);
 }

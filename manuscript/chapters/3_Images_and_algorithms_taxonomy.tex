@@ -623,7 +623,7 @@ def dilate(img, out, se):
 
   def before_inner_loop(img, out, pnt):
     out(pnt) = img(pnt)
-  
+
   def inner_loop(ipix, opix, nx):
     out(pnt) = max(out(pnt), img(nx))
 
@@ -780,10 +780,10 @@ callback event we have identified:
   \item after exiting outer loop (iteration over the image is over)
 \end{enumerate}
 \begin{minted}{C++}
-template <class In, class Out, class SE, class T, class BeforeOuterLoopCB, 
+template <class In, class Out, class SE, class T, class BeforeOuterLoopCB,
           class BeforeInnerLoopCB, class InnerLoopCB class AfterInnerLoopCB,
           class AfterOuterLoopCB>
-auto local_accumulate(In input, Out output, SE se, T init, 
+auto local_accumulate(In input, Out output, SE se, T init,
                       BeforeOuterLoopCB bolCB, BeforeInnerLoopCB bilCB,
                       InnerLoopCB ilCB, AfterInnerLoopCB ailCB,
                       AfterOuterLoopCB aolCB)

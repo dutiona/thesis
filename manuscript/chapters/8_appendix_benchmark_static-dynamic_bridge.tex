@@ -8,6 +8,7 @@
 Here is the code of the ndimage module, including the helpers for the type conversion.
 
 \paragraph{ndimage.hpp}
+\label{appendix:static-dynamic-bridge.ndimage.hpp}
 
 \begin{minted}{C++}
 #include <mln/core/image/ndbuffer_image.hpp>
@@ -48,6 +49,7 @@ namespace pybind11::detail
 \end{minted}
 
 \paragraph{ndimage.cpp}
+\label{appendix:static-dynamic-bridge.ndimage.cpp}
 
 \begin{minted}{C++}
 #include "ndimage.hpp"
@@ -238,6 +240,7 @@ namespace mln::py
 Here is the code of the structuring element module. This module defines what structuring elements available from Python.
 
 \paragraph{se.hpp}
+\label{appendix:static-dynamic-bridge.se.hpp}
 
 \begin{minted}{C++}
 #include <pybind11/pybind11.h>
@@ -252,6 +255,7 @@ namespace mln::py
 \end{minted}
 
 \paragraph{se.cpp}
+\label{appendix:static-dynamic-bridge.se.cpp}
 
 \begin{minted}{C++}
 #include "se.hpp"
@@ -301,6 +305,7 @@ algorithms.
 \label{appendix:static-dynamic-bridge.mm.nndispatcher}
 
 \paragraph{visit.hpp}
+\label{appendix:static-dynamic-bridge.mm.nndispatcher.visit.hpp}
 
 \begin{minted}{C++}
 #include <mln/core/image/ndimage.hpp>
@@ -384,13 +389,14 @@ namespace mln::py
 \label{appendix:static-dynamic-bridge.mm.vs}
 
 \paragraph{value\_set.hpp}
+\label{appendix:static-dynamic-bridge.mm.vs.value_set.hpp}
 
 \begin{minted}{C++}
 #include <algorithm>
 #include <any>
+#include <cassert>
 #include <cmath>
 #include <limits>
-#include <string_view>
 #include <type_traits>
 #include <utility>
 
@@ -512,6 +518,8 @@ namespace mln
 
   struct abstract_value_set
   {
+    virtual ~abstract_value_set() {}
+
     /*
     template <class U>
     virtual std::any cast(std::any v) const = 0;
@@ -525,19 +533,21 @@ namespace mln
     virtual std::any plus(const std::any& v) const  = 0;
     virtual std::any minus(const std::any& v) const = 0;
 
-    virtual std::any max(std::any l, std::any r) const  = 0;
-    virtual std::any min(std::any l, std::any r) const  = 0;
-    virtual std::any add(std::any l, std::any r) const  = 0;
-    virtual std::any sub(std::any l, std::any r) const  = 0;
-    virtual std::any mult(std::any l, std::any r) const = 0;
-    virtual std::any div(std::any l, std::any r) const  = 0;
-    // virtual std::any mod(std::any l, std::any r) const  = 0;
-    virtual std::any pow(std::any l, std::any r) const = 0;
+    virtual std::any max(const std::any& l, const std::any& r) const  = 0;
+    virtual std::any min(const std::any& l, const std::any& r) const  = 0;
+    virtual std::any add(const std::any& l, const std::any& r) const  = 0;
+    virtual std::any sub(const std::any& l, const std::any& r) const  = 0;
+    virtual std::any mult(const std::any& l, const std::any& r) const = 0;
+    virtual std::any div(const std::any& l, const std::any& r) const  = 0;
+    virtual std::any mod(const std::any& l, const std::any& r) const  = 0;
+    virtual std::any pow(const std::any& l, const std::any& r) const = 0;
   };
 
   template <typename T>
   struct concrete_value_set : abstract_value_set
   {
+    ~concrete_value_set() override {}
+
     template <class U>
     std::any cast(std::any v) const /* override */
     {
@@ -552,70 +562,503 @@ namespace mln
     std::any plus(const std::any& v) const override { return {+std::any_cast<T>(v)}; };
     std::any minus(const std::any& v) const override { return {-std::any_cast<T>(v)}; };
 
-    std::any max(std::any l, std::any r) const override
+    std::any max(const std::any& l, const std::any& r) const override
     {
       return {std::max(std::any_cast<T>(l), std::any_cast<T>(r))};
-    };
-    std::any min(std::any l, std::any r) const override
+    }
+    std::any min(const std::any& l, const std::any& r) const override
     {
       return {std::min(std::any_cast<T>(l), std::any_cast<T>(r))};
-    };
-    std::any add(std::any l, std::any r) const override { return {std::any_cast<T>(l) + std::any_cast<T>(r)}; };
-    std::any sub(std::any l, std::any r) const override { return {std::any_cast<T>(l) - std::any_cast<T>(r)}; };
-    std::any mult(std::any l, std::any r) const override { return {std::any_cast<T>(l) * std::any_cast<T>(r)}; };
-    std::any div(std::any l, std::any r) const override { return {std::any_cast<T>(l) / std::any_cast<T>(r)}; };
-    /*std::any mod(std::any l, std::any r) const override
+    }
+    std::any add(const std::any& l, const std::any& r) const override
+    {
+      return {std::any_cast<T>(l) + std::any_cast<T>(r)};
+    }
+    std::any sub(const std::any& l, const std::any& r) const override
+    {
+      return {std::any_cast<T>(l) - std::any_cast<T>(r)};
+    }
+    std::any mult(const std::any& l, const std::any& r) const override
+    {
+      return {std::any_cast<T>(l) * std::any_cast<T>(r)};
+    }
+    std::any div(const std::any& l, const std::any& r) const override
+    {
+      return {std::any_cast<T>(l) / std::any_cast<T>(r)};
+    }
+    std::any mod(const std::any& l, const std::any& r) const override
     {
       return {std::any_cast<T>(l) % std::any_cast<T>(r)};
-    };*/
-    std::any pow(std::any l, std::any r) const override
+    }
+    std::any pow(const std::any& l, const std::any& r) const override
     {
       return {std::pow(std::any_cast<T>(l), std::any_cast<T>(r))};
-    };
+    }
+  };
+
+  struct type_erased_value
+  {
+    type_erased_value(const std::any& v, const abstract_value_set& vs);
+
+    const std::any&       val() const;
+    const std::type_info& tid() const;
+
+    template <typename From, typename To>
+    type_erased_value cast(abstract_value_set* new_vs = nullptr) const
+    {
+      assert(typeid(From) == tid());
+      auto new_val = std::any{static_cast<To>(std::any_cast<From>(v_))};
+      return {new_val, new_vs != nullptr ? *new_vs : *vs_};
+    }
+
+    type_erased_value max() const;
+    type_erased_value min() const;
+    type_erased_value sup() const;
+    type_erased_value inf() const;
+
+    type_erased_value plus() const;
+    type_erased_value minus() const;
+
+    type_erased_value max(const type_erased_value& rhs) const;
+    type_erased_value min(const type_erased_value& rhs) const;
+    type_erased_value add(const type_erased_value& rhs) const;
+    type_erased_value sub(const type_erased_value& rhs) const;
+    type_erased_value mult(const type_erased_value& rhs) const;
+    type_erased_value div(const type_erased_value& rhs) const;
+    type_erased_value mod(const type_erased_value& rhs) const;
+    type_erased_value pow(const type_erased_value& rhs) const;
+
+  private:
+    std::any                  v_;
+    const abstract_value_set* vs_;
+  };
+
+  template <>
+  struct value_set<type_erased_value> : abstract_value_set
+  {
+    value_set(const type_erased_value& v);
+    ~value_set() override;
+
+    template <typename From, typename To>
+    std::any cast(const std::any& v, abstract_value_set* new_vs = nullptr) const
+    {
+      auto absv = std::any_cast<type_erased_value>(v);
+      return {absv.template cast<From, To>(new_vs)};
+    }
+
+    std::any max() const override;
+    std::any min() const override;
+    std::any sup() const override;
+    std::any inf() const override;
+
+    std::any plus(const std::any& v) const override;
+
+    std::any minus(const std::any& v) const override;
+
+    std::any max(const std::any& l, const std::any& r) const override;
+    std::any min(const std::any& l, const std::any& r) const override;
+    std::any add(const std::any& l, const std::any& r) const override;
+    std::any sub(const std::any& l, const std::any& r) const override;
+    std::any mult(const std::any& l, const std::any& r) const override;
+    std::any div(const std::any& l, const std::any& r) const override;
+    std::any mod(const std::any& l, const std::any& r) const override;
+    std::any pow(const std::any& l, const std::any& r) const override;
+
+  private:
+    const type_erased_value* v_;
   };
 } // namespace mln
 \end{minted}
 
-\paragraph{py\_value\_set.hpp}
+\paragraph{value\_set.cpp}
+\label{appendix:static-dynamic-bridge.mm.vs.value_set.cpp}
 
 \begin{minted}{C++}
 #include <mln/core/value/value_set.hpp>
-#include <pybind11/pybind11.h>
 
+#include <algorithm>
+#include <any>
 #include <cinttypes>
-#include <memory>
-#include <string>
-#include <string_view>
+#include <cmath>
+#include <limits>
+#include <optional>
+#include <type_traits>
 #include <typeinfo>
+#include <variant>
+
+
+namespace details
+{
+
+
+  template <class... Args>
+  auto any_to_variant_cast(std::any a) -> std::optional<std::variant<Args...>>
+  {
+    if (!a.has_value())
+      return std::nullopt;
+
+    std::optional<std::variant<Args...>> v = std::nullopt;
+
+    bool found = ((a.type() == typeid(Args) && (v = std::any_cast<Args>(std::move(a)), true)) || ...);
+
+    if (!found)
+      return std::nullopt;
+
+    return {std::move(*v)};
+  }
+
+  template <template <typename> class Op, typename... Args>
+  auto call_template_op_from_type_info(const std::type_info& tid) -> std::optional<std::variant<Op<Args>...>>
+  {
+    std::optional<std::variant<Op<Args>...>> v = std::nullopt;
+
+    bool found = ((tid == typeid(Args) && (v = Op<Args>{}, true)) || ...);
+
+    if (!found)
+      return std::nullopt;
+
+    return {std::move(*v)};
+  }
+
+  template <class... Ts>
+  struct type_list
+  {
+  };
+
+  template <class... Ts>
+  auto any_to_variant_cast_type_list(std::any a, type_list<Ts...>) -> std::optional<std::variant<Ts...>>
+  {
+    return any_to_variant_cast<Ts...>(a);
+  }
+
+  template <template <typename> class Op, typename... Ts>
+  auto call_template_op_from_type_info_type_list(const std::type_info& tid, type_list<Ts...>)
+      -> std::optional<std::variant<Op<Ts>...>>
+  {
+    return call_template_op_from_type_info<Op, Ts...>(tid);
+  }
+
+  using supported_types = type_list<std::uint8_t, std::uint16_t, std::uint32_t, std::uint64_t, std::int8_t,
+                                    std::int16_t, std::int32_t, std::int64_t, float, double>;
+
+  template <class T, class U, class C = std::common_type_t<T, U>>
+  C max(const T& a, const U& b)
+  {
+    return std::max(static_cast<C>(a), static_cast<C>(b));
+  }
+
+  template <class T, class U, class C = std::common_type_t<T, U>>
+  C min(const T& a, const U& b)
+  {
+    return std::min(static_cast<C>(a), static_cast<C>(b));
+  }
+
+  template <class T, class U>
+  long double pow(const T& a, const U& b)
+  {
+    return std::pow(static_cast<long double>(a), static_cast<long double>(b));
+  }
+
+} // namespace details
 
 
 namespace mln
 {
 
+  type_erased_value::type_erased_value(const std::any& v, const abstract_value_set& vs)
+    : v_(v)
+    , vs_(&vs)
+  {
+  }
+
+  const std::any&       type_erased_value::val() const { return v_; }
+  const std::type_info& type_erased_value::tid() const { return v_.type(); }
+
+  template <typename T>
+  struct limit_max
+  {
+    auto operator()() { return std::numeric_limits<T>::max(); }
+  };
+
+  type_erased_value type_erased_value::max() const
+  {
+    auto op = details::call_template_op_from_type_info_type_list<limit_max>(tid(), details::supported_types{});
+
+    auto ret = std::visit([](auto op_) -> std::any { return {op_()}; }, *op);
+    return {ret, *vs_};
+  }
+
+  template <typename T>
+  struct limit_min
+  {
+    auto operator()() { return std::numeric_limits<T>::min(); }
+  };
+
+  type_erased_value type_erased_value::min() const
+  {
+    auto op = details::call_template_op_from_type_info_type_list<limit_min>(tid(), details::supported_types{});
+
+    auto ret = std::visit([](auto op_) -> std::any { return {op_()}; }, *op);
+    return {ret, *vs_};
+  }
+
+  type_erased_value type_erased_value::sup() const
+  {
+    auto op = details::call_template_op_from_type_info_type_list<limit_max>(tid(), details::supported_types{});
+
+    auto ret = std::visit([](auto op_) -> std::any { return {op_()}; }, *op);
+    return {ret, *vs_};
+  }
+
+  type_erased_value type_erased_value::inf() const
+  {
+    auto op = details::call_template_op_from_type_info_type_list<limit_min>(tid(), details::supported_types{});
+
+    auto ret = std::visit([](auto op_) -> std::any { return {op_()}; }, *op);
+    return {ret, *vs_};
+  }
+
+  type_erased_value type_erased_value::plus() const { return {vs_->plus(v_), *vs_}; }
+  type_erased_value type_erased_value::minus() const { return {vs_->plus(v_), *vs_}; }
+
+  type_erased_value type_erased_value::max(const type_erased_value& rhs) const
+  {
+    return {vs_->max(v_, rhs.val()), *vs_};
+  }
+  type_erased_value type_erased_value::min(const type_erased_value& rhs) const
+  {
+    return {vs_->min(v_, rhs.val()), *vs_};
+  }
+  type_erased_value type_erased_value::add(const type_erased_value& rhs) const
+  {
+    return {vs_->add(v_, rhs.val()), *vs_};
+  }
+  type_erased_value type_erased_value::sub(const type_erased_value& rhs) const
+  {
+    return {vs_->sub(v_, rhs.val()), *vs_};
+  }
+  type_erased_value type_erased_value::mult(const type_erased_value& rhs) const
+  {
+    return {vs_->mult(v_, rhs.val()), *vs_};
+  }
+  type_erased_value type_erased_value::div(const type_erased_value& rhs) const
+  {
+    return {vs_->div(v_, rhs.val()), *vs_};
+  }
+  type_erased_value type_erased_value::mod(const type_erased_value& rhs) const
+  {
+    return {vs_->mod(v_, rhs.val()), *vs_};
+  }
+  type_erased_value type_erased_value::pow(const type_erased_value& rhs) const
+  {
+    return {vs_->pow(v_, rhs.val()), *vs_};
+  }
+
+
+  value_set<type_erased_value>::value_set(const type_erased_value& v)
+    : v_(&v)
+  {
+  }
+
+  value_set<type_erased_value>::~value_set() {}
+
+  std::any value_set<type_erased_value>::max() const { return {v_->max()}; }
+  std::any value_set<type_erased_value>::min() const { return {v_->min()}; }
+  std::any value_set<type_erased_value>::sup() const { return {v_->sup()}; }
+  std::any value_set<type_erased_value>::inf() const { return {v_->inf()}; }
+
+  std::any value_set<type_erased_value>::plus(const std::any& v) const
+  {
+
+    auto va = details::any_to_variant_cast_type_list(v, details::supported_types{});
+    if (va)
+      return {std::visit([](auto _v) -> std::any { return {+_v}; }, *va)};
+    else
+    {
+      auto absv = std::any_cast<type_erased_value>(v);
+      return {absv.plus()};
+    }
+  }
+
+  std::any value_set<type_erased_value>::minus(const std::any& v) const
+  {
+    auto va = details::any_to_variant_cast_type_list(v, details::supported_types{});
+    if (va)
+      return {std::visit([](auto _v) -> std::any { return {-_v}; }, *va)};
+    else
+    {
+      auto absv = std::any_cast<type_erased_value>(v);
+      return {absv.minus()};
+    }
+  }
+
+  std::any value_set<type_erased_value>::max(const std::any& l, const std::any& r) const
+  {
+    auto lhs = details::any_to_variant_cast_type_list(l, details::supported_types{});
+    auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
+
+    if (lhs && rhs)
+      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {details::max(lhs_, rhs_)}; }, *lhs, *rhs)};
+    else
+    {
+      auto absl = std::any_cast<type_erased_value>(l);
+      auto absr = std::any_cast<type_erased_value>(r);
+      return {absl.max(absr)};
+    }
+  }
+
+  std::any value_set<type_erased_value>::min(const std::any& l, const std::any& r) const
+  {
+    auto lhs = details::any_to_variant_cast_type_list(l, details::supported_types{});
+    auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
+
+    if (lhs && rhs)
+      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {details::min(lhs_, rhs_)}; }, *lhs, *rhs)};
+    else
+    {
+      auto absl = std::any_cast<type_erased_value>(l);
+      auto absr = std::any_cast<type_erased_value>(r);
+      return {absl.min(absr)};
+    }
+  }
+
+  std::any value_set<type_erased_value>::add(const std::any& l, const std::any& r) const
+  {
+    auto lhs = details::any_to_variant_cast_type_list(l, details::supported_types{});
+    auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
+
+    if (lhs && rhs)
+      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ + rhs_}; }, *lhs, *rhs)};
+    else
+    {
+      auto absl = std::any_cast<type_erased_value>(l);
+      auto absr = std::any_cast<type_erased_value>(r);
+      return {absl.add(absr)};
+    }
+  }
+
+  std::any value_set<type_erased_value>::sub(const std::any& l, const std::any& r) const
+  {
+    auto lhs = details::any_to_variant_cast_type_list(l, details::supported_types{});
+    auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
+
+    if (lhs && rhs)
+      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ - rhs_}; }, *lhs, *rhs)};
+    else
+    {
+      auto absl = std::any_cast<type_erased_value>(l);
+      auto absr = std::any_cast<type_erased_value>(r);
+      return {absl.sub(absr)};
+    }
+  }
+
+  std::any value_set<type_erased_value>::mult(const std::any& l, const std::any& r) const
+  {
+    auto lhs = details::any_to_variant_cast_type_list(l, details::supported_types{});
+    auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
+
+    if (lhs && rhs)
+      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ * rhs_}; }, *lhs, *rhs)};
+    else
+    {
+      auto absl = std::any_cast<type_erased_value>(l);
+      auto absr = std::any_cast<type_erased_value>(r);
+      return {absl.mult(absr)};
+    }
+  }
+
+  std::any value_set<type_erased_value>::div(const std::any& l, const std::any& r) const
+  {
+    auto lhs = details::any_to_variant_cast_type_list(l, details::supported_types{});
+    auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
+
+    if (lhs && rhs)
+      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ / rhs_}; }, *lhs, *rhs)};
+    else
+    {
+      auto absl = std::any_cast<type_erased_value>(l);
+      auto absr = std::any_cast<type_erased_value>(r);
+      return {absl.div(absr)};
+    }
+  }
+
+  std::any value_set<type_erased_value>::mod(const std::any& l, const std::any& r) const
+  {
+    auto lhs = details::any_to_variant_cast_type_list(l, details::supported_types{});
+    auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
+
+    if (lhs && rhs)
+      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ % rhs_}; }, *lhs, *rhs)};
+    else
+    {
+      auto absl = std::any_cast<type_erased_value>(l);
+      auto absr = std::any_cast<type_erased_value>(r);
+      return {absl.mod(absr)};
+    }
+  }
+
+  std::any value_set<type_erased_value>::pow(const std::any& l, const std::any& r) const
+  {
+    auto lhs = details::any_to_variant_cast_type_list(l, details::supported_types{});
+    auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
+
+    if (lhs && rhs)
+      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {details::pow(lhs_, rhs_)}; }, *lhs, *rhs)};
+    else
+    {
+      auto absl = std::any_cast<type_erased_value>(l);
+      auto absr = std::any_cast<type_erased_value>(r);
+      return {absl.pow(absr)};
+    }
+  }
+
+} // namespace mln
+\end{minted}
+
+\paragraph{py\_value\_set.hpp}
+\label{appendix:static-dynamic-bridge.mm.vs.py_value_set.hpp}
+
+\begin{minted}{C++}
+#include <mln/core/value/value_set.hpp>
+#include <pybind11/pybind11.h>
+
+#include <any>
+#include <cinttypes>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <typeinfo>
+#include <variant>
+
+
+namespace mln
+{
   template <>
-  struct value_set<pybind11::object>
+  struct value_set<pybind11::object> : abstract_value_set
   {
     value_set(pybind11::object python_vs_instance);
 
+    ~value_set() override;
+
     template <typename U>
-    std::unique_ptr<U> cast(pybind11::object v) const;
+    std::any cast(const std::any& v) const;
 
-    pybind11::object max() const noexcept;
-    pybind11::object min() const noexcept;
-    pybind11::object sup() const noexcept;
-    pybind11::object inf() const noexcept;
+    std::any max() const override;
+    std::any min() const override;
+    std::any sup() const override;
+    std::any inf() const override;
 
-    pybind11::object plus(pybind11::object v) const;
-    pybind11::object minus(pybind11::object v) const;
+    std::any plus(const std::any& v) const override;
+    std::any minus(const std::any& v) const override;
 
-    pybind11::object max(pybind11::object l, pybind11::object r) const noexcept;
-    pybind11::object min(pybind11::object l, pybind11::object r) const noexcept;
-    pybind11::object add(pybind11::object l, pybind11::object r) const noexcept;
-    pybind11::object sub(pybind11::object l, pybind11::object r) const noexcept;
-    pybind11::object mult(pybind11::object l, pybind11::object r) const noexcept;
-    pybind11::object div(pybind11::object l, pybind11::object r) const noexcept;
-    pybind11::object mod(pybind11::object l, pybind11::object r) const noexcept;
-    pybind11::object pow(pybind11::object l, pybind11::object r) const noexcept;
+    std::any max(const std::any& l, const std::any& r) const override;
+    std::any min(const std::any& l, const std::any& r) const override;
+    std::any add(const std::any& l, const std::any& r) const override;
+    std::any sub(const std::any& l, const std::any& r) const override;
+    std::any mult(const std::any& l, const std::any& r) const override;
+    std::any div(const std::any& l, const std::any& r) const override;
+    std::any mod(const std::any& l, const std::any& r) const override;
+    std::any pow(const std::any& l, const std::any& r) const override;
 
   private:
     pybind11::object vs_instance_;
@@ -655,32 +1098,29 @@ namespace details
 namespace mln
 {
   template <typename U>
-  std::unique_ptr<U> value_set<pybind11::object>::cast(pybind11::object v) const
+  std::any value_set<pybind11::object>::cast(const std::any& v) const
   {
+    pybind11::object v_ = std::any_cast<pybind11::object>(v);
     // if constexpr (std::is_arithmetic_v<U>) // bool, signed/unsigned int, floating point
     if constexpr (std::is_same_v<U, bool>) // bool
     {
-      pybind11::bool_ pyv  = vs_instance_.attr("cast")(v, ::details::get_python_type<U>());
-      bool            cppv = static_cast<U>(pyv);
-      return std::make_unique<bool>(cppv);
+      pybind11::bool_ pyv = vs_instance_.attr("cast")(v_, ::details::get_python_type<U>());
+      return {static_cast<U>(pyv)};
     }
     else if constexpr (std::is_integral_v<U>) // signed/unsigned int
     {
-      pybind11::int_ pyv  = vs_instance_.attr("cast")(v, ::details::get_python_type<U>());
-      U              cppv = static_cast<U>(pyv);
-      return std::make_unique<U>(cppv);
+      pybind11::int_ pyv = vs_instance_.attr("cast")(v_, ::details::get_python_type<U>());
+      return {static_cast<U>(pyv)};
     }
     else if constexpr (std::is_floating_point_v<U>) // floating point
     {
-      pybind11::float_ pyv  = vs_instance_.attr("cast")(v, ::details::get_python_type<U>());
-      U                cppv = static_cast<U>(pyv);
-      return std::make_unique<U>(cppv);
+      pybind11::float_ pyv = vs_instance_.attr("cast")(v_, ::details::get_python_type<U>());
+      return {static_cast<U>(pyv)};
     }
     else
     {
       pybind11::object ret = vs_instance_.attr("cast")(v, ::details::get_python_type<U>());
-      auto             ptr = std::unique_ptr<U>(ret.cast<U*>());
-      return ptr;
+      return {*(ret.cast<U*>())};
     }
   }
 
@@ -688,10 +1128,12 @@ namespace mln
 \end{minted}
 
 \paragraph{py\_value\_set.cpp}
+\label{appendix:static-dynamic-bridge.mm.vs.py_value_set.cpp}
 
 \begin{minted}{C++}
 #include "py_value_set.hpp"
 
+#include <any>
 
 namespace mln
 {
@@ -701,61 +1143,86 @@ namespace mln
   {
   }
 
-  pybind11::object value_set<pybind11::object>::max() const noexcept { return vs_instance_.attr("max")(); }
-
-  pybind11::object value_set<pybind11::object>::min() const noexcept { return vs_instance_.attr("min")(); }
-
-  pybind11::object value_set<pybind11::object>::sup() const noexcept { return vs_instance_.attr("sup")(); }
-
-  pybind11::object value_set<pybind11::object>::inf() const noexcept { return vs_instance_.attr("inf")(); }
-
-
-  pybind11::object value_set<pybind11::object>::plus(pybind11::object v) const { return vs_instance_.attr("plus")(v); }
-
-  pybind11::object value_set<pybind11::object>::minus(pybind11::object v) const
+  value_set<pybind11::object>::~value_set()
   {
-    return vs_instance_.attr("minus")(v);
+  }
+
+  std::any value_set<pybind11::object>::max() const { return {vs_instance_.attr("max")()}; }
+
+  std::any value_set<pybind11::object>::min() const { return {vs_instance_.attr("min")()}; }
+
+  std::any value_set<pybind11::object>::sup() const { return {vs_instance_.attr("sup")()}; }
+
+  std::any value_set<pybind11::object>::inf() const { return {vs_instance_.attr("inf")()}; }
+
+
+  std::any value_set<pybind11::object>::plus(const std::any& v) const
+  {
+    auto pyv = std::any_cast<pybind11::object>(v);
+    return {vs_instance_.attr("plus")(pyv)};
+  }
+
+  std::any value_set<pybind11::object>::minus(const std::any& v) const
+  {
+    auto pyv = std::any_cast<pybind11::object>(v);
+    return {vs_instance_.attr("minus")(pyv)};
   }
 
 
-  pybind11::object value_set<pybind11::object>::max(pybind11::object l, pybind11::object r) const noexcept
+  std::any value_set<pybind11::object>::max(const std::any& l, const std::any& r) const
   {
-    return vs_instance_.attr("max")(l, r);
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("max")(pyl, pyr)};
   }
 
-  pybind11::object value_set<pybind11::object>::min(pybind11::object l, pybind11::object r) const noexcept
+  std::any value_set<pybind11::object>::min(const std::any& l, const std::any& r) const
   {
-    return vs_instance_.attr("min")(l, r);
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("min")(pyl, pyr)};
   }
 
-  pybind11::object value_set<pybind11::object>::add(pybind11::object l, pybind11::object r) const noexcept
+  std::any value_set<pybind11::object>::add(const std::any& l, const std::any& r) const
   {
-    return vs_instance_.attr("add")(l, r);
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("add")(pyl, pyr)};
   }
 
-  pybind11::object value_set<pybind11::object>::sub(pybind11::object l, pybind11::object r) const noexcept
+  std::any value_set<pybind11::object>::sub(const std::any& l, const std::any& r) const
   {
-    return vs_instance_.attr("sub")(l, r);
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("sub")(pyl, pyr)};
   }
 
-  pybind11::object value_set<pybind11::object>::mult(pybind11::object l, pybind11::object r) const noexcept
+  std::any value_set<pybind11::object>::mult(const std::any& l, const std::any& r) const
   {
-    return vs_instance_.attr("mult")(l, r);
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("mult")(pyl, pyr)};
   }
 
-  pybind11::object value_set<pybind11::object>::div(pybind11::object l, pybind11::object r) const noexcept
+  std::any value_set<pybind11::object>::div(const std::any& l, const std::any& r) const
   {
-    return vs_instance_.attr("div")(l, r);
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("div")(pyl, pyr)};
   }
 
-  pybind11::object value_set<pybind11::object>::mod(pybind11::object l, pybind11::object r) const noexcept
+  std::any value_set<pybind11::object>::mod(const std::any& l, const std::any& r) const
   {
-    return vs_instance_.attr("mod")(l, r);
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("mod")(pyl, pyr)};
   }
 
-  pybind11::object value_set<pybind11::object>::pow(pybind11::object l, pybind11::object r) const noexcept
+  std::any value_set<pybind11::object>::pow(const std::any& l, const std::any& r) const
   {
-    return vs_instance_.attr("pow")(l, r);
+    auto pyl = std::any_cast<pybind11::object>(l);
+    auto pyr = std::any_cast<pybind11::object>(r);
+    return {vs_instance_.attr("pow")(pyl, pyr)};
   }
 
 } // namespace mln
@@ -766,6 +1233,7 @@ namespace mln
 \label{appendix:static-dynamic-bridge.mm.algos}
 
 \paragraph{morpho.hpp}
+\label{appendix:static-dynamic-bridge.mm.mropho.hpp}
 
 \begin{minted}{C++}
 #include <pybind11/pybind11.h>
@@ -780,6 +1248,7 @@ namespace mln::py
 \end{minted}
 
 \paragraph{morpho.cpp}
+\label{appendix:static-dynamic-bridge.mm.mropho.cpp}
 
 \begin{minted}{C++}
 #include "morpho.hpp"
@@ -809,13 +1278,11 @@ namespace my
   mln::image2d<float> slow_stretch(const mln::image2d<T>& src, const mln::value_set<pybind11::object>& py_vs)
   {
     mln::image2d<float> res = mln::transform(src, [&py_vs](auto val) -> float {
-      auto pymax = py_vs.max();
-      auto pyval = pybind11::cast(val);
-      auto pyret = py_vs.div(pyval, pymax);
-
-      std::unique_ptr<float> ret = py_vs.template cast<float>(pyret);
-
-      return *ret;
+      auto anymax  = py_vs.max();                        // returns std::any of pybind11:object
+      auto anyval  = std::any{pybind11::cast(val)};      // converts to std::any of pybind11::object
+      auto anyret  = py_vs.div(anyval, anymax);          // returns std::any of pybind11::object
+      auto anyfret = py_vs.template cast<float>(anyret); // returns std::any of float
+      return std::any_cast<float>(anyfret);              // returns float
     });
     return res;
   }
@@ -823,13 +1290,42 @@ namespace my
   template <class T>
   mln::image2d<float> virtual_dispatch_stretch(const mln::image2d<T>& src)
   {
-    auto                vs  = mln::concrete_value_set<T>{};
-    mln::image2d<float> res = mln::transform(src, [&vs](auto val) -> float {
-      auto max  = vs.max();
-      auto fval = vs.template cast<float>(val);
-      auto fmax = vs.template cast<float>(max);
-      auto vs_f = mln::concrete_value_set<float>{};
-      return std::any_cast<float>(vs_f.div(fval, fmax));
+    auto                vs   = mln::concrete_value_set<T>{};     // value-set for T
+    auto                vs_f = mln::concrete_value_set<float>{}; // value-set for float
+    mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
+      auto anymax  = vs.max();                                 // returns std::any
+      auto fanyval = vs.template cast<float>(val);             // cast to float in std::any
+      auto fanymax = vs.template cast<float>(anymax);          // cast to float in std::any
+      return std::any_cast<float>(vs_f.div(fanyval, fanymax)); // div returns float
+    });
+    return res;
+  }
+
+  template <class T>
+  mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2d<T>& src)
+  {
+    auto                vs   = mln::concrete_value_set<T>{};     // value-set for T
+    auto                vs_f = mln::concrete_value_set<float>{}; // value-set for float
+    mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
+      // simulate having an image<type_erased_value>
+      auto anyval = std::any{val}; // std::any of T
+                                    // type_erased_value of std::any of T aware of value-set of T
+      auto abs_anyval = mln::type_erased_value{anyval, vs};
+      // instantiate a value-set for type_erased_value
+      auto abs_vs = mln::value_set<mln::type_erased_value>{abs_anyval};
+      auto anyabs_anymax =
+          abs_vs.max(); // returns std::any of type_erased_value
+                        // cast underlying std::any of type_erased_value of std::any of T into
+                        // std::any of type_erased_value of std::any of float aware of value-set for float
+      auto anyabs_fanyval = abs_vs.template cast<T, float>(std::any{abs_anyval}, &vs_f);
+      auto anyabs_fanymax = abs_vs.template cast<T, float>(anyabs_anymax, &vs_f);
+      // dispatch on known type, find a type_erased_value, then call
+      // anyabs_fanyval.div(anyabs_fanymax) to perform division which will call
+      // the underlying value-set for float for this operation
+      auto anyabs_fanyret = abs_vs.div(anyabs_fanyval, anyabs_fanymax);
+      // convert result back into float for returning to the image
+      auto anyfret = std::any_cast<mln::type_erased_value>(anyabs_fanyret).val();
+      return std::any_cast<float>(anyfret);
     });
     return res;
   }
@@ -837,13 +1333,13 @@ namespace my
   template <class T>
   mln::image2d<float> fast_stretch(const mln::image2d<T>& src)
   {
-    auto                vs  = src.get_value_set();
-    mln::image2d<float> res = mln::transform(src, [&vs](auto val) -> float {
-      auto max  = vs.max();
-      auto fval = vs.template cast<float>(val);
-      auto fmax = vs.template cast<float>(max);
-      auto vs_f = mln::value_set<float>{};
-      return vs_f.div(fval, fmax);
+    auto                vs   = src.get_value_set();     // value-set for T
+    auto                vs_f = mln::value_set<float>{}; // fast value-set for float
+    mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
+      auto max  = vs.max();                     // returns T
+      auto fval = vs.template cast<float>(val); // returns float
+      auto fmax = vs.template cast<float>(max); // returns float
+      return vs_f.div(fval, fmax);              // div directly returns float
     });
     return res;
   }
@@ -922,6 +1418,37 @@ namespace
     }
   }
 
+  template <typename T>
+  struct stretch_virtual_dispatch_type_erased_value_operator_t
+  {
+    template <typename Img>
+    mln::ndbuffer_image operator()(Img&& img) const
+    {
+      if (auto* image_ptr = std::forward<Img>(img).template cast_to<T, 2>(); image_ptr)
+      {
+        return my::stretch_virtual_dispatch_type_erased_value(*image_ptr);
+      }
+      else
+      {
+        std::runtime_error("Unable to convert the image to the required type.");
+        return {};
+      }
+    }
+  };
+
+  mln::ndbuffer_image stretch_virtual_dispatch_type_erased_value(mln::ndbuffer_image input)
+  {
+    if (input.pdim() == 2)
+    {
+      return mln::py::visit<stretch_virtual_dispatch_type_erased_value_operator_t>(input.sample_type(), input);
+    }
+    else
+    {
+      std::runtime_error("Unsupported dimension.");
+      return {};
+    }
+  }
+
   using se_t = std::variant<mln::se::disc, mln::se::disc_non_decomp, mln::se::rect2d, mln::se::rect2d_non_decomp>;
 
   template <typename T>
@@ -973,14 +1500,18 @@ namespace mln::py
           "structuring element must be valid.",
           "Input"_a, "se"_a)
 
-        .def("stretch", stretch,
-              "Perform a morphological stretch.\n"
-              "Input"_a,
-              "vs"_a = pybind11::none())
+      .def("stretch", stretch,
+            "Perform a morphological stretch.\n"
+            "Input"_a,
+            "vs"_a = pybind11::none())
 
-        .def("stretch_virtual_dispatch", stretch_virtual_dispatch,
-              "Perform a morphological stretch.\n"
-              "Input"_a);
+      .def("stretch_virtual_dispatch", stretch_virtual_dispatch,
+            "Perform a morphological stretch.\n"
+            "Input"_a)
+
+      .def("stretch_virtual_dispatch_type_erased_value", stretch_virtual_dispatch_type_erased_value,
+            "Perform a morphological stretch.\n"
+            "Input"_a);
   }
 
 } // namespace mln::py
@@ -993,6 +1524,7 @@ namespace mln::py
 \label{appendix:static-dynamic-bridge.pylena}
 
 \paragraph{pylena.cpp}
+\label{appendix:static-dynamic-bridge.pylena.cpp}
 
 \begin{minted}{C++}
 #include "morpho.hpp"
@@ -1029,6 +1561,7 @@ The module has the following directory structure:
 \end{minted}
 
 \paragraph{BaseValueSet.py}
+\label{appendix:static-dynamic-bridge.python.vs.BaseValueSet.py}
 
 \begin{minted}{Python}
 from abc import ABC, abstractmethod
@@ -1047,22 +1580,6 @@ class AbstractValueSet(ABC):
             cls = getattr(module, type_)
             return cls(value)
         raise ValueError()
-        # int
-        # float
-        # bool
-        # str
-        # object
-        #  cls = getattr(module, type_)
-        # try:
-        #  # Check if it's a builtin type
-        #  module = importlib.import_module('builtins')
-        #  cls = getattr(module, type_)
-        # except AttributeError:
-        #  # if not, separate module and class
-        #  module, type_ = type_.rsplit(".", 1)
-        #  module = importlib.import_module(module)
-        #  cls = getattr(module, type_)
-        # return cls(value)
 
     @abstractmethod
     def max(self):
@@ -1118,6 +1635,7 @@ class AbstractValueSet(ABC):
 \end{minted}
 
 \paragraph{ExampleStruct.py}
+\label{appendix:static-dynamic-bridge.python.vs.ExampleStruct.py}
 
 \begin{minted}{Python}
 from typing import Any
@@ -1137,6 +1655,7 @@ class MyStruct:
 \end{minted}
 
 \paragraph{ExampleValueSet.py}
+\label{appendix:static-dynamic-bridge.python.vs.ExampleValueSet.py}
 
 \begin{minted}{Python}
 from ValueSetExample.ExampleStruct import MyStruct
@@ -1208,6 +1727,7 @@ class MyValueSet(AbstractValueSet):
 \end{minted}
 
 \paragraph{\_\_init\_\_.py}
+\label{appendix:static-dynamic-bridge.python.vs.__init__.py}
 
 \begin{minted}{Python}
 from ValueSetExample.BaseValueSet import AbstractValueSet
@@ -1222,6 +1742,7 @@ from ValueSetExample.ExampleValueSet import MyValueSet
 \label{appendix:static-dynamic-bridge.benchmark}
 
 \paragraph{benchmark.py}
+\label{appendix:static-dynamic-bridge.benchmark.py}
 
 \begin{minted}{Python}
 import numpy as np
@@ -1253,19 +1774,29 @@ def test_virtual_dispatch():
     return pln_ret
 
 
+def test_virtual_dispatch_type_erased_value():
+    global grayscale
+    pln_ret = pln.morpho.stretch_virtual_dispatch_type_erased_value(grayscale)
+    return pln_ret
+
+
 if __name__ == "__main__":
     print("Benchmarking static-dynamic bridge...")
     cpp_fast_ret = timeit.timeit("test_fast()", globals=locals(), number=10)
     cpp_virtual_dispatch_ret = timeit.timeit(
         "test_virtual_dispatch()", globals=locals(), number=10)
+    cpp_virtual_dispatch_type_erased_value_ret = timeit.timeit(
+        "test_virtual_dispatch_type_erased_value()", globals=locals(), number=10)
     cpp_python_vs_ret = timeit.timeit(
         "test_slow()", globals=locals(), number=10)
-    print("Benchmarking done.")
+    print("Benchmarking done...")
 
     print(
-        "Forward (no dispatch) C++ algorithm: {0:.4f}sec".format(cpp_fast_ret))
+        "Native value-set with native C++ value-type: {0:.4f}sec".format(cpp_fast_ret))
     print(
-        "Virtual dispatch C++ algorithm: {0:.4f}sec".format(cpp_virtual_dispatch_ret))
+        "Value-set with virtual dispatch with native C++ value-type: {0:.4f}sec".format(cpp_virtual_dispatch_ret))
     print(
-        "C++ algorithm with injected Python value set: {0:.4f}sec".format(cpp_python_vs_ret))
+        "Value-set with virtual dispatch with C++ type-erased values: {0:.4f}sec".format(cpp_virtual_dispatch_type_erased_value_ret))
+    print(
+        "Injected Python value-set with native C++ value-type: {0:.4f}sec".format(cpp_python_vs_ret))
 \end{minted}

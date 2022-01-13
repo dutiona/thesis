@@ -1558,6 +1558,34 @@
   year      = {1982}
 }
 
+@inproceedings{badawy.2001.locality,
+  author    = {Badawy, Abdel-Hameed A. and Aggarwal, Aneesh and Yeung, Donald and Tseng, Chau-Wen},
+  title     = {Evaluating the Impact of Memory System Performance on Software Prefetching and Locality Optimizations},
+  year      = {2001},
+  isbn      = {158113410X},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/377792.377906},
+  doi       = {10.1145/377792.377906},
+  abstract  = {Software prefetching and locality optimizations are techniques for overcoming the speed gap between
+               processor and memory. In this paper, we evaluate the impact of memory trends on the effectiveness of
+               software prefetching and locality optimizations for three types of applications: regular scientific
+               codes, irregular scientific codes, and pointer-chasing codes. We find for many applications, software
+               prefetching outperforms locality optimizations when there is sufficient memory bandwidth, but locality
+               optimizations outperform software prefetching under bandwidth-limited conditions. The break-even point
+               (for 1 Ghz processors) occurs at roughly 2.5 GBytes/sec on today's memory systems, and will increase on
+               future memory systems. We also study the interactions between software prefetching and locality
+               optimizations when applied in concert. Naively combining the techniques provides robustness to changes in
+               memory bandwidth and latency, but does not yield additional performance gains. We propose and evaluate
+               several algorithms to better integrate software prefetching and locality optimizations, including a
+               modified tiling algorithm, padding for prefetching, and index prefetching.},
+  booktitle = {Proceedings of the 15th International Conference on Supercomputing},
+  pages     = {486-500},
+  numpages  = {15},
+  location  = {Sorrento, Italy},
+  series    = {ICS '01}
+}
+
 @proceedings{kerautret.2018.rrprconf,
   editor    = {Bertrand Kerautret and Miguel Colom and Daniel Lopresti and Pascal Monasse and Hugues Talbot},
   publisher = {Springer},
@@ -1891,7 +1919,7 @@
 }
 
 @article{liskov.1993.cluart,
-  abstract   = {The idea of a data abstraction has had a significant impact on the development of programming languages 
+  abstract   = {The idea of a data abstraction has had a significant impact on the development of programming languages
                 and on programming methodology. CLU was the first implemented programming language to provide direct
                 linguistic support for data abstraction. This paper provides a history of data abstraction and CLU. CLU
                 contains a number of other interesting and influential features, including its exception handling
