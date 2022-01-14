@@ -909,7 +909,7 @@ python side as it is a \texttt{pybind11::object}. The dispatcher then forward it
 parameter. We then have actual Python call on lines 4, 6 and 7. The line 5 just wrap the image value into a python
 object so that it can then be forwarded to the python code downstream, as described in the pipeline shown
 in~\cref{fig:static_dyn.python_injected_value_set_stretch}. The line 7 cast the python type into an actual C++ type
-(wrapped into our \texcttt{std::any} wrapper). Finally, the line 8 unwrap the float for returning it to the algorithm.
+(wrapped into our \texttt{std::any} wrapper). Finally, the line 8 unwrap the float for returning it to the algorithm.
 
 
 \section{Summary and continuation}
