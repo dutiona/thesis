@@ -215,14 +215,14 @@ it has become possible to design $n*n$ dispatch without gigantic switch-case cla
 The first step of our solution consists in designing a buffer class that holds all the informations about an image:
 dimension, underlying type, strides and pointer to data buffer. This class is named \texttt{ndimage\_buffer}. When
 interfacing with Python, it is necessary to convert the Python image which is a \texttt{NumpPy.array} into our image
-type and vise versa, converting our C++ image type back into a pythonimage. The purpose of this buffer image is to holds
-all the information from the \texttt{NumpPy.array} to then instantiate a concrete C++ type. This process is illustrated
-in~\cref{fig:type-erased.buffer}. The first pitfall here is due to a limitation from the abstraction interface used in
-Python. Indeed, when using, for instance \emph{Scikit-Image}, it is not possible to differentiate a 2D multichannel
-image from a 3D grayscale image. Indeed, the image is always broken down to its most simple value and a 2D multichannel
-image is turned into a 3-dimensional \texttt{NumpPy.array} containing a single 8-bits channel, the last dimension
-contains only 3 elements at max but can theoretically contain more. Indeed, there is no limitation embed in the used
-abstraction which does not prevent that. To prevent this confusion, the C++ wrapper code may chose between two
+type and vise versa, converting our C++ image type back into a python image. The purpose of this buffer image is to
+holds all the information from the \texttt{NumpPy.array} to then instantiate a concrete C++ type. This process is
+illustrated in~\cref{fig:type-erased.buffer}. The first pitfall here is due to a limitation from the abstraction
+interface used in Python. Indeed, when using, for instance \emph{Scikit-Image}, it is not possible to differentiate a 2D
+multichannel image from a 3D grayscale image. Indeed, the image is always broken down to its most simple value and a 2D
+multichannel image is turned into a 3-dimensional \texttt{NumpPy.array} containing a single 8-bits channel, the last
+dimension contains only 3 elements at max but can theoretically contain more. Indeed, there is no limitation embed in
+the used abstraction which does not prevent that. To prevent this confusion, the C++ wrapper code may chose between two
 strategies; first is to consider all 3D/1-channel image as 2D/RGB images by default, second is to let the user give the
 information. For the sake of simplicity, we have chosen the first strategy.
 
