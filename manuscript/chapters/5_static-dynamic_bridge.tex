@@ -469,8 +469,7 @@ As common thread in this section, we will work on the morphological \emph{stretc
 followed:
 \begin{minted}{C++}
 template <class T>
-mln::image2d<float> naive_stretch(const mln::image2d<T>& src)
-{
+mln::image2d<float> naive_stretch(const mln::image2d<T>& src) {
   mln::image2d<float> res  = mln::transform(src, [](auto val) -> float {
     auto max = std::numeric_limits<T>::max();
     return static_cast<float>(val) / static_cast<float>(max);
@@ -557,8 +556,7 @@ that are the responsibility of a value-set: getting the max, performing a cast, 
 step is then to use the value set shown above to abstract away those operations. The algorithm then becomes:
 \begin{minted}[linenos,highlightlines={4-5,7,8-9,10}]{C++}
 template <class T>
-mln::image2d<float> fast_stretch(const mln::image2d<T>& src)
-{
+mln::image2d<float> fast_stretch(const mln::image2d<T>& src) {
   auto                vs   = src.get_value_set();     // value-set for T
   auto                vs_f = mln::value_set<float>{}; // fast value-set for float
   mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
@@ -635,8 +633,7 @@ type to properly perform the operation. Thanks to this implementation, we are ab
 using this value-set to perform its operations. The new algorithm now looks like this:
 \begin{minted}[linenos,highlightlines={4-5,7,8-9,10}]{C++}
 template <class T>
-mln::image2d<float> virtual_dispatch_stretch(const mln::image2d<T>& src)
-{
+mln::image2d<float> virtual_dispatch_stretch(const mln::image2d<T>& src) {
   auto                vs   = mln::concrete_value_set<T>{};     // value-set for T
   auto                vs_f = mln::concrete_value_set<float>{}; // value-set for float
   mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
@@ -713,8 +710,7 @@ write the code that will do the work.
 Thanks to this technique, we are able to write another version of our stretch algorithm, as followed:
 \begin{minted}[linenos,highlightlines={8-12,13-14,17-18,20,22,23}]{C++}
 template <class T>
-mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2d<T>& src)
-{
+mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2d<T>& src) {
   auto                vs   = mln::concrete_value_set<T>{};     // value-set for T
   auto                vs_f = mln::concrete_value_set<float>{}; // value-set for float
   mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
@@ -749,7 +745,7 @@ mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2
   \label{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}
 \end{figure}
 
-This version is verbose because we do not yet support \texttt{mln::image2d<type\_value\_value>} as a proper image type.
+This version is verbose because we do not yet support \texttt{mln::image2d<type\_erased\_value>} as a proper image type.
 Thus we need to first convert the value of type \texttt{T} into the value-set aware type-erased value type. This work is
 done on lines 8 to 12. Then on lines 13 to 20 we perform the actual work on the values. This is where the dispatch
 mechanic, whose pipeline is shown in detail in~\cref{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}, will
@@ -778,14 +774,12 @@ struct value_set<pybind11::object> : abstract_value_set
   std::any max() const override { {vs_instance_.attr("max")()}; }
   /* min, sup, inf, ... */
 
-  std::any add(const std::any& l, const std::any& r) const override
-  {
+  std::any add(const std::any& l, const std::any& r) const override {
     auto pyl = std::any_cast<pybind11::object>(l);
     auto pyr = std::any_cast<pybind11::object>(r);
     return {vs_instance_.attr("add")(pyl, pyr)};
   }
-  std::any div(const std::any& l, const std::any& r) const override
-  {
+  std::any div(const std::any& l, const std::any& r) const override {
     auto pyl = std::any_cast<pybind11::object>(l);
     auto pyr = std::any_cast<pybind11::object>(r);
     return {vs_instance_.attr("div")(pyl, pyr)};
@@ -810,12 +804,7 @@ On this particular matter, the user will find a Python abstract class to impleme
 usable by the library. This abstract class is defined by the following Python code:
 
 \begin{minted}{python}
-from abc import ABC, abstractmethod
-from typing import Any
-import math, importlib
-
 class AbstractValueSet(ABC):
-
   @abstractmethod
   def cast(self, value: Any, type_): pass
     if type_ in ["int", "float", "bool", "str"]:
@@ -824,105 +813,114 @@ class AbstractValueSet(ABC):
       return cls(value)
     else:
       raise ValueError()
-
   @abstractmethod
   def max(self): return math.inf
 
-  @abstractmethod
-  def min(self): return -math.inf
-
-  # ...
+  # ... min, sup, inf, ...
 
   @abstractmethod
   def add(self, lhs: Any, rhs: Any) -> Any: return lhs + rhs
-
   @abstractmethod
-  def sub(self, lhs: Any, rhs: Any) -> Any: return lhs - rhs
+  def div(self, lhs: Any, rhs: Any) -> Any: return lhs / rhs
 
-  # ...
+  # ... sub, mult, ...
 \end{minted}
 
 This abstract class provide a facility to cast a value into a given type from its representation as a string. It also
-provides default / standard way of computing values. Those methods needs to be overridden by a child class as they are
-all tagged with the \texttt{@abstractmethod} attribute.
+provides default/standard way of computing values. Those methods needs to be overridden by a child class as they are all
+tagged with the \texttt{@abstractmethod} attribute. The full code of this data structure is given
+in~\cref{appendix:static-dynamic-bridge.python.vs.BaseValueSet.py}.
 
-\FIXME{TODO, finish this part.}
-
-Now, let us make our own custom Python data structure containing a value. Let us name our class \texttt{MyStruct} as in
-the following code:
-
-\begin{minted}{Python}
-from typing import Any
+Let us assume our user wants to build an image whose value type are his own custom Python data structure. For the sake
+of this example, we will name this specific value type will be named~\texttt{MyStruct}. The Python structure will look
+like this:
+\begin{minted}{python}
 class MyStruct:
   v_: Any
   def __init__(self, v: Any): self.v_ = v
   def getV(self) -> Any:      return self.v_
   def setV(self, v: Any):     self.v_ = v
 \end{minted}
-
-Now we want to use this custom structure in an image we pass to the C++ library. The following Python code will not
-work:
-
-\begin{minted}{Python}
-img = np.array(
-  [MyStruct(1), MyStruct(2), MyStruct(6.5), MyStruct(3.14)],
-  ndmin=1)
-pln_img = pln.ndimage(img, is_multichannel=false)
+It is just a strong wrapper around a value with setters and getters. If we want to use this data structure as an image
+value-type and downstream it to our C++ library, we need to provide a value-set which is aware of how to handle this
+value type properly. If the user wants to write such a code:
+\begin{minted}{python}
+img = np.array([MyStruct(1), MyStruct(2), MyStruct(6.5), MyStruct(3.14)] * 10, ndmin=2)
+pln_img = pln.stretch(img) # Error, C++ does not know how to handle a value of type MyStruct
 \end{minted}
-
-Indeed, the image's value-type is a \texttt{pybind11::object} which requires the C++ code to fallback on the
-corresponding value-set specialization. However, in order to construct a value-set of that specialization, we are
-missing a parameter: the \texttt{pybind11::object} value-set offloading the work to Python. The next step is then to
-declare our custom value-set on Python side shown on the following code:
-
-\begin{minted}{Python}
-from typing import Any
-
+Then the user must provide his own value-set defined after the Python \texttt{AbstractValueSet} seen earlier. Such a
+value-set would look like this:
+\begin{minted}{python}
 class MyValueSet(AbstractValueSet):
-  def get_MyStruct_val__(self, v: Any):
+  def get_MyStruct__(self, v: Any):
     return v.getV() if isinstance(v, MyStruct) else v
-
   def cast(self, value: Any, type_):
-    return super().cast(self.get_MyStruct__(value), type_)
+    v = self.get_MyStruct__(value)
+    return super().cast(v, type_)
+  def max(self):
+    return 255
 
-  def max(self): return super().max()
-
-  def min(self): return super().min()
+  # ... min, sup, inf, ...
 
   def add(self, lhs: Any, rhs: Any) -> Any:
-    return MyStruct(super().add(self.get_MyStruct__(lhs), self.get_MyStruct__(rhs)))
+    l = self.get_MyStruct__(lhs)
+    r = self.get_MyStruct__(rhs)
+    return MyStruct(super().add(l, r))
+  def div(self, lhs: Any, rhs: Any) -> Any:
+    l = self.get_MyStruct__(lhs)
+    r = self.get_MyStruct__(rhs)
+    return MyStruct(super().div(l, r))
 
-  def sub(self, lhs: Any, rhs: Any) -> Any:
-    return MyStruct(super().sub(self.get_MyStruct__(lhs), self.get_MyStruct__(rhs)))
+  # ... sub, mult, ...
+\end{minted}
+The full code of this implementation is given in~\cref{appendix:static-dynamic-bridge.python.vs.ExampleValueSet.py}.
+With this information, we can now write the following Python code:
+\begin{minted}{python}
+img = np.array([MyStruct(1), MyStruct(2), MyStruct(6.5), MyStruct(3.14)] * 10, ndmin=2)
+pln_img = pln.stretch(img, value_set=MyValueSet()) # This works !
+\end{minted}
+And this will work finely.
+
+On the C++ side, the maintainer just needs to write another version of the stretch algorithm supporting the Python
+value-set which is shown in the following code:
+\begin{minted}[linenos,highlightlines={4,5,6,7,8}]{C++}
+template <class T>
+mln::image2d<float> slow_stretch(const mln::image2d<T>& src, const mln::value_set<pybind11::object>& py_vs) {
+  mln::image2d<float> res = mln::transform(src, [&py_vs](auto val) -> float {
+    auto anymax  = py_vs.max();                        // returns std::any of pybind11:object
+    auto anyval  = std::any{pybind11::cast(val)};      // converts to std::any of pybind11::object
+    auto anyret  = py_vs.div(anyval, anymax);          // returns std::any of pybind11::object
+    auto anyfret = py_vs.template cast<float>(anyret); // returns std::any of float
+    return std::any_cast<float>(anyfret);              // returns float
+  });
+  return res;
+}
 \end{minted}
 
-Now it is possible to write the following code:
-\begin{minted}{Python}
-  img = np.array(
-    [MyStruct(1), MyStruct(2), MyStruct(6.5), MyStruct(3.14)],
-    ndmin=1)
-  pln_img = pln.ndimage(img, is_multichannel=false, value_set=MyValueSet())
-\end{minted}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/python_injected_value_set_stretch}
+  \caption{Stretch algorithm with an injected value-set from PYthon code, pipeline to perform operations on values.}
+  \label{fig:static_dyn.python_injected_value_set_stretch}
+\end{figure}
 
-And on the C++ side there are just small trivial adaptations to do to forward the \texttt{pybind11::object} to the
-\texttt{ndimage\_from\_buffer} function so that it is then correctly forwarded into the resulting
-\texttt{mln::ndbuffer\_image}, thus accessible from any algorithms. There is another way of achieving the exact same
-result which consist of having a concrete value-set Python class inheriting an abstract value-set C++ class. This is
-rendered possible by using a trampoline on the C++ side to define a special C++ class (with macros provided by pybind).
-Afterwards, it is possible to define a Python class in Python code inheriting from the trampoline intermediate C++
-class. Then the user implement the pure virtual member function with Python code. Thanks to polymorphism, it is then
-possible to pass this child class back to a C++ function as if it was the C++ parent class. Whichever solution is
-selected, the performances remain equally bad as Python code do the work in both case.
+The \mintinline{c++}/mln::value_set<pybind11::object>/ is constructed from the passed \texttt{value\_set} argument on
+python side as it is a \texttt{pybind11::object}. The dispatcher then forward it to the algorithm as an additional
+parameter. We then have actual Python call on lines 4, 6 and 7. The line 5 just wrap the image value into a python
+object so that it can then be forwarded to the python code downstream, as described in the pipeline shown
+in~\cref{fig:static_dyn.python_injected_value_set_stretch}. The line 7 cast the python type into an actual C++ type
+(wrapped into our \texcttt{std::any} wrapper). Finally, the line 8 unwrap the float for returning it to the algorithm.
 
-Indeed, while it works and enables the user to construct \texttt{numpy.array} of custom Python type and pass them to the
-library with the corresponding value-set for it to "just work", the performance is greatly impacted. As a matter of
-fact, the computation is no longer done on the C++ side with optimized, vectorized instructions. Instead, a callback to
-Python is done in order to get the result. It is important that the user keep in mind that custom python types are be
-supported by the library by providing a value-set at the cost that the resulting performances will literally be blown
-away. This may be sufficient for prototyping and tinkering however the user must consider implementing his own type on
-the C++ side when time comes to write production code.
 
-\section{Performances \& overhead}
+\section{Summary and continuation}
+
+\subsection{Performances \& overhead}
+
+In this chapter, we have designed many solutions to solve several kind of issues. However, layering one abstraction
+layer after another, or even calling Python code does come with performance cost. This is why we have run a benchmark to
+outline the cost of our solutions. The full code of the benchmark is given
+in~\cref{appendix:static-dynamic-bridge.benchmark}. This benchmark compares the four version of our stretch algorithm.
+The result is shown in~\cref{table:static.dynamic.perfs}.
 
 % Native value-set with native C++ value-type: 0.0093sec
 % Value-set with virtual dispatch with native C++ value-type: 0.1213sec
@@ -933,19 +931,25 @@ the C++ side when time comes to write production code.
   \begin{tabular}{l|ccc}
     \toprule
     Dispatch type                                               & Compute Time & $\Delta{}$Compute Time \\ \midrule
-    Native value-set with native C++ value-type                 & $0.0093s$    & $0$                    \\
+    Native value-set with native C++ value-type (baseline)      & $0.0093s$    & $0$                    \\
     Value-set with virtual dispatch with native C++ value-type  & $0.1213s$    & $\times 13$            \\
     Value-set with virtual dispatch with C++ type-erased values & $1.0738s$    & $\times 115$           \\
     Injected Python value-set with native C++ value-type        & $21.5444s$   & $\times 2316$          \\
     \bottomrule
   \end{tabular}
-  \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average
-    computation time and memory usage of implementations with/without \emph{views} and with OpenCV as a baseline.}
+  \caption{Benchmarks of all our version of the stretch algorithm.}
   \label{table:static.dynamic.perfs}
-  %\vspace{-1em}
 \end{table}
 
-\section{JIT-based solutions: pros. and cons.}
+This benchmark shows that each time an abstraction layer is added on top of the baseline, the user must expect a
+$10\times$ slowness factor in his code performance. Also, calling Python code is immensely slower ($2300\times$ !) than
+the baseline. This renew the interest there is to recompile the templated C++ library with an additional known type than
+injecting it from Python long time running code. Being able to inject Python code ease prototyping and increase the
+speed at which the user can write his code. However the benchmark shows that this is not a viable solution once the
+prototype needs to scale to a production environment.
+
+
+\subsection{Continuation: JIT-based solutions, pros. and cons.}
 
 Our hybrid solution certainly has advantages but the huge disadvantage is the slowness of injecting our own types from
 the Python side. There exists another solution that this thesis did not have the opportunity to study in-depth. This

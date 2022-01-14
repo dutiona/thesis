@@ -1563,7 +1563,7 @@ The module has the following directory structure:
 \paragraph{BaseValueSet.py}
 \label{appendix:static-dynamic-bridge.python.vs.BaseValueSet.py}
 
-\begin{minted}{Python}
+\begin{minted}{python}
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -1637,7 +1637,7 @@ class AbstractValueSet(ABC):
 \paragraph{ExampleStruct.py}
 \label{appendix:static-dynamic-bridge.python.vs.ExampleStruct.py}
 
-\begin{minted}{Python}
+\begin{minted}{python}
 from typing import Any
 
 
@@ -1657,7 +1657,7 @@ class MyStruct:
 \paragraph{ExampleValueSet.py}
 \label{appendix:static-dynamic-bridge.python.vs.ExampleValueSet.py}
 
-\begin{minted}{Python}
+\begin{minted}{python}
 from ValueSetExample.ExampleStruct import MyStruct
 from ValueSetExample.BaseValueSet import AbstractValueSet
 
@@ -1729,7 +1729,7 @@ class MyValueSet(AbstractValueSet):
 \paragraph{\_\_init\_\_.py}
 \label{appendix:static-dynamic-bridge.python.vs.__init__.py}
 
-\begin{minted}{Python}
+\begin{minted}{python}
 from ValueSetExample.BaseValueSet import AbstractValueSet
 from ValueSetExample.ExampleStruct import MyStruct
 from ValueSetExample.ExampleValueSet import MyValueSet
@@ -1744,7 +1744,7 @@ from ValueSetExample.ExampleValueSet import MyValueSet
 \paragraph{benchmark.py}
 \label{appendix:static-dynamic-bridge.benchmark.py}
 
-\begin{minted}{Python}
+\begin{minted}{python}
 import numpy as np
 import skimage
 import timeit
