@@ -749,11 +749,11 @@ mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2
   \label{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}
 \end{figure}
 
-This version is verbose because we do not yet support mln::image2d<type_value_value> as a proper image type. Thus we
-need to first convert the value of type \texttt{T} into the value-set aware type-erased value type. This work is done on
-lines 8 to 12. Then on lines 13 to 20 we perform the actual work on the values. This is where the dispatch mechanic,
-whose pipeline is shown in detail in~\cref{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}, will happen.
-Finally, on lines 22 and 23, we unwrap the previously wrapped type-erased value into a float to return for the
+This version is verbose because we do not yet support \texttt{mln::image2d<type\_value\_value>} as a proper image type.
+Thus we need to first convert the value of type \texttt{T} into the value-set aware type-erased value type. This work is
+done on lines 8 to 12. Then on lines 13 to 20 we perform the actual work on the values. This is where the dispatch
+mechanic, whose pipeline is shown in detail in~\cref{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}, will
+happen. Finally, on lines 22 and 23, we unwrap the previously wrapped type-erased value into a float to return for the
 algorithm.
 
 
@@ -803,7 +803,7 @@ that will call the Python's value-set and get the wanted result. Also, at line 8
 get the correct resulting cast from a Python type. Indeed, the cast is done on Python side before being casted back into
 the corresponding C++ type. As such, we have to translate the wanted C++ type information into Python type information
 to request the cast. Once the cast is done, we need to unwrap the python type into the corresponding C++ type and rewrap
-it into our, now favorite, \textt{std::any}. The full implementation of this facility is given
+it into our, now favorite, \texttt{std::any}. The full implementation of this facility is given
 in~\cref{appendix:static-dynamic-bridge.mm.vs.py_value_set.hpp}.
 
 On this particular matter, the user will find a Python abstract class to implement in order for his value-set to be
