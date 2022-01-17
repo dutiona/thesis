@@ -35,7 +35,11 @@
 %\usepackage[backend=biber,style=alphabetic,sorting=ynt]{biblatex}
 %\usepackage[backend=biber,sorting=ynt,style=numeric]{biblatex}
 %\usepackage[backend=biber,sorting=ynt,style=draft,backref=true]{biblatex}
-\usepackage[backend=biber,sorting=ynt,style=numeric,backref=true]{biblatex}
+\usepackage[backend=biber,
+            defernumbers=true,
+            sorting=ynt,
+            style=numeric,
+            backref=true]{biblatex}
 
 \DeclareBibliographyCategory{cited}
 \AtEveryCitekey{\addtocategory{cited}{\thefield{entrykey}}}

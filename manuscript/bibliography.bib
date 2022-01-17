@@ -44,6 +44,14 @@
   year      = {2020}
 }
 
+@misc{amd.2013.acml-gpu,
+  author       = {AMD},
+  howpublished = {AMD},
+  note         = {Available at \url{http://developer.amd.com/wordpress/media/2013/02/ACML-GPUreadme.pdf}},
+  title        = {ACML-GPU - drop-in BLAS replacement, multi-GPUs accelerated},
+  year         = {2013}
+}
+
 @software{anaconda.2020,
   author  = {{Anaconda, Inc.}},
   date    = {2020-11-19},
@@ -168,6 +176,34 @@
   year       = {1978}
 }
 
+@inproceedings{badawy.2001.locality,
+  abstract  = {Software prefetching and locality optimizations are techniques for overcoming the speed gap between
+               processor and memory. In this paper, we evaluate the impact of memory trends on the effectiveness of
+               software prefetching and locality optimizations for three types of applications: regular scientific
+               codes, irregular scientific codes, and pointer-chasing codes. We find for many applications, software
+               prefetching outperforms locality optimizations when there is sufficient memory bandwidth, but locality
+               optimizations outperform software prefetching under bandwidth-limited conditions. The break-even point
+               (for 1 Ghz processors) occurs at roughly 2.5 GBytes/sec on today's memory systems, and will increase on
+               future memory systems. We also study the interactions between software prefetching and locality
+               optimizations when applied in concert. Naively combining the techniques provides robustness to changes in
+               memory bandwidth and latency, but does not yield additional performance gains. We propose and evaluate
+               several algorithms to better integrate software prefetching and locality optimizations, including a
+               modified tiling algorithm, padding for prefetching, and index prefetching.},
+  address   = {New York, NY, USA},
+  author    = {Badawy, Abdel-Hameed A. and Aggarwal, Aneesh and Yeung, Donald and Tseng, Chau-Wen},
+  booktitle = {Proceedings of the 15th International Conference on Supercomputing},
+  doi       = {10.1145/377792.377906},
+  isbn      = {158113410X},
+  location  = {Sorrento, Italy},
+  numpages  = {15},
+  pages     = {486-500},
+  publisher = {Association for Computing Machinery},
+  series    = {ICS '01},
+  title     = {Evaluating the Impact of Memory System Performance on Software Prefetching and Locality Optimizations},
+  url       = {https://doi.org/10.1145/377792.377906},
+  year      = {2001}
+}
+
 @inproceedings{beazley.1996.swig,
   author    = {Beazley, David M and others},
   booktitle = {Tcl/Tk Workshop},
@@ -194,7 +230,7 @@
 
 @misc{behnel.2022.cython-template,
   author       = {Behnel, S. and Bradshaw, R. and Seljebotn, D.S. and Dalcin, L.},
-  howpublished = {Readthedoc},
+  howpublished = {https://cython.readthedocs.io/en/latest},
   note         = {Available at \url{https://cython.readthedocs.io/en/latest/src/userguide/wrapping_CPlusPlus.html\#templates}},
   title        = {Using {C}++ in {C}ython > templates},
   year         = {2022}
@@ -227,6 +263,17 @@
   title     = {{GrAL}--the Grid Algorithms Library},
   volume    = {22},
   year      = {2006}
+}
+
+@article{blackford.2002.blas,
+  author  = {Blackford, L Susan and Petitet, Antoine and Pozo, Roldan and Remington, Karin and Whaley, R Clint and
+             Demmel, James and Dongarra, Jack and Duff, Iain and Hammarling, Sven and Henry, Greg and others},
+  journal = {ACM Transactions on Mathematical Software},
+  number  = {2},
+  pages   = {135--151},
+  title   = {An updated set of basic linear algebra subprograms (BLAS)},
+  volume  = {28},
+  year    = {2002}
 }
 
 @article{boehm.1984.economics,
@@ -1170,6 +1217,14 @@
   year         = {2010}
 }
 
+@misc{guennebaud.2010.eigen-cuda,
+  author       = {Ga\"{e}l Guennebaud and Beno\^{i}t Jacob and others},
+  howpublished = {http://eigen.tuxfamily.org},
+  note         = {Available at \url{https://eigen.tuxfamily.org/dox/TopicCUDA.html}},
+  title        = {Using Eigen in CUDA kernels },
+  year         = {2022}
+}
+
 @book{gulli.2017.deep,
   author    = {Gulli, Antonio and Pal, Sujit},
   publisher = {Packt Publishing Ltd},
@@ -1178,15 +1233,20 @@
 }
 
 @phdthesis{halli.2016.java-hpc,
-  url    = {http://www.theses.fr/2016GREAM047},
-  title  = {Optimisation de code pour application Java haute-performance},
-  author = {Halli, Abderrahmane Nassim},
-  year   = {2016},
-  note   = {Thèse de doctorat dirigée par Méhaut, Jean-François et Charles, Henri-Pierre Informatique Université
-            Grenoble Alpes (ComUE) 2016},
-  note   = {2016GREAM047},
-  url    = {http://www.theses.fr/2016GREAM047/document}
+  author      = {Halli, Abderrahmane Nassim},
+  hal_id      = {tel-01679740},
+  hal_version = {v1},
+  keywords    = {Jni ; Jit ; Hotspot JVM ; Performance ; Java ; Jit ; Jni ; JVM HotSpot ; Performance ; Java},
+  month       = {10},
+  note        = {Available at \url{https://tel.archives-ouvertes.fr/tel-01679740/file/HALLI_2016_archivage.pdf}},
+  number      = {2016GREAM047},
+  school      = {{Universit{\'e} Grenoble Alpes}},
+  title       = {{Optimisation de code pour application Java haute-performance}},
+  type        = {Theses},
+  url         = {https://tel.archives-ouvertes.fr/tel-01679740},
+  year        = {2016}
 }
+
 
 @inproceedings{hanus.1995.curry,
   abstract  = {Functional and logic programming are the most important declarative programming paradigms, and interest
@@ -1296,19 +1356,19 @@
   year    = {2012}
 }
 
+@inproceedings{iglberger.2012_2.blaze,
+  author    = {Klaus {Iglberger} and Georg {Hager} and Jan {Treibig} and Ulrich {R{\"u}de}},
+  booktitle = {Proceedings of the 2nd International Workshop on New Algorithms and Programming Models for the Manycore
+               Era (APMM 2012) at HPCS 2012},
+  title     = {High Performance Smart Expression Template Math Libraries},
+  year      = {2012}
+}
+
 @misc{iglberger.2012.blaze,
   author       = {Klaus {Iglberger}},
   howpublished = {https://bitbucket.org/blaze-lib},
   title        = {Blaze C++ Linear Algebra Library},
   year         = {2012}
-}
-
-@inproceedings{iglberger2012_2.blaze,
-  author    = {Klaus {Iglberger} and Georg {Hager} and Jan {Treibig} and Ulrich {R{\"u}de}},
-  booktitle = {Proceedings of the 2nd International Workshop on New Algorithms and Programming Models for the Manycore
-               Era (APMM 2012) at HPCS 2012},
-  title     = {High Performance Smart Expression Template Math Libraries},
-  year      = 2012
 }
 
 @software{imagemagick.2021,
@@ -1558,34 +1618,6 @@
   year      = {1982}
 }
 
-@inproceedings{badawy.2001.locality,
-  author    = {Badawy, Abdel-Hameed A. and Aggarwal, Aneesh and Yeung, Donald and Tseng, Chau-Wen},
-  title     = {Evaluating the Impact of Memory System Performance on Software Prefetching and Locality Optimizations},
-  year      = {2001},
-  isbn      = {158113410X},
-  publisher = {Association for Computing Machinery},
-  address   = {New York, NY, USA},
-  url       = {https://doi.org/10.1145/377792.377906},
-  doi       = {10.1145/377792.377906},
-  abstract  = {Software prefetching and locality optimizations are techniques for overcoming the speed gap between
-               processor and memory. In this paper, we evaluate the impact of memory trends on the effectiveness of
-               software prefetching and locality optimizations for three types of applications: regular scientific
-               codes, irregular scientific codes, and pointer-chasing codes. We find for many applications, software
-               prefetching outperforms locality optimizations when there is sufficient memory bandwidth, but locality
-               optimizations outperform software prefetching under bandwidth-limited conditions. The break-even point
-               (for 1 Ghz processors) occurs at roughly 2.5 GBytes/sec on today's memory systems, and will increase on
-               future memory systems. We also study the interactions between software prefetching and locality
-               optimizations when applied in concert. Naively combining the techniques provides robustness to changes in
-               memory bandwidth and latency, but does not yield additional performance gains. We propose and evaluate
-               several algorithms to better integrate software prefetching and locality optimizations, including a
-               modified tiling algorithm, padding for prefetching, and index prefetching.},
-  booktitle = {Proceedings of the 15th International Conference on Supercomputing},
-  pages     = {486-500},
-  numpages  = {15},
-  location  = {Sorrento, Italy},
-  series    = {ICS '01}
-}
-
 @proceedings{kerautret.2018.rrprconf,
   editor    = {Bertrand Kerautret and Miguel Colom and Daniel Lopresti and Pascal Monasse and Hugues Talbot},
   publisher = {Springer},
@@ -1652,18 +1684,6 @@
 }
 
 @article{kotzmann.2008.hotspot,
-  author     = {Kotzmann, Thomas and Wimmer, Christian and M\"{o}ssenb\"{o}ck, Hanspeter and Rodriguez,
-                Thomas and Russell, Kenneth and Cox, David},
-  title      = {Design of the Java HotSpot\textsuperscript{\texttrademark} Client Compiler for Java 6},
-  year       = {2008},
-  issue_date = {May 2008},
-  publisher  = {Association for Computing Machinery},
-  address    = {New York, NY, USA},
-  volume     = {5},
-  number     = {1},
-  issn       = {1544-3566},
-  url        = {https://doi.org/10.1145/1369396.1370017},
-  doi        = {10.1145/1369396.1370017},
   abstract   = {Version 6 of Sun Microsystems' Java HotSpot\textsuperscript{\texttrademark} VM ships with a redesigned
                 version of the client just-in-time compiler that includes several research results of the last years.
                 The client compiler is at the heart of the VM configuration used by default for interactive desktop
@@ -1681,12 +1701,24 @@
                 compiler are the ideal basis for experiments with new feedback-directed optimizations in a
                 production-level Java just-in-time compiler. The paper outlines research projects that add fast
                 algorithms for escape analysis, automatic object inlining, and array bounds check elimination.},
-  journal    = {ACM Trans. Archit. Code Optim.},
-  month      = {05},
+  address    = {New York, NY, USA},
   articleno  = {7},
-  numpages   = {32},
+  author     = {Kotzmann, Thomas and Wimmer, Christian and M\"{o}ssenb\"{o}ck, Hanspeter and Rodriguez,
+                Thomas and Russell, Kenneth and Cox, David},
+  doi        = {10.1145/1369396.1370017},
+  issn       = {1544-3566},
+  issue_date = {May 2008},
+  journal    = {ACM Trans. Archit. Code Optim.},
   keywords   = {deoptimization, intermediate representation, register allocation, Java, compiler,
-                just-in-time compilation, optimization}
+                just-in-time compilation, optimization},
+  month      = {05},
+  number     = {1},
+  numpages   = {32},
+  publisher  = {Association for Computing Machinery},
+  title      = {Design of the Java HotSpot\textsuperscript{\texttrademark} Client Compiler for Java 6},
+  url        = {https://doi.org/10.1145/1369396.1370017},
+  volume     = {5},
+  year       = {2008}
 }
 
 @article{kwame.2017.qualitative,
@@ -2027,7 +2059,7 @@
               resulting software systems are presented. It is shown that the object-oriented techniques rely on the
               theory of design by contract, which underlies the design of the Eiffel analysis, design, and programming
               language and of the supporting libraries, from which a number of examples are drawn. The theory of
-              contract design and the role of assertions in that theory are discussed.&lt;<ETX>&gt;</ETX>},
+              contract design and the role of assertions in that theory are discussed.},
   author   = {Meyer, B.},
   doi      = {10.1109/2.161279},
   issn     = {1558-0814},
@@ -2297,6 +2329,14 @@
   year     = {1997}
 }
 
+@misc{nvidia.2022.nvblas,
+  author       = {Nvidia},
+  howpublished = {Nvidia},
+  note         = {Available at \url{https://docs.nvidia.com/cuda/nvblas/}},
+  title        = {NVBLAS - drop-in BLAS replacement, multi-GPUs accelerated},
+  year         = {2022}
+}
+
 @inproceedings{oezkan.2017.IPlibrary,
   abstract  = {Field Programmable Gate Arrays (FPGAs) are proved to be among the most suitable architectures for image
                processing applications. However, accelerating algorithms using FPGAs is a time-consuming task and needs
@@ -2398,6 +2438,14 @@
   title     = {PyTorch: An Imperative Style, High-Performance Deep Learning Library},
   url       = {http://papers.neurips.cc/paper/9015-pytorch-an-imperative-style-high-performance-deep-learning-library.pdf},
   year      = {2019}
+}
+
+@misc{penuchot.2019.blaze-cuda,
+  author       = {Jules {Penuchot}},
+  howpublished = {Github},
+  note         = {Available at \url{https://github.com/STEllAR-GROUP/blaze_cuda}},
+  title        = {CUDA extension for Blaze.},
+  year         = {2019}
 }
 
 @article{perret.2019.higra,
@@ -2608,7 +2656,15 @@
   year      = {2019}
 }
 
-@article{sanderson.2016.armadillo,
+@misc{sanderson.2016.armadillo,
+  author       = {Sanderson, Conrad and Curtin, Ryan},
+  howpublished = {Sourceforge},
+  note         = {Available at \url{https://gitlab.com/conradsnicta/armadillo-code}},
+  title        = {Armadillo, {C}++ library for linear algebra \& scientific computing},
+  year         = {2016}
+}
+
+@article{sanderson.2016.armadillo-art,
   author    = {Sanderson, Conrad and Curtin, Ryan},
   journal   = {Journal of Open Source Software},
   number    = {2},
@@ -2618,6 +2674,38 @@
   volume    = {1},
   year      = {2016}
 }
+
+@inproceedings{sanderson.2018.armadillo-proc,
+  abstract  = {When implementing functionality which requires sparse matrices, there are numerous storage formats to
+               choose from, each with advantages and disadvantages. To achieve good performance, several formats may
+               need to be used in one program, requiring explicit selection and conversion between the formats. This can
+               be both tedious and error-prone, especially for non-expert users. Motivated by this issue, we present a
+               user-friendly sparse matrix class for the C++ language, with a high-level application programming
+               interface deliberately similar to the widely used MATLAB language. The class internally uses two main
+               approaches to achieve efficient execution: (i) a hybrid storage framework, which automatically and
+               seamlessly switches between three underlying storage formats (compressed sparse column, coordinate list,
+               Red-Black tree) depending on which format is best suited for specific operations, and (ii) template-based
+               meta-programming to automatically detect and optimise execution of common expression patterns. To
+               facilitate relatively quick conversion of research code into production environments, the class and its
+               associated functions provide a suite of essential sparse linear algebra functionality (eg., arithmetic
+               operations, submatrix manipulation) as well as high-level functions for sparse eigendecompositions and
+               linear equation solvers. The latter are achieved by providing easy-to-use abstractions of the low-level
+               ARPACK and SuperLU libraries. The source code is open and provided under the permissive Apache 2.0
+               license, allowing unencumbered use in commercial products.},
+  address   = {Cham},
+  author    = {Sanderson, Conrad
+               and Curtin, Ryan},
+  booktitle = {Mathematical Software -- ICMS 2018},
+  editor    = {Davenport, James H.
+               and Kauers, Manuel
+               and Labahn, George
+               and Urban, Josef},
+  isbn      = {978-3-319-96418-8},
+  pages     = {422--430},
+  publisher = {Springer International Publishing},
+  title     = {A User-Friendly Hybrid Sparse Matrix Class in {C}++},
+  year      = {2018}
+} 
 
 @article{sanderson.2019.practical,
   author    = {Sanderson, Conrad and Curtin, Ryan},
@@ -2648,7 +2736,7 @@
   year         = {2009}
 }
 
-@inproceeding{siek.2001.boostgraph,
+@inproceedings{siek.2001.boostgraph,
   author    = {Jeremy Siek, Lie-Quan Lee, Andrew Lumsdaine},
   publisher = {Addison-Wesley},
   title     = {The {B}oost {G}raph library},
@@ -3144,8 +3232,8 @@
 }
 
 @article{xie.improving,
-  title  = {Improving Java Virtual Machine performance with SIMD technology},
-  author = {Xie, Danke and Wang, ChernHsi Jeffrey and Schimpf, Michael}
+  author = {Xie, Danke and Wang, ChernHsi Jeffrey and Schimpf, Michael},
+  title  = {Improving Java Virtual Machine performance with SIMD technology}
 }
 
 @software{xilinx.2021.triSYCL,
