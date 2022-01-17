@@ -79,7 +79,7 @@ blending algorithm can be rewritten in terms of views entirely, as shown in~\cre
     \bigskip
     \bigskip
   \end{minipage}
-  \caption{Alpha-blending, generic implementation with views, expression tree.}
+  \caption{Alpha-blending, generic implementation with \emph{views}, expression tree.}
   \label{fig.new.alphablend}
 \end{figure}
 
@@ -340,7 +340,7 @@ concept ViewImage =
   \begin{minipage}{\linewidth}
     \includestandalone[mode=image, width=.7\linewidth]{figs/transform_thresholding}
   \end{minipage}
-  \caption{An image view performing a thresholding.}
+  \caption{An image \emph{view} performing a thresholding.}
   \label{fig.view.threshold}
 \end{figure}
 
@@ -423,7 +423,7 @@ trees are complex for the compiler to process and can induce heavy compilation t
 \begin{figure}[htb]
   \centering
   \includegraphics[width=8cm]{figs/viewAST2.pdf}
-  \caption{Abstract Syntax Tree of the types chained by the code above}
+  \caption{Abstract Syntax Tree of the types chained by the code in~\cref{fig.lazy}}
   \label{fig.viewAST}
 \end{figure}
 
@@ -451,8 +451,7 @@ in-place way of doing this computation is shown in~\cref{fig.legacy.vs.view}.
     \includegraphics[width=1.6in,align=t]{figs/blur_inplace}
   }
 
-  \caption{Comparison of a legacy and a modern pipeline using \colorbox{lightgreen}{algorithms} and
-    \colorbox{thistle}{views}.}
+  \caption{Comparison of a legacy and a modern pipeline using \emph{algorithms} (green) and \emph{views} (purple).}
   \label{fig.legacy.vs.view}
 \end{figure}
 
