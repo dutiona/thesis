@@ -1,9 +1,9 @@
 \chapter{Taxonomy of Images and Algorithms}
 \label{chap:image.algorithms.taxonomy}
 
-In this thesis, we researches how to apply all those new generic facilities from the C++ language into the Image
-processing area. This allows us to test them in a practical way on our predilection area while remembering our past
-work, both success and failures in this matter. However, as we saw in the previous chapter~\ref{chap:genericity},
+In this thesis, we have pursued research into how to apply all those new generic facilities from the C++ language into
+the Image processing area. This allows us to test them in a practical way on our predilection area while remembering our
+past work, both success and failures in this matter. However, as we saw in the previous chapter~\ref{chap:genericity},
 birthing concepts from code is something that is done in an emerging way. Henceforth, the first work will be to do an
 inventory of all existing image algorithms as well as an inventory of all image processing algorithms (both basic and
 more complex) we can think of. This way, we will notice behavior patterns emerging from similar image types or similar
@@ -471,11 +471,16 @@ implemented using low level and fast primitives such as \texttt{memset} to incre
 
 Making a full inventory of images types is not possible as there are many families of image types, each family may
 intersect with each other, images may have some particular properties at some points, those properties may appear in
-several family of image types. Furthermore, this image type inventory does not help when it comes to designing an image
-processing library. Instead, what helps is making an inventory of image processing algorithms as well as what properties
-those algorithms can leverage to speed up their execution.
+several family of image types. We can nonetheless cite a few to illustrate our points. There exists image-type whose
+values are cubical complexes~\parencite{ziou.2002.cubical-complex} or layered as hexagonal or triangular grid instead of
+square grids (such as meshes), that are represented as graphes, etc. All of those interleaves with different research
+areas (computer vision for meshes, topological classification for complex
+cells~\parencite{movn.20.cviu,allili.2001.cubical}, graph theory and hierarchy for image
+graphes~\parencite{carlinet.2014.tip,carlinet.2015.tip,perret.2019.higra}). Finally, this image type inventory does not
+help when it comes to designing an image processing library. Instead, what helps is making an inventory of image
+processing algorithms as well as what properties those algorithms can leverage to speed up their execution.
 
-By making the Inventory of image processing algorithms (limited to mathematical morphology), we distinguish three main
+By making the inventory of image processing algorithms (limited to mathematical morphology), we distinguish three main
 types of image processing algorithms. The first one are the pixel-wise algorithms. Those algorithms are the basic
 pixel-wise transformation. They are the base of any image processing toolkit. Indeed, being able to extract the green or
 red color channel of an image is mandatory. Thresholding as well as the previously seen gamma correction are such

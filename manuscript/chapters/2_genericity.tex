@@ -70,8 +70,8 @@ mathematical terms that could not include this notion of complexity. It is also 
 \emph{regular} type appears: ``Since we wish to extend semantics as well as syntax from built-in types to user types, we
 introduce the idea of regular type, which matches the built-in type semantics, thereby making our user-defined types
 behave like built-in types as well.'' Efforts were made by \citeauthor{gregor.2006.concepts-art}
-in~\parencite{gregor.2006.concepts-art} in 2006 to introduce them into C++ but it ultimately failed, and the feature was
-pulled off of the C++ standard.
+in~\parencite{gregor.2006.concepts-proc,gregor.2006.concepts-art} in 2006 to introduce them into C++ but it ultimately
+failed, and the feature was pulled off of the C++ standard.
 
 Stepanov presented \emph{Generic programming} to Backus before publishing~\parencite{stepanov.2009.elements} and Backus
 ``always knew that at some points he needed to figure out mutation into functional programming and one view of generic
@@ -114,7 +114,11 @@ those limitations and what reason motivates them is the key to understand how to
 developing new hardware and/or software support for new feature enabling more genericity.
 
 \paragraph{Genericity within programming language} is described by the ability of the language to execute a code
-statement over a large amount of data stally changed to fit the newhematically results in a reduced development and maintenance cost. Programming
+statement over a large amount of data structures~\parencite{dehnert.1998.fundamentals}, be they native (char, int, ...)
+or user defined. It is nowadays primordial for a programming language to be able to do so. Indeed, in a world where
+Information Technologies are everywhere, the amount of code written by software developers is staggering. And with it so
+is the amount of bugs and security vulnerabilities. Being able to natively have a programming language that enables to
+do \emph{more} by writing \emph{less} mathematically results in a reduced development and maintenance cost. Programming
 languages offers many ways to achieve genericity which is dependent of the language intrinsic specificities: compiled or
 interpreted, native or emulated, etc.
 
@@ -123,20 +127,20 @@ some vocabulary for the sake of comprehension. First is the notion of \emph{type
 is an attribute of data which tells the compiler or interpreter how the programmer intends to use the data. Most
 programming language support basic data types (also called primitive types) such as integer numbers, floating point
 numbers, boolean and characters (ASCII, Unicode, etc.). This data attribute defines the operation that can be done on
-the data, the meaning of the data and the way values of that type are stored in memory (heap, stack, etc.). A data type
-provides a set of values from which an expression (i.e. variable, function, etc.) may take its values. Among programming
-language, we can distinguish those who are dynamically types and those that are statically typed. Statically typed
-languages are those whose variables are declared holding a specific type. This variable cannot hold data from another
-type in the scope it is declared. Statically typed programming languages are Ada, C, C++, Java, Rust, Go, Scala.
-Dynamically types languages are those whose variables can be reassigned with a value of different type from the one it
-was initially declared to hold. The variable type is then dynamically changed to fit the new value it is holding.
-Dynamically typed programming languages are PHP, Python, JavaScript, Perl.
+the data, the meaning of the data and the size of the data in memory (the data can then be stored on the heap, stack,
+etc.). A data type provides a set of values from which an expression (i.e. variable, function, etc.) may take its
+values. Among programming language, we can distinguish those who are dynamically types and those that are statically
+typed. Statically typed languages are those whose variables are declared holding a specific type. This variable cannot
+hold data from another type in the scope it is declared. Statically typed programming languages are Ada, C, C++, Java,
+Rust, Go, Scala. Dynamically types languages are those whose variables can be reassigned with a value of different type
+from the one it was initially declared to hold. The variable type is then dynamically changed to fit the new value it is
+holding. Dynamically typed programming languages are PHP, Python, JavaScript, Perl.
 
 The consequence of being able to tell which type a variable is holding at all time (statically-typed language) is
 two-fold. For the developer, it is easier to reason about code and to spot bugs. For the compiler, it is possible to
 generate optimized binary code specific to this data type (vectorization, etc.). The consequence of being able to morph
-the type a variable can hold at run-time is mainly to serve prototyping purpose. When tweaking a Jupyter notebook, it is
-much appreciated not to be limited to a single type for each variable to be able to iterate on the prototype much
+the types a variable can hold at run-time is mainly to serve prototyping purpose. When tweaking a Jupyter notebook, it
+is much appreciated not to be limited to a single type for each variable to be able to iterate on the prototype much
 faster.
 
 In image processing, an image $Im$ is defined on a domain $\mathcal{D}$ (which contains points) by the relation $\forall
@@ -214,8 +218,8 @@ existing possibility within this space. It is all the more true when one wants e
 Genericity is not new and was first introduced in 1988 by Musser et al.~\cite{musser.1988.generic}. The main point is to
 dissociate data structures and algorithms. The more your data structures and algorithms are tied together, the less you
 will be generic and will fail to handle multiple data structures in the same algorithm. Further work has been made about
-genericity in~\cite{musser.1994.algorithm, dehnert.1998.fundamentals}. Those works highlight the notion of abstraction
-to be able to turn an algorithm tied to a data structure into a generic algorithm. Notably
+genericity in~\cite{musser.1994.algorithm,dehnert.1998.fundamentals}. Those works highlight the notion of abstraction to
+be able to turn an algorithm tied to a data structure into a generic algorithm. Notably
 in~\cite{stepanov.2009.elements}, Stepanov digs further and introduce the notion of \emph{Concepts}, which are static
 requirements about the behavior of a type, by showing how to design a generic library and its algorithms. He highlights
 the importance of having the algorithms driving the behavior requirements, and not the opposite. These works are very
@@ -470,8 +474,8 @@ currently not possible to dilate a 3D image with a 3D ball (as stated above).
 Another point to note with OpenCV is the requirement to do temporary copies (to extract data or to have working copy)
 when writing an algorithm. For instance, it is currently not possible to write a dilation algorithm operating only on
 the green channel of an RGB image. One must first extract the green channel into a single channel temporary image, blur
-that image, to finally put the result back into the original image. Generally, \FIXME{in-place?} computation is poorly
-handled in OpenCV.
+that image, to finally put the result back into the original image. Generally, in-place computation is poorly handled in
+OpenCV.
 
 \paragraph{Performance discussion} When comparing performances of the simple dilation between Matlab and OpenCV, which
 is done in~\cite{matuska.2012.bench}, shows that Matlab is very oriented toward prototyping and not toward production.
@@ -511,9 +515,9 @@ Being statically typed (at language level) has its advantages (performance, opti
 especially when interfacing with dynamic languages such as Python. Indeed, being statically typed in a dynamic world
 disqualify the library from being able to select, for instance, a new, custom structuring element, when performing a
 dilation. Indeed, all the supported structuring elements must be listed in advance and code must be compiled for each
-supported type. This induce a strong inertia when the practitioner wants to try out new things not yet supported by the
+supported type. This induces a strong inertia when the practitioner wants to try out new things not yet supported by the
 library. This also defeats the initial purpose of being generic. Indeed, one would expect a generic library to work with
-any type and not jst a specified set of pre-compiled types. Being able to break through this limit is addressed more
+any type and not just a specified set of pre-compiled types. Being able to break through this limit is addressed more
 in-depth in~\cref{chap:static_dynamic_bridge}.
 
 
@@ -848,7 +852,9 @@ Finally, let us give some call-site example to finish illustrating our point:
   fill(ima2, 255); // will dispatch over overload #2
 \end{minted}
 Here, no hard error occur. Both overload are dispatched according to the constraint built with the SFINAE construct. Now
-we can talk about \emph{constrained genericity} in C++.
+we can talk about \emph{constrained genericity} in C++. If we had an algorithm returning a value instead of performing
+an in-place computation, we would have been able to write the code with the SFINAE construct in the return-type instead
+of having it in the templates parameters. However that is not the case here.
 
 
 \subsubsection{CRTP: Curiously Recurring Template Pattern}
@@ -859,7 +865,8 @@ C++03~\parencite{iso.2003.cpp} is the curiously recurring template pattern (CRTP
 Coplien~\parencite{coplien.1996.crtp}. This programming technique allows a base class (in its specific code) to be aware
 of its derived class at compile type. We made extensive use of this pattern in the past to design a new paradigm,
 SCOOP~\parencite{burrus.2003.mpool, geraud.2006.scoop-pres, geraud.2008.mpool, levillain.2011.phd} which combined
-multiple inheritance (via CRTP) and concept checking (via SFINAE) to implement a solution to provide a library with
+multiple inheritance (via CRTP) and concept checking (via
+Boost.Concept~\parencite{siek.2000.concept,boost.2006.concepts}) to implement a solution to provide a library with
 constrained genericity in C++ for the image processing area. The Scoop paradigm relied on the fact that multiple
 (especially diamond) inheritance did not pose much of an issue as long as there was no member variable involved. This
 way, one could consider a class hierarchy as a hierarchy of constraint indeed. Using CRTP, it was possible to find back,
@@ -893,7 +900,7 @@ to the underlying point and domain of the image.
 \end{minted}
 
 For the sake of brevity, we are omitting the implementation of domain functions related to iterating over all the points
-of the domain. With those concept defined, we can now dig into how we would implement an image class with the SCOOP
+of the domain. With those concepts defined, we can now dig into how we would implement an image class with the SCOOP
 paradigm.
 
 \begin{minted}{C++}
@@ -1265,13 +1272,16 @@ construct:
   }
 \end{minted}
 A best-match mechanic~\parencite{dosries.2066.specifying.proc} operates under the hood to select the function overload
-whose concept is the most specialized when possible. The best-match is very interesting to us as it removed completely
+whose concept is the most specialized when possible. The best-match is very interesting to us as it removes completely
 the need to have mutually exclusive conditions which were required with the SFINAE technique and could result in
-explosive complexity with the growing number of \emph{and}/\emph{or} clauses. The best-match mechanic, instead, will
-find the most specialized concept. Indeed, providing a concept A, if there exists a concept B refining the concept A
-(meaning requiring A plus some other clauses), the compiler will be able to tell that the concept B is the most
-specialized one and perform the best-match selection. However, if the two concepts A and B are not related whatsoever
-then the compiler will raise a hard error stating that there is an ambiguiti it cannot solve.
+explosive complexity with the growing number of \emph{and}/\emph{or} clauses. The best-match mechanic, works on top of
+another widely used machinery in C++: the function overload set. For a specific function call, all the functions
+overloads will be considered in the overload set. Then, to select the correct one, they will be sorted according to the
+best-match procedure. Finally, if there is still two overloads that have the same priority, the compiler will raise a
+hard error stating that there is an ambiguity it cannot solve on its own. As a matter of fact, adding one more function
+to the overload set is enough to have it selected when it matches without modifying the already existing functions. One
+could have added, in our example, an overload for structuring element whose shape is a periodic line, assuming that this
+is a property that we can detect at compile-time.
 
 \section{C++ templates in a dynamic world}
 \label{sec:template.dynworld}
@@ -1360,10 +1370,12 @@ scope of possibilities for the future.
 
 \section{Summary}
 
-In this chapter we have presented the origine of generic programming, which goes as far
+In this chapter we have presented the origin of generic programming, which goes as far
 as~\citedate[year]{musser.1988.generic}. We then proceeds to demonstrate how genericity can be achieved within libraries
 and what programming languages features enables it. Second, we discuss how true generic facilities are builtin
 programming languages thanks to template metaprogramming techniques in a first time. In a second time, we discuss how
 new builtin programming language features such as concepts are finally reaching a state of generic programming as
 describe in~\parencite{dehnert.1998.fundamentals}. Finally we discuss how the current state of generic programming via
 template metaprogramming, which is bound to the static world, interacts with the dynamic world.
+
+\FIXME{Rework summary}

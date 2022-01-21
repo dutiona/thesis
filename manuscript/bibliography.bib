@@ -1,6 +1,6 @@
-@String{pub-ISO:adr = "Geneva, Switzerland"}
-
 @String{pub-ISO     = "International Organization for Standardization"}
+
+@String{pub-ISO:adr = "Geneva, Switzerland"}
 
 @inproceedings{abrahams.2000.exceptions-generic,
   abstract  = {This paper represents the knowledge accumulated in response to a real-world need: that the C++ Standard
@@ -42,6 +42,24 @@
   title     = {SYCL beyond OpenCL: The Architecture, Current State and Future Direction of HipSYCL},
   url       = {https://doi.org/10.1145/3388333.3388658},
   year      = {2020}
+}
+
+@inproceedings{allili.2001.cubical,
+  author    = {Allili, M. and Mischaikow, K. and Tannenbaum, A.},
+  booktitle = {Proceedings 2001 International Conference on Image Processing (Cat. No.01CH37205)},
+  title     = {Cubical homology and the topological classification of 2D and 3D imagery},
+  year      = {2001},
+  volume    = {2},
+  number    = {},
+  pages     = {173-176 vol.2},
+  abstract  = {There are a number of tasks in low level vision and image processing that involve computing certain
+               topological characteristics of objects in a given image including connectivity and the number of holes.
+               We combine a new combinatorial topology method to compute the number of connected components and holes of
+               objects in a given image with fast segmentation methods to extract the objects.},
+  keywords  = {},
+  doi       = {10.1109/ICIP.2001.958452},
+  issn      = {},
+  month     = {10}
 }
 
 @misc{amd.2013.acml-gpu,
@@ -293,6 +311,14 @@
   title    = {Software Engineering Economics},
   volume   = {SE-10},
   year     = {1984}
+}
+
+@misc{boost.2006.concepts,
+  author       = {Siek, Jeremy and Abrahams, Dave},
+  howpublished = {https://www.boost.org/},
+  note         = {Available starting with Boost v1.19.0},
+  title        = {Boost Concept Check},
+  year         = {2006}
 }
 
 @software{boost.2021,
@@ -1247,7 +1273,6 @@
   year        = {2016}
 }
 
-
 @inproceedings{hanus.1995.curry,
   abstract  = {Functional and logic programming are the most important declarative programming paradigms, and interest
                in combining them has grown over the last decade. However, integrated functional logic languages are
@@ -2053,7 +2078,6 @@
   volume    = {},
   year      = {2012}
 }
-
 @article{meyer.1992.design,
   abstract = {Methodological guidelines for object-oriented software construction that improve the reliability of the
               resulting software systems are presented. It is shown that the object-oriented techniques rely on the
@@ -2083,6 +2107,7 @@
   volume    = {5720},
   year      = {2009}
 }
+
 @article{moisan.2005.modeling,
   author  = {Moisan, Lionel},
   journal = {Lecture Notes of ENS Cachan edition},
@@ -2095,6 +2120,30 @@
   publisher = {Pearson},
   title     = {MATLAB for Engineers},
   year      = {2017}
+}
+
+@article{movn.20.cviu,
+  author   = {Minh {\^On V\~{u} Ng\d{o}c} and Nicolas Boutry and
+              Jonathan Fabrizio and Thierry G\'eraud},
+  title    = {A New Minimum Barrier Distance for Multivariate Images
+              with Applications to Salient Object Detection, Shortest
+              Path Finding, and Segmentation},
+  journal  = {Computer Vision and Image Understanding},
+  year     = {2020},
+  month    = {08},
+  volume   = {197--198},
+  doi      = {10.1016/j.cviu.2020.102993},
+  abstract = {Distance transforms and the saliency maps they induce are
+              widely used in image processing, computer vision, and pattern recognition. One of the most commonly used
+              distance transform is the geodesic one. Unfortunately, this distance does not always achieve satisfying
+              results on noisy or blurred images. Recently, a new (pseudo-)distance, called the minimum barrier distance
+              (MBD), more robust to pixel variations, has been introduced. Some years after, G\'eraud et al. have
+              proposed a good and fast-to compute approximation of this distance: the Dahu pseudo-distance. Since this
+              distance was initially developped for grayscale images, we propose here an extension of this transform to
+              multivariate images; we call it vectorial Dahu pseudo-distance. An efficient way to compute it is provided
+              in this paper. Besides, we provide benchmarks demonstrating how much the vectorial Dahu pseudo-distance is
+              more robust and competitive compared to other MB-based distances, which shows how much this distance is
+              promising for salient object detection, shortest path finding, and object segmentation.}
 }
 
 @inproceedings{musser.1987.ada,
@@ -2119,7 +2168,6 @@
   year      = {1987}
 }
 
-% First appearence of the expression "generic programming"
 @inproceedings{musser.1988.generic,
   author       = {David R. Musser and Alexander A. Stepanov},
   booktitle    = {Intl. Symp. on Symbolic and Algebraic Computation},
@@ -2705,7 +2753,7 @@
   publisher = {Springer International Publishing},
   title     = {A User-Friendly Hybrid Sparse Matrix Class in {C}++},
   year      = {2018}
-} 
+}
 
 @article{sanderson.2019.practical,
   author    = {Sanderson, Conrad and Curtin, Ryan},
@@ -2734,6 +2782,14 @@
   title        = {{LWG} Papers to Re-Merge into {C}++0x After Removing Concepts},
   url          = {https://wg21.link/n2929},
   year         = {2009}
+}
+
+@inproceedings{siek.2000.concept,
+  title        = {Concept checking: Binding parametric polymorphism in C++},
+  author       = {Siek, Jeremy and Lumsdaine, Andrew},
+  booktitle    = {First Workshop on C++ Template Programming},
+  year         = {2000},
+  organization = {Citeseer}
 }
 
 @inproceedings{siek.2001.boostgraph,
@@ -2786,7 +2842,6 @@
   year      = {2009}
 }
 
-% Reclaiming of the expression "generic programming"
 @book{stepanov.2014.mathematics,
   author    = {Stepanov, Alexander A and Rose, Daniel E},
   publisher = {Pearson Education},
@@ -2830,7 +2885,6 @@
   year      = {1999}
 }
 
-% first appearence of "concept" and "regular type"
 @misc{stroustrup.2003.concepts,
   author       = {Bjarne Stroustrup and Gabriel Dos Reis},
   key          = {N1522},
@@ -3287,4 +3341,28 @@
   publisher = {Springer International Publishing},
   title     = {Colorful Image Colorization},
   year      = {2016}
+}
+
+@article{ziou.2002.cubical-complex,
+  title    = {Generating cubical complexes from image data and computation of the Euler number},
+  journal  = {Pattern Recognition},
+  volume   = {35},
+  number   = {12},
+  pages    = {2833-2839},
+  year     = {2002},
+  note     = {Pattern Recognition in Information Systems},
+  issn     = {0031-3203},
+  doi      = {https://doi.org/10.1016/S0031-3203(01)00238-2},
+  url      = {https://www.sciencedirect.com/science/article/pii/S0031320301002382},
+  author   = {Djemel Ziou and Madjid Allili},
+  keywords = {Feature extraction, Algebraic topology, Cubical complex, Collapsing, Euler number},
+  abstract = {A number of tasks in image processing and computer vision require the computation of certain topological
+              characteristics of objects in a given image. In this paper, we introduce a new method based on the notion
+              of the algebraic topology complex to compute the Euler number of a given object. First, we attach a
+              cubical complex to the object of interest, then we associate an algebraic structure on which a number of
+              simplifying operations preserving the topology but not necessarily the geometric nature of the complex are
+              possible. This is a unifying dimension independent approach. We show that the Euler number can be obtained
+              directly from the cubical structure or one can perform a collapsing operation that allows to reduce the
+              given image to a lower dimension structure with equivalent topological properties. This reduced structure
+              can be used in a further process, in particular, for the computation of the Euler number.}
 }
