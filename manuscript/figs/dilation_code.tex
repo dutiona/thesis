@@ -8,11 +8,10 @@
 
 \begin{minted}{python}
 def dilate(img, se, out):
-  for pnt in zip(img.points()):
+  for pnt in img.points():
     out(pnt) = img(pnt)
     for nx in se(pnt):
-      out(pnt) = \
-        max(out(pnt), img(nx))
+      out(pnt) = max(out(pnt), img(nx))
 \end{minted}
 
 \end{document}

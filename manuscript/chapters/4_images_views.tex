@@ -422,7 +422,7 @@ trees are complex for the compiler to process and can induce heavy compilation t
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=8cm]{figs/viewAST2.pdf}
+  \includegraphics[width=8cm]{figs/viewAST2}
   \caption{Abstract Syntax Tree of the types chained by the code in~\cref{fig.lazy}}
   \label{fig.viewAST}
 \end{figure}
@@ -705,7 +705,7 @@ not all the methods are available for both policies. The policies are: none, fil
 user.
 
 The \emph{none} policy enforces a policy where there is no border to use. The method cannot fail as it enforces the
-border to vanish. To enforce this method, the border manager decorate the structuring element in a view that checks the
+border to vanish. To enforce this method, the border manager decorates the structuring element in a view that checks the
 domain inclusion of each neighboring point. The \emph{fill} policy enforces that the border is filled with a specific
 value. The \emph{mirror} policy enforces that the border is filled with a mirrored value from an axial symmetry relative
 to the image's edges. The \emph{periodize} policy enforces that the border replicate the image, like a mosaic. The
@@ -805,7 +805,7 @@ is able to cherry-pick the parts he needs without pulling half of the library wh
 of a project.
 
 The ranges for C++20's standard library and its views face the same issue. It was not rare for someone to need 90sec to
-compile the calendar toy example of the library which just contains code that display a given month in the classic
+compile the calendar toy example of the library which just contains code that displays a given month in the classic
 printed format (day number-of-month correctly displayed in column corresponding to the day of week label). This huge
 compile time is due to early compiler implementation needing massive RAM usage for template type and having to swap when
 the computer running the compilation was out of RAM. Now compilers have optimized the whole process, but the combination
@@ -855,7 +855,7 @@ internals for a non-initiated user. Rewriting the algorithm using ranges results
     {
       out_px.val() = out_px.val();
       for(auto nhx : se(in_px))
-        out_pix.val() = std::max(in_px.val(), out_px.val());
+        out_pix.val() = std::max(nhx.val(), out_px.val());
     }
     return output;
   }
@@ -977,14 +977,14 @@ single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
   \begin{tabular}{cccc}
     Result                                                                                                                      & Benchmark & Benchmark Pln only \\[5pt]
     \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0.pdf}}                                            &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_0.pdf}}                                                                         \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0}}                                                &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_0}}                                                                             \\[5pt]
     \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_1.pdf}}                                            &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_1.pdf}}                                                                         \\[5pt]
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_1}}                                                &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_1}}                                                                             \\[5pt]
     \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_6.pdf}}                                            &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_6.pdf}}
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_6}}                                                &
+    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_6}}
   \end{tabular}
 
   \caption{Background detection: garden results.}
@@ -995,6 +995,7 @@ single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
 \newcommand{\mydelta}[1]{{\itshape\bfseries #1\%}}
 
 \begin{table}
+  \centering
   \begin{tabular}{l|ccc}
     \toprule
     Framework          & Compute Time          & Memory usage & $\Delta{}$Memory usage \\ \midrule

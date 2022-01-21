@@ -366,6 +366,19 @@ The third step is to write image processing algorithms for each set of image typ
 shall be negligible if not null. Finally, the final step is to provide a high degree of friendliness for the end user.
 Ease of use is always to be considered.
 
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=.5\linewidth]{figs/image_version}
+%   \caption{Set of supported image type.}
+%   \label{fig:image.version}
+% \end{figure}
+\begin{wrapfigure}{l}{0.4\textwidth}
+  \centering
+  \includegraphics[width=.38\textwidth]{figs/image_version}
+  \caption{Set of supported image type.}
+  \label{fig:image.version}
+\end{wrapfigure}
+
 Considering the available options to achieve our goal, the parametric polymorphism approach is the way to go. This
 allows the implementer to design image types and algorithms with behavior in mind. To illustrate this remark, let us
 consider the set of supported set of image types shown in figure~\ref{fig:image.version}. We usually refer to different
@@ -377,12 +390,12 @@ More generally, the model used to handle it is previously described in~\cref{sub
 sub-types are handled the same way as their super-type but the fact that they have additional properties the algorithms
 can take advantage of.
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/image_version.pdf}
-  \caption{Set of supported image type.}
-  \label{fig:image.version}
-\end{figure}
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=.5\linewidth]{figs/fill_version_diagram}
+%   \caption{Diagram of the two versions of the fill algorithm.}
+%   \label{fig:fill.version.diagram}
+% \end{figure}
 
 To implement a basic image algorithm such as \texttt{fill} there really are two distinct ways of writing it. For the
 set of images type whose data type is encoded into each pixel, one must traverse the image and set each pixel's color
@@ -406,16 +419,16 @@ in~\cref{fig:fill.version.diagram}.
   \label{fig:traverse.vs.LUT}
 \end{figure}
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/fill_version_diagram.pdf}
-  \caption{Diagram of the two versions of the fill algorithm.}
-  \label{fig:fill.version.diagram}
-\end{figure}
-
 More generally, we consider that the set of image type is formed of several subset of image types. In the example there
 are two subsets: images whose pixel are writable and images whose data type are ordered in a look-up table. \emph{For
   each one of these subsets, if there is a way to implement an algorithm then we have a \emph{version} of this algorithm}.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+  \centering
+  \includegraphics[width=.38\textwidth]{figs/fill_version_diagram}
+  \caption{Diagram of the two versions of the fill algorithm.}
+  \label{fig:fill.version.diagram}
+\end{wrapfigure}
 
 Sometimes, it is possible to take advantage of a property on a particular image set, that may be correlated to an
 external data, to write the algorithm in a more efficient way. When those properties are linked to the types, this is
@@ -423,38 +436,37 @@ call \emph{specialization}. For instance, when considering a dilation algorithm,
 the disc) is decomposable then we can branch on an algorithm taking advantage of this opportunity: decompose the
 dilation disc into small vectors and apply each one of them on the image through multiple passes. The speed-up comparing
 to a single pass with a large dilation disc is really significant (illustrated in~\ref{fig:gen.bench.square.disc}). The
-code in~\ref{code:decomp.dilate} illustrate how an algorithm can be written to take advantage of the structuring
-element's decomposability property. The algorithm will first decompose the structuring element into smaller 1D periodic
-lines. It will then recursively call itself with those lines to do the multi-pass and thanks to known optimizations on
-periodic lines~\cite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram outlining the different
-specialization of the dilation algorithm used is shown in~\cref{fig:dilation.specialization.diagram}.
+code in~\ref{fig:dilation.specialization.alg.diagram} illustrate how an algorithm can be written to take advantage of
+the structuring element's decomposability property. The algorithm will first decompose the structuring element into
+smaller 1D periodic lines. It will then recursively call itself with those lines to do the multi-pass and thanks to
+known optimizations on periodic lines~\cite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram
+outlining the different specialization of the dilation algorithm used is show alongside
+in~\cref{fig:dilation.specialization.alg.diagram}.
 
 \begin{figure}[htbp]
-  \centering
-  \begin{minted}{c++}
-  template <Image Img, StructuringElement SE>
-  auto dilate(Img img, SE se) {
-    if (se.is_decomposable()) {
-      lst_small_se = se.decompose();
-      for (auto small_se : lst_small_se)
-        img = dilate(img, small_se) // Recursive call
-      return img;
-    } else if (is_pediodic_line(se))
-      return fast_dilate1d(img, se) // Van Herk's algorithm;
-    else
-      return dilate_normal(img, se) // Classic algorithm;
-  }
-  \end{minted}
-
-  \caption{Dilate algorithm with decomposable structuring element.}
-  \label{code:decomp.dilate}
-\end{figure}
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=.5\linewidth]{figs/dilation_specialization_diagram.pdf}
-  \caption{Diagram of the specialization used to implement the dilation algorithm.}
-  \label{fig:dilation.specialization.diagram}
+  \begin{minipage}[l]{0.48\linewidth}
+    \begin{minted}{C++}
+template <Image Img, StructuringElement SE>
+auto dilate(Img img, SE se) {
+  if (se.is_decomposable()) {
+    lst_small_se = se.decompose();
+    for (auto small_se : lst_small_se)
+      img = dilate(img, small_se) // Recursive call
+    return img;
+  } else if (is_pediodic_line(se))
+    return fast_dilate1d(img, se) // Van Herk's algorithm;
+  else
+    return dilate_normal(img, se) // Classic algorithm;
+}
+\end{minted}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[r]{0.48\linewidth}
+    \centering
+    \includegraphics[scale=0.5]{figs/dilation_specialization_diagram}
+  \end{minipage}
+  \caption{Dilate algorithm (left) with decomposable structuring element and its specialization diagram (right).}
+  \label{fig:dilation.specialization.alg.diagram}
 \end{figure}
 
 The figure~\ref{fig:image.specialization} shows how an algorithm specialization may exists in a set of algorithms
@@ -462,12 +474,19 @@ version. In this figure there exists a specialization of algorithms when it is k
 following property: its memory is contiguous. This implies that, for example, an algorithm like \texttt{fill} can be
 implemented using low level and fast primitives such as \texttt{memset} to increase its efficiency.
 
-\begin{figure}[htbp]
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=.5\linewidth]{figs/image_version_specialization}
+%   \caption{Algorithm specialization within a set.}
+%   \label{fig:image.specialization}
+% \end{figure}
+
+\begin{wrapfigure}{l}{0.4\textwidth}
   \centering
-  \includegraphics[width=.5\linewidth]{figs/image_version_specialization.pdf}
+  \includegraphics[width=.38\textwidth]{figs/image_version_specialization}
   \caption{Algorithm specialization within a set.}
   \label{fig:image.specialization}
-\end{figure}
+\end{wrapfigure}
 
 Making a full inventory of images types is not possible as there are many families of image types, each family may
 intersect with each other, images may have some particular properties at some points, those properties may appear in
@@ -543,11 +562,11 @@ code of such algorithm is naively be given in figure~\ref{code:erode.dilate}.
 \begin{figure}[htbp]
   \centering
   \subfloat[Dilation]{
-    \includegraphics[width=1.64in]{figs/dilation_code}
+    \includegraphics[width=1.7in]{figs/dilation_code}
   }%
   \hfil
   \subfloat[Erosion]{
-    \includegraphics[width=1.64in]{figs/erosion_code}
+    \includegraphics[width=1.7in]{figs/erosion_code}
   }%
   \caption{Dilate vs. Erode algorithms.}
   \label{code:erode.dilate}
@@ -855,8 +874,8 @@ The second fundamental brick is the concept of \emph{Point}, detailed in~\cref{t
 a bit less open than the concept \emph{Value} as it must be totally ordered. Indeed, when accessing a value stored in an
 image, whether it is about reading or mutating, it is important that there is only one accessed value.
 
-Now we introduce an abstract way to represent this relation $Value * Point$: the Pixel. This is a well known notion in
-image processing, and it represents a couple $(point, value)$. This abstraction layer is easy to move around and
+Now we introduce an abstract way to represent this relation $Value \times Point$: the Pixel. This is a well known notion
+in image processing, and it represents a couple $(point, value)$. This abstraction layer is easy to move around and
 contains facilities to read and mutate the pixel's value if possible. Indeed, not all pixels are able to mutate their
 value. If the pixel is yielded by an image that only generates values on the fly then it cannot be mutated. Henceforth,
 we introduce two new concepts: \emph{Pixel} and \emph{OutputPixel} in~\cref{table:concept.pixel.definitions}. Those two
@@ -874,7 +893,7 @@ We show how those three fundamental concepts interact with each other in the dia
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/pixel.pdf}
+  \includegraphics[width=.8\linewidth]{figs/concepts/pixel}
   \caption{Pixel concept.}
   \label{fig:concept.pixel}
 \end{figure}
@@ -940,7 +959,7 @@ We show how the concept \emph{Domain} flows from the previous concepts in the di
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/domain.pdf}
+  \includegraphics[width=.8\linewidth]{figs/concepts/domain}
   \caption{Domain concept.}
   \label{fig:concept.domain}
 \end{figure}
@@ -974,7 +993,7 @@ We show the diagram building up the image concept from the previous concepts in~
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/image.pdf}
+  \includegraphics[width=.8\linewidth]{figs/concepts/image}
   \caption{Image concept.}
   \label{fig:concept.image}
 \end{figure}
@@ -1072,7 +1091,7 @@ We show how those concepts are defined from one another in the diagram shown i~\
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/images_all.pdf}
+  \includegraphics[width=.8\linewidth]{figs/concepts/images_all}
   \caption{All images concepts.}
   \label{fig:concept.images}
 \end{figure}
@@ -1154,7 +1173,7 @@ diagram shown in~\cref{fig:concept.se_extension}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/se_extension.pdf}
+  \includegraphics[width=.8\linewidth]{figs/concepts/se_extension}
   \caption{Structuring element and Extension concepts.}
   \label{fig:concept.se_extension}
 \end{figure}
