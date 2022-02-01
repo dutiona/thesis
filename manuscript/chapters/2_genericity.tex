@@ -36,6 +36,7 @@ the lazy-computing techniques is used to generate new types on-the-fly. Hencefor
 generic facilities to handle their own internal set of types. This thesis addresses genericity at the input level rather
 than the target architecture level, henceforth, we will not address this topic here.
 
+\FIXME{Rework style}
 \paragraph{History} of genericity takes its root in~\citedate[year]{backus.1978.functional}
 when~\citeauthor{backus.1978.functional} publishes his paper about functional
 programming~\parencite{backus.1978.functional}. \citeauthor{backus.1978.functional} thinks that there exists five
@@ -1158,11 +1159,11 @@ only the fast and optimized code remains. This brings a new distinction between 
 compile time) and the dynamic world (what is decided at runtime). The more is decided at compile time the smaller,
 faster the binary will because there is work less to do at runtime. By following this principle, one can think of some
 properties that are known ahead of time (at compilation) when writing one's image processing algorithm. For instance,
-when considering the example of the dilation whose code is shown in~\ref{code:decomp.dilate}, we can see that the
-property about the decomposability if the structuring element is linked to the type. This means that when the
-structuring element's type is of a disc, or a square, the compiler will know at compile time that it is decomposable. To
-tell the compiler to take advantage of a property at compile time, C++ has a language construct named if-constexpr. The
-resulting code then becomes:
+when considering the example of the dilation whose code is shown in~\ref{code:gen.dilate}, we can see that the property
+about the decomposability of the structuring element is linked to the type. This means that when the structuring
+element's type is of a disc, or a square, the compiler will know at compile time that it is decomposable. To tell the
+compiler to take advantage of a property at compile time, C++ has a language construct named if-constexpr. The resulting
+code then becomes:
 
 \begin{minted}[highlightlines=3]{c++}
   template <Image Img, StructuringElement SE>

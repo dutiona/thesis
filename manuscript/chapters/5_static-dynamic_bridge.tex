@@ -4,54 +4,52 @@
 %\section{Coexistence between the static world and the dynamic world}
 %introduction
 
-In the programming world, there are three main families of programming language~\parencite{kwame.2017.qualitative}.
-There are the \emph{compiled} programming, such as C, C++, Rust or Go. There are also the \emph{interpreted} programming
-languages, such as Python, PHP, Lisp or Javascript. Finally, there are the hybrid programming languages, such as Java or
-C\#, that have a fast compilation pass that compiles the source code into an intermediate bytecode. Then, this bytecode
-is interpreted via an interpreter on the host (runner) machine.
+In the programming world, there are three main families of programming language~\parencite{prechelt.2000.comparison}.
+There are (i) \emph{compiled} programming languages, such as C, C++, Rust or Go, (ii) \emph{interpreted} programming
+languages, such as Python, PHP, Lisp or Javascript, and (iii) hybrid programming languages, such as Java or C\#. The
+latter have a fast compilation pass that compiles the source code into an intermediate bytecode. Then, this bytecode is
+interpreted via an interpreter on the host (runner) machine.
 
 
 \section{Introducing the static and dynamic bridge}
 
 Many studies have been carried out to compare the advantages and disadvantages of each family of programming
-languages~\parencite{prechelt.2000.comparison,kwame.2017.qualitative,boehm.1984.economics}. In this thesis we focus
-mainly on comparing the burden that are shouldered by the maintainers and the end-user.
+languages~\parencite{boehm.1984.economics}. In this thesis we focus mainly on comparing the burden that are shouldered
+by the maintainers and the end-user.
 
 
 \subsection{Languages types}
 
+\FIXME{Rework arguments for compiled and interpreted languages.}
+
 \paragraph{Compiled languages} From the maintainer point of view, there is a lot of burden to shoulder. First is the
 binary generation which can be problematic in itself. Indeed, to generate a binary, there are many steps, as illustrated
-in~\cref{fig:static.dynamic.compiled.compiletime}. First the compiler does a pass to generate machine code for each
-translation unit. There can be as many machine code as there are architecture and/or operating system supported. The
-maintainer may want to support different operating systems (last two windows and OSX version, a handful linux or unix
-distributions, maybe mobile phone portages). Each of this OS requires its own bundle. Additionally, the hardware may
-change, or the maintainer may want to take advantage of some specific hardware when available (like vectorized SIMD
-instructions such as SSE4, XOP, FMA4, AVX-512, etc.): this also requires the maintainer to multiply the number of
-binaries he compiles and distribute. Finally, the linker resolves the dependencies of the program and assemble the final
-binary. At that time the maintainer has to sort out how he wants to bundle the dependencies of his program. Should he
-statically link them alongside the binary and distribute them, at the risk of having the size of his binary exploding?
-Or should he state that the user has to install the dependencies on his system (via a package manager for instance) so
-that the binary can run? The burden of handling the dependencies is then shifted to the end-user when installing the
-program.
+in~\cref{fig:static.dynamic.compiled}. First the compiler does a pass to generate machine code for each translation
+unit. There can be as many machine code as there are architecture and/or operating system supported. The maintainer may
+want to support different operating systems (last two windows and OSX version, a handful linux or unix distributions,
+maybe mobile phone portages). Each of these OS requires its own bundle. Additionally, the hardware may change, or the
+maintainer may want to take advantage of some specific hardware when available (like vectorized SIMD instructions such
+as SSE4, XOP, FMA4, AVX-512, etc.): this also requires the maintainer to multiply the number of binaries he compiles and
+distributes. Finally, the linker resolves the dependencies of the program and assembles the final binary. At that time
+the maintainer has to sort out how he wants to bundle the dependencies of his program. Should he statically link them
+alongside the binary and distribute them, at the risk of having the size of his binary exploding? Or should he state
+that the user has to install the dependencies on his system (via a package manager for instance) so that the binary can
+run? The burden of handling the dependencies is then shifted to the end-user when installing the program. Usually the
+package manager, such as \emph{apt}, \emph{yum} or \emph{pacman}, solves this transparently for the end-user and the
+programs works "out-of-the-box" once installed, as illustrated in~\cref{fig:static.dynamic.compiled}. The downside is
+that the maintainer has to publish many bundles of his package where he wants it to be available.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.6\linewidth]{figs/static_compiletime}
-  \caption{Compiled languages: compile-time}
-  \label{fig:static.dynamic.compiled.compiletime}
-\end{figure}
-
-
-Usually the package manager, such as \emph{apt}, \emph{yum} or \emph{pacman}, solves this transparently for the end-user
-and the programs works "out-of-the-box" once installed, as illustrated in~\cref{fig:static.dynamic.compiled.runtime}.
-The downside is that the maintainer has to publish many bundles of his package where he wants it to be available.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=.6\linewidth]{figs/static_runtime}
-  \caption{Compiled languages: run-time}
-  \label{fig:static.dynamic.compiled.runtime}
+  \subfloat[Compile-time]{
+    \includegraphics[width=.48\linewidth]{figs/static_compiletime}
+  }
+  \hfil
+  \subfloat[Run-time]{
+    \includegraphics[width=.48\linewidth]{figs/static_runtime}
+  }
+  \caption{Compiled languages: compile-time (a) vs. run-time (b).}
+  \label{fig:static.dynamic.compiled}
 \end{figure}
 
 \paragraph{Interpreted languages} From the maintainer point of view, this is the ideal standpoint. It is easier to
@@ -64,8 +62,8 @@ SDK natively, e.g. pip for python). However, the most notable disadvantage is th
 fact that the source code is not compiled into optimized assembly code ready to be executed by the computer. Instead,
 the interpreter must do all the work in one go and very often this is slow (at least the first pass). Nowadays,
 interpreters differentiate two use cases. One is opening the console interpreter from the command line and typing
-commands to get the immediate interpreted results. This use-case usually do not provide heavy optimization because it is
-likely the user is prototyping his script and thus does not need it in the first place. The second use case is when the
+commands to get the immediate interpreted results. This use-case usually does not provide heavy optimization because the
+user is likely prototyping his script and thus does not need it in the first place. The second use case is when the
 interpreter parses files and/or libraries as a whole. In this use-case, it is likely that the file will not change, but
 they will be used a lot. It is then relevant to pay a pass to generate intermediate bytecode that can be interpreted
 faster for the future passes onward. As an example, the Python programming language has several implementations:
@@ -96,6 +94,16 @@ increase performances by implementing hot code detection which would compile the
 code. This area is still a field of research to this day (c.f. Java
 HotSpot~\parencite{xie.improving,kotzmann.2008.hotspot,halli.2016.java-hpc}).
 
+\paragraph{To summarize} Interpreted and hybrid programming languages produces more portable artefacts and therefore are
+easier to deploy in a dynamic environment. We summarize in~\cref{fig:static.dynamic.summary.pipeline} the different
+approaches in order to be able to execute a binary from source code.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.9\linewidth]{figs/comp_inter_hybrid_summary}
+  \caption{Languages types: summary diagram}
+  \label{fig:static.dynamic.summary.pipeline}
+\end{figure}
 
 \subsection{Static and dynamic informations}
 
@@ -115,24 +123,31 @@ of the application, replace the old running binary by the new compiled one, all 
 
 The next important step is to classify what information is known at \emph{compile-time} (machine/bytecode code
 generation): we call it \emph{static} information; and what information is known at \emph{runtime} (program execution):
-we call it \emph{dynamic} information. In image processing, have the following static informations:
+we call it \emph{dynamic} information. In image processing, we have, on the one hand, knowledge about the following
+static informations:
 \begin{itemize}
   \item Image's value type (unit8, rgb8, complex, etc.),
   \item Image's dimension size (1D, 2D, 3D, etc.),
   \item Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.).
 \end{itemize}
-On the other hand, we have the following dynamic informations:
+This means that, while the information may not be known at compile-time, we are able to write (or, more accurately,
+generate) code dedicated for those common types that we know constitutes a large portion of the use cases. Furthermore,
+we can write optimized portion of code dedicated to handle some particular known types that the program will use when it
+encounters them at run-time.
+On the other hand, the following informations are always dynamic:
 \begin{itemize}
   \item Image's actual values,
   \item Image's actual size,
   \item Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.).
 \end{itemize}
+The library needs both information type (static and dynamic) however, even if some informations are missing, it is not a
+fatality and the library can still recover and work efficiently at runtime.
 
-We notice that the architecture hosting the program is both an information which is static and dynamic. This translates
-the complexity of this information. Indeed, the maintainer needs to guess the array of architectures he wants to support
-and generate binaries for them (static). Also, the program needs to detect at runtime (dynamically) on which hardware he
-is running to possibly take advantage of it to increase performances. This is an area of research on its own called
-heterogeneous computing~\parencite{wong.2019.heterogeneous,brown.2019.heterogeneous}.
+On another note, we notice that the architecture hosting the program is both an information which is static and dynamic.
+This translates the complexity of this information. Indeed, the maintainer needs to guess the array of architectures he
+wants to support and generate binaries for them (static). Also, the program needs to detect at runtime (dynamically) on
+which hardware he is running to possibly take advantage of it to increase performances. This is an area of research on
+its own called heterogeneous computing~\parencite{wong.2019.heterogeneous,brown.2019.heterogeneous}.
 
 
 \subsection{Introducing our hybrid solution}
@@ -177,14 +192,14 @@ binaries and bindings just as they are used. This solution brings speed (excludi
 compilation time) and unrestrained genericity. However it bounds both user and maintainer to the specificities of a
 compiler vendor and loose platform portability.
 
-Another option is to type-erase (dynamic polymorphism) our types to enables the use of various concrete types through a
+Another option is to type-erase (dynamic polymorphism) our types to enable the use of various concrete types through a
 single generic interface. This would translate into a class hierarchy whose concrete classes are the leaves (thus, whose
 value-types and dimensions are known). This induces a non-negligible performance overhead but enables us to keep the
 genericity and portability at the cost of maintaining the class hierarchy.
 
 Type generalization can also be considered. It is possible to cast everything into a super-type that is suitable for the
 vast majority of cases. For instance, we could say that we have a super-type \texttt{image4D<double>} into which we can
-easily cast sub-types such as \texttt{image2D<int>} or \texttt{image3D<float>}. Of course we would loose the generic
+easily promote sub-types such as \texttt{image2D<int>} or \texttt{image3D<float>}. Of course we would loose the generic
 aspect and induce non negligible speed cost. Although portability is kept.
 
 And finally there is the dynamic dispatch. It consists in embedding dynamic information at runtime about types, and
@@ -465,9 +480,12 @@ user-provided Python routine to manipulate unknown user values.
 
 \subsection{Third and final step: type-erasure \& the value-set}
 
-As common thread in this section, we will work on the morphological \emph{stretch} algorithm which is naively defined as
-followed:
-\begin{minted}{C++}
+\FIXME{rework motivation of this part: what do we want to write and why.}
+
+As common thread in this section, we will work on the \emph{stretch} algorithm which is naively defined
+in~\cref{fig:stretch.naive.code}.
+\begin{figure}[htbp]
+  \begin{minted}{C++}
 template <class T>
 mln::image2d<float> naive_stretch(const mln::image2d<T>& src) {
   mln::image2d<float> res  = mln::transform(src, [](auto val) -> float {
@@ -477,6 +495,9 @@ mln::image2d<float> naive_stretch(const mln::image2d<T>& src) {
   return res;
 }
 \end{minted}
+  \caption{Stretch algorithm, naive C++ version.}
+  \label{fig:stretch.naive.code}
+\end{figure}
 
 \begin{figure}[htbp]
   \centering
@@ -553,8 +574,11 @@ class ndimage {
 Let us recall our naive stretch algorithm presented earlier. The pipeline representing the operations on values inside
 the algorithm is presented in~\cref{fig:static_dyn.naive_stretch}. Typically, this algorithm performs three operations
 that are the responsibility of a value-set: getting the max, performing a cast, and performing a division. The first
-step is then to use the value set shown above to abstract away those operations. The algorithm then becomes:
-\begin{minted}[linenos,highlightlines={4-5,7,8-9,10}]{C++}
+step is then to use the value set shown above to abstract away those operations. The new algorithm is shown
+in~\cref{fig:stretch.fast.code}.
+
+\begin{figure}[htbp]
+  \begin{minted}[linenos,highlightlines={3-4,6,7-8,9}]{C++}
 template <class T>
 mln::image2d<float> fast_stretch(const mln::image2d<T>& src) {
   auto                vs   = src.get_value_set();     // value-set for T
@@ -568,6 +592,9 @@ mln::image2d<float> fast_stretch(const mln::image2d<T>& src) {
   return res;
 }
 \end{minted}
+  \caption{Stretch algorithm, fast C++ version.}
+  \label{fig:stretch.fast.code}
+\end{figure}
 
 \begin{figure}[htbp]
   \centering
@@ -576,14 +603,14 @@ mln::image2d<float> fast_stretch(const mln::image2d<T>& src) {
   \label{fig:static_dyn.fast_stretch}
 \end{figure}
 
-We instantiates the value-set we will need (for \texttt{T} values and \texttt{float} values) on lines 4 and 5. Then the
-maximum value is obtained via the value-set of \texttt{T} on line 7. Then a cast is performed via the value-set to get
-floating point value on lines 8 and 9. Finally a floating point division is performed on line 10 via the formerly
-instantiates floating point value-set defined on line 5. Indeed, using the value-set instantiated for \texttt{T} would
+We instantiates the value-set we will need (for \texttt{T} values and \texttt{float} values) on lines 3 and 4. Then the
+maximum value is obtained via the value-set of \texttt{T} on line 6. Then a cast is performed via the value-set to get
+floating point value on lines 7 and 8. Finally a floating point division is performed on line 9 via the formerly
+instantiates floating point value-set defined on line 4. Indeed, using the value-set instantiated for \texttt{T} would
 have performed an Euclidean division and which would have resulted in a bug. Calling this algorithm from python is as
 simple as \mintinline{python}/ret = pln.fast_stretch(input)/ once exposed. The pipeline representing the actual
 operations in the algorithm to access values is shown in~\cref{fig:static_dyn.fast_stretch}. The glue code to expose
-this algorithm is givenin~\cref{appendix:static-dynamic-bridge.mm.algos}.
+this algorithm is given in~\cref{appendix:static-dynamic-bridge.mm.algos}.
 
 \paragraph{Type-erasure interface for value-set}
 
@@ -630,21 +657,26 @@ struct concrete_value_set : abstract_value_set {
 \end{minted}
 This concrete value-set implement simple dispatch via casting the type-erased \texttt{std::any} into the wanted value
 type to properly perform the operation. Thanks to this implementation, we are able to rewrite our stretch algorithm
-using this value-set to perform its operations. The new algorithm now looks like this:
-\begin{minted}[linenos,highlightlines={4-5,7,8-9,10}]{C++}
-template <class T>
-mln::image2d<float> virtual_dispatch_stretch(const mln::image2d<T>& src) {
-  auto                vs   = mln::concrete_value_set<T>{};     // value-set for T
-  auto                vs_f = mln::concrete_value_set<float>{}; // value-set for float
-  mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
-    auto anymax  = vs.max();                                 // returns std::any
-    auto fanyval = vs.template cast<float>(val);             // cast to float in std::any
-    auto fanymax = vs.template cast<float>(anymax);          // cast to float in std::any
-    return std::any_cast<float>(vs_f.div(fanyval, fanymax)); // div returns float
-  });
-  return res;
-}
+using this value-set to perform its operations. The new algorithm is shown in~\cref{fig:stretch.virtual.dispatch.code}.
+
+\begin{figure}[htbp]
+  \begin{minted}[linenos,highlightlines={3-4,6,7-8,9}]{C++}
+  template <class T>
+  mln::image2d<float> virtual_dispatch_stretch(const mln::image2d<T>& src) {
+    auto                vs   = mln::concrete_value_set<T>{};     // value-set for T
+    auto                vs_f = mln::concrete_value_set<float>{}; // value-set for float
+    mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
+      auto anymax  = vs.max();                                 // returns std::any
+      auto fanyval = vs.template cast<float>(val);             // cast to float in std::any
+      auto fanymax = vs.template cast<float>(anymax);          // cast to float in std::any
+      return std::any_cast<float>(vs_f.div(fanyval, fanymax)); // div returns float
+    });
+    return res;
+  }
 \end{minted}
+  \caption{Stretch algorithm, virtual dispatch version.}
+  \label{fig:stretch.virtual.dispatch.code}
+\end{figure}
 
 \begin{figure}[htbp]
   \centering
@@ -653,19 +685,21 @@ mln::image2d<float> virtual_dispatch_stretch(const mln::image2d<T>& src) {
   \label{fig:static_dyn.virtual_dispatch_stretch}
 \end{figure}
 
-This algorithm uses two value sets (l.4 and l.5), one to get the maximum value with regard of the original underlying
-value type in the image \texttt{T} (l.7) and to properly cast the values into float values (l.8-9). The other one is
-used to perform the floating point division (l.10). This algorithm is almost identical to the one given for
-\texttt{fast\_stretch} earlier. Only the lines instantiating the value-set changes (l. 4-5) as well as the line handing
-over the result (l. 10) where we added a downcast from \texttt{std::any}. The pipeline presenting the operations needed
+This algorithm uses two value sets (l.3 and l.4), one to get the maximum value with regard of the original underlying
+value type in the image \texttt{T} (l.6) and to properly cast the values into float values (l.7-8). The other one is
+used to perform the floating point division (l.9). This algorithm is almost identical to the one given for
+\texttt{fast\_stretch} earlier. Only the lines instantiating the value-set changes (l. 3-4) as well as the line handing
+over the result (l. 9) where we added a downcast from \texttt{std::any}. The pipeline presenting the operations needed
 to access values is presented in~\cref{fig:static_dyn.virtual_dispatch_stretch}.
 
 
 \paragraph{Going forward: type-erasing the value entirely}
 
 The need may arise where the user wants to handle images where the input value is abstracted away behind a type-erased
-type. This value-type would then embed its own value set able to perform operations (as a pointer for instance). This
-fallback would allow writing such code possible:
+type. This happens when handling image with heterogeneous value-type (different channel number from one value to
+another, optional information embed with the value, etc.). In order to work, this value-type needs to be aware of its
+own value-set  to perform operations. To achieve this, the value must embed the value set (as a pointer for instance)
+directly alongside the value. This embedding would allow writing such code possible:
 \begin{minted}[highlightlines={10}]{C++}
 class type_erased_value {
   type_erased_value add(const type_erased_value& rhs);
@@ -707,8 +741,11 @@ and embed it to perform the required operation on line 10. The full code of the 
 in~\cref{appendix:static-dynamic-bridge.mm.vs}. We have relied on metaprogramming techniques in order to efficiently
 write the code that will do the work.
 
-Thanks to this technique, we are able to write another version of our stretch algorithm, as followed:
-\begin{minted}[linenos,highlightlines={8-12,13-14,17-18,20,22,23}]{C++}
+Thanks to this technique, we are able to write another version of our stretch algorithm which is shown
+in~\cref{fig:stretch.virtual.dispatch.type.erased.code}.
+
+\begin{figure}[htbp]
+  \begin{minted}[linenos,highlightlines={8-12,13-14,17-18,20,22,23}]{C++}
 template <class T>
 mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2d<T>& src) {
   auto                vs   = mln::concrete_value_set<T>{};     // value-set for T
@@ -737,6 +774,9 @@ mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2
   return res;
 }
 \end{minted}
+  \caption{Stretch algorithm, virtual dispatch with a type-erased value version.}
+  \label{fig:stretch.virtual.dispatch.type.erased.code}
+\end{figure}
 
 \begin{figure}[htbp]
   \centering
@@ -882,25 +922,30 @@ pln_img = pln.stretch(img, value_set=MyValueSet()) # This works !
 And this will work finely.
 
 On the C++ side, the maintainer just needs to write another version of the stretch algorithm supporting the Python
-value-set which is shown in the following code:
-\begin{minted}[linenos,highlightlines={4,5,6,7,8}]{C++}
-template <class T>
-mln::image2d<float> slow_stretch(const mln::image2d<T>& src, const mln::value_set<pybind11::object>& py_vs) {
-  mln::image2d<float> res = mln::transform(src, [&py_vs](auto val) -> float {
-    auto anymax  = py_vs.max();                        // returns std::any of pybind11:object
-    auto anyval  = std::any{pybind11::cast(val)};      // converts to std::any of pybind11::object
-    auto anyret  = py_vs.div(anyval, anymax);          // returns std::any of pybind11::object
-    auto anyfret = py_vs.template cast<float>(anyret); // returns std::any of float
-    return std::any_cast<float>(anyfret);              // returns float
-  });
-  return res;
-}
-\end{minted}
+value-set which is shown in~\cref{fig:stretch.injected.python.code}.
+
+\begin{figure}[htbp]
+  \begin{minted}[linenos,highlightlines={4,5,6,7,8}]{C++}
+    template <class T>
+    mln::image2d<float> slow_stretch(const mln::image2d<T>& src, const mln::value_set<pybind11::object>& py_vs) {
+      mln::image2d<float> res = mln::transform(src, [&py_vs](auto val) -> float {
+        auto anymax  = py_vs.max();                        // returns std::any of pybind11:object
+        auto anyval  = std::any{pybind11::cast(val)};      // converts to std::any of pybind11::object
+        auto anyret  = py_vs.div(anyval, anymax);          // returns std::any of pybind11::object
+        auto anyfret = py_vs.template cast<float>(anyret); // returns std::any of float
+        return std::any_cast<float>(anyfret);              // returns float
+      });
+      return res;
+    }
+    \end{minted}
+  \caption{Stretch algorithm, injected value-set from Python version.}
+  \label{fig:stretch.injected.python.code}
+\end{figure}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/python_injected_value_set_stretch}
-  \caption{Stretch algorithm with an injected value-set from PYthon code, pipeline to perform operations on values.}
+  \caption{Stretch algorithm with an injected value-set from Python code, pipeline to perform operations on values.}
   \label{fig:static_dyn.python_injected_value_set_stretch}
 \end{figure}
 
@@ -928,13 +973,15 @@ The result is shown in~\cref{table:static.dynamic.perfs}.
 % Injected Python value-set with native C++ value-type: 21.5444sec
 
 \begin{table}[htbp]
+  \footnotesize
+  \centering
   \begin{tabular}{l|ccc}
     \toprule
-    Dispatch type                                               & Compute Time & $\Delta{}$Compute Time \\ \midrule
-    Native value-set with native C++ value-type (baseline)      & $0.0093s$    & $0$                    \\
-    Value-set with virtual dispatch with native C++ value-type  & $0.1213s$    & $\times 13$            \\
-    Value-set with virtual dispatch with C++ type-erased values & $1.0738s$    & $\times 115$           \\
-    Injected Python value-set with native C++ value-type        & $21.5444s$   & $\times 2316$          \\
+    Dispatch type                                                                                                   & Compute Time & $\Delta{}$Compute Time \\ \midrule
+    Native value-set with native C++ value-type (baseline)~\ref{fig:stretch.fast.code}                              & $0.0093s$    & $0$                    \\
+    Value-set with virtual dispatch with native C++ value-type~\ref{fig:stretch.virtual.dispatch.code}              & $0.1213s$    & $\times 13$            \\
+    Value-set with virtual dispatch with C++ type-erased values~\ref{fig:stretch.virtual.dispatch.type.erased.code} & $1.0738s$    & $\times 115$           \\
+    Injected Python value-set with native C++ value-type~\ref{fig:stretch.injected.python.code}                     & $21.5444s$   & $\times 2316$          \\
     \bottomrule
   \end{tabular}
   \caption{Benchmarks of all our version of the stretch algorithm.}

@@ -312,16 +312,14 @@ the most out of the data we already have, and we do not want to compute data we 
 when the \emph{copyability} property is required. This is the main reason why we did not adopt this approach.
 
 The second one is to make the differentiation between a \emph{concrete image} which owns the data (like the standard
-containers) and the \emph{views} that are lightweight cheap-to-copy objects. This is a very important property as it
-simplify greatly the reasoning when performance is needed. It also enables us to have a library design similar to the
-C++'s standard library which the user is familiar with and, why not, have standard algorithm and standard view work on
-our images types. All of these are the main reason why we decided to adopt this design. However, unlike the standard
-library, as we are not required to work with iterator due to backward compatibility. This is why the views and the
-concrete image we introduce for image processing are different. Indeed, we assert that all image are cheap-to-copy, even
-the concrete images. This allows the user to pass his images everywhere without worrying about dangling data buffer
-expiring around the corner. Finally, there is a way to distinguish a view (cheap-to-copy, possibly-owner) from a
-concrete image (cheap-to-copy, owner). To emphasis this difference we introduce two concepts \texttt{ViewImage} and
-\texttt{ConcreteImage} which are defined by the following code:
+containers) and the \emph{views} that are lightweight cheap-to-copy objects. However this would imply we have to
+distinguish both image families when writing algorithms and we do not want that.
+
+This is why we have chosen to take a path where we mix both approaches at the same time. We assert that all image are
+cheap-to-copy (including views), even the concrete images. The concrete image will have a shared ownership semantic
+related to its data buffer and will remain cheap-to-copy. It will also behave the same way a view behaves. That is why,
+with our semantic, all images are views. Ultimately, there is still a way to distinguish a view from a concrete image,
+if needed, and we introduce two new concepts \texttt{ViewImage} and \texttt{ConcreteImage} for this end:
 \begin{minted}{C++}
 template <typename I>
 concept ConcreteImage =
@@ -334,6 +332,12 @@ concept ViewImage =
   Image<I> &&
   image_view_v<I>;
 \end{minted}
+Having images as views is a very important property as it simplify greatly the reasoning when performance is needed.
+This allows the user to pass his images everywhere without worrying about dangling data buffer expiring around the
+corner. It also enables us to have a library design similar to the C++'s standard library which the user is familiar
+with and, why not, have standard algorithm and standard view work on our images types. All of these are the main reason
+why we decided to adopt this design. However, unlike the standard library, as we are not required to work with iterator
+due to backward compatibility.
 
 \begin{figure}[htbp]
   \centering
@@ -845,7 +849,8 @@ implementation we had of our dilation algorithm as an example:
 \end{minted}
 
 This code features the macro mentioned above and, while being explicit, may be quite obscure with regard to its
-internals for a non-initiated user. Rewriting the algorithm using ranges results in the following code:
+internals for a non-initiated user. However, it uses a double loop to traverse the image under the hood. Rewriting the
+algorithm using ranges results in the following code:
 \begin{minted}{c++}
   template<class I, , class SE>
   auto dilate(I input, const SE& se)

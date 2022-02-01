@@ -507,10 +507,10 @@ algorithm. The second one are the local algorithms. Those algorithms algorithms 
 all the neighboring pixels around a given pixel. In order to operate, those algorithms need additional data in the form
 of image's extension (defining border's behavior) and structuring element (disc, rectangle around the considered pixel).
 Such algorithms are widely used in mathematical morphology. Dilation, erosion, closing, opening, gradient, rank filter
-are local algorithms. In mathematical morphology we will also have the union find, the max tree, the skeletonize
-algorithms. Finally, the third set of image processing algorithms is the global one. This set contains algorithms where
-computing the current pixel requires to know what was previously computed on the previous pixels as a prerequisite.
-Champfer distance transform, labeling, watershed, hierarchy structures related algorithms are in this category.
+are all local algorithms, as well as stencil-type algorithms such as union-find, max-tree or skeletonize. Finally, the
+third set of image processing algorithms is the global one. This set contains algorithms where computing the current
+pixel requires to know what was previously computed on the previous pixels as a prerequisite. Champfer distance
+transform, labeling, watershed, hierarchy structures related algorithms are in this category.
 
 
 \section{Generic aspect of algorithm: canvas}
@@ -530,6 +530,8 @@ find one or several algorithms abstraction. Indeed, in image processing there ar
 looks at algorithms implementations, the most famous being \emph{for all pixels of an image, do something to each
   pixel}. But there are other more high-level similarities that we can leverage to have more generic algorithm. Let us
 first study the different programmatic model there are commonly used to process images.
+
+\FIXME{Rework these 3 paragraphs}
 
 \paragraph{The pipeline} is the classic way of doing the work. It consists of an imbrication of different operators
 (algorithms) taking as input one or several image, maybe additional data as well (such as labels, adjacency map, etc.)
@@ -1017,7 +1019,13 @@ in~\cref{table:concept.image.expressions.2}. With this concept, we are able to w
   ima[k] = 255; // Mutate the element at the index
 \end{minted}
 Being able to traverse an image through indexes is especially useful for algorithms that are aware of the number of
-elements in the image.
+elements in the image. We chose to be flexible with our indexing method (i.e. allowing signed indexes) not to fall into
+the same pitfall as the C++ core language~\parencite{stroustrup.2019.signed-unsigned-mess}. Indeed, requiring that the
+type \texttt{std::size\_t} is unsigned lead to loads of issues, the first one being a conversion issue when writing a
+simple for-loop. Solving these issues lead to the appearance of new member function \texttt{.ssize()} (for signed size)
+and the new type \texttt{std::ptrdiff\_t} to store the result of a soustraction between two \texttt{std::size\_t}.
+Furthermore, in our specific area (image processing), it may be well defined to access a buffer with negative indexes
+when, for instance, we are accessing the value of the extension of an image. This is why our indexes are signed.
 
 Additionally, we want to be able to access a value by providing a point, the same way as in the algebraic definition
 $val = image(point)$. To do so, we introduce the concept of accessibility through \emph{AccessibleImage}. This concept
@@ -1063,7 +1071,7 @@ described in~\cref{table:concept.image.expressions.5}. Thanks to this concept, w
     for(auto pix : input.pixels())
       // ...
 
-    auto backward = std::views::reverse(input.pixels())
+    auto backward = mln::ranges::views::reverse(input.pixels())
     for(auto pix : backward)
       // ...
   }
@@ -1092,7 +1100,7 @@ We show how those concepts are defined from one another in the diagram shown i~\
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{figs/concepts/images_all}
-  \caption{All images concepts.}
+  \caption{All images concepts. \FIXME{Donner du sens aux flèches}}
   \label{fig:concept.images}
 \end{figure}
 
@@ -1119,6 +1127,9 @@ properties are:
         is shifted by a basic displacement (e.g. for a \emph{2D point}, the basic displacement is $(0,1)$). Usually used
         to compute attributes over a sliding structuring element in linear time.
 \end{itemize}
+
+\FIXME{Give exemples}
+
 The behavioral for those concepts is described in~\cref{table:concept.se.expressions}. Being able to manipulate
 structuring element allows us to write the following code:
 \begin{minted}{C++}
@@ -1199,3 +1210,5 @@ taxonomy of image processing algorithms in order to extract those concepts. We t
 aspects of algorithms by introducing the notion of canvas which enables taking advantage of opportunities to do
 heterogeneous computation while remaining user friendly. Finally, we offer and justify a detailed taxonomy of concepts
 related to image processing area.
+
+\FIXME{rework summary}
