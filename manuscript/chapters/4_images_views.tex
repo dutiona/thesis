@@ -99,7 +99,7 @@ following modification:
   auto blended_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 \end{minted}
 The restriction is done upstream from the algorithm and propagated downstream without increasing the code complexity.
-This way, view greatly increase what the user can do by writting less code.
+This way, view greatly increase what the user can do by writing less code.
 
 \section{Views for image processing}
 \label{sec:viws_for_ip}
@@ -118,7 +118,7 @@ the views that transform the values (transform, zip).
 
 \subsection{Domain-restricting views}
 
-\paragraph{The filter view} is also a fundamental view which consists in keeping only the values that satisfy a
+\paragraph{The filter view} It is also a fundamental view which consists in keeping only the values that satisfy a
 predicate. This is very useful when working with thresholds as shown in the following code:
 \begin{minted}{C++}
 auto my_threshold = 145;
@@ -130,15 +130,15 @@ auto ima_superiorstrict = mln::view::filter(ima_grayscale, superiorstrict_to);
 mln::fill(ima_inferior, 0u8);
 mln::fill(ima_superiorstrict, 255u8);
 \end{minted}
-This code shows a way to binarise \texttt{ima\_grayscale} with a custom threshold using the filter view. It is important
+This code shows a way to binarize \texttt{ima\_grayscale} with a custom threshold using the filter view. It is important
 to note that the resulting filtered image has its domain of definition changed. And the new domain of definition will
 most likely not be in a regular usual shape (such as a 2D rectangle). This implies that the usage of this view inside
 certain algorithms may be limited.
 
-\paragraph{The clip view} is a convenient way to extract a sub-image from a base image. This view essentially redefine
-the domain of definition to restrict it into a smaller one. It does not change anything else which means it proxies
-every access to the image. For instance, we make use of this view to easily subdivide a 2D-image into 4 tiles as shown
-in the code below:
+\paragraph{The clip view} It is a convenient way to extract a sub-image from a base image. This view essentially
+redefine the domain of definition to restrict it into a smaller one. It does not change anything else which means it
+proxies every access to the image. For instance, we make use of this view to easily subdivide a 2D-image into 4 tiles as
+shown in the code below:
 \begin{minted}{C++}
   mln::image2d<mln::rgb8> large_image = /* ... */;
   point2d shape = large_image.domain().shape();
@@ -159,9 +159,9 @@ in the code below:
   };
 \end{minted}
 
-\paragraph{The mask view} is very image-processing oriented as it allows the practitioner to provide a boolean image the
-same size as the original image to select only the pixels whose corresponding value in the mask is true. Its usage is
-shown in the following code:
+\paragraph{The mask view} It is very image-processing oriented as it allows the practitioner to provide a boolean image
+the same size as the original image to select only the pixels whose corresponding value in the mask is true. Its usage
+is shown in the following code:
 \begin{minted}{C++}
   mln::image2d<mln::rgb8> ima = /* ... */;
   auto mask = ima > 127;
@@ -173,7 +173,7 @@ and write access.
 
 \subsection{Value-transforming views}
 
-\paragraph{The transform view} is the most important view of all. It consists in applying a function to each image's
+\paragraph{The transform view} It is the most important view of all. It consists in applying a function to each image's
 pixel. For instance, writing the grayscale algorithm with a transform view is as simple as the following code:
 \begin{minted}{C++}
   auto grayscale_transform = [](mln::rgb8 val) -> uint8_t {
@@ -187,10 +187,10 @@ pixel. For instance, writing the grayscale algorithm with a transform view is as
 There is no loop in this code, just the pixel-wise transformation function. Furthermore, the code will not compute the
 resulting image. The computation will happen on-the-fly each time a value from \texttt{ima\_grayscale} is yielded.
 This view allows the practitioner to quickly write and adapt any pixel-wise algorithm he needs for his more complex
-calculation in an efficient way.
+calculation efficiently.
 
-\paragraph{The zip view} is one of the most useful view and allow the practitioner to iterate over a set of image at the
-same time. The basic use-case consists in iterating over a set of input image and the output image to be able to
+\paragraph{The zip view} It is one of the most useful view and allow the practitioner to iterate over a set of image at
+the same time. The basic use-case consists in iterating over a set of input image and the output image to be able to
 consistently assign output values to a resulting computation from input values. Its usage is shown in the following
 code:
 \begin{minted}{C++}
@@ -202,9 +202,9 @@ code:
 \end{minted}
 This code is another example of how to compute a binary threshold image.
 
-\paragraph{The channel/RGB views} is a projector to access a specific color channel of an image. There exists image with
-many more channels than just the standard red/green/blue ones, from the astrophysics or medical area for instances. This
-view is a tool to restrict an image and only access a specific channel. Its usage is shown in the following code:
+\paragraph{The channel/RGB views} It is a projector to access a specific color channel of an image. There exists image
+with many more channels than just the standard red/green/blue ones, from the astrophysics or medical area for instances.
+This view is a tool to restrict an image and only access a specific channel. Its usage is shown in the following code:
 \begin{minted}{C++}
   mln::image2d<mln::rgb8> ima = /* ... */;
   mln::copy(mln::view::red(ima), mln::view::green(ima));
@@ -213,8 +213,9 @@ This code copies the red component into the green component. It shows that the v
 access. Another more generic view exists; \mintinline{c++}{mln::view::channel(ima, k)}, that access the \texttt{k}-th
 channel in \texttt{ima}.
 
-\paragraph{The cast views} is a way to convert an image's underlying type to another type, by performing a cast. As this
-does not modify the underlying value in itself, the access cannot be a write access. This view can be used as shown in
+\paragraph{The cast views} It is a way to convert an image's underlying type to another type, by performing a cast. As
+this does not modify the underlying value in itself, the access cannot be a write access. This view can be used as shown
+in
 the following code:
 \begin{minted}{C++}
   mln::image2d<double> ima = /* ... */;
@@ -257,7 +258,7 @@ swap between values depending on a boolean mask. This way, a mathematical morpho
 \end{minted}
 Everything is taken care of and the practitioner just has to write down his algorithm to get it done.
 
-\paragraph{The mathematical operators} are implemented in the form of views that operates point-wise. The supported
+\paragraph{The mathematical operators} They are implemented in the form of views that operates point-wise. The supported
 mathematical operators are the following: abs, pow, sqr, cbrt, sqrt, sum, prod, min, max, dot, cross, l0norm, l1norm,
 l2norm, l2norm\_sqr, linfnorm, lpnorm, l0dist, l1dist, l2dist, l2dist\_sqr, linfdist, lpdist. Calling an operator onto
 an image is equivalent to calling a transform view on each value of this image:
@@ -312,8 +313,8 @@ the most out of the data we already have, and we do not want to compute data we 
 when the \emph{copyability} property is required. This is the main reason why we did not adopt this approach.
 
 The second one is to make the differentiation between a \emph{concrete image} which owns the data (like the standard
-containers) and the \emph{views} that are lightweight cheap-to-copy objects. However this would imply we have to
-distinguish both image families when writing algorithms and we do not want that.
+containers) and the \emph{views} that are lightweight cheap-to-copy objects. However, this would imply we have to
+distinguish both image families when writing algorithms, and we do not want that.
 
 This is why we have chosen to take a path where we mix both approaches at the same time. We assert that all image are
 cheap-to-copy (including views), even the concrete images. The concrete image will have a shared ownership semantic
@@ -421,7 +422,7 @@ auto i = view::transform(h,
 
 The tree of type resulting from this view chaining is illustrated by~\cref{fig.viewAST}. It illustrates how chaining
 views with each other result in the formation of an abstract tree that records the operations to perform. This model
-enables building complex computational trees via views while keeping efficient performances at run-time. However, those
+enables building complex computational trees via views while keeping efficient performance at run-time. However, those
 trees are complex for the compiler to process and can induce heavy compilation time overhead.
 
 \begin{figure}[htb]
@@ -590,7 +591,8 @@ produce proper results.
 
 \paragraph{Image decoration}
 The border is infinite, and we make a view of our image to decorate it with the required extension. This is achieved
-using \emph{views}: the original image is chained into a view that will add the required feature to the image. For instance, let us consider the following image:
+using \emph{views}: the original image is chained into a view that will add the required feature to the image. For
+instance, let us consider the following image:
 \begin{minted}{C++}
 struct borderless_image {
   // ...
@@ -602,7 +604,7 @@ struct borderless_image {
 Attempting to use this image in a local algorithm that works with a structuring element as the structuring element does
 not fit inside the image when considering the behavior on the borders. However, instead of narrowing the region of
 interest, it is possible to make a view that will return an image from which the behavior at the border is well-defined.
-Referring to the taxonomy from the previous chapter~\ref{chap:image.algorithms.taxonomy} we remember that we can
+Referring to the taxonomy from the previous Chapter~\ref{chap:image.algorithms.taxonomy} we remember that we can
 construct a custom extension type for the sake of an example (as described in~\cref{subsec:local.se.ext}). This example
 will decorate the image so that the border is always filled with a specific value. The following code shows how we can
 write such an extension:
@@ -777,7 +779,7 @@ local_algorithm(Ima ima, SE se)
   // use ima & se in loop
 }
 \end{minted}
-We can rewrite it leveraging the border manager facility this way :
+We can rewrite it leveraging the border manager facility this way:
 \begin{minted}{C++}
 template <class Ima, class SE, class BM>
 local_algorithm(Ima ima, SE se, BM bm)
@@ -821,7 +823,7 @@ optimizations the compiler do to be efficient.
 \label{subsec.range.traversing}
 
 Lastly, views usage should be measured when used at critical points. We learned from experience that one simple change
-can make the compiler miss optimization opportunities which can greatly impact the resulting performances. Let us
+can make the compiler miss optimization opportunities which can greatly impact the resulting performance. Let us
 illustrate our remark with a concrete example: image traversing. In previous version of our library, we used macro for
 image traversing. \texttt{mln\_concrete}, \texttt{mln\_piter}, \texttt{mln\_qiter}, \texttt{for\_all} and
 \texttt{mln\_value} are all macros aiming at hiding the underlying complexity. Our goal were to replace those macros
@@ -887,8 +889,8 @@ in~\cref{fig.inner.outer.range}.
 \end{figure}
 
 Thanks to this new design we can now rewrite our algorithm with a double for-loop for the image traversing. Hopefully it
-stays really similar to what one would be used to when working with the classical two dimension image. As an example, we
-can rewrite the dilation algorithm this way:
+stays really similar to what one would be used to when working with the classical two-dimensional image. As an example,
+we can rewrite the dilation algorithm this way:
 \begin{minted}{c++}
 template<class I, class SE>
 auto dilate(I input, const SE& se)
@@ -912,7 +914,7 @@ the multidimensional outer range.
 
 \subsection{Performance discussion}
 
-In order to have a relevant discussion on performances, we decided to implement a real world image processing pipeline:
+In order to have a relevant discussion on performance, we decided to implement a real world image processing pipeline:
 the background subtraction. It is used to detect changes in image sequences~\parencite{opencv.bg_sub}. It is mainly used
 when regions of interest are foreground objects. The pipeline components include: subtraction, Gaussian filtering,
 threshold, erode and dilate, as shown in~\ref{fig.view.comp.sub_bg}.
@@ -920,7 +922,7 @@ threshold, erode and dilate, as shown in~\ref{fig.view.comp.sub_bg}.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\linewidth]{figs/pipeline_bg_sub_comp}
-  \caption{Background substraction pipeline using \colorbox{lightgreen}{algorithms} and
+  \caption{Background subtraction pipeline using \colorbox{lightgreen}{algorithms} and
     \colorbox{thistle}{views}.}
   \label{fig.view.comp.sub_bg}
 \end{figure}
@@ -933,12 +935,12 @@ pipeline and the code.
   \begin{minted}[highlightlines={3-4,6,8},highlightcolor=thistle]{c++}
   float kThreshold = 150; float kVSigma = 10;
   float kHSigma = 10;  int kOpeningRadius = 32;
-  auto img_grey = view::transform(img_color, to_gray);
-  auto bg_grey  = view::transform(bg_color, to_gray);
-  auto bg_blurred = gaussian2d(bg_grey,  kHSigma, kVSigma);
-  auto tmp_grey = img_grey - bg_blurred; /
+  auto img_gray = view::transform(img_color, to_gray);
+  auto bg_gray  = view::transform(bg_color, to_gray);
+  auto bg_blurred = gaussian2d(bg_gray,  kHSigma, kVSigma);
+  auto tmp_gray = img_gray - bg_blurred; /
   auto thresholdf = [](auto x) { return x < kThreshold; };
-  auto tmp_bin = view::transform(tmp_grey, thresholdf); /
+  auto tmp_bin = view::transform(tmp_gray, thresholdf); /
   auto ero = erosion(tmp_bin, disc(kOpeningRadius));
   dilation(ero, disc(kOpeningRadius), output);
   \end{minted}

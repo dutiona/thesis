@@ -3,13 +3,13 @@
 
 \section*{Outline}
 
-\lettrine[lines=2]{N}{owadays} \emph{Computer Vision} and \emph{Image Processing (IP)} are omnipresent in the day to day
+\lettrine[lines=2]{N}{owadays} \emph{Computer Vision} and \emph{Image Processing (IP)} are omnipresent in the day-to-day
 life of the people. It is present each time we pass by a CCTV camera, each time we go to the hospital do an MRI, each
 time we drive our car and pass in front of a speed camera and each time we use our computer, smartphone or tablet. We
-just cannot avoid it anymore. The systems using this technology are sometimes simple and, sometimes, more complex. Also
-the usage made of this technology has several different purposes: space observation, medical, quality of life
-improvement, surveillance, control, autonomous system, etc. Henceforth, Image processing has a wide range of research
-and despite having a mass of previous of work already contributed to, there are still a lot to explore.
+just cannot avoid it anymore. The systems using this technology are sometimes simple and, sometimes, more complex. Also,
+the usage made of this technology has several purposes: space observation, medical, quality of life improvement,
+surveillance, control, autonomous system, etc. Henceforth, Image processing has a wide range of research and despite
+having a mass of previous of work already contributed to, there are still a lot to explore.
 
 Let us take the example of a modern smartphone application which provides facial recognition in order to recognize
 people whom are featuring inside a photo. To provide accurate result, this application will have to do a lot of
@@ -18,20 +18,20 @@ light exposition, the resolution, the orientation, the number of person, the loc
 between humans and objects/animals, etc. All of these is in order to finally recognizing the person(s) inside the photo.
 What the application does not tell you is the complexity of the image processing pipeline behind the scene that can not
 even be executed in its entirety on one's device (smartphone, tablet, \ldots). Indeed, image processing is costly in
-computing ressources and would not meet the time requirement desired by the user if the entire pipeline was executed on
-the device. Furthermore, for the final part which is "recognize the person on the photo", one needs to feed the
+computing resources and would not meet the time requirement desired by the user if the entire pipeline was executed on
+the device. Furthermore, for the final part which is ``recognize the person on the photo'', one needs to feed the
 pre-processed photo to a neural network trained beforehand through deep learning techniques in order to give an accurate
 response. There exists technologies able to embed neural network into mobile phone such as
 MobileNets~\parencite{howard.2017.mobilenets} but it is still limited. It can detect a human being inside a photo but
-not give the answer about who this human being is for instance. That is why, accurate neural network system usually are
+not give the answer about whom this human being is for instance. That is why, accurate neural network system usually are
 abstracted away in cloud technologies making them available only via Internet. When uploading his image, the user does
 not imagine the amount of technologies and computing power that will be used to find who is on the photo.
 
 We now understand that in order to build applications that interact with photos or videos nowadays, we need to be able
 to do accurate, fast and scalable image processing on a multitude of devices (smartphone, tablet, \ldots). In order to
 achieve this goal, image processing practitioners needs to have two kinds of tools at their disposal. One will be the
-prototyping environnement, a toolbox which allow the practitioner to develop, test and improve its application logic.
-The other is the production environnement which deploy the viable version of the application that was developed by the
+prototyping environment, a toolbox which allow the practitioner to develop, test and improve its application logic.
+The other is the production environment which deploy the viable version of the application that was developed by the
 practitioner. Both environment may not have the same needs. On one hand, the prototyping environment usually requires to
 have a fast feedback loop for testing, an availability of state-of-the-art algorithms and existing software. This way
 the practitioner can easily build upon them and be fast enough in order not to keep waiting for results when testing
@@ -39,15 +39,15 @@ many prototypes. On the other hand, the production environment must be stable, r
 
 When looking at standards in the industry nowadays, we notice that Python is the main choice for prototyping. Also,
 Python may not be enough so that a viable prototype can be pushed in production with minimal changes afterwards. We find
-it non-ideal that the practitioner cannot take advantages of many optimisation opportunities, both in term of algorithm
+it non-ideal that the practitioner cannot take advantages of many optimization opportunities, both in terms of algorithm
 efficiency and better hardware usage, when proceeding this way. It would be much more efficient to have basic low level
 building blocks that can be adapted to fit as mush use cases as possible. This way, the practitioner can easily build
-upon them when designing its application. We distinguishes two kind of use cases. The first one is about the
-multiplicity of types or algorithms the practitioner is facing. The second one is about the diversity of hardware the
-practitioner may want to run his program. The goal is to have building blocks that can be intelligent enough to take
-advantage of many optimization opportunities, with regard to both input data types/algorithms and target hardware. Then
-the practitioner would have a huge performance improvement, by default, without specifically tweaking its application.
-As such, the concept of genericity was introduced. It aims at providing a common ground about how an image should behave
+upon them when designing its application. We distinguish two kinds of use cases. The first one is about the multiplicity
+of types or algorithms the practitioner is facing. The second one is about the diversity of hardware the practitioner
+may want to run his program. The goal is to have building blocks that can be intelligent enough to take advantage of
+many optimization opportunities, with regard to both input data types/algorithms and target hardware. Then the
+practitioner would have a huge performance improvement, by default, without specifically tweaking its application. As
+such, the concept of genericity was introduced. It aims at providing a common ground about how an image should behave
 when passed to basic algorithms needed for complex applications. This way, in theory, one only needs to write the
 algorithm once for it to work with any given kind of image.
 
@@ -57,15 +57,15 @@ algorithm once for it to work with any given kind of image.
 In Image Processing, there exists a multitude of image types whose characteristics can be vastly different from one
 another. This large specter is also resulting from the large domain of application of image processing. For instance,
 when considering photography we have 2D image whose values can vary from 8 bits grayscale to multiple band 32-bits color
-scheme storing informations about the non-visible specter of human eye. If we consider another domain of application,
+scheme storing information about the non-visible specter of human eye. If we consider another domain of application,
 such as medical imaging, we now can consider sequence of images such as sequence of 3D image for an MRI for instance.
-More broadly there are two orthogonal constituent of an image: its topology (or structure) and its values. However,
-there are two more aspectes to consider here. Firstly, image processing provide plenty of algorithms that can or cannot
-operate over specific data types. There are also different kind of algorithms. Some will extract informations,(e.g.
-histogram) other will transform the image point-wise (e.g. thresholding), and some other will even combine several image
-to render a different kind of informations (e.g. background substraction). There are many simple algorithms and also
-many complex algorithms out there. Secondly, there are orbiting data around image types and algorithms that are also
-very diverse and necessary for their smooth operation. Indeed, a dilation algorithm will also need an additional
+More broadly there are two orthogonal constituents of an image: its topology (or structure) and its values. However,
+there are two more aspects to consider here. Firstly, image processing provide plenty of algorithms that can or cannot
+operate over specific data types. There are also different kind of algorithms. Some will extract information, (e.g.
+histogram) others will transform the image point-wise (e.g. thresholding), and some other will even combine several
+images to render a different kind of information (e.g. background subtraction). There are many simple algorithms and
+also many complex algorithms out there. Secondly, there are orbiting data around image types and algorithms that are
+also very diverse and necessary for their smooth operation. Indeed, a dilation algorithm will also need additional
 information: the dilation disc. A thresholding algorithm may be given a threshold. A convolution filter requires a
 convolution matrix to operate. That is why, when considering both image types and algorithms, we need a 3D-chart
 (illustrated in~\cref{fig:int.possibility_space}) to enumerate all possibilities, where one axis is the image topology,
@@ -82,7 +82,7 @@ one axis is the color scheme and one axis enumerate the additional data that can
 
 \section*{Different user profiles and their use cases}
 
-\paragraph{The end user} is a non programmer user who wants to occasionally use image processing software through
+\paragraph{The end user} He is a non-programmer user who wants to occasionally use image processing software through
 UI-rich interface, such as Adobe Photoshop~\parencite{adobe.2019.photoshop} or The GIMP~\parencite{gimp.2019}. Its
 skills are non-relevant as the end user is using the software to get work done even though he does not fully understand
 the underlying principles. For instance, the end user will want to correct the brightness of an image, of remove some
@@ -90,85 +90,86 @@ impurities from a face or a building. The end user does not want to build an app
 needs of the end user mainly revolves around a clean and intuitive software UI as well as a well as support for
 mainstream image types and operation a photograph may need to do.
 
-\paragraph{The practitioner} is what we are called when we first approach the image processing area. A practitioner is
-the end user of image processing libraries. Its skills mainly revolve around applied mathematics for image processing,
-prototyping and algorithms. A practitioner aims at leveraging the features the libraries can offer to build his
-application. For instance, a practitioner can be a researcher in medical imaging, an engineer build a facial recognition
-application, a data scientist labeling its image set, etc. The needs of practitioner are mainly revolving around a fast
-feedback loop. The developing environment must be easily accessible and installable. This way a practitioner can judge
-quickly wether one library will answer his needs. The documentation of the library must be exhaustive and didactic with
-examples. When prototyping, the library must provide fast feedback loops, as in a python notebook for instance. Finally
-it must be easily integrated in a standard ecosystem such as being able to work with NumPy's array natively without
-imposing its own types. To sum up, practitioner's programmatic skills do not need to be high as his main goal is to
-focus on algorithms and mathematics formulas.
+\paragraph{The practitioner} He is what we are called when we first approach the image processing area. A practitioner
+is the end user of image processing libraries. Its skills mainly revolve around applied mathematics for image
+processing, prototyping and algorithms. A practitioner aims at leveraging the features the libraries can offer to build
+his application. For instance, a practitioner can be a researcher in medical imaging, an engineer build a facial
+recognition application, a data scientist labeling its image set, etc. The needs of practitioner are mainly revolving
+around a fast feedback loop. The developing environment must be easily accessible and installable. This way a
+practitioner can judge quickly whether one library will answer his needs. The documentation of the library must be
+exhaustive and didactic with examples. When prototyping, the library must provide fast feedback loops, as in a Python
+notebook for instance. Finally, it must be easily integrated in a standard ecosystem such as being able to work with
+NumPy's array~\parencite{oliphant.2006.numpy,harris.2020.numpy} natively without imposing its own types. To sum up,
+practitioner's programmatic skills do not need to be high as his main goal is to focus on algorithms and mathematics
+formulas.
 
-\paragraph{The contributer} is an advanced user of a library who is very comfortable with its inner working, philosophy,
-aims, strengths and potential shortcomings. As such, he is able to add new specific features to library, fix some
-shortcomings or bugs. Usually a contributer is able to add a feature needed for a practitioner to finish his
+\paragraph{The contributor} He is an advanced user of a library who is very comfortable with its inner working,
+philosophy, aims, strengths and potential shortcomings. As such, he is able to add new specific features to library, fix
+some shortcomings or bugs. Usually a contributor is able to add a feature needed for a practitioner to finish his
 application. Furthermore he can then contribute back his features to the main project via pull requests if it is
-relevant. This way, a maintainer will assess the pull request and review it. The two main points of a contributer are
+relevant. This way, a maintainer will assess the pull request and review it. The two main points of a contributor are
 his deep knowledge of a library and his ability to write code in the same language as the source code of it. Also, a
-contributer must have knowledge of coding best practices such as writing unit tests which are mandatory when adding a
+contributor must have knowledge of coding best practices such as writing unit tests which are mandatory when adding a
 feature to an existing library. To facilitate contribution, a library must provide clear guidelines about the way to
 contribute, be easy to bootstrap and compile without having heavy requirements on dependencies. The best case would be
-that the library is handled by standard packages managers such as system apt or python conan.
+that the library is handled by standard packages managers such as system apt or Python conan.
 
-\paragraph{The maintainer} is usually the creator, founder of the library or someone that took over the project when the
-founder stepped back. Also, when a library grows, it is not rare that regular contributers end up being maintainer as
-well to help the project. The maintainer is in charge of keeping alive the project by fulfilling several aspects:
+\paragraph{The maintainer} He is usually the creator, founder of the library or someone that took over the project when
+the founder stepped back. Also, when a library grows, it is not rare that regular contributors end up being maintainer
+as well to help the project. The maintainer is in charge of keeping alive the project by fulfilling several aspects:
 upgrade and release new features according to the user (practitioner) needs and the library philosophy. Also, a library
 may not evolve as fast as the user may want it because of lack of time from maintainers. A lot of open source projects
 are maintained by volunteers and lack of time is usually the main aspect slowing development progress. The maintainer is
-also in charge of reviewing all the contributers pull requests. He must check if they are relevant and completed enough,
+also in charge of reviewing all the contributors pull requests. He must check if they are relevant and completed enough,
 (for instance, presence of tests and documentation) to be integrated in the project. Indeed, merging a pull requests
 equals to accepting to take care of this code in the future too. It means that further upgrade, bug fix, refactoring of
 the project will consider this new code too. If the maintainer is not able to take care of this code then it should
 probably not be integrated in the project in the first place. Any project and library has its maintainers. A maintainer
 is someone very familiar with the inner working and architectural of the project. He is also someone that has some
-history in the project to understand why some decisions has been made, what choices has been made at some points and
+history in the project to understand why some decisions has been made, what choices had been made at some points and
 what the philosophy of the project is. It is important to be able to refuse a contribution that would go contrary to the
-philosophy of the project, even a very interesting one. Finally the profile of a maintainer is one of a developer that
+philosophy of the project, even a very interesting one. Finally, the profile of a maintainer is one of a developer that
 is used to the standard workflow in open source based on: forks, branches, merge/pull requests and continuous
 integration.
 
 \section*{Different tools}
 
 Before stating the topic of the thesis, it is important to enumerate the different kind of tools the current market has
-to offer to know where we will be positioning ourself.
+to offer to know where we will be positioning ourselves.
 
-\paragraph{Graphic editors} are what neophyte thinks about when they imagine what image processing is. Those are tools
-that allow a non expert user to apply a wide array of operation on an image from an intuitive GUI in a way the user does
-not have to understand the underlying logic behind each and every operation he is applying. Such tools are usually large
-complex software such as The GIMP~\parencite{gimp.2019} or Photoshop~\parencite{adobe.2019.photoshop}. Their aim is to
-be useable by end users while supporting a large set of popular image format.
+\paragraph{Graphic editors} They are what neophyte thinks about when they imagine what image processing is. Those are
+tools that allow a non-expert user to apply a wide array of operation on an image from an intuitive GUI in a way the
+user does not have to understand the underlying logic behind each and every operation he is applying. Such tools are
+usually large complex software such as The GIMP~\parencite{gimp.2019} or Photoshop~\parencite{adobe.2019.photoshop}.
+Their aim is to be useable by end users while supporting a large set of popular image format.
 
-\paragraph{Command line utilities} are binaries that perform one operation or more invocable from a console interface or
-from a shell script through a command line interface (CLI). This CLI usually offers several options to pass data and/or
-information to the programs in order to have an processing happening. The informations can be, for instance, the input
-image path, the ouput image name and the name of a mathematical morphology algorithm to apply. Usually command line
-utilities come as projects such as ImageMagick~\parencite{imagemagick.2021},
+\paragraph{Command line utilities} They are binaries that perform one operation or more invocable from a console
+interface or from a shell script through a command line interface (CLI). This CLI usually offers several options to pass
+data and/or information to the programs in order to have an action happening. The information can be, for instance, the
+input image path, the output image name and the name of a mathematical morphology algorithm to apply. Usually command
+line utilities come as projects such as ImageMagick~\parencite{imagemagick.2021},
 GraphicsMagick~\parencite{graphicsmagick.2021} or MegaWave~\parencite{froment.2012.megawave,froment.2004.megawave2}.
 
-\paragraph{Visual programming environment} are software that allow the user to graphically and intuitively link one or
-several image processing operations while interactively displaying the result. The processing can easily be modified and
-the results are updated accordingly. Those software are usually aimed at engineer or researchers doing prototyping work
-not exclusive to image processing. Mathcad~\parencite{ptc.2019.mathcad} is a good example of such a software.
+\paragraph{Visual programming environment} They are software that allow the user to graphically and intuitively link one
+or several image processing operations while interactively displaying the result. The processing can easily be modified,
+and the results are updated accordingly. Those pieces of software are usually aimed at engineer or researchers doing
+prototyping work not exclusive to image processing. Mathcad~\parencite{ptc.2019.mathcad} is a good example of such a
+software.
 
-\paragraph{Integrated environment} are feature-rich platforms for scientists oriented toward prototyping. Those
-platforms provides a fully functional programming language and a graphical interface allowing the user to run commands
+\paragraph{Integrated environment} They are feature-rich platforms for scientists oriented toward prototyping. Those
+platforms provide a fully functional programming language and a graphical interface allowing the user to run commands
 and scripts as well as viewing results and data (image, matrices, etc.). The most well-known integrated environnement
 are Matlab~\parencite{mathworks.2020.matlab}, Scilab~\parencite{scilab.2020}, Octave~\parencite{gnu.2021.octave},
 Mathematica~\parencite{wolfram.2020.mathematica} and Jupyter~\parencite{kluyver.2016.jupyter} notebooks.
 
-\paragraph{Package for dynamic language} has known a surge in development these last few years and a multitude of
-libraries has been brought to dynamic languages this way. For instance, let us consider the python programming language.
-There are two main package provider: PyPi~\parencite{pypi.2021} and Conda~\parencite{anaconda.2020}. Both allow to
+\paragraph{Package for dynamic language} It has known a surge in development these last few years and a multitude of
+libraries has been brought to dynamic languages this way. For instance, let us consider the Python programming language.
+There are two main package providers: PyPi~\parencite{pypi.2021} and Conda~\parencite{anaconda.2020}. Both allow to
 install packages to enable the user to program his prototypes in Python very quickly. In image processing, there are
-packages such as Scipi~\parencite{jones.2006.scipy}, NumPy~\parencite{oliphant.2006.numpy},
-scikit-image~\parencite{vanderwalt.2014.skimage}, Pillow~\parencite{clark.2021.pillow} as well as binding for
-OpenCV~\parencite{bradski.2000.opencv}.
+packages such as Scipi~\parencite{jones.2006.scipy}, NumPy, scikit-image~\parencite{vanderwalt.2014.skimage},
+Pillow~\parencite{clark.2021.pillow} as well as binding for OpenCV~\parencite{bradski.2000.opencv}.
 
-\paragraph{Programming libraries} is the most common tool available out there. They are a collection of routines,
+\paragraph{Programming libraries} It is the most common tool available out there. They are a collection of routines,
 functions and structures providing features through a documentation and binaries. They require the user to be proficient
 with a certain programming language and also to be able to integrate a library into his project. For image processing we
 have: IPP~\parencite{taylor.2004.intel}, ITK~\parencite{johnson.2013.ITKSoftwareGuideThirdEdition},
@@ -178,16 +179,16 @@ Video++~\parencite{garrigues.2014.video++}, Generic Graphic Library~\parencite{k
 Milena~\parencite{levillain.2009.ismm,levillain.2010.icip} and
 Olena~\parencite{olena.2000.www,levillain.2011.phd,geraud.2012.hdr,levillain.2014.ciarp}.
 
-\paragraph{Domain Specific Languages (DSL)} are tools developed when a library developer deem he is unable to express
-the concepts and abstraction layers he wants to express through publishing a library. In this case, the barrier is often
-the programming language itself and so the developer does think that another layer of abstraction above the programming
-language would be a good thing. It leads to the genesis of a new programming language in some cases like
+\paragraph{Domain Specific Languages (DSL)} They are tools developed when a library developer deem he is unable to
+express the concepts and abstraction layers he wants to express through publishing a library. In this case, the barrier
+is often the programming language itself and so the developer does think that another layer of abstraction above the
+programming language would be a good thing. It leads to the genesis of a new programming language in some cases like
 Halide~\parencite{ragankelley.2013.halide} and SYCL~\parencite{brown.2019.heterogeneous,wong.2019.heterogeneous} but can
-also be a case of having the current programming language be "upgraded" to include another subset of features that are
+also be a case of having the current programming language be ``upgraded'' to include another subset of features that are
 not natively included. This is often the case in C++ where we have in-language DSL like
-Eigen~\cite{guennebaud.2010.eigen}, Blaze~\cite{iglberger.2012.blaze,iglberger.2012_1.blaze},
-Blitz++~\cite{veldhuizen.2000.blitz} or Armadillo~\cite{sanderson.2016.armadillo}. They leverage a possibility of the
-C++ programming language (\emph{expression templates}~\cite{veldhuizen.1995.expression}) to achieve it.
+Eigen~\parencite{guennebaud.2010.eigen}, Blaze~\parencite{iglberger.2012.blaze,iglberger.2012_1.blaze},
+Blitz++~\parencite{veldhuizen.2000.blitz} or Armadillo~\parencite{sanderson.2016.armadillo}. They leverage a possibility
+of the C++ programming language (\emph{expression templates}~\parencite{veldhuizen.1995.expression}) to achieve it.
 
 
 \section*{Topic of this thesis}
@@ -208,18 +209,18 @@ easy to use, then it will be not very efficient by default. If one wants a solut
 it will not be very generic. To illustrate this rule, we can find examples among existing libraries. A notably generic
 and efficient library in C++ is Boost~\parencite{boost.2021}: it is also notably known to be hard to use. Components
 such as Boost.Graph, Boost.Fusion or Boost.Spirit are hard to use. Also, a library which is generic and easy to use is
-the json parser written by Niels Lohmann~\parencite{nlohmann.2021.json} it strives to handle every use case while
-remaining very easy to integrate and to use in user code (syntax really close to native json in C++ code by providing
+the Json parser written by Niels Lohmann~\parencite{nlohmann.2021.json} it strives to handle every use case while
+remaining very easy to integrate and to use in user code (syntax really close to native Json in C++ code by providing
 DSL to parse C++ constructs into JSON). However, this has a cost and the parser is slower than Json parser optimized for
-speed such as simdjson~\parencite{lemire.2021.simdjson} whose aim is to "parse gigabytes of JSON per second". Finally,
-there are plenty of example of user friendly and efficient code which is not generic. We can cite
+speed such as simdjson~\parencite{lemire.2021.simdjson} whose aim is to ``parse gigabytes of JSON per second''. Finally,
+there are plenty of example of user-friendly and efficient code which is not generic. We can cite
 Scikit-image~\parencite{vanderwalt.2014.skimage} and OpenCV~\parencite{bradski.2000.opencv} that are easy to use and
-efficient (lot of handwritten simd/gpu code) but not generic due to the design choices.
+efficient (lot of handwritten SIMD/GPU code) but not generic due to the design choices.
 
 In this thesis, we chose to work on an image processing library though continuing the work on
-Pylene~\cite{carlinet.2018.pylena}. But only working at library level would restrict the usability of our work and thus
-its impact. That is why we aim to reach prototyping users through providing a package that can be used in dynamic
-language such as Python without sacrificing efficiency. In particular, we aim to be useable in a jupyter notebook. It is
+Pylene~\parencite{carlinet.2018.pylena}. But only working at library level would restrict the usability of our work and
+thus its impact. That is why we aim to reach prototyping users through providing a package that can be used in dynamic
+language such as Python without sacrificing efficiency. In particular, we aim to be useable in a Jupyter notebook. It is
 a very important goal for us to reach a usability able to permeate into the educational side which is a strength of
 Python. In this library, we demonstrate how to achieve genericity and efficiency while remaining easy to use all at the
 same time. The scope of this library would be to specialize in mathematical morphology as well as providing very
@@ -231,31 +232,31 @@ diffusion and ease of use.
 With this philosophy in mind, this manuscript aims at presenting our thesis work related to the C++ language applied to
 the Image Processing domain. It is organized as followed:
 
-\paragraph{Genericity~\ref{chap:genericity}} presents a state-of-the-art overview about the notion of genericity. We
+\paragraph{Genericity~\ref{chap:genericity}} It presents a state-of-the-art overview about the notion of genericity. We
 explain its origin, how it has evolved (especially within the C++ language), what issues it is solving, what issues it
 is creating. We explain why image processing and genericity work well together. Finally, we tour around existing
 facilities that allows genericity (intrinsically restricted to compiled language) to exists in the dynamic world (with
 interpreted languages such as Python).
 
-\paragraph{Images and Algorithms taxonomy~\ref{chap:image.algorithms.taxonomy}} presents our first contribution
-which is a comprehensive work in the image processing area around the taxonomy of different images families as well of
+\paragraph{Images and Algorithms taxonomy~\ref{chap:image.algorithms.taxonomy}} It presents our first contribution which
+is a comprehensive work in the image processing area around the taxonomy of different images families as well of
 different algorithms families. This part explains, among others, the notion of concept and how it applies to the image
 processing domain. We explain how to extract a concept from existing code, how to leverage it to make code more
 efficient and readable. We finally offer our take about a collection of concepts related to image processing area.
 
-\paragraph{Images Views~\ref{chap:image_views}} presents our second contribution which is a generalization of the
+\paragraph{Images Views~\ref{chap:image_views}} It presents our second contribution which is a generalization of the
 concept of View (from the C++ language, the work on ranges~\parencite{niebler.2018.ranges}) to images. This allows the
 creation of lightweight, cheap-to-copy images. It also enables a much simpler way to design image processing pipeline by
 chaining operations directly in the code in an intuitive way. Ranges are the cement of news design to ease the use of
-image into algorithms which can further extend their generic behavior. Finally, we discuss the concept of lazy evaluation
-and the impacts of views on performances.
+image into algorithms which can further extend their generic behavior. Finally, we discuss the concept of lazy
+evaluation and the impacts of views on performance.
 
-\paragraph{Static dynamic bridge~\ref{chap:static_dynamic_bridge}} presents our third contribution which is a way to
+\paragraph{Static dynamic bridge~\ref{chap:static_dynamic_bridge}} It presents our third contribution which is a way to
 grant access to the generic facilities of a compiled language (such as C++) to a dynamic language (such as Python) to
 ease the gap between the prototyping phase and the production phase. Indeed, it is really not obvious to be able to
-conciliate generic code from C++ whose genericity is resolved at compilation-time (we call this the "static world"), and
-dynamic code from Python which rely on pre-compiled package binaries to achieve an efficient communication between the
-dynamic code and the library (we call this the "dynamic world"). We also cannot ask of the user to provide a compiler
-each time he wants to use our library from Python. In this part, we discuss what are the existing solutions that can be
-considered as well as their pros and cons. We then discuss how we designed an hybrid solution to make a bridge between
-the static world and the dynamic world: a static-dynamic bridge.
+conciliate generic code from C++ whose genericity is resolved at compilation-time (we call this the ``static world''),
+and dynamic code from Python which rely on pre-compiled package binaries to achieve an efficient communication between
+the dynamic code and the library (we call this the ``dynamic world''). We also cannot ask of the user to provide a
+compiler each time he wants to use our library from Python. In this part, we discuss what are the existing solutions
+that can be considered as well as their pros and cons. We then discuss how we designed a hybrid solution to make a
+bridge between the static world and the dynamic world: a static-dynamic bridge.

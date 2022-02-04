@@ -1,6 +1,6 @@
-@String{pub-ISO     = "International Organization for Standardization"}
+@String{pub-ISO     = {International Organization for Standardization}}
 
-@String{pub-ISO:adr = "Geneva, Switzerland"}
+@String{pub-ISO:adr = {Geneva, Switzerland}}
 
 @inproceedings{abrahams.2000.exceptions-generic,
   abstract  = {This paper represents the knowledge accumulated in response to a real-world need: that the C++ Standard
@@ -45,21 +45,21 @@
 }
 
 @inproceedings{allili.2001.cubical,
-  author    = {Allili, M. and Mischaikow, K. and Tannenbaum, A.},
-  booktitle = {Proceedings 2001 International Conference on Image Processing (Cat. No.01CH37205)},
-  title     = {Cubical homology and the topological classification of 2D and 3D imagery},
-  year      = {2001},
-  volume    = {2},
-  number    = {},
-  pages     = {173-176 vol.2},
   abstract  = {There are a number of tasks in low level vision and image processing that involve computing certain
                topological characteristics of objects in a given image including connectivity and the number of holes.
                We combine a new combinatorial topology method to compute the number of connected components and holes of
                objects in a given image with fast segmentation methods to extract the objects.},
-  keywords  = {},
+  author    = {Allili, M. and Mischaikow, K. and Tannenbaum, A.},
+  booktitle = {Proceedings 2001 International Conference on Image Processing (Cat. No.01CH37205)},
   doi       = {10.1109/ICIP.2001.958452},
   issn      = {},
-  month     = {10}
+  keywords  = {},
+  month     = {10},
+  number    = {},
+  pages     = {173-176 vol.2},
+  title     = {Cubical homology and the topological classification of 2D and 3D imagery},
+  volume    = {2},
+  year      = {2001}
 }
 
 @misc{amd.2013.acml-gpu,
@@ -471,16 +471,6 @@
   year         = {2018}
 }
 
-@misc{stroustrup.2019.signed-unsigned-mess,
-  author       = {Bjarne Stroustrup},
-  key          = {p1491r0},
-  month        = {02},
-  organization = {WG21},
-  title        = {Don't add to the signed/unsigned mess},
-  url          = {https://wg21.link/p1491r0},
-  year         = {2019}
-}
-
 @online{chollet.2015.keras,
   author    = {Chollet, Francois and others},
   publisher = {GitHub},
@@ -608,10 +598,10 @@
                profiling works by running performance experiments during program execution. Each experiment calculates
                the impact of any potential optimization by virtually speeding up code: inserting pauses that slow down
                all other code running concurrently. The key insight is that this slowdown has the same relative effect
-               as running that line faster, thus "virtually" speeding it up. We present Coz, a causal profiler, which we
-               evaluate on a range of highly-tuned applications: Memcached, SQLite, and the PARSEC benchmark suite. Coz
-               identifies previously unknown optimization opportunities that are both significant and targeted. Guided
-               by Coz, we improve the performance of Memcached by 9\%, SQLite by 25\%, and accelerate six PARSEC
+               as running that line faster, thus ``virtually'' speeding it up. We present Coz, a causal profiler, which
+               we evaluate on a range of highly-tuned applications: Memcached, SQLite, and the PARSEC benchmark suite.
+               Coz identifies previously unknown optimization opportunities that are both significant and targeted.
+               Guided by Coz, we improve the performance of Memcached by 9\%, SQLite by 25\%, and accelerate six PARSEC
                applications by as much as 68\%; in most cases, these optimizations involve modifying under 10 lines of
                code.},
   address   = {New York, NY, USA},
@@ -887,7 +877,7 @@
   journal   = {PeerJ Computer Science},
   pages     = {e149},
   publisher = {PeerJ Inc.},
-  title     = {AutoWIG: automatic generation of python bindings for C++ libraries},
+  title     = {{AutoWIG}: automatic generation of {P}ython bindings for {C}++ libraries},
   url       = {https://peerj.com/articles/cs-149.pdf},
   volume    = {4},
   year      = {2018}
@@ -1240,7 +1230,7 @@
   number    = {1},
   pages     = {014001},
   publisher = {IOP Publishing},
-  title     = {{P}ythran: Enabling static optimization of scientific python programs},
+  title     = {{P}ythran: Enabling static optimization of scientific {P}ython programs},
   volume    = {8},
   year      = {2015}
 }
@@ -1326,6 +1316,39 @@
   year     = {1977}
 }
 
+@article{harris.2020.numpy,
+  abstract = {Array programming provides a powerful, compact and expressive syntax for accessing, manipulating and
+              operating on data in vectors, matrices and higher-dimensional arrays. NumPy is the primary array
+              programming library for the Python language. It has an essential role in research analysis pipelines in
+              fields as diverse as physics, chemistry, astronomy, geoscience, biology, psychology, materials science,
+              engineering, finance and economics. For example, in astronomy, NumPy was an important part of the software
+              stack used in the discovery of gravitational waves1 and in the first imaging of a black hole2. Here we
+              review how a few fundamental array concepts lead to a simple and powerful programming paradigm for
+              organizing, exploring and analysing scientific data. NumPy is the foundation upon which the scientific
+              Python ecosystem is constructed. It is so pervasive that several projects, targeting audiences with
+              specialized needs, have developed their own NumPy-like interfaces and array objects. Owing to its central
+              position in the ecosystem, NumPy increasingly acts as an interoperability layer between such array
+              computation libraries and, together with its application programming interface (API), provides a flexible
+              framework to support the next decade of scientific and industrial analysis.},
+  author   = {Harris, Charles R. and Millman, K. Jarrod and van der Walt, St{\'e}fan J. and Gommers, Ralf and
+              Virtanen, Pauli and Cournapeau, David and Wieser, Eric and Taylor, Julian and Berg, Sebastian and
+              Smith, Nathaniel J. and Kern, Robert and Picus, Matti and Hoyer, Stephan and van Kerkwijk, Marten H. and
+              Brett, Matthew and Haldane, Allan and del R{\'i}o, Jaime Fern{\'a}ndez and Wiebe, Mark and
+              Peterson, Pearu and G{\'e}rard-Marchant, Pierre and Sheppard, Kevin and Reddy, Tyler and
+              Weckesser, Warren and Abbasi, Hameer and Gohlke, Christoph and Oliphant, Travis E.},
+  day      = {01},
+  doi      = {10.1038/s41586-020-2649-2},
+  issn     = {1476-4687},
+  journal  = {Nature},
+  month    = {09},
+  number   = {7825},
+  pages    = {357--362},
+  title    = {Array programming with NumPy},
+  url      = {https://doi.org/10.1038/s41586-020-2649-2},
+  volume   = {585},
+  year     = {2020}
+}
+
 @article{hoare.1969.axiomatic,
   abstract   = {In this paper an attempt is made to explore the logical foundations of computer programming by use of
                 techniques which were first applied in the study of geometry and have later been extended to other
@@ -1350,6 +1373,14 @@
   url        = {https://doi.org/10.1145/363235.363259},
   volume     = {12},
   year       = {1969}
+}
+
+@inproceedings{horvath.2016.transparent,
+  author    = {Horv{\'a}th, G{\'a}bor and Pataki, Norbert},
+  booktitle = {Proceedings of the 11th Joint Conference on Mathematics and Computer Science, ed. by E. Vatai, CEUR-WS},
+  pages     = {96--101},
+  title     = {Transparent functors for the C++ Standard Template Library},
+  year      = {2016}
 }
 
 @misc{howard.2017.mobilenets,
@@ -1767,6 +1798,16 @@
   year      = {2017}
 }
 
+@misc{lavavej.2012.transparent,
+  author       = {},
+  key          = {n3421},
+  month        = {09},
+  organization = {WG21},
+  title        = {Making Operator Functors greater<>},
+  url          = {http://wg21.link/n3421},
+  year         = {2012}
+}
+
 @software{lemire.2021.simdjson,
   author  = {Daniel Lemire and Geoff Langdale and John Keiser},
   date    = {2021-09-08},
@@ -2056,7 +2097,6 @@
   volume   = {7},
   year     = {2019}
 }
-
 @software{mathworks.2020.matlab,
   author  = {{MathWorks}},
   date    = {2020-09-22},
@@ -2088,6 +2128,7 @@
   volume    = {},
   year      = {2012}
 }
+
 @article{meyer.1992.design,
   abstract = {Methodological guidelines for object-oriented software construction that improve the reliability of the
               resulting software systems are presented. It is shown that the object-oriented techniques rely on the
@@ -2133,16 +2174,6 @@
 }
 
 @article{movn.20.cviu,
-  author   = {Minh {\^On V\~{u} Ngoc} and Nicolas Boutry and
-              Jonathan Fabrizio and Thierry G\'eraud},
-  title    = {A New Minimum Barrier Distance for Multivariate Images
-              with Applications to Salient Object Detection, Shortest
-              Path Finding, and Segmentation},
-  journal  = {Computer Vision and Image Understanding},
-  year     = {2020},
-  month    = {08},
-  volume   = {197--198},
-  doi      = {10.1016/j.cviu.2020.102993},
   abstract = {Distance transforms and the saliency maps they induce are
               widely used in image processing, computer vision, and pattern recognition. One of the most commonly used
               distance transform is the geodesic one. Unfortunately, this distance does not always achieve satisfying
@@ -2153,7 +2184,27 @@
               multivariate images; we call it vectorial Dahu pseudo-distance. An efficient way to compute it is provided
               in this paper. Besides, we provide benchmarks demonstrating how much the vectorial Dahu pseudo-distance is
               more robust and competitive compared to other MB-based distances, which shows how much this distance is
-              promising for salient object detection, shortest path finding, and object segmentation.}
+              promising for salient object detection, shortest path finding, and object segmentation.},
+  author   = {Minh {\^On V\~{u} Ngoc} and Nicolas Boutry and
+              Jonathan Fabrizio and Thierry G\'eraud},
+  doi      = {10.1016/j.cviu.2020.102993},
+  journal  = {Computer Vision and Image Understanding},
+  month    = {08},
+  title    = {A New Minimum Barrier Distance for Multivariate Images
+              with Applications to Salient Object Detection, Shortest
+              Path Finding, and Segmentation},
+  volume   = {197--198},
+  year     = {2020}
+}
+
+@misc{munoz.2012.comparison,
+  author       = {Joaqu{\'i}n M$^a$ L{\'o}pez Mu{\~n}oz},
+  key          = {n3465},
+  month        = {10},
+  organization = {WG21},
+  title        = {Adding heterogeneous comparison lookup to associative containers for TR2 (Rev 2)},
+  url          = {http://wg21.link/n3465},
+  year         = {2012}
 }
 
 @inproceedings{musser.1987.ada,
@@ -2329,7 +2380,6 @@
   key          = {p1037r0},
   month        = {05},
   organization = {WG21},
-  pages        = {61--61},
   title        = {Deep Integration of the Ranges {TS}},
   url          = {https://wg21.link/p1037r0},
   year         = {2018}
@@ -2470,7 +2520,7 @@
   author    = {Sean Parent},
   note      = {Talk available on youtube at \url{https://youtu.be/FtZEU9zv9eM}},
   publisher = {{code::dive} 2019},
-  title     = {2018 : Generic Programming},
+  title     = {2018: Generic Programming},
   url       = {https://codedive.pl/2018/generic-programming},
   year      = {2018}
 }
@@ -2795,11 +2845,11 @@
 }
 
 @inproceedings{siek.2000.concept,
-  title        = {Concept checking: Binding parametric polymorphism in C++},
   author       = {Siek, Jeremy and Lumsdaine, Andrew},
   booktitle    = {First Workshop on C++ Template Programming},
-  year         = {2000},
-  organization = {Citeseer}
+  organization = {Citeseer},
+  title        = {Concept checking: Binding parametric polymorphism in C++},
+  year         = {2000}
 }
 
 @inproceedings{siek.2001.boostgraph,
@@ -2965,6 +3015,16 @@
   title   = {A Concept Design for the STL},
   volume  = {3351},
   year    = {2012}
+}
+
+@misc{stroustrup.2019.signed-unsigned-mess,
+  author       = {Bjarne Stroustrup},
+  key          = {p1491r0},
+  month        = {02},
+  organization = {WG21},
+  title        = {Don't add to the signed/unsigned mess},
+  url          = {https://wg21.link/p1491r0},
+  year         = {2019}
 }
 
 @article{stroustrup.2020.acm,
@@ -3221,12 +3281,22 @@
   year    = {2005}
 }
 
+@misc{wakely.2013.transparent,
+  author       = {Jonathan Wakely and Stephan {T}. Lavavej and Joaqu{\'i}n M$^a$ L{\'o}pez Mu{\~n}oz},
+  key          = {n3657},
+  month        = {03},
+  organization = {WG21},
+  title        = {Adding heterogeneous comparison lookup to associative containers (rev 4)},
+  url          = {http://wg21.link/n3657},
+  year         = {2013}
+}
+
 @inproceedings{welsh.2002.transferring,
-  abstract  = {We introduce a general technique for "colorizing" grayscale images by transferring color between a
+  abstract  = {We introduce a general technique for ``colorizing'' grayscale images by transferring color between a
                source, color image and a destination, grayscale image. Although the general problem of adding chromatic
                values to a grayscale image has no exact, objective solution, the current approach attempts to provide a
                method to help minimize the amount of human labor required for this task. Rather than choosing RGB colors
-               from a palette to color individual components, we transfer the entire color "mood" of the source to the
+               from a palette to color individual components, we transfer the entire color ``mood'' of the source to the
                target image by matching luminance and texture information between the images. We choose to transfer only
                chromatic information and retain the original luminance values of the target image. Further, the
                procedure is enhanced by allowing the user to match areas of the two images with rectangular swatches. We
@@ -3354,18 +3424,6 @@
 }
 
 @article{ziou.2002.cubical-complex,
-  title    = {Generating cubical complexes from image data and computation of the Euler number},
-  journal  = {Pattern Recognition},
-  volume   = {35},
-  number   = {12},
-  pages    = {2833-2839},
-  year     = {2002},
-  note     = {Pattern Recognition in Information Systems},
-  issn     = {0031-3203},
-  doi      = {https://doi.org/10.1016/S0031-3203(01)00238-2},
-  url      = {https://www.sciencedirect.com/science/article/pii/S0031320301002382},
-  author   = {Djemel Ziou and Madjid Allili},
-  keywords = {Feature extraction, Algebraic topology, Cubical complex, Collapsing, Euler number},
   abstract = {A number of tasks in image processing and computer vision require the computation of certain topological
               characteristics of objects in a given image. In this paper, we introduce a new method based on the notion
               of the algebraic topology complex to compute the Euler number of a given object. First, we attach a
@@ -3374,5 +3432,17 @@
               possible. This is a unifying dimension independent approach. We show that the Euler number can be obtained
               directly from the cubical structure or one can perform a collapsing operation that allows to reduce the
               given image to a lower dimension structure with equivalent topological properties. This reduced structure
-              can be used in a further process, in particular, for the computation of the Euler number.}
+              can be used in a further process, in particular, for the computation of the Euler number.},
+  author   = {Djemel Ziou and Madjid Allili},
+  doi      = {https://doi.org/10.1016/S0031-3203(01)00238-2},
+  issn     = {0031-3203},
+  journal  = {Pattern Recognition},
+  keywords = {Feature extraction, Algebraic topology, Cubical complex, Collapsing, Euler number},
+  note     = {Pattern Recognition in Information Systems},
+  number   = {12},
+  pages    = {2833-2839},
+  title    = {Generating cubical complexes from image data and computation of the Euler number},
+  url      = {https://www.sciencedirect.com/science/article/pii/S0031320301002382},
+  volume   = {35},
+  year     = {2002}
 }

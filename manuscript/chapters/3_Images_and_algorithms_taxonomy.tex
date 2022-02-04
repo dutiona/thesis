@@ -40,12 +40,12 @@ void gamma_correction(Image& ima, double gamma)
 }
 \end{minted}
 
-\noindent This algorithm here performs the transformation correctly but it also makes a lot of hypothesis. Firstly, we
+\noindent This algorithm here performs the transformation correctly, but it also makes a lot of hypotheses. Firstly, we
 suppose that we can write in the image via the \texttt{=} operator (l.9-11): it may not be true if the image is sourced
 from a generator function. Secondly, we suppose that we have a 2D image via the double loop (l.6-7). Finally, we suppose
-we are operating on 8bits range (0-255) RGB via \texttt{'.r'}, \texttt{'.g'}, \texttt{'.b'} (l.9-11). Those hypothesis
+we are operating on 8bits range (0-255) RGB via \texttt{'.r'}, \texttt{'.g'}, \texttt{'.b'} (l.9-11). Those hypotheses
 are unjustified. Intrinsically, all we want to say is \blockquote{\emph{For each value of \texttt{ima}, apply a gamma
-    correction on it.}}. Let us proceed to make this algorithm the most generic possible by lifting those unjustified
+    correction on it}}. Let us proceed to make this algorithm the most generic possible by lifting those unjustified
 constraints one by one.
 
 
@@ -82,7 +82,7 @@ double loop then becomes:
 
 \noindent This led to us requiring that the type \emph{Image} requires to provide a method \texttt{Image::pixels()} that
 returns \emph{something} we can iterate on with a range-for loop: this \emph{something} is a \emph{Range} of
-\emph{Pixel}. This \emph{Range} is required to behave like an \emph{iterable}: it is an abstraction that provides a way
+\emph{Pixel}s. This \emph{Range} is required to behave like an \emph{iterable}: it is an abstraction that provides a way
 to browse all the elements one by one. The \emph{Pixel} is required to provide a method \texttt{Pixel::value()} that
 returns a \emph{Value} which is \emph{Regular}~(see \cref{term:regular}). Here, we use \texttt{auto\&\&} instead of
 \texttt{auto\&} to allow the existence of proxy iterator (think of \texttt{vector<bool>}). Indeed, we may be iterating
@@ -131,7 +131,7 @@ to deduce what our \emph{concepts} needs to be. The real question for a \emph{co
 \subsection{Dilation algorithm}
 \label{subsec:dilation}
 
-To show the versatility of this approach, we will now attempt to deduces the requirements necessary to write a classical
+To show the versatility of this approach, we will now attempt to deduce the requirements necessary to write a classical
 \emph{dilate} algorithm. First let us start with a naive implementation:
 
 \begin{minted}[linenos]{C++}
@@ -153,11 +153,11 @@ void dilate(const InputImage& input_ima, OutputImage& output_ima)
 \end{minted}
 
 \noindent Here we are falling into the same pitfall as for the \emph{gamma correction} example: there are a lot of
-unjustified hypothesis. We suppose that we have a 2D image (l.7-8), that we can write in the \texttt{output\_image}
+unjustified hypotheses. We suppose that we have a 2D image (l.7-8), that we can write in the \texttt{output\_image}
 (l.10, 13). We also require that the input image does not handle borders, (cf. loop index arithmetic l.7-8, 11-12).
 Additionally, the \emph{structuring element} is restricted to a $5 \times 5$ window (l.11-12) whereas we may need to
 dilate via, for instance, a $11 \times 15$ window, or a sphere. Finally, the algorithm does not exploit any potential
-properties such as the \emph{decomposability} (l.11-12) to improve its efficiency. Those hypothesis are, once again,
+properties such as the \emph{decomposability} (l.11-12) to improve its efficiency. Those hypotheses are, once again,
 unjustified. Intrinsically, all we want to say is \blockquote{For each value of \texttt{input\_ima}, take the maximum
   of the $X \times X$ window around and then write it in \texttt{output\_ima}}.
 
@@ -291,12 +291,12 @@ The \emph{concept Image} does not provide a facility to write inside it. To do s
 
 The \emph{sub-concept ForwardRange} can be seen as a requirement on the underlying type. We need to be able to browse
 all the pixels in a forward way. Its \emph{concept} will not be detailed here as it is very similar to \emph{concept} of
-the same name~\cite{niebler.2018.mergingranges,niebler.2018.deepranges} (soon in the STL). Also, in practice, the
+the same name~\parencite{niebler.2018.mergingranges,niebler.2018.deepranges} (soon in the STL). Also, in practice, the
 \emph{concepts} described here are incomplete. We would need to analyze several other algorithms to deduce all the
 requirements so that our \emph{concepts} are the most complete possible. One thing important to note here is that to
 define a simple \emph{Image concept}, there are already a large amount of prerequisites:
 \label{term:regular}\emph{Regular}, \emph{Pixel} and \emph{ForwardRange}. Those \emph{concepts} are basic but are also
-tightly linked to the \emph{concept} in the STL~\cite{carter.2018.concepts}. We refer to the STL \emph{concepts} as
+tightly linked to the \emph{concept} in the STL~\parencite{carter.2018.concepts}. We refer to the STL \emph{concepts} as
 \emph{fundamental concepts}. \emph{Fundamentals concepts} are the basic building blocks on which we work to build our
 own \emph{concepts}. We show the C++20 code implementing those \emph{concepts} in~\ref{code:concept.cpp20}.
 
@@ -360,7 +360,7 @@ concept Decomposable =
 
 Achieving true genericity in a satisfactory way is a complex problem that has components of different levels. The first
 goal is to natively support as many sets of image type as possible. Natively means that there is no need for a
-conversion from one type to a supertype under the hood. The second step is to support an abstraction layer above the
+conversion from one type to a super-type under the hood. The second step is to support an abstraction layer above the
 underlying data type for each pixel. Indeed, the structure of an image is decorrelated from the underlying data type.
 The third step is to write image processing algorithms for each set of image type. Fourthly, the performance trade-off
 shall be negligible if not null. Finally, the final step is to provide a high degree of friendliness for the end user.
@@ -382,13 +382,13 @@ Ease of use is always to be considered.
 Considering the available options to achieve our goal, the parametric polymorphism approach is the way to go. This
 allows the implementer to design image types and algorithms with behavior in mind. To illustrate this remark, let us
 consider the set of supported set of image types shown in figure~\ref{fig:image.version}. We usually refer to different
-image families as sub-type. Indeed, an image with a LUT is sub-type of the (global) Image type. This notion of
-sub-typing is important because it may be abstracted behind an interface. A user can manipulate an image type without
-knowing its specific sub-type. This induces that the sub-typing facility may be handled internally in the library with
-dynamic dispatching code (with run-time overhead). Each image processing library has its own way of handling sub-typing.
-More generally, the model used to handle it is previously described in~\cref{subsec:different.approaches}. Indeed,
-sub-types are handled the same way as their super-type but the fact that they have additional properties the algorithms
-can take advantage of.
+image families as subtype. Indeed, an image with a LUT is subtype of the (global) Image type. This notion of sub-typing
+is important because it may be abstracted behind an interface. A user can manipulate an image type without knowing its
+specific subtype. This induces that the sub-typing facility may be handled internally in the library with dynamic
+dispatching code (with run-time overhead). Each image processing library has its own way of handling sub-typing. More
+generally, the model used to handle it is previously described in~\cref{subsec:different.approaches}. Indeed, subtypes
+are handled the same way as their super-type but the fact that they have additional properties the algorithms can take
+advantage of.
 
 % \begin{figure}[htbp]
 %   \centering
@@ -397,12 +397,12 @@ can take advantage of.
 %   \label{fig:fill.version.diagram}
 % \end{figure}
 
-To implement a basic image algorithm such as \texttt{fill} there really are two distinct ways of writing it. For the
-set of images type whose data type is encoded into each pixel, one must traverse the image and set each pixel's color
-to the new one. However, for the set of images type whose data type is encoded in a look-up table, one only has to
-traverse the look-up table to set each color to the new one. This translates into two distinct algorithms shown
-in~\cref{fig:traverse.vs.LUT}. We can represent the diagram outlining that those two algorithms are two distinct version
-in~\cref{fig:fill.version.diagram}.
+To implement a basic image algorithm such as \texttt{fill} there really are two distinct ways of writing it. For the set
+of images type whose data type is encoded into each pixel, one must traverse the image and set each pixel's color to the
+new one. However, for the set of images type whose data type is encoded in a look-up table, one only has to traverse the
+look-up table to set each color to the new one. This translates into two distinct algorithms shown
+in~\cref{fig:traverse.vs.LUT}. We can represent the diagram outlining that those two algorithms are two distinct
+versions in~\cref{fig:fill.version.diagram}.
 
 \begin{figure}[htbp]
   \centering
@@ -419,8 +419,8 @@ in~\cref{fig:fill.version.diagram}.
   \label{fig:traverse.vs.LUT}
 \end{figure}
 
-More generally, we consider that the set of image type is formed of several subset of image types. In the example there
-are two subsets: images whose pixel are writable and images whose data type are ordered in a look-up table. \emph{For
+More generally, we consider that the set of image type is formed of several subsets of image types. In the example there
+are two subsets: images whose pixels are writable and images whose data type are ordered in a look-up table. \emph{For
   each one of these subsets, if there is a way to implement an algorithm then we have a \emph{version} of this algorithm}.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -439,7 +439,7 @@ to a single pass with a large dilation disc is really significant (illustrated i
 code in~\ref{fig:dilation.specialization.alg.diagram} illustrate how an algorithm can be written to take advantage of
 the structuring element's decomposability property. The algorithm will first decompose the structuring element into
 smaller 1D periodic lines. It will then recursively call itself with those lines to do the multi-pass and thanks to
-known optimizations on periodic lines~\cite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram
+known optimizations on periodic lines~\parencite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram
 outlining the different specialization of the dilation algorithm used is show alongside
 in~\cref{fig:dilation.specialization.alg.diagram}.
 
@@ -469,7 +469,7 @@ auto dilate(Img img, SE se) {
   \label{fig:dilation.specialization.alg.diagram}
 \end{figure}
 
-The figure~\ref{fig:image.specialization} shows how an algorithm specialization may exists in a set of algorithms
+The figure~\ref{fig:image.specialization} shows how an algorithm specialization may exist in a set of algorithms
 version. In this figure there exists a specialization of algorithms when it is known that the data buffer has the
 following property: its memory is contiguous. This implies that, for example, an algorithm like \texttt{fill} can be
 implemented using low level and fast primitives such as \texttt{memset} to increase its efficiency.
@@ -490,9 +490,9 @@ implemented using low level and fast primitives such as \texttt{memset} to incre
 
 Making a full inventory of images types is not possible as there are many families of image types, each family may
 intersect with each other, images may have some particular properties at some points, those properties may appear in
-several family of image types. We can nonetheless cite a few to illustrate our points. There exists image-type whose
+several families of image types. We can nonetheless cite a few to illustrate our points. There exists image-type whose
 values are cubical complexes~\parencite{ziou.2002.cubical-complex} or layered as hexagonal or triangular grid instead of
-square grids (such as meshes), that are represented as graphes, etc. All of those interleaves with different research
+square grids (such as meshes), that are represented as graphs, etc. All of those interleaves with different research
 areas (computer vision for meshes, topological classification for complex
 cells~\parencite{movn.20.cviu,allili.2001.cubical}, graph theory and hierarchy for image
 graphes~\parencite{carlinet.2014.tip,carlinet.2015.tip,perret.2019.higra}). Finally, this image type inventory does not
@@ -503,20 +503,20 @@ By making the inventory of image processing algorithms (limited to mathematical 
 types of image processing algorithms. The first one are the pixel-wise algorithms. Those algorithms are the basic
 pixel-wise transformation. They are the base of any image processing toolkit. Indeed, being able to extract the green or
 red color channel of an image is mandatory. Thresholding as well as the previously seen gamma correction are such
-algorithm. The second one are the local algorithms. Those algorithms algorithms perform transformations by considering
-all the neighboring pixels around a given pixel. In order to operate, those algorithms need additional data in the form
-of image's extension (defining border's behavior) and structuring element (disc, rectangle around the considered pixel).
+algorithm. The second one are the local algorithms. Those algorithms perform transformations by considering all the
+neighboring pixels around a given pixel. In order to operate, those algorithms need additional data in the form of
+image's extension (defining border's behavior) and structuring element (disc, rectangle around the considered pixel).
 Such algorithms are widely used in mathematical morphology. Dilation, erosion, closing, opening, gradient, rank filter
 are all local algorithms, as well as stencil-type algorithms such as union-find, max-tree or skeletonize. Finally, the
 third set of image processing algorithms is the global one. This set contains algorithms where computing the current
-pixel requires to know what was previously computed on the previous pixels as a prerequisite. Champfer distance
-transform, labeling, watershed, hierarchy structures related algorithms are in this category.
+pixel requires to knowledge about what was previously computed for the previous pixels. Champfer distance transform,
+labeling, watershed, hierarchy structures related algorithms are in this category.
 
 
 \section{Generic aspect of algorithm: canvas}
 \label{sec:canvas}
 
-Genericity is always referred to with this sentence \blockquote{write once, work for every types, run everywhere}.
+Genericity is always referred to with this sentence \blockquote{write once, work for every type, run everywhere}.
 However, very quickly we learned that the \emph{run} aspect can be a combination of:
 \begin{itemize}
   \item as fast as possible on a single CPU unit;
@@ -524,28 +524,28 @@ However, very quickly we learned that the \emph{run} aspect can be a combination
   \item as fast as possible on thanks to using many GPU units;
   \item as fast as possible on thanks to using many computers (cloud) and their CPU/GPU units.
 \end{itemize}
-How do we decide what is the most efficient way to do? There is no simple answer to this question but we can start by
+How do we decide what is the most efficient way to do? There is no simple answer to this question, but we can start by
 studying the morphology of algorithms with two goals in mind: (i) find what can be parallelized/distributed and (ii)
-find one or several algorithms abstraction. Indeed, in image processing there are a lot of common patterns when one
+find one or several algorithms' abstraction. Indeed, in image processing there are a lot of common patterns when one
 looks at algorithms implementations, the most famous being \emph{for all pixels of an image, do something to each
   pixel}. But there are other more high-level similarities that we can leverage to have more generic algorithm. Let us
 first study the different programmatic model there are commonly used to process images.
 
 \FIXME{Rework these 3 paragraphs}
 
-\paragraph{The pipeline} is the classic way of doing the work. It consists of an imbrication of different operators
-(algorithms) taking as input one or several image, maybe additional data as well (such as labels, adjacency map, etc.)
+\paragraph{The pipeline} It is the classic way of doing the work. It consists of an imbrication of different operators
+(algorithms) taking as input one or several images, maybe additional data as well (such as labels, adjacency map, etc.)
 in order to process the data \blockquote{from left to right}. The result will show at the end of the pipeline and the
 optimization opportunities are located inside the smaller operators and in the form of correctly managing data (no
 useless copies, locality, etc.)
 
-\paragraph{Kernels and tiling} is the trendy way of the last decade. It consists in breaking the original image into
-small tiles in order to feed those tiles into a massively multicore GPU (via CUDA,
+\paragraph{Kernels and tiling} They are the trendy way of the last decade. It consists in breaking the original image
+into small tiles in order to feed those tiles into a massively multicore GPU (via CUDA,
 Halide~\parencite{ragankelley.2013.halide}). Processing will happen concurrently on those core, but it is costly to swap
-concents inside those GPU from the RAM memory. It's then preferred to design pipeline for those tiles so that the work
+contents inside those GPU from the RAM memory. It's then preferred to design pipeline for those tiles so that the work
 directly happens on each core to minimize the number of back and forth copies from the RAM.
 
-\paragraph{Cloud computing} is a huge deal in image processing these last years as well, especially used in Deep
+\paragraph{Cloud computing} It is a huge deal in image processing these last years as well, especially used in Deep
 learning applications. Deep neural networks are usually executed on cluster of computer through network (cloud) and
 thus are leveraging combinations of successive MapReduce~\parencite{dean.2008.mapreduce} under the hood. They can also
 be offloaded onto or local available computers, or directly locally available GPU hardware thanks to frameworks that are
@@ -554,12 +554,12 @@ Tensorflow/Keras~\parencite{tensorflow.2015.whitepaper,chollet.2015.keras,gulli.
 PyTorch~\parencite{paszke.2019.pytorch}, etc.).
 
 In every case there is a notion of pipeline where the user pipe algorithms into each others in order to achieve a
-result. Those algorithms can leverage all the heterogenous ressources (cloud, GPU, CPU) they can to \emph{map} the input
+result. Those algorithms can leverage all the heterogeneous resources (cloud, GPU, CPU) they can to \emph{map} the input
 data. Algorithms will then finally aggregate the results (\emph{reduce}) to output them into another algorithm, or save
 them, or display them. It is important to dissociate the route the data will go through and the processing pipeline
 logic. Both have their own specificities. In this thesis, we make a parallel, at small scale, between processing
-pipeline logic and image processing algorithms. First let us study two basic algorithm: dilation and erosion. The python
-code of such algorithm is naively be given in figure~\ref{code:erode.dilate}.
+pipeline logic and image processing algorithms. First let us study two basic algorithms: dilation and erosion. The
+Python code of such algorithm is naively be given in figure~\ref{code:erode.dilate}.
 
 \begin{figure}[htbp]
   \centering
@@ -578,8 +578,8 @@ The algorithms are almost written the same way. The only change is the operation
 selecting the value to keep. As such, we can easily see a way to factorize code by passing the operator as an argument.
 The algorithms can then be rewritten as shown in figure~\ref{code:erode.dilate.factorized}. In this last example, we
 have one piece of code which is in charge of abstracting the way an image is traversed: it is the canvas. We also have
-other pieces of code which carry the logic of the operations, calling the canvas an providing the logic to apply from
-within the canvas. This way of decomposing the code enables the possibility of writing more specific heterogeneous logic
+other pieces of code which carry the logic of the operations, calling the canvas and providing the logic to apply from
+within the canvas. This way of decomposing the code offers the opportunity of writing more specific heterogeneous logic
 for the traversing code so that the other parts of the code that carry the operator logic remains unaware and unburdened
 of possible implementation details.
 
@@ -605,10 +605,10 @@ of possible implementation details.
 \label{subsec.taxonomy.canvas}
 
 This approach is very much compatible with the inventory of the algorithms we did in the previous~\cref{sec:image.set}.
-Indeed, for the point-wise family of algorithms, it is hardly an issue as they can all be written in term of
+Indeed, for the point-wise family of algorithms, it is hardly an issue as they can all be written in terms of
 views~\cref{chap:image_views}. For the second family, which consists in all the local algorithm, they may be abstracted
 behind an algorithm canvas where the user provides the work to do at each point of the algorithm. For instance, a single
-pass local algorithm will always have shape given in~\ref{code:local.algorithm.canvas}. Finally for third family which
+pass local algorithm will always have shape given in~\ref{code:local.algorithm.canvas}. Finally, for third family which
 consists in all the algorithm that propagate their computation while traversing the image. It is way less easy to
 provide an algorithmic canvas as each algorithm has its own way to propagate changes curing its computation.
 
@@ -666,8 +666,8 @@ def dilate(img, out, se):
   \label{code:local.algorithm.dilate}
 \end{figure}
 
-This way of thinking algorithms is far less readable than the classic way. The user does not see the loops happening and
-it can becomes very messy when several passes are happening (closing, opening, hit or miss, etc.)
+This way of thinking algorithms is far less readable than the classic way. The user does not see the loops happening,
+and it can become very messy when several passes are happening (closing, opening, hit or miss, etc.)
 
 %\FIXME{Add union find example?}
 
@@ -676,18 +676,18 @@ it can becomes very messy when several passes are happening (closing, opening, h
 \label{subsec:heterogeneous}
 
 One of the key aspect driving genericity is performance. We still have the following mantra: \blockquote{write once,
-  work for every types, run everywhere}. However when considering the \emph{run} aspect, one has a lot to do. Indeed,
-nowadays, leveraging the available resources to their maximum is long standing issue. There are many ongoing work on
-the subject, such as SyCL~\cite{brown.2019.heterogeneous,wong.2019.heterogeneous} which is a standard for
+  work for every type, run everywhere}. However, when considering the \emph{run} aspect, one has a lot to do. Indeed,
+nowadays, leveraging the available resources to their maximum is long-standing issue. There are many ongoing works on
+the subject, such as SyCL~\parencite{brown.2019.heterogeneous,wong.2019.heterogeneous} which is a standard for
 heterogeneous computing model edited by Kronos. This standard currently has four implementations: Codeplay's
 ComputeCpp~\parencite{codeplay.2021.computecpp}, Intel's LLVM/clang implementation~\parencite{intel-llvm.2021.sycl},
 triSYCL~\parencite{xilinx.2021.triSYCL} led by Xilinx and hipSYCL~\parencite{aksel.2020.hipsycl} led by Heidelberg
-University. There also exists smaller libraries such as Boost.SIMD~\cite{esterie.2014.boostsimd} or even
-VCL~\cite{fog.2013.vcl} for easing how to write SIMD code. After taking some distance to study the subject, we can
+University. There also exists smaller libraries such as Boost.SIMD~\parencite{esterie.2014.boostsimd} or even
+VCL~\parencite{fog.2013.vcl} for easing how to write SIMD code. After taking some distance to study the subject, we can
 infer that there are three main aspects to consider when optimizing performance.
 
 The first one, the most important one is the algorithm to use in function of certain set of data. This aspect is covered
-by the C++ language and its builtin genericity tool: template metaprogramming. Indeed, we select the most optimized
+by the C++ language and its built-in genericity tool: template metaprogramming. Indeed, we select the most optimized
 algorithm for a particular set of data.
 
 The second one is the ability for the code to be understood by the compiler so that is is further optimized during the
@@ -698,29 +698,29 @@ help much needed.
 Finally, the third aspect is not as trivial as the first two ones. It consists in studying the structure of an algorithm
 to allow distributed computation. It also consists in studying the different architectures to select the most efficient
 algorithm for a given architecture. Sometimes algorithm are friendly to be distributed on several processing units that
-compute a part of the result concurrently. This is what we call parallelism. There exists several way to take advantage
+compute a part of the result concurrently. This is what we call parallelism. There exists several ways to take advantage
 of parallelism. First there is the use of several CPU units on the host computer. Then there is the use of GPU units
 working in combination with the CPU units to take advantage of the massive amount of core a graphic card can provide.
-Finally there is the use of cloud computing which consists in using several "virtual" computers, each of them offering
-of CPU and GPU units in order to compute a result. One should be aware that each time we introduce a new layer of
-abstraction, there is a cost to orchestrate the computation, send the input data and retrieve the results. It is thus
+Finally, there is the use of cloud computing which consists in using several ``virtual'' computers, each of them
+offering of CPU and GPU units in order to compute a result. One should be aware that each time we introduce a new layer
+of abstraction, there is a cost to orchestrate the computation, send the input data and retrieve the results. It is thus
 very important to study case by case what is needed. Some solutions exist that abstract away completely the hardware
-through a DSL~\footnote{Domain Specific Language} such as Halide~\cite{ragankelley.2013.halide}: the DSL compiler's job
-will be to try very hard to make the most out of both the available (or targeted) hardware and the code. Those solutions
-are not satisfactory for us as we want to avoid DSL and remain at code level. We are not developing a compiler: we are
-working with it.
+through a DSL~\footnote{Domain Specific Language} such as Halide~\parencite{ragankelley.2013.halide}: the DSL compiler's
+job will be to try very hard to make the most out of both the available (or targeted) hardware and the code. Those
+solutions are not satisfactory for us as we want to avoid DSL and remain at code level. We are not developing a
+compiler: we are working with it.
 
 There is one true issue when studying parallel algorithm: it is whether they can be parallelized or not. Not all
 algorithms can be parallelized. Some just intrinsically cannot, typically, algorithms that immediately need the result
 at the previous iteration to compute the next iteration. There may exist specific ways to re-arrange a specific
-algorithm, for instance, taking advantage of some algebraic property, in order to rewrite it in a parallelisable way,
+algorithm, for instance, taking advantage of some algebraic property, in order to rewrite it in a parallelizable way,
 but it is not trivial (on a per-algorithm basis), and not generic. As such, it is out of the scope of this thesis. What
 interest us are the algorithms whose structure is an accumulation over a data type that can be defined as a monoid. We
 assert that every algorithm that can be rewritten as an accumulation over a monoid can be parallelized and/or
 distributed. This model that consists in distributing computation like an accumulation over a monoid data structure is
 also call the map-reduce. This model has two steps: the distribution (map) and then the accumulation (reduce).
 
-The map step will dispatch computation on sub-units with small set of data. The reduce step will retrieve and accumulate
+The map step will dispatch computation on subunits with small set of data. The reduce step will retrieve and accumulate
 all those resulting data, as soon as they are ready.
 
 The accumulation algorithm has this form:
@@ -743,11 +743,12 @@ The issue left here is the monoid. What exactly is a monoid here? A monoid is a 
 of values, finite or infinite. This data structure must provide a binary operation which is closed and associative.
 Finally, this data structure must also provide a neutral element (aka the identity). Some trivial monoids comes to mind:
 \begin{itemize}
-  \item boolean. For binary operation "and", identity is "true" whereas for binary operation "or", identity is "false".
-  \item integer. For binary operation "-" and "+", identity is "0" whereas for binary operation "*" and "/", identity is
-        "1".
-  \item string. For concatenation, identity is empty string.
-  \item optional value (also known as monadic structure in haskell programming language).
+  \item \emph{boolean}. For binary operation ``and'', identity is ``true'' whereas for binary operation ``or'', identity
+        is ``false''.
+  \item \emph{integer}. For binary operation $-$ and $+$, identity is $0$ whereas for binary operation $*$ and $/$,
+        identity is $1$.
+  \item \emph{string}. For concatenation, identity is empty string.
+  \item \emph{optional} value (also known as monadic structure in Haskell programming language).
 \end{itemize}
 There are many more monoids, less trivial but very handy, such as the unsigned integer/max/0 set and the signed
 integer/min/global max set.
@@ -763,12 +764,12 @@ take advantage of it. For instance, computing a CUDA kernel at one point and dis
 within scope and transparent for the user of the library. Although there is a caveat: rewriting our algorithm in an
 accumulation form and chunking it in fragments to feed to the canvas is definitely not intuitive. Indeed, we require our
 user to change his way of thinking from the procedural paradigm to the event-driven paradigm. This approach is not new
-and is used in other libraries such as Boost.Graph~\cite{siek.2001.boostgraph} for similar purposes.
+and is used in other libraries such as Boost.Graph~\parencite{siek.2001.boostgraph} for similar purposes.
 \citeauthor{dean.2019.monoids} talks about this recurring monoid pattern more in-depth in his
 talk~\parencite{dean.2019.monoids}.
 
 In image processing, we quickly come to identify \emph{local} algorithms, that reason about a group of pixel around a
-given of coordinate. All those algorithms can be abstracted behind an accumulation of some sort and they all have the
+given of coordinate. All those algorithms can be abstracted behind an accumulation of some sort, and they all have the
 same morphology. Thus leading to the following abstraction:
 \begin{minted}{C++}
 template <class In, class Out, class SE, class T, class Op>
@@ -795,9 +796,9 @@ From this code we can deduce some very useful and easy monoids by the following 
   \item $(type = signed integer, operator = min, neutral = global max)$ is an erosion
 \end{itemize}
 
-Now if we want to rewrite the \texttt{local\_accumulate} in an event driven paradigme, we need to identify the different
+Now if we want to rewrite the \texttt{local\_accumulate} in an event driven paradigm, we need to identify the different
 callbacks to expose our user on the call site. Especially, what will be of the callback parameters. There are five
-callback event we have identified:
+callback events we have identified:
 \begin{enumerate}
   \item before entering outer loop (no work is done)
   \item before entering inner loop (iteration over the pixel's neighbor)
@@ -882,7 +883,7 @@ contains facilities to read and mutate the pixel's value if possible. Indeed, no
 value. If the pixel is yielded by an image that only generates values on the fly then it cannot be mutated. Henceforth,
 we introduce two new concepts: \emph{Pixel} and \emph{OutputPixel} in~\cref{table:concept.pixel.definitions}. Those two
 concepts have a very similar interface described in~\cref{table:concept.pixel.expressions}. They can both access the
-stored informations: the point and the value. On top of that, the \emph{OutputPixel} can mutate the value. When
+stored information: the point and the value. On top of that, the \emph{OutputPixel} can mutate the value. When
 interacting with pixels, the user will want to be able to write code as followed:
 \begin{minted}{C++}
   auto pix = Pixel();     // Get a pixel
@@ -903,8 +904,8 @@ We show how those three fundamental concepts interact with each other in the dia
 Now we need a helper concept: the ranges.
 Ranges~\parencite{niebler.2014.ranges,niebler.2018.ranges,niebler.2018.deepranges,niebler.2018.mergingranges} are a set
 of concepts defined in the C++ standard library shipped with the ISO C++20 norm in 2020~\parencite{iso.2020.cpp}. They
-allow the user to abstract away iterators to only iterate over one object: the range. This allow the user to migrate his
-source code from:
+allow the user to abstract away iterators to only iterate over one object: the range. This offers the user the
+opportunity to migrate his source code from:
 \begin{minted}{C++}
 template <class IteratorBegin, class IteratorEnd>
 void my_algorithm(IteratorBegin beg, IteratorEnd end)
@@ -941,7 +942,7 @@ in~\cref{table:concept.ranges.expressions}. They are designed so that the user c
 
 From an algebraic point of view, the definition of an image is not complete without considering a definition domain on
 which it is defined. In image processing, the same rule applies. We cannot consider an image without considering the set
-of points that are valid for this image. Henceforth we must define the concept of \emph{Domain}
+of points that are valid for this image. Henceforth, we must define the concept of \emph{Domain}
 in~\emph{table:concept.domain.definitions}. The \emph{Domain} concept is refined into two sub-concepts which are
 \emph{SizedDomain} and \emph{ShapedDomain}. This emphasis the chance of existence of possible infinite domain as
 well as domains that may be defined over non-continuous intervals in space. This enables algorithms to require the
@@ -969,16 +970,16 @@ We show how the concept \emph{Domain} flows from the previous concepts in the di
 Now we have all the tools to introduce our main concept: \emph{Image}. As for \emph{Pixel}, we have the distinction over
 image whose value can be mutated in a sub-concept named \emph{WritableImage}. These concepts are defined
 in~\cref{table:concept.image.definitions.1}. In addition to this definition we can infer the behavior described
-in~\cref{table:concept.image.expressions.1}. There are complicated requirements written in template metaprogramming
-code. But in the end it is just to requires the ranges returned by the member functions \texttt{pixels()} and
-\texttt{values()} to iterate over element whose type are the same as those declared in the parent image. In addition, we
-introduce two facilities which are the member function \texttt{concretize()} and \texttt{ch\_value<V>()}. The first is a
-way to turn a view into a concrete type. This will be seen more in-depth in~\cref{chap:image_views}. The last is a way
-to cast values from one type to another. It forms a new image type whose underlying values will be returned after being
-casted to a new value type. This last facility is extremely useful when one only wants to mutate the underlying type
-while keeping all the other details about one type (such as the dimension). For instance, when working with labeling
-algorithm, we know our algorithm will return an image similar to the input one with the exception of the underlying type
-which will be the type of the label. The following code shows how it is applied:
+in~\cref{table:concept.image.expressions.1}. There are complicated requirements written in template metaprogramming code
+and, in summary, they just require that the value types of the ranges returned by the member functions \texttt{pixels()}
+and \texttt{values()} are the same as the value types declared in the parent image. In addition, we introduce two
+facilities which are the member function \texttt{concretize()} and \texttt{ch\_value<V>()}. The first is a way to turn a
+view into a concrete type. This will be seen more in-depth in~\cref{chap:image_views}. The last is a way to cast values
+from one type to another. It forms a new image type whose underlying values will be returned after being converted to a
+new value type. This last facility is extremely useful when one only wants to mutate the underlying type while keeping
+all the other details about one type (such as the dimension). For instance, when working with labeling algorithm, we
+know our algorithm will return an image similar to the input one except for the underlying type which will be the type
+of the label. The following code shows how it is applied:
 \begin{minted}{C++}
   using label_t = int; // label type
 
@@ -1023,8 +1024,8 @@ elements in the image. We chose to be flexible with our indexing method (i.e. al
 the same pitfall as the C++ core language~\parencite{stroustrup.2019.signed-unsigned-mess}. Indeed, requiring that the
 type \texttt{std::size\_t} is unsigned lead to loads of issues, the first one being a conversion issue when writing a
 simple for-loop. Solving these issues lead to the appearance of new member function \texttt{.ssize()} (for signed size)
-and the new type \texttt{std::ptrdiff\_t} to store the result of a soustraction between two \texttt{std::size\_t}.
-Furthermore, in our specific area (image processing), it may be well defined to access a buffer with negative indexes
+and the new type \texttt{std::ptrdiff\_t} to store the result of a subtraction between two \texttt{std::size\_t}.
+Furthermore, in our specific area (image processing), it may be well-defined to access a buffer with negative indexes
 when, for instance, we are accessing the value of the extension of an image. This is why our indexes are signed.
 
 Additionally, we want to be able to access a value by providing a point, the same way as in the algebraic definition
@@ -1079,14 +1080,14 @@ described in~\cref{table:concept.image.expressions.5}. Thanks to this concept, w
 
 Finally, we need a way, when possible, to iterate over a continuous data buffer for very fast and optimized calculation.
 That is what the concept of \emph{RawImage} is for: an image whose data buffer can be accessed, as well as its mutable
-counterpart. It is defined defined in~\cref{table:concept.image.definitions.6}. Having a raw image whose data buffer can
-be accessed allow ust to expose two more member function to access the data buffer and its strides for correct pointer
+counterpart, which are defined in~\cref{table:concept.image.definitions.6}. Having a raw image whose data buffer can be
+accessed allow us to expose two more member function to access the data buffer and its strides for correct pointer
 arithmetic. They behave as described in~\cref{table:concept.image.expressions.6}. This enables writing code as followed:
 \begin{minted}{C++}
   auto ima = Image(); // Image of int
   const int* data = ima.data(); // Access the underlying buffer
   auto dim = ima.domain().dim(); // Get the dimension of the image
-  // Retrieve informations about strides
+  // Retrieve information about strides
   auto strides = std::vector<std::ptrdiff_t>(0, dim)
   for (int i = 0; i < dim; ++i)
     strides[i] = ima.stride(i)
@@ -1128,7 +1129,7 @@ properties are:
         to compute attributes over a sliding structuring element in linear time.
 \end{itemize}
 
-\FIXME{Give exemples}
+\FIXME{Give examples}
 
 The behavioral for those concepts is described in~\cref{table:concept.se.expressions}. Being able to manipulate
 structuring element allows us to write the following code:
@@ -1142,8 +1143,8 @@ structuring element allows us to write the following code:
 Additionally, we introduce the concept of \emph{Neighborhood} in~\cref{table:concept.nbh.definitions}. This concept has
 facilities to know what points/pixels are placed before or after another point/pixel inside the window of a specific
 structuring element. It behaves as described in~\cref{table:concept.nbh.expressions}. This concept is useful when one
-wants to only consider a certain part of the neighboring pixels within a structuring element. This allow to write the
-following code:
+wants to only consider a certain part of the neighboring pixels within a structuring element. This offers the
+opportunity to write the following code:
 \begin{minted}{C++}
   auto se = se::disc(.radius=3); // get a structuring element
   for(auto pix : ima.pixels())   // traverse image
@@ -1156,17 +1157,17 @@ with local algorithm as pixels on the border need to be processed too, and the b
 must be defined and well-specified. There are several strategies when it comes to borders and extension. We refine
 concept for each strategy we identified:
 \begin{itemize}
-  \item fillable: fill the border with a specific value.
-  \item mirrorable: mirror the image as if there was an axial symmetry, with the border being the axis.
-  \item periodizeable: repeat the image, as if a modulo size was applied to the coordinates.
-  \item clampable: extend the value at the image's border into the extension.
-  \item extent with: used when tiling. it consider the current image as a sub-image of another bigger image and pick the
-        extension values there.
+  \item \emph{fillable}: fill the border with a specific value.
+  \item \emph{mirrorable}: mirror the image as if there was an axial symmetry, with the border being the axis.
+  \item \emph{periodizeable}: repeat the image, as if a modulo size was applied to the coordinates.
+  \item \emph{clampable}: extend the value at the image's border into the extension.
+  \item \emph{extent\_with}: used when tiling. It considers the current image as a sub-image of another bigger image and
+        pick the extension values there.
 \end{itemize}
 Those concepts are defined in~\cref{table:concept.extensions.definitions} and their behavior is described
 in~\cref{table:concept.extensions.expressions}. All those concepts allow us to introduce the final refined image
 concepts: \emph{WithExtensionImage} as well as \emph{ConcreteImage} and \emph{ViewImage}. Those two last will be seen in
-detail in the next chapter~\ref{chap:image_views}. Those concepts are defined
+detail in the next Chapter~\ref{chap:image_views}. Those concepts are defined
 in~\cref{table:concept.image.definitions.7}. Their behavior is described in~\cref{table:concept.image.expressions.7}. It
 is now possible to write the following code:
 \begin{minted}{C++}
@@ -1189,7 +1190,7 @@ diagram shown in~\cref{fig:concept.se_extension}.
   \label{fig:concept.se_extension}
 \end{figure}
 
-Finally, we introduce a helper concept to centralize the detection of the "writability" of an image. Indeed, we do not
+Finally, we introduce a helper concept to centralize the detection of the ``writability'' of an image. Indeed, we do not
 want the user to have to use the writable counterpart of each concept for each and every case. That is why we introduce
 this final concept, \emph{OutputImage} in~\cref{table:concept.image.expressions.8}, that will tell the user if an image
 is well-specified.
@@ -1208,7 +1209,7 @@ void my_algorithm(Img img) {
 In this chapter, we have demonstrated how it is possible to extract concepts from algorithms. We have then offered a
 taxonomy of image processing algorithms in order to extract those concepts. We then discuss and dig further the generic
 aspects of algorithms by introducing the notion of canvas which enables taking advantage of opportunities to do
-heterogeneous computation while remaining user friendly. Finally, we offer and justify a detailed taxonomy of concepts
+heterogeneous computation while remaining user-friendly. Finally, we offer and justify a detailed taxonomy of concepts
 related to image processing area.
 
-\FIXME{rework summary}
+\FIXME{Rework summary}
