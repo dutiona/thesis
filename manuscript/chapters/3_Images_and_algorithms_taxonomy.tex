@@ -367,29 +367,16 @@ The third step is to write image processing algorithms for each set of image typ
 shall be negligible if not null. Finally, the final step is to provide a high degree of friendliness for the end user.
 Ease of use is always to be considered.
 
-% \begin{figure}[htbp]
-%   \centering
-%   \includegraphics[width=.5\linewidth]{figs/image_version}
-%   \caption{Set of supported image type.}
-%   \label{fig:image.version}
-% \end{figure}
-\begin{wrapfigure}{l}{0.4\textwidth}
-  \centering
-  \includegraphics[width=.38\textwidth]{figs/image_version}
-  \caption{Set of supported image type.}
-  \label{fig:image.version}
-\end{wrapfigure}
-
 Considering the available options to achieve our goal, the parametric polymorphism approach is the way to go. This
 allows the implementer to design image types and algorithms with behavior in mind. To illustrate this remark, let us
-consider the set of supported set of image types shown in figure~\ref{fig:image.version}. We usually refer to different
-image families as subtype. Indeed, an image with a LUT is subtype of the (global) Image type. This notion of sub-typing
-is important because it may be abstracted behind an interface. A user can manipulate an image type without knowing its
-specific subtype. This induces that the sub-typing facility may be handled internally in the library with dynamic
-dispatching code (with run-time overhead). Each image processing library has its own way of handling sub-typing. More
-generally, the model used to handle it is previously described in~\cref{subsec:different.approaches}. Indeed, subtypes
-are handled the same way as their super-type but the fact that they have additional properties the algorithms can take
-advantage of.
+consider the set of supported set of image types shown in figure~\ref{fig:image.version.vs.specialization}. We usually
+refer to different image families as subtype. Indeed, an image with a LUT is subtype of the (global) Image type. This
+notion of sub-typing is important because it may be abstracted behind an interface. A user can manipulate an image type
+without knowing its specific subtype. This induces that the sub-typing facility may be handled internally in the library
+with dynamic dispatching code (with run-time overhead). Each image processing library has its own way of handling
+sub-typing. More generally, the model used to handle it is previously described in~\cref{subsec:different.approaches}.
+Indeed, subtypes are handled the same way as their super-type but the fact that they have additional properties the
+algorithms can take advantage of.
 
 % \begin{figure}[htbp]
 %   \centering
@@ -403,7 +390,7 @@ of images type whose data type is encoded into each pixel, one must traverse the
 new one. However, for the set of images type whose data type is encoded in a look-up table, one only has to traverse the
 look-up table to set each color to the new one. This translates into two distinct algorithms shown
 in~\cref{fig:traverse.vs.LUT}. We can represent the diagram outlining that those two algorithms are two distinct
-versions in~\cref{fig:fill.version.diagram}.
+versions in~\cref{fig:image.version.vs.specialization}.
 
 \begin{figure}[htbp]
   \centering
@@ -423,13 +410,6 @@ versions in~\cref{fig:fill.version.diagram}.
 More generally, we consider that the set of image type is formed of several subsets of image types. In the example there
 are two subsets: images whose pixels are writable and images whose data type are ordered in a look-up table. \emph{For
   each one of these subsets, if there is a way to implement an algorithm then we have a \emph{version} of this algorithm}.
-
-\begin{wrapfigure}{r}{0.4\textwidth}
-  \centering
-  \includegraphics[width=.38\textwidth]{figs/fill_version_diagram}
-  \caption{Diagram of the two versions of the fill algorithm.}
-  \label{fig:fill.version.diagram}
-\end{wrapfigure}
 
 Sometimes, it is possible to take advantage of a property on a particular image set, that may be correlated to an
 external data, to write the algorithm in a more efficient way. When those properties are linked to the types, this is
@@ -470,24 +450,23 @@ auto dilate(Img img, SE se) {
   \label{fig:dilation.specialization.alg.diagram}
 \end{figure}
 
-The figure~\ref{fig:image.specialization} shows how an algorithm specialization may exist in a set of algorithms
+The figure~\ref{fig:image.version.vs.specialization} shows how an algorithm specialization may exist in a set of algorithms
 version. In this figure there exists a specialization of algorithms when it is known that the data buffer has the
 following property: its memory is contiguous. This implies that, for example, an algorithm like \texttt{fill} can be
 implemented using low level and fast primitives such as \texttt{memset} to increase its efficiency.
 
-% \begin{figure}[htbp]
-%   \centering
-%   \includegraphics[width=.5\linewidth]{figs/image_version_specialization}
-%   \caption{Algorithm specialization within a set.}
-%   \label{fig:image.specialization}
-% \end{figure}
-
-\begin{wrapfigure}{l}{0.4\textwidth}
+\begin{figure}[htbp]
   \centering
-  \includegraphics[width=.38\textwidth]{figs/image_version_specialization}
-  \caption{Algorithm specialization within a set.}
-  \label{fig:image.specialization}
-\end{wrapfigure}
+  \subfloat[Different versions of \emph{fill} algorithms]{
+    \includegraphics[width=1.9in]{figs/image_version}
+  }%
+  \hfil
+  \subfloat[Specialization existing within a version]{
+    \includegraphics[width=2.9in]{figs/image_version_specialization}
+  }%
+  \caption{Set of algorithms version (a) and its specialization existing within a set (b).}
+  \label{fig:image.version.vs.specialization}
+\end{figure}
 
 Making a full inventory of images types is not possible as there are many families of image types, each family may
 intersect with each other, images may have some particular properties at some points, those properties may appear in
