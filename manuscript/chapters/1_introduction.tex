@@ -61,9 +61,9 @@ scheme storing information about the non-visible specter of human eye. If we con
 such as medical imaging, we now can consider sequence of images such as sequence of 3D image for an MRI for instance.
 More broadly there are two orthogonal constituents of an image: its topology (or structure) and its values. However,
 there are two more aspects to consider here. Firstly, image processing provide plenty of algorithms that can or cannot
-operate over specific data types. There are also different kind of algorithms. Some will extract information, (e.g.
-histogram) others will transform the image point-wise (e.g. thresholding), and some other will even combine several
-images to render a different kind of information (e.g. background subtraction). There are many simple algorithms and
+operate over specific data types. There are also different kind of algorithms. Some will extract information, (\eg
+histogram) others will transform the image point-wise (\eg thresholding), and some other will even combine several
+images to render a different kind of information (\eg background subtraction). There are many simple algorithms and
 also many complex algorithms out there. Secondly, there are orbiting data around image types and algorithms that are
 also very diverse and necessary for their smooth operation. Indeed, a dilation algorithm will also need additional
 information: the dilation disc. A thresholding algorithm may be given a threshold. A convolution filter requires a
@@ -166,7 +166,7 @@ Mathematica~\parencite{wolfram.2020.mathematica} and Jupyter~\parencite{kluyver.
 libraries has been brought to dynamic languages this way. For instance, let us consider the Python programming language.
 There are two main package providers: PyPi~\parencite{pypi.2021} and Conda~\parencite{anaconda.2020}. Both allow to
 install packages to enable the user to program his prototypes in Python very quickly. In image processing, there are
-packages such as Scipi~\parencite{jones.2006.scipy}, NumPy, scikit-image~\parencite{vanderwalt.2014.skimage},
+packages such as Scipi~\parencite{jones.2006.scipy}, NumPy, Scikit-image~\parencite{vanderwalt.2014.skimage},
 Pillow~\parencite{clark.2021.pillow} as well as binding for OpenCV~\parencite{bradski.2000.opencv}.
 
 \paragraph{Programming libraries} It is the most common tool available out there. They are a collection of routines,
@@ -258,5 +258,5 @@ conciliate generic code from C++ whose genericity is resolved at compilation-tim
 and dynamic code from Python which rely on pre-compiled package binaries to achieve an efficient communication between
 the dynamic code and the library (we call this the ``dynamic world''). We also cannot ask of the user to provide a
 compiler each time he wants to use our library from Python. In this part, we discuss what are the existing solutions
-that can be considered as well as their pros and cons. We then discuss how we designed a hybrid solution to make a
+that can be considered as well as their \pros and \cons We then discuss how we designed a hybrid solution to make a
 bridge between the static world and the dynamic world: a static-dynamic bridge.

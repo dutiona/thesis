@@ -1,16 +1,16 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-The work presented in this thesis by the author followed a very clear narrative arc. The emphasis was first shown on
-presenting what is the notion of genericity, its story and how anyone can relate to its day to day usage especially when
-applied to image processing. Genericity is a 4-decades year old notion that has evolved and found usage in very modern
-area of our society. In particular, in image processing, it is widely used to build modern applications used around the
-world. However, it was demonstrated how difficult it can be to implement solutions relying on genericity by stating the
-rule of three related to genericity, performance and easy of use. The rule states that one can only have two of those
-items by sacrificing the third one. If one wants to be generic and efficient, then the naive solution will be very
-complex to use with lot of parameters. If one wants a solution to be generic and easy to use, then it will be not very
-efficient by default. If one wants a solution to be easy to use and efficient then it will not be very generic.
-In this thesis, we try to demonstrate how to break this rule in three steps.
+\lettrine[lines=2]{T}{he} work presented in this thesis by the author followed a very clear narrative arc. The emphasis
+was first shown on presenting what is the notion of genericity, its story and how anyone can relate to its day to day
+usage especially when applied to image processing. Genericity is a 4-decades year old notion that has evolved and found
+usage in very modern area of our society. In particular, in image processing, it is widely used to build modern
+applications used around the world. However, it was demonstrated how difficult it can be to implement solutions relying
+on genericity by stating the rule of three related to genericity, performance and easy of use. The rule states that one
+can only have two of those items by sacrificing the third one. If one wants to be generic and efficient, then the naive
+solution will be very complex to use with lots of parameters. If one wants a solution to be generic and easy to use,
+then it will be not very efficient by default. If one wants a solution to be easy to use and efficient then it will not
+be very generic. In this thesis, we try to demonstrate how to break this rule in three steps.
 
 The first step was to realize an inventory of image types and families as well as different image processing algorithms.
 The aim was to produce a comprehensive taxonomy of images and algorithms related to image processing in order to be able
@@ -20,7 +20,7 @@ by relying on those concepts. Furthermore, different concepts exist to enable al
 properties (structuring elements' decomposability, image's buffer contiguous, \ldots) in order to achieve maximum
 performance.
 
-A this point, we are still reasoning at low level and need to design an abstraction layer in order to enable fast
+At this point, we are still reasoning at low level and need to design an abstraction layer in order to enable fast
 prototyping for simple operations while guarantying very small memory footprint and near-zero performance impact. We
 expand the concept of \emph{views} from the C++ standard to images and design what is an image view. We also make the
 design choice to have cheap-to-copy (because of shared data buffer) image by default in order to merge concrete image
@@ -31,27 +31,27 @@ algorithm and border management how the usage of views simplify greatly how to w
 algorithms that are efficient by default.
 
 Finally, this thesis focused its attention on how it is possible to distribute this software to the image processing
-community which is mainly working with Python. The last work concentrate its effort to how best design a static
-(templated C++) - dynamic (Python notebook) bridge to bring those concepts and performance to the practitioner. This
-last work explores the dilemmas and offers to address them with one hybrid solution whose design is explained in-depth.
-This hybrid solution rely on a type-erased type which offers compatibility with a \emph{NumPy.array} that then is able
-to cast itself inside $n*n$ dispatcher (dimension and underlying type) into an optimized templated C++ type. This
-solution also explain how to write very simply the glue code to enable already-existing algorithms (in C++) to be
-exposed in Python thanks to a dispatch mechanic heavily inspired from the C++ standard (\texttt{std::visit},
+community which is mainly working with Python. The last work concentrates its efforts on finding the best way to design
+a static (templated C++) --- dynamic (Python notebook) bridge to bring those concepts to the practitioner, efficiently.
+This last work explores the dilemmas and offers to address them with one hybrid solution whose design is explained
+in-depth. This hybrid solution rely on a type-erased type which offers compatibility with a \emph{NumPy.array} that then
+is able to cast itself inside \(n \times n\) dispatcher (dimension and underlying type) into an optimized templated C++
+type. This solution also explain how to write very simply the glue code to enable already-existing algorithms (in C++)
+to be exposed in Python thanks to a dispatch mechanic heavily inspired from the C++ standard (\texttt{std::visit},
 \texttt{std::variant}). The aim of this solution was to regroup at a single place in the code all the supported types
 into the dispatchers for maintenance purpose as well as demanding minimal work from algorithm implementer to expose
-their algorithm, all this while keeping the native performance. Indeed, no-copy is performed thanks to
-\emph{pybind11}'s \emph{buffer protocol} facility, and one cast is done from the type-erased type to the native one. All
-the work that is done in the algorithm is performed on native optimized type. Finally this solution offers a way to
-inject custom Python types into the library for prototyping purpose at the cost of heavy performance thanks to a new
-abstraction layer, the \emph{value-set} explained in-depth in the chapter. The downside of this solution is obviously
-the code bloat with the resulting binary size exploding exponentially with the number of supported types multiplied by
-the number of algorithms multiplied by the number of additional supported data (structuring elements, label map, etc.)
+their algorithm, all this while keeping the native performance. Indeed, no-copy is performed thanks to \emph{pybind11}'s
+\emph{buffer protocol} facility, and one cast is done from the type-erased type to the native one. All the work that is
+done in the algorithm is performed on native optimized type. Finally, this solution offers a way to inject custom Python
+types into the library for prototyping purpose at the cost of heavy performance thanks to a new abstraction layer, the
+\emph{value-set} explained in-depth in the chapter. The downside of this solution is obviously the code bloat with the
+resulting binary size exploding exponentially with the number of supported types multiplied by the number of algorithms
+multiplied by the number of additional supported data (structuring elements, label map, etc.)
 
 We conclude this thesis by offering new avenue of research, the JIT-compilation. The author think that this avenue is
-worth exploring, especially with the already promising existing tools (xeus-cling, cppyy, Cython, autowig) in order to
+worth exploring, especially with the already promising existing tools (Xeus-cling, Cppyy, Cython, AutoWIG) in order to
 solve the code bloat issue. We would only compile what the user needs. But the entry price may be to statically link a
-C++ interpreter (LLVM/cling ?) into the binary which in itself would greatly bloat it. It may be possible to rely on
+C++ interpreter (LLVM/cling?) into the binary which in itself would greatly bloat it. It may be possible to rely on
 user's system-wide infrastructure however so that the maintenance does not distribute a whole C++ interpreter/compiler
 alongside his image processing library binary. This is still a new area of research and the author would very much want
 to delve into it to study what is possible to achieve as of today with those tools for the image processing community.

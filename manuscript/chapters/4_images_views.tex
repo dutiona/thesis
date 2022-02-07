@@ -1,22 +1,23 @@
 \chapter{Image views}
 \label{chap:image_views}
 
-This concept of views is not new and naturally appeared in Image processing with Milena under the name of
-morphers~\parencite{levillain.2009.ismm, geraud.2012.hdr}. It was always useful to be able to project an image through a
-prism that could extract specific information about it without the need to copy the underlying data buffer. In modern
-days, the language C++ (20) also introduces this mechanism with the ranges~\parencite{niebler.2014.ranges} facilities
-for \emph{non-owning collections}. It is named \emph{views} and allows the user to access the content of a container
-(vector, map) through a prism. In Pylene, we decided to align the naming system after what was decided in C++20 in order
-not to confuse the user. This way, a \texttt{transform} view in image processing will do the same thing on an image that
-the transform view in the standard range library does on a container. \emph{Views} feature the following properties:
-\emph{cheap to copy}, \emph{non-owner} (does not \emph{own} any data buffer), \emph{lazy evaluation} (accessing the
-value of a pixel may require computations) and \emph{composition}. When chained, the compiler builds a \emph{tree of
-  expressions} (or \emph{expression template} as used in many scientific computing libraries such as
-Eigen~\parencite{guennebaud.2010.eigen}), thus it knows at compile-time the type of the composition and ensures a
-0-overhead at evaluation. We will first motivate the usage of \emph{views} in image processing. We will then present the
-main views used in image processing. Then will be discussed how image views differ from the one used in C++'s ranges and
-their main properties (especially how they keep/discard the properties from the parent image) through a concrete
-example: the management of border and extension policies. Finally, we will discuss the limitations of such a design.
+\lettrine[lines=2]{T}{his} concept of views is not new and naturally appeared in Image processing with Milena under the
+name of \emph{morpher}~\parencite{levillain.2009.ismm, geraud.2012.hdr}. It was always useful to be able to project an
+image through a prism that could extract specific information about it without the need to copy the underlying data
+buffer. In modern days, the language C++ (20) also introduces this mechanism with the
+ranges~\parencite{niebler.2014.ranges} facilities for \emph{non-owning collections}. It is named \emph{views} and allows
+the user to access the content of a container (vector, map) through a prism. In Pylene, we decided to align the naming
+system after what was decided in C++20 in order not to confuse the user. This way, a \texttt{transform} view in image
+processing will do the same thing on an image that the transform view in the standard range library does on a container.
+\emph{Views} feature the following properties: \emph{cheap to copy}, \emph{non-owner} (does not \emph{own} any data
+buffer), \emph{lazy evaluation} (accessing the value of a pixel may require computations) and \emph{composition}. When
+chained, the compiler builds a \emph{tree of expressions} (or \emph{expression template} as used in many scientific
+computing libraries such as Eigen~\parencite{guennebaud.2010.eigen}), thus it knows at compile-time the type of the
+composition and ensures a 0-overhead at evaluation. We will first motivate the usage of \emph{views} in image
+processing. We will then present the main views used in image processing. Then will be discussed how image views differ
+from the one used in C++'s ranges and their main properties (especially how they keep/discard the properties from the
+parent image) through a concrete example: the management of border and extension policies. Finally, we will discuss the
+limitations of such a design.
 
 \section{The Genesis of a new abstraction layers: Views}
 \label{sec:genesis_of_views}
@@ -105,11 +106,12 @@ This way, view greatly increase what the user can do by writing less code.
 \label{sec:viws_for_ip}
 
 There are four fundamental kinds of views, inspired by functional programming paradigm: \texttt{transform(input, f)}
-applies the transformation $f$ on each pixel of the image \emph{input}, \texttt{filter(input, pred)} keeps the pixels of
-\emph{input} that satisfy the predicate \emph{pred}, \texttt{clip(input, domain)} keeps the pixels of \emph{input}
-that are in the \emph{domain}, \texttt{zip($input_1$, $input_2$, \ldots, $input_n$)} allows to pack several pixels
-of several images to iterate on them all at the same time. From those four fundamentals come out more very useful views
-such as \texttt{cast<T>(input)} or \texttt{mask(input, msk)} that are more specific to the image processing area.
+applies the transformation \(f\) on each pixel of the image \emph{input},\\
+\texttt{filter(input, pred)} keeps the pixels of \emph{input} that satisfy the predicate \emph{pred},
+\texttt{clip(input, domain)} keeps the pixels of \emph{input} that are in the \emph{domain}, \texttt{zip(\(input_1\),
+  \(input_2\), \ldots, \(input_n\))} allows to pack several pixels of several images to iterate on them all at the same
+time. From those four fundamentals come out more very useful views such as \texttt{cast<T>(input)} or
+\texttt{mask(input, msk)} that are more specific to the image processing area.
 
 In Pylena, the practitioner can use a large array of views. Those views come into different form and allow the
 practitioner to seamlessly use arithmetic or logic operators on images like he would when using expression template. We
@@ -222,8 +224,8 @@ the following code:
   mln::image2d<uint8_t> ima_8bits = mln::view::cast<uint8_t>(ima);
 \end{minted}
 
-\paragraph{The arithmetical operators} $+, -, *, /, \%$ are implemented in the form of transformation views that operate
-point-wise between two images whose size is identical. For instance, writing the following code:
+\paragraph{The arithmetical operators} \(+, -, *, /, \%\) are implemented in the form of transformation views that
+operate point-wise between two images whose size is identical. For instance, writing the following code:
 \begin{minted}{C++}
   mln::image2d<uint8_t> ima1 = /* ... */;
   mln::image2d<uint8_t> ima2 = /* ... */;
@@ -235,7 +237,7 @@ Is equivalent to writing the following code:
 \end{minted}
 It is important to note that the \texttt{-} unary operator is also supported: \mintinline{C++}{-ima1}.
 
-\paragraph{The logical operators} $<, <=, ==, !=, >, >=$ are implemented in the same way that arithmetical operators
+\paragraph{The logical operators} \(<, <=, ==, !=, >, >=\) are implemented in the same way that arithmetical operators
 are. Both unary and binary operators are expressed as transform views such as writing the following code:
 \begin{minted}{C++}
   auto ret = !ima1 && ima2;
@@ -246,7 +248,7 @@ is equivalent to writing the following code:
   auto ret = mln::view::transform(tmp, ima2, [](auto v1, auto v2){ return v1 && v2; });
 \end{minted}
 It is far more expressive and more comprehensible by the practitioner. Also, a new facility is introduced to express the
-logic behind a ternary expression (if C then A else B): the operator $ifelse(C, A, B)$. The rationale is to be able to
+logic behind a ternary expression (if C then A else B): the operator \(ifelse(C, A, B)\). The rationale is to be able to
 swap between values depending on a boolean mask. This way, a mathematical morphology algorithm such as \emph{hit or
   miss} can be implemented in the following simple manner:
 \begin{minted}{C++}
@@ -363,15 +365,15 @@ This design induces one major property which is the \emph{lazy-evaluation} of th
 \label{subsec:image.views.lazy.eval}
 
 The key point of views is the lazy evaluation. When a concrete image is piped through a view, no computation is done.
-The computation happens when the practitioner requests a value by doing $val = V(p)$. The implications are multiples: an
-image can be piped into several computation-heavy views, some of which can be discarded later on, and it will not impact
-the performance. Also, when processing large images, applying a transformation on a part of the image (such as clipping
-or filtering) is as simple as restricting the domain with a view and applying the transformation to this resulting
-sub-image.
+The computation happens when the practitioner requests a value by doing \(val = V(p)\). The implications are multiples:
+an image can be piped into several computation-heavy views, some of which can be discarded later on, and it will not
+impact the performance. Also, when processing large images, applying a transformation on a part of the image (such as
+clipping or filtering) is as simple as restricting the domain with a view and applying the transformation to this
+resulting sub-image.
 
 \emph{Lazy-evaluation} combined with the view \emph{chaining} allows the user to write clear and very efficient code
 whose evaluation is delayed till very last moment as shown in~\cref{fig.lazy} (see \parencite{geraud.2018.gtgdmm} for
-additional examples). Neither memory allocation nor computation are performed; the image $i$ has just recorded all the
+additional examples). Neither memory allocation nor computation are performed; the image \(i\) has just recorded all the
 operations required to compute its values.
 
 \begin{figure}[htbp]
@@ -438,7 +440,7 @@ trees are complex for the compiler to process and can induce heavy compilation t
 Views will also try to preserve properties of the original image when they can. That means that views can preserve the
 ability of the practitioner to, for instance, write into this image. This may be a trivial property to preserve when
 considering a view that restrict a domain, but when considering a view that transforms the resulting values, it is not.
-Let us consider the projection $h: (r,g,b) \mapsto g$ that selects the green component of an RGB triplet. When piping
+Let us consider the projection \(h: (r,g,b) \mapsto g\) that selects the green component of an RGB triplet. When piping
 the resulting view into, for instance, a blurring algorithm, the computation will take be performed in place thanks to
 the fact we still have the ability to write into the image. A legacy way of obtaining the same result would have been to
 create a temporary single-channel image to extract the green channel of the original RGB image so that the temporary
@@ -460,8 +462,8 @@ in-place way of doing this computation is shown in~\cref{fig.legacy.vs.view}.
   \label{fig.legacy.vs.view}
 \end{figure}
 
-On the other hand, when considering the view $g: (r,g,b) \mapsto 0.2126*r+0.7152*g+0.0722*b$ that compute the gray level
-of a color triplet (as shown in~\cref{fig.view.grayscale}), the ability to write a value into the image cannot be
+On the other hand, when considering the view \(g: (r,g,b) \mapsto 0.2126*r+0.7152*g+0.0722*b\) that compute the gray
+level of a color triplet (as shown in~\cref{fig.view.grayscale}), the ability to write a value into the image cannot be
 preserved. Indeed, one would need an inverse function that is able to deduce the original color triplet from the gray
 level to be able to write back into the original image. This operation alone is a whole field of research on its
 own~\parencite{zhang.2016.colorful,levin.2004.colorization,welsh.2002.transferring}
@@ -505,10 +507,11 @@ Views feature many interesting properties that change the way we program an imag
 those features, let us consider the following image processing pipeline: (Start) Load an input RGB-8 2D image (a
 classical HDR photography) (A) Convert it in grayscale (B) Sub-quantize to 8-bits (C) Perform the grayscale dilation of
 the image (End) Save the resulting 2D 8-bit grayscale image; as described in~\cref{fig.view.pipeline}. This pipeline is
-expressed with two notions. The first notion is composition of \colorbox{lightgreen}{algorithms} (A -> B -> C) in order
-to achieve the desired result. The second notion is the composition of \colorbox{thistle}{views} (Input -> A -> B) which
-overlaps partially with the algorithm part. This express that part of the algorithm is performed lazily only when we
-perform the last part (C). Those two notions are illustrated by the~\cref{fig.view.comp}.
+expressed with two notions. The first notion is composition of \colorbox{lightgreen}{algorithms} (\(A \rightarrow B
+\rightarrow C\)) in order to achieve the desired result. The second notion is the composition of
+\colorbox{thistle}{views} (\(Input \rightarrow A \rightarrow B\)) which overlaps partially with the algorithm part. This
+express that part of the algorithm is performed lazily only when we perform the last part (C). Those two notions are
+illustrated by the~\cref{fig.view.comp}.
 
 \begin{figure}[htbp]
   \centering
@@ -522,12 +525,12 @@ There are six properties one want to keep track when working with views: \emph{f
 \emph{accessible}, \emph{indexable}, \emph{bidirectional} and \emph{raw}. Those properties echo to the concepts seen
 in~\cref{sec:library.concepts}. An image is \emph{forward} when it can be traversed in a forward way. It is
 \emph{writable} when the values are mutable. It is \emph{accessible} whenever it allows to access the value associated
-to a point (i.e. it allows to write the expression $v = ima(p)$). It is \emph{indexable} whenever its values can be
-accessed through an index localizer (i.e. it allows to write the expression $v = ima[idx]$). Usually, accessing through
-an index is faster than accessing by a point. It is \emph{bidirectional} when it can be traversed in both a forward and
-a backward way. Finally, an image is \emph{raw} when its data buffer can is contiguous and can directly be accessed with
-information about strides. The~\cref{table:views.properties} presents all the views and how they preserve the base
-properties of a concrete image.
+to a point (\ie it allows to write the expression \(v = ima(p)\)). It is \emph{indexable} whenever its values can be
+accessed through an index localizer (\ie it allows to write the expression \(v = ima[idx]\)). Usually, accessing
+through an index is faster than accessing by a point. It is \emph{bidirectional} when it can be traversed in both a
+forward and a backward way. Finally, an image is \emph{raw} when its data buffer can is contiguous and can directly be
+accessed with information about strides. The~\cref{table:views.properties} presents all the views and how they preserve
+the base properties of a concrete image.
 
 \begin{table}[htbp]
   \begin{scriptsize}
@@ -535,25 +538,25 @@ properties of a concrete image.
       \caption{Views: property conservation}
       \begin{tabular}{|l|l|cccccc|}
         \hline
-        \thead{View type}    & \diagbox{\thead{Expression}}{\thead{Property}} & Forward & Bidirectional & Raw    & Writable   & Accessible & Indexable \\
+        \thead{View type}    & \diagbox{\thead{Expression}}{\thead{Property}} & Forward & Bidirectional & Raw    & Writable     & Accessible & Indexable \\
         %\thead{View type}    & \thead{Expression | Properties:} & Forward & Bidirectional & Raw    & Writable   & Accessible & Indexable \\
         \hline
-        \thead{Image}        & \texttt{ima1, ima2}                            & \cmark  & \cmark        & \cmark & \cmark     & \cmark     & \cmark    \\
-        \thead{Cast}         & \texttt{cast<T>(ima)}                          & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
-        \thead{Transform}    & \texttt{transform(ima, func)}                  & \cmark  & \cmark        & \xmark & \cmark$^1$ & \cmark     & \cmark    \\
-        \thead{Filter}       & \texttt{filter(ima, pred)}                     & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
-        \thead{Clip}         & \texttt{clip(ima, dom)}                        & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
-        \thead{mask}         & \texttt{mask(ima, mask)}                       & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
-        \thead{Zip}          & \texttt{zip(ima1, ima2)}                       & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
-        \thead{Channel}      & \texttt{red(ima)}                              & \cmark  & \cmark        & \xmark & \cmark     & \cmark     & \cmark    \\
-        \thead{Arithmetic}   & \texttt{ima1 + ima2}                           & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
-        \thead{Logical}      & \texttt{ima > 125}                             & \cmark  & \cmark        & \xmark & \xmark$^2$ & \cmark     & \cmark    \\
-        \thead{Mathematical} & \texttt{abs(ima)}                              & \cmark  & \cmark        & \xmark & \xmark     & \cmark     & \cmark    \\
+        \thead{Image}        & \texttt{ima1, ima2}                            & \cmark  & \cmark        & \cmark & \cmark       & \cmark     & \cmark    \\
+        \thead{Cast}         & \texttt{cast<T>(ima)}                          & \cmark  & \cmark        & \xmark & \xmark       & \cmark     & \cmark    \\
+        \thead{Transform}    & \texttt{transform(ima, func)}                  & \cmark  & \cmark        & \xmark & \cmark\(^1\) & \cmark     & \cmark    \\
+        \thead{Filter}       & \texttt{filter(ima, pred)}                     & \cmark  & \cmark        & \xmark & \xmark       & \cmark     & \cmark    \\
+        \thead{Clip}         & \texttt{clip(ima, dom)}                        & \cmark  & \cmark        & \xmark & \cmark       & \cmark     & \cmark    \\
+        \thead{mask}         & \texttt{mask(ima, mask)}                       & \cmark  & \cmark        & \xmark & \cmark       & \cmark     & \cmark    \\
+        \thead{Zip}          & \texttt{zip(ima1, ima2)}                       & \cmark  & \cmark        & \xmark & \cmark       & \cmark     & \cmark    \\
+        \thead{Channel}      & \texttt{red(ima)}                              & \cmark  & \cmark        & \xmark & \cmark       & \cmark     & \cmark    \\
+        \thead{Arithmetic}   & \texttt{ima1 + ima2}                           & \cmark  & \cmark        & \xmark & \xmark       & \cmark     & \cmark    \\
+        \thead{Logical}      & \texttt{ima > 125}                             & \cmark  & \cmark        & \xmark & \xmark\(^2\) & \cmark     & \cmark    \\
+        \thead{Mathematical} & \texttt{abs(ima)}                              & \cmark  & \cmark        & \xmark & \xmark       & \cmark     & \cmark    \\
         \hline
       \end{tabular}
       \begin{tablenotes}
-        \item $^1$: writability is preserved only if \texttt{func} is a projection.
-        \item $^2$: writability not preserved except for the expression \texttt{ifelse(ima, ima1, ima2)}.
+        \item \(^1\): writability is preserved only if \texttt{func} is a projection.
+        \item \(^2\): writability not preserved except for the expression \texttt{ifelse(ima, ima1, ima2)}.
       \end{tablenotes}
       \label{table:views.properties}
     \end{threeparttable}
@@ -561,7 +564,7 @@ properties of a concrete image.
 \end{table}
 
 Also, we may want to extend the property preservation discussion to other concepts we saw in the previous
-chapter~\ref{chap:image.algorithms.taxonomy}, especially the concepts of structuring element and extension.
+Chapter~\ref{chap:image.algorithms.taxonomy}, especially the concepts of structuring element and extension.
 
 \section{Decorating images to ease border management}
 \label{sec:border.management}
@@ -873,8 +876,8 @@ macros) as it enables compiler optimizations such as vectorization or inner loop
 we have learned that this solution does not mix well~\parencite{austern.2000.segmented} with the multidimensional nature
 of images. The issue originates from the fact that we have no way to explicitly say in the code that the
 multidimensional range is made of chunk of contiguous rows of memory. Indeed, for each element we have to compute an
-index originating from potentially $N$ dimensions. This disables critical optimizations such as vectorization. We solved
-this problem by augmenting range-v3's ranges with our own multidimensional ranges. Indeed, we only need to have
+index originating from potentially \(N\) dimensions. This disables critical optimizations such as vectorization. We
+solved this problem by augmenting range-v3's ranges with our own multidimensional ranges. Indeed, we only need to have
 contiguity on the last dimension to provide the compiler code it can optimize. Which means that each for-loop that
 traverses the whole n-dimensional image can be transformed into a double for-loop whose inner loop is guaranteed to be a
 contiguous row. This way we have now an outer range as well as an inner range, as illustrated
@@ -884,7 +887,7 @@ in~\cref{fig.inner.outer.range}.
   \centering
   \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/linear_rng}}
   \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/segmented_rng}}
-  \caption{Range-v3's ranges (a) vs. multidimensional ranges (b).}
+  \caption{Range-v3's ranges (a) \vs multidimensional ranges (b).}
   \label{fig.inner.outer.range}
 \end{figure}
 
@@ -956,16 +959,16 @@ We have considered 10 data set. We present in~\cref{fig:bg_sub.dataset_samples} 
   \centering
   \begin{tabular}{cccc}
     Background
-                                                                                      & Candidate & Result                    \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/castle_bg.png}}    &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/castle_fg_1.png}}  &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}} \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_bg.png}}    &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/garden_fg_1.png}}  &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}} \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/pathway_fg_1.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}}
+                                                                                       & Candidate & Result                    \\[5pt]
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/castle_bg.png}}    &
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/castle_fg_1.png}}  &
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}} \\[5pt]
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/garden_bg.png}}    &
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/garden_fg_1.png}}  &
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}} \\[5pt]
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/pathway_fg_1.png}} &
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}}
   \end{tabular}
 
   \caption{Background detection: data set samples.}
@@ -982,33 +985,33 @@ single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
 \begin{figure}[htbp]
   \centering
   \begin{tabular}{cccc}
-    Result                                                                                                                      & Benchmark & Benchmark Pln only \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0}}                                                &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_0}}                                                                             \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}}   &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_1}}                                                &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_1}}                                                                             \\[5pt]
-    \fbox{\includegraphics[width=.3\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}} &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_6}}                                                &
-    \fbox{\includegraphics[width=.3\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_6}}
+    Result                                                                                                                       & Benchmark & Benchmark Pln only \\[5pt]
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}}   &
+    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0}}                                                &
+    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_0}}                                                                             \\[5pt]
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}}   &
+    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_1}}                                                &
+    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_1}}                                                                             \\[5pt]
+    \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}} &
+    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_6}}                                                &
+    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_6}}
   \end{tabular}
 
   \caption{Background detection: garden results.}
   \label{fig:bg_sub.benchmarks}
 \end{figure}
 
-\newcommand{\mystd}[1]{{\itshape ($\pm$ #1)}}
+\newcommand{\mystd}[1]{{\itshape(\(\pm\) #1)}}
 \newcommand{\mydelta}[1]{{\itshape\bfseries #1\%}}
 
 \begin{table}
   \centering
   \begin{tabular}{l|ccc}
     \toprule
-    Framework          & Compute Time          & Memory usage & $\Delta{}$Memory usage \\ \midrule
-    Pylene (w/o views) & $2.11s$ \mystd{144ms} & 106 MB       & \mydelta{+0}           \\
-    OpenCV             & $2.41s$ \mystd{134ms} & 59 MB        & \mydelta{-44}          \\
-    Pylene (views)     & $2.13s$ \mystd{164ms} & 51 MB        & \mydelta{-52}          \\
+    Framework          & Compute Time            & Memory usage & \(\Delta{}\)Memory usage \\ \midrule
+    Pylene (w/o views) & \(2.11s\) \mystd{144ms} & 106 MB       & \mydelta{+0}             \\
+    OpenCV             & \(2.41s\) \mystd{134ms} & 59 MB        & \mydelta{-44}            \\
+    Pylene (views)     & \(2.13s\) \mystd{164ms} & 51 MB        & \mydelta{-52}            \\
     \bottomrule
   \end{tabular}
   \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average
@@ -1036,25 +1039,22 @@ a real advantage for software maintenance.
 \paragraph{Views are composable.} One of the most important feature in a pipeline design (generally, in software
 engineering) is \emph{object composition}. It enables composing simple blocks into complex ones. Those complex blocks
 can then be managed as if they were still simple blocks. In~\cref{fig.view.pipeline}, we have 3 simple image operators
-\emph{Image} $\rightarrow$ \emph{Image} (the grayscale conversion, the sub-quantization, the dilation). As shown
+\emph{Image}~\(\rightarrow\)~\emph{Image} (the grayscale conversion, the sub-quantization, the dilation). As shown
 in~\cref{fig.view.comp}, algorithm composition would consider these 3 simple operators as a single complex operator
-\emph{Image} $\rightarrow$ \emph{Image} that could then be used in another even more complex processing pipeline. Just
-like algorithms, image views are composable, e.g. a view of the view of an image is still an image.
+\emph{Image}~\(\rightarrow\)~\emph{Image} that could then be used in another even more complex processing pipeline. Just
+like algorithms, image views are composable, \eg a view of the view of an image is still an image.
 In~\cref{fig.view.comp}, we compose the input image with a grayscale transform view and a sub-quantization view that
 then feeds the dilation algorithm.
 
 \paragraph{Views improve usability.} The code to compose images in~\cref{fig.view.comp} is almost as simple as:
 
-\begin{minipage}{\linewidth}
-  \begin{minted}{c++}
+\begin{minted}{c++}
 auto input = imread(...);
 auto A = transform(input, [](rgb16 x) -> float {
-    return (x.r + x.g + x.b) / 3.f; }; );
+  return (x.r + x.g + x.b) / 3.f; }; );
 auto MyComplexImage = transform(A, [](float x)
-    -> uint8_t { return (x / 256 + .5f); }; );
-  \end{minted}
-  \smallskip
-\end{minipage}
+  -> uint8_t { return (x / 256 + .5f); }; );
+\end{minted}
 
 People familiar with functional programming may notice similarities with these languages where \emph{transform}
 (\emph{map}) and \emph{filter} are sequence operators. Views use the functional paradigm and are created by functions
@@ -1069,7 +1069,6 @@ conversion as well as the sub-quantization which can be reused afterward\footnot
   written in a more generic way for more re-usability, but this is not the purpose here.}.
 
 \begin{figure}
-  \noindent
   \begin{minted}{c++}
 auto operator+(Image A, Image B) {
   return transform(A, B, std::plus<>());

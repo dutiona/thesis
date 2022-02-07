@@ -1,16 +1,16 @@
 \chapter{Genericity}
 \label{chap:genericity}
 
-In natural language we say that something is generic when it can fit several purposes at once while being decently
-efficient. For instance, a computer is a generic tool that allows one to write documents, access emails, browse
-Internet, play video games, watch movies, read e-books etc. In programming, we will say that a tool is generic when it
-can fit several purposes. For instance, the gcc compiler can compile several programming languages (C, C++, Objective-C,
-Objective-C++, Fortran, Ada, D, Go, and BRIG (HSAIL)) as well as target several architectures (IA-32 (x86), x86--64,
-ARM, SPARC, etc.). Henceforth, we can say that gcc is a generic compiler. At this point it is important to note that
-even though a tool is deemed generic, there is a scope on what the tool can do and what the tool cannot do. A compiler
-despite supporting many languages and architectures, will not be able to make a phone call or a coffee. As such it is
-important to note that genericity is an aspect that qualifies something. We will now study the generic aspect related to
-libraries and programming languages.
+\lettrine[lines=2]{I}{n} natural language we say that something is generic when it can fit several purposes at once
+while being decently efficient. For instance, a computer is a generic tool that allows one to write documents, access
+emails, browse Internet, play video games, watch movies, read e-books etc. In programming, we will say that a tool is
+generic when it can fit several purposes. For instance, the gcc compiler can compile several programming languages (C,
+C++, Objective-C, Objective-C++, Fortran, Ada, D, Go, and BRIG (HSAIL)) as well as target several architectures (IA-32
+(x86), x86--64, ARM, SPARC, etc.). Henceforth, we can say that gcc is a generic compiler. At this point it is important
+to note that even though a tool is deemed generic, there is a scope on what the tool can do and what the tool cannot do.
+A compiler despite supporting many languages and architectures, will not be able to make a phone call or a coffee. As
+such it is important to note that genericity is an aspect that qualifies something. We will now study the generic aspect
+related to libraries and programming languages.
 
 This thesis voluntary leaves out the generic aspect related to the target architecture. Indeed, being able to write
 and/or generate code that is able to run on a large array of different hardware architecture is a field of research on
@@ -46,7 +46,7 @@ in theory, is built from those five functional forms. Furthermore, the initial w
 possibility offered by mutations in his five computational forms. These forms will lead to the birth of the functional
 programming paradigm (notably famous for its value immutability). Stepanov, a mathematician, thinks that those forms are
 theorems. He also thinks that there is an infinite number of theorem (as in mathematics) and that reducing their number
-to five for software programming is taking things a little too far.  He publishes in
+to five for software programming is taking things a little too far. He publishes in
 1987~\parencite{stepanov.1987.higher} that one cannot ignore the mutability of states if one wants to achieve maximum
 efficiency. Stepanov reasons about software programming by drawing a parallel with algebraic structures. Indeed, let us
 consider the classical parallel computation model. In this model, it is needed to be able to reorder computation in
@@ -130,7 +130,7 @@ is an attribute of data which tells the compiler or interpreter how the programm
 programming language support basic data types (also called primitive types) such as integer numbers, floating point
 numbers, boolean and characters (ASCII, Unicode, etc.). This data attribute defines the operation that can be done on
 the data, the meaning of the data and the size of the data in memory (the data can then be stored on the heap, stack,
-etc.). A data type provides a set of values from which an expression (i.e. variable, function, etc.) may take its
+etc.). A data type provides a set of values from which an expression (\ie variable, function, etc.) may take its
 values. Among programming language, we can distinguish those who are dynamically types and those that are statically
 typed. Statically typed languages are those whose variables are declared holding a specific type. This variable cannot
 hold data from another type in the scope it is declared. Statically typed programming languages are Ada, C, C++, Java,
@@ -145,10 +145,10 @@ the types a variable can hold at run-time is mainly to serve prototyping purpose
 is much appreciated not to be limited to a single type for each variable to be able to iterate on the prototype much
 faster.
 
-In image processing, an image $Im$ is defined on a domain $\mathcal{D}$ (which contains points) by the relation $\forall
-  x \in \mathcal{D}, y = Im(x)$ where y is the value of the image $Im$ for the point $x$. This definition always
-translates into a complex data structure when transposed into a programming language. This data structure must be aware
-of the data buffer containing the image data as well as information about the size and dimensions of the image.
+In image processing, an image \(Im\) is defined on a domain \(\mathcal{D}\) (which contains points) by the relation
+\(\forall x \in \mathcal{D}, y = Im(x)\) where y is the value of the image \(Im\) for the point \(x\). This definition
+always translates into a complex data structure when transposed into a programming language. This data structure must be
+aware of the data buffer containing the image data as well as information about the size and dimensions of the image.
 Furthermore, to add to the difficulty, the information needed to define precisely the data structure is not always known
 when writing the source code. Indeed, a very simple use-case consists in reading an image from a file to load it in
 memory. The file can contain an image of varying data type and the program should still work properly. There are
@@ -212,8 +212,8 @@ existing possibility within this space. It is all the more true when one wants e
   \subfloat[]{\includestandalone[width=1.7in]{figs/espaceSeI}}
   \hfil
   \subfloat[]{\includestandalone[width=1.7in]{figs/espaceSAV}}
-  \caption{The space of possible implementation of the \emph{dilation(image, se)} routine. The image axis shown in (a)
-    is in-fact multidimensional and should be considered 2D as in (b).}
+  \caption{The space of possible implementation of the \emph{dilation(image, se)} routine.\\
+    The image axis shown in (a) is in-fact multidimensional and should be considered 2D as in (b).}
   \label{fig:gen.espaceSAV}
 \end{figure}
 
@@ -238,9 +238,9 @@ types with near-native performance. Let us first explain briefly how we achieved
 \label{subsec:different.approaches}
 
 First, let us consider the morphological \emph{dilation} that takes two inputs: an image and a flat structuring element
-(SE). The set of some possible inputs is depicted in~\ref{fig:gen.espaceSAV}. Without genericity, with $s$ the
-number of image type, $v$ the number of value type and $k$ the number of structuring elements, one would have to write
-$s * v * k$ different \emph{dilation} routine.
+(SE). The set of some possible inputs is depicted in~\ref{fig:gen.espaceSAV}. Without genericity, with \(s\) the number
+of image type, \(v\) the number of value type and \(k\) the number of structuring elements, one would have to write \(s
+* v * k\) different \emph{dilation} routine.
 
 There are several ways to reach a high level of genericity. First there are the \emph{code duplication} approach as well
 as the \emph{generalization} approach. Finally, there is a way that consists in using expert, domain specific tools
@@ -301,9 +301,9 @@ is also just a matter of writing it once for the super-type. This mechanism is s
 However, one must keep in mind that the conversion can be costly. Also, processing the super-type may induce a
 significant performance trade-off while processing the original type would be much faster. Furthermore, it is not always
 possible to find this common denominator when enumerating through some esoteric data types. Finally, the provided
-interface (from the super-type) may allow the image to be used incorrectly, such as a $2D$ image being processed into
-video ($3D+t$) algorithm. Widely use libraries such as OpenCV~\parencite{bradski.2000.opencv},
-scikit-image~\parencite{vanderwalt.2014.skimage} use this technique to handle as many image types as possible. Another
+interface (from the super-type) may allow the image to be used incorrectly, such as a \(2D\) image being processed into
+video (\(3D+t\)) algorithm. Widely use libraries such as OpenCV~\parencite{bradski.2000.opencv},
+Scikit-image~\parencite{vanderwalt.2014.skimage} use this technique to handle as many image types as possible. Another
 library making use of this generalization technique in its implementation is CImg~\parencite{tschumperle.2012.cimg}.
 CImg generalize its data type to a 4D image type templated by its underlying data type.
 
@@ -355,7 +355,7 @@ in~\cref{chap:image.algorithms.taxonomy}.
   \subfloat[]{
     \includegraphics[width=1.64in]{figs/parapoly_code}
   }
-  \caption{Dynamic, object-oriented polymorphism (a) vs. static, parametric polymorphism (b).}
+  \caption{Dynamic, object-oriented polymorphism (a) \vs static, parametric polymorphism (b).}
   \label{code:gen.inclupoly}
 \end{figure}
 
@@ -369,14 +369,14 @@ Pylena~\parencite{carlinet.2018.pylena}. Most of them have been written in compl
 the user standpoint and thus are often difficult and complex to handle. It is also harder to debug because errors in
 highly templated code shows up very deep in compiler error trace.
 
-The table comparing all the pros. and cons. from the aforementioned approaches is presented
+The table comparing all the \pros and \cons from the aforementioned approaches is presented
 in~\cref{table:gen.approaches}. We can see in this table that Generic Programming in C++20 check all the boxes that we
 are interested in.
 
 \begin{table}[htbp]
   \centering
   \begin{threeparttable}
-    \caption{Genericity approaches: pros. \& cons.}
+    \caption{Genericity approaches: \pros~\& \cons}
     \begin{tabular}[width=0.8\linewidth]{l|ccccc}
       Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
       \hline
@@ -407,8 +407,8 @@ are interested in.
 
 Image processing community operates mostly with either Python or Matlab~\parencite{etter.2002.introduction}. As such
 this subsection will focus on those two technologies. Python offers access to two major libraries for image processing:
-OpenCV and scikit-image. Matlab has built-in support as well as toolboxes for more advanced features. When we intersect
-scikit-image and Matlab, we can notice that both are very similar both in feature and interface. As such, it is possible
+OpenCV and Scikit-image. Matlab has built-in support as well as toolboxes for more advanced features. When we intersect
+Scikit-image and Matlab, we can notice that both are very similar both in feature and interface. As such, it is possible
 to regroup them both here for the sake of comprehension. As stated above, when considering a generic library, one must
 consider the three axes: underlying data type, domain structure and additional data. Let us compare how the mentioned
 library behave along those axes with a simple algorithm such as the morphological dilation.
@@ -416,10 +416,10 @@ library behave along those axes with a simple algorithm such as the morphologica
 \subsubsection{Limitations regarding feasibility}
 
 \paragraph{Data type} Dilating a grayscale or a binary image works fine as intended with all the libraries. However,
-there is no trivial way of dilating a RGB colored image~\parencite{angulo.2007.morpho_color,dewitte.2005.morpho_color}
+there is no trivial way of dilating an RGB colored image~\parencite{angulo.2007.morpho_color,dewitte.2005.morpho_color}
 as this operation is not defined for colored images. Indeed, the algorithm is able to work if a supremum function is
 provided. Such functions have multiple possible implementation and selecting the correct one is not trivial. However,
-provided a supremum function, the dilation algorithm should normally be performed. Despite that fact, scikit-image does
+provided a supremum function, the dilation algorithm should normally be performed. Despite that fact, Scikit-image does
 not allow one to dilate a colored RGB image and raises an error: it is required to convert into a grayscale the image
 beforehand.
 
@@ -462,7 +462,7 @@ approach, sadly, is fully dynamic (that is, runtime) and does not allow the comp
 as vectorization out of the box.
 
 \paragraph{OpenCV \& Matlab} In OpenCV as well as in Matlab, the choice was made to systematically attempt to decompose
-big rectangular structuring elements into smaller $3*3$ structuring elements. This is not as effective as using
+big rectangular structuring elements into smaller \(3*3\) structuring elements. This is not as effective as using
 multi-pass 1D algorithm but still allows for relatively stable performance.
 
 Also, OpenCV let the implementer handle the cases he wants to support by himself. For instance, the dilation algorithm
@@ -482,11 +482,11 @@ OpenCV.
 \paragraph{Performance discussion} When comparing performance of the simple dilation between Matlab and OpenCV, which
 is done in~\parencite{matuska.2012.bench}, shows that Matlab is very oriented toward prototyping and not toward production.
 The performance gap between the two libraries shows that performance may not a major concern for MATLAB in this case.
-Opposite to this, OpenCV and scikit-image both have a C/C++ core to provide fast basic algorithms such as the dilation
+Opposite to this, OpenCV and Scikit-image both have a C/C++ core to provide fast basic algorithms such as the dilation
 and erosion mathematical morphology.
 
 As such, when comparing the performance of OpenCV, Scikit-image and Pylene in~\cref{fig:gen.bench.square.disc}, we can
-notice some interesting facts. Both scikit-image and Pylene have a very stable execution time even though the size of
+notice some interesting facts. Both Scikit-image and Pylene have a very stable execution time even though the size of
 the structuring element grows by power of two. This corroborates the fact that the author did see code taking advantage
 of the structuring element's properties, such as the decomposability/separability. OpenCV has very good performance for
 a square because it has specific handwritten code for both vectorization and GPU offloading when possible: even if
@@ -496,7 +496,7 @@ OpenCV decomposed its square into smaller sub square (and not periodic lines), i
   \centering
   \includegraphics[width=3.8in]{figs/bench_disc_rect_by_SE}
   %\caption{Benchmark: dilation of a 2D image (3128x3128 \eqmark 10Mpix) with a 2D square and a 2D disc. \FIXME{Légende image (noms, espace)}}
-  \caption{Benchmark: dilation of a 2D image (3128x3128 \eqmark 10Mpix) with a 2D square and a 2D disc.}
+  \caption{Benchmark: dilation of a 2D image (\(3128 \times 3128\) \eqmark 10Mpix) with a 2D square and a 2D disc.}
   \label{fig:gen.bench.square.disc}
 \end{figure}
 
@@ -548,7 +548,7 @@ in CLU. Later, \emph{where clauses} were introduced to specify specific requirem
 had the consequence of allowing only the operations required in the where clause to be used in the cluster
 implementation code. This enables proper compile-type checks, type-safety and the compilation into a simple native and
 optimized code by the compiler. The following code illustrates how to create a cluster (or class) named \emph{vector},
-declaring a set of member functions and requiring a specific behavior (operator $=$ and $<$) from its underlying stored
+declaring a set of member functions and requiring a specific behavior (operator \(=\) and \(<\)) from its underlying stored
 elements:
 
 \begin{minted}{cobol}
@@ -560,12 +560,12 @@ elements:
 \end{minted}
 
 When implementing the member functions declared for \texttt{vector}, the only valid operations that can be performed on
-a value of type \texttt{T} are \texttt{equal} ($=$ for comparison) and \texttt{less} ($<$ for ordering). In CLU the
+a value of type \texttt{T} are \texttt{equal} (\(=\) for comparison) and \texttt{less} (\(<\) for ordering). In CLU the
 actual instantiation of the parameter (here \texttt{T}) is done at run-time. Indeed, each type is represented by a
 descriptor, even a parametrized type parameter. At run-time, a concrete type is used to instantiate the cluster. To
 achieve this, the placeholder type descriptor is replaced by the one of the actual concrete type at this moment. The
 instantiation can then be considered dynamic which differs from the C++ compilation model where the template
-instantiation is considered static (i.e. done at compile-time). The pros and cons of this approach are discussed
+instantiation is considered static (\ie done at compile-time). The \pros and \cons of this approach are discussed
 in~\parencite{atkinson.1978.cluimpl} which essentially are the resulting binary code size due to combinatorial explosion
 combined with optimized code generation versus small, flexible and slower binary.
 
@@ -696,7 +696,7 @@ will be defined by dropping the \texttt{const-qualifier} off of the passed param
 
 This language construct is very useful when developing generic libraries because it enables performing ``functions'' on
 types, and even chain them. It is also possible to perform checks to extract information about those types. We can
-easily write a \texttt{is\_const} metafunction if we need it.
+easily write an \texttt{is\_const} metafunction if we need it.
 
 In image processing in particular, the usage of traits in the generic library
 Milena~\parencite{levillain.2009.ismm,levillain.2010.icip} was very useful to achieve standard ways to compute very
@@ -1330,9 +1330,9 @@ worlds without the drawbacks, but this thesis will not discuss this matter any f
 
 The main point to understand here is that our main interest is set on C++, a compiled language with slow compilation
 time and very fast execution time. In C++ there are template metaprogramming to achieve genericity, but \emph{templates
-do not generate any binary code}. Why? Because when the compiler meet a templated type or a templated routine, it does
+  do not generate any binary code}. Why? Because when the compiler meet a templated type or a templated routine, it does
 not know which type it will be instantiated with when it is used. Therefore, it can not calculate stuff like type size,
-alignment, can not select which assembly instruction to select to do an addition or a division (fixed vs. floating
+alignment, can not select which assembly instruction to select to do an addition or a division (fixed \vs floating
 point arithmetic). This is why the compiler does not generate any binary code when it first meets templates. The code is
 generated only it is used with a concrete and known type. This is a huge problem. Now, if a library implementer wants to
 distribute his generic library, he must distribute source code and have  the user compile it. For a language like C++,
@@ -1361,7 +1361,7 @@ achieve a huge performance gain at the cost of near zero knowledge of the comple
 solution essentially bypass the work of a JIT compiler (that would be used by a programming language using bytecode such
 as Java or C\#) and just offload it onto well known/proven solution: the machine's C compiler.
 
-\paragraph{Autowig~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy} and
+\paragraph{AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy} and
   Xeus-cling~\parencite{quantstack.2021.xeus-cling}} are all solutions aiming to generate automatically Python bindings
 on-the-fly using different solutions. AutoWIG has in-house code based on LLVM/Clang to parse C++ code in order to
 generate and compile a Swig Python binding using the Mako templating engine. Cppyy will generate Python bindings but can

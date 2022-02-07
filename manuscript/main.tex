@@ -1,4 +1,5 @@
 \documentclass[11pt,a4paper]{book}
+%\documentclass[11pt,a4paper,draft]{book}
 \usepackage[inner=3cm,textwidth=16cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -40,11 +41,18 @@
             defernumbers=true,
             sorting=ynt,
             style=numeric,
+            %style=draft,
             backref=true]{biblatex}
 
 \DeclareBibliographyCategory{cited}
 \AtEveryCitekey{\addtocategory{cited}{\thefield{entrykey}}}
 \addbibresource{bibliography.bib}
+
+% This allows for an additional line-breaking pass with the amount of
+% "tolerable" white space per line increased by 1em.
+% Needed for overfull hbox in bibliography
+% \emergencystretch=1em
+\usepackage[final]{microtype}
 
 \usepackage[section]{placeins}
 
@@ -55,7 +63,14 @@
 \usepackage{pifont}
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
-\newcommand{\eqmark}{{\bf $\approx$}}
+\newcommand{\eqmark}{{\bf \(\approx\)}}
+
+\newcommand{\eg}{e.g.}
+\newcommand{\ie}{i.e.}
+\newcommand{\cf}{cf.}
+\newcommand{\vs}{vs.}
+\newcommand{\pros}{pros.}
+\newcommand{\cons}{cons.}
 
 \definecolor{lightgray}{rgb}{0.83, 0.83, 0.83}
 \definecolor{lightblue}{rgb}{0.68, 0.85, 0.9}
@@ -194,6 +209,11 @@ et accessible.
 \label{part:annexes}
 
 \appendix
+
+% This allows for an additional line-breaking pass with the amount of
+% "tolerable" white space per line increased by 1em.
+% Needed for overfull hbox in bibliography
+\emergencystretch=1em
 
 \chapter{Bibliography}
 \label{chap:bibliography}

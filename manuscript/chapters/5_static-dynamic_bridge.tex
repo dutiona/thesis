@@ -4,11 +4,11 @@
 %\section{Coexistence between the static world and the dynamic world}
 %introduction
 
-In the programming world, there are three main families of programming language~\parencite{prechelt.2000.comparison}.
-There are (i) \emph{compiled} programming languages, such as C, C++, Rust or Go, (ii) \emph{interpreted} programming
-languages, such as Python, PHP, Lisp or Javascript, and (iii) hybrid programming languages, such as Java or C\#. The
-latter have a fast compilation pass that compiles the source code into an intermediate bytecode. Then, this bytecode is
-interpreted via an interpreter on the host (runner) machine.
+\lettrine[lines=2]{I}{n} the programming world, there are three main families of programming
+language~\parencite{prechelt.2000.comparison}. There are (i) \emph{compiled} programming languages, such as C, C++, Rust
+or Go, (ii) \emph{interpreted} programming languages, such as Python, PHP, Lisp or Javascript, and (iii) hybrid
+programming languages, such as Java or C\#. The latter have a fast compilation pass that compiles the source code into
+an intermediate bytecode. Then, this bytecode is interpreted via an interpreter on the host (runner) machine.
 
 
 \section{Introducing the static and dynamic bridge}
@@ -48,7 +48,7 @@ that the maintainer has to publish many bundles of his package where he wants it
   \subfloat[Run-time]{
     \includegraphics[width=.48\linewidth]{figs/static_runtime}
   }
-  \caption{Compiled languages: compile-time (a) vs. run-time (b).}
+  \caption{Compiled languages: compile-time (a) \vs run-time (b).}
   \label{fig:static.dynamic.compiled}
 \end{figure}
 
@@ -58,7 +58,7 @@ released in the bundle. All the burden about resolving the dependencies and inst
 is shouldered by the end-user that is using the program. Indeed, as shown in~\cref{fig:static.dynamic.dynamic.pipeline},
 everything happens at runtime. The main advantage of this approach is to build a very rich ecosystem as distributing,
 maintaining and using programs is very easy once integrated in a package manager (often delivered alongside the language
-SDK natively, e.g. pip for Python). However, the most notable disadvantage is the performance which is explained by the
+SDK natively, \eg pip for Python). However, the most notable disadvantage is the performance which is explained by the
 fact that the source code is not compiled into optimized assembly code ready to be executed by the computer. Instead,
 the interpreter must do all the work in one go and very often this is slow (at least the first pass). Nowadays,
 interpreters differentiate two use cases. One is opening the console interpreter from the command line and typing
@@ -169,7 +169,7 @@ in~\cref{fig:static.vs.dynamic.genericity}.
   \subfloat[Python dynamic genericity]{
     \includegraphics[width=2in]{figs/python_dynamic_code}
   }
-  \caption{C++ Static (a) vs. Python Dynamic (b) genericity.}
+  \caption{C++ Static (a) \vs Python Dynamic (b) genericity.}
   \label{fig:static.vs.dynamic.genericity}
 \end{figure}
 
@@ -222,7 +222,7 @@ We do not want to provide an abstract interface that will resolve the calls to a
 call because it would be very slow when the C++ code is executed. This would defeat the purpose of having to rely on C++
 in a first place. However, it is possible to convert an abstract class into an instantiated concrete generic class whose
 template parameter are known. This requires, however, to enumerate all the possible cases. With modern C++, it has
-become possible to design $n*n$ dispatch without gigantic switch-case clauses.
+become possible to design \(n \times n\) dispatch without gigantic switch-case clauses.
 
 
 \subsection{First step: converting back and forth}
@@ -285,7 +285,7 @@ for this part is given in~\cref{appendix:static-dynamic-bridge.ndimage}.
 
 We are now all set and are able to convert back-and-forth a Python image into a C++ image and vise versa.
 
-\subsection{Second step: multi-dispatcher (a.k.a. $\protect n*n$ dispatch)}
+\subsection{Second step: multi-dispatcher (a.k.a. \(\protect n \times n\) dispatch)}
 
 The second step of our hybrid solution is to dispatch the abstract buffer type coming from Python to an efficient
 generic code. The naive way of doing so would be to include a gigantic switch-case clause in each algorithm
@@ -502,7 +502,7 @@ mln::image2d<float> naive_stretch(const mln::image2d<T>& src) {
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/nxndispatch_pipeline}
-  \caption{Python to C++ pipeline algorithm through the $n*n$ dispatcher.}
+  \caption{Python to C++ pipeline algorithm through the \(n \times n\) dispatcher.}
   \label{fig:static_dyn.nxndispatcher}
 \end{figure}
 
@@ -985,20 +985,20 @@ The result is shown in~\cref{table:static.dynamic.perfs}.
     \toprule
     Dispatch type                                                                                                   &
     Compute Time                                                                                                    &
-    $\Delta{}$Compute Time
+    \(\Delta{}\)Compute Time
     \\ \midrule Native value-set with native C++ value-type (baseline)~\ref{fig:stretch.fast.code}
-                                                                                                                    & $0.0093s$ & $0$ \\
+                                                                                                                    & \(0.0093s\) & \(0\) \\
     Value-set with virtual dispatch with native C++ value-type~\ref{fig:stretch.virtual.dispatch.code}              &
-    $0.1213s$                                                                                                       &
-    $\times 13$
+    \(0.1213s\)                                                                                                     &
+    \(\times 13\)
     \\
     Value-set with virtual dispatch with C++ type-erased values~\ref{fig:stretch.virtual.dispatch.type.erased.code} &
-    $1.0738s$                                                                                                       &
-    $\times 115$
+    \(1.0738s\)                                                                                                     &
+    \(\times 115\)
     \\
     Injected Python value-set with native C++ value-type~\ref{fig:stretch.injected.python.code}                     &
-    $21.5444s$                                                                                                      &
-    $\times 2316$
+    \(21.5444s\)                                                                                                    &
+    \(\times 2316\)
     \\
     \bottomrule
   \end{tabular}
@@ -1007,14 +1007,14 @@ The result is shown in~\cref{table:static.dynamic.perfs}.
 \end{table}
 
 This benchmark shows that each time an abstraction layer is added on top of the baseline, the user must expect a
-$10\times$ slowness factor in his code performance. Also, calling Python code is immensely slower ($2300\times$ !) than
-the baseline. This renews the interest there is to recompile the templated C++ library with an additional known type
-than injecting it from Python long time running code. Being able to inject Python code ease prototyping and increase the
-speed at which the user can write his code. However, the benchmark shows that this is not a viable solution once the
-prototype needs to scale to a production environment.
+\(10\times\) slowness factor in his code performance. Also, calling Python code is immensely slower (\(2300\times\) !)
+than the baseline. This renews the interest there is to recompile the templated C++ library with an additional known
+type than injecting it from Python long time running code. Being able to inject Python code ease prototyping and
+increase the speed at which the user can write his code. However, the benchmark shows that this is not a viable solution
+once the prototype needs to scale to a production environment.
 
 
-\subsection{Continuation: JIT-based solutions, pros. and cons.}
+\subsection{Continuation: JIT-based solutions, \pros and \cons}
 
 Our hybrid solution certainly has advantages, but the huge disadvantage is the slowness of injecting our own types from
 the Python side. There exists another solution that this thesis did not have the opportunity to study in-depth. This
@@ -1046,7 +1046,7 @@ Cython even support C++ template code~\parencite{behnel.2022.cython-template} wh
 
 The third solution consists in relying on recent projects that are all relying on the LLVM infrastructure. We can
 notably note AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy} and
-Xeus-cling~\parencite{quantstack.2021.xeus-cling}. Autowig has in-house code based on LLVM/Clang to parse C++ code in
+Xeus-cling~\parencite{quantstack.2021.xeus-cling}. AutoWIG has in-house code based on LLVM/Clang to parse C++ code in
 order to generate and compile a Swig Python binding using the Mako templating engine. AutoWIG, coupled with Cython would
 permit the user to, for instance, generate C code related to a custom Python structure. Then a simple call to AutoWIG
 will parse the C code and inject it into the C++ library to generate the appropriate bindings for the user. As for

@@ -93,9 +93,12 @@ bool operator>(const OrderedValue&, const OrderedValue&);
 bool operator<=(const OrderedValue&, const OrderedValue&);
 bool operator>=(const OrderedValue&, const OrderedValue&);
 
-static_assert(mln::concepts::Value<Value>, "Value archetype does not model the Value concept!");
-static_assert(mln::concepts::ComparableValue<ComparableValue>, "ComparableValue archetype does not model the ComparableValue concept!");
-static_assert(mln::concepts::OrderedValue<OrderedValue>, "OrderedValue archetype does not model the OrderedValue concept!");
+static_assert(mln::concepts::Value<Value>,
+    "Value archetype does not model the Value concept!");
+static_assert(mln::concepts::ComparableValue<ComparableValue>,
+    "ComparableValue archetype does not model the ComparableValue concept!");
+static_assert(mln::concepts::OrderedValue<OrderedValue>,
+    "OrderedValue archetype does not model the OrderedValue concept!");
 \end{minted}
 
 
@@ -324,8 +327,10 @@ using PixelT      = details::AsPixel<details::PixelT<P, V>>;
 using Pixel       = PixelT<Point, Value>;
 using OutputPixel = details::AsPixel<details::OutputPixel>;
 
-static_assert(mln::concepts::Pixel<Pixel>, "Pixel archetype does not model the Pixel concept!");
-static_assert(mln::concepts::OutputPixel<OutputPixel>, "OutputPixel archetype does not model the OutputPixel concept!");
+static_assert(mln::concepts::Pixel<Pixel>,
+    "Pixel archetype does not model the Pixel concept!");
+static_assert(mln::concepts::OutputPixel<OutputPixel>,
+    "OutputPixel archetype does not model the OutputPixel concept!");
 \end{minted}
 
 
@@ -524,7 +529,7 @@ concept reversible_mdrange = MDBidirectionalRange<R> || std::ranges::bidirection
       Returns the domain's dimension.                                                                                  \\
       \cline{1-4}
       \multicolumn{1}{c|}{SizedDomain}             & \texttt{sdom.size()}             & \texttt{unsigned int}        &
-      Returns the number of points inside the domain.                                                                  \\
+      \makecell[l]{Returns the number of points inside                                                                 \\ the domain.}                                                                  \\
       \cline{1-4}
       \multicolumn{1}{c|}{ShapedDomain}            & \texttt{shdom.extends()}         & \texttt{std::forward\_range} &
       \makecell[l]{Return a range that yields the number                                                               \\ of elements for each dimension.}
@@ -586,7 +591,8 @@ struct Domain
   int  dim() const;
 };
 
-static_assert(mln::concepts::Domain<Domain>, "Domain archetype does not model the Domain concept!");
+static_assert(mln::concepts::Domain<Domain>,
+    "Domain archetype does not model the Domain concept!");
 
 struct SizedDomain : Domain
 {
@@ -704,7 +710,8 @@ concept Image =
   Domain<image_domain_t<I>> &&
   std::convertible_to<pixel_point_t<image_pixel_t<I>>, image_point_t<I>> &&
   std::convertible_to<pixel_reference_t<image_pixel_t<I>>, image_reference_t<I>> &&
-  // Here we don't want a convertible constraint as value_type is the decayed type and should really be the same
+  // Here we don't want a convertible constraint as value_type
+  // is the decayed type and should really be the same
   std::same_as<pixel_value_t<image_pixel_t<I>>, image_value_t<I>> &&
   std::common_reference_with<image_reference_t<I>&&, image_value_t<I>&> &&
   std::common_reference_with<image_reference_t<I>&&, image_value_t<I>&&> &&
@@ -716,8 +723,10 @@ concept Image =
     { cima.domain() }     -> std::convertible_to<image_domain_t<I>>;
     { ima.pixels() }  -> mln::ranges::mdrange;
     { ima.values() }  -> mln::ranges::mdrange;
-    requires std::convertible_to<mln::ranges::mdrange_value_t<decltype(ima.pixels())>, image_pixel_t<I>>;
-    requires std::convertible_to<mln::ranges::mdrange_value_t<decltype(ima.values())>, image_value_t<I>>;
+    requires std::convertible_to<mln::ranges::mdrange_value_t<decltype(ima.pixels())>,
+                                  image_pixel_t<I>>;
+    requires std::convertible_to<mln::ranges::mdrange_value_t<decltype(ima.values())>,
+                                  image_value_t<I>>;
   };
 
 namespace detail
@@ -972,7 +981,8 @@ concept IndexableImage =
   } &&
   image_indexable_v<I> &&
   requires (I ima, image_index_t<I> k) {
-    { ima[k] }  -> std::same_as<image_reference_t<I>>; // For concrete image it returns a const_reference
+    { ima[k] }  -> std::same_as<image_reference_t<I>>;  // For concrete image it returns
+                                                        // a const_reference
   };
 
 
@@ -1095,9 +1105,11 @@ concept AccessibleImage =
   Image<I> &&
   image_accessible_v<I> &&
   requires (I ima, image_point_t<I> p) {
-    { ima(p) }              -> std::same_as<image_reference_t<I>>; // For concrete image it returns a const_reference
+    { ima(p) }              -> std::same_as<image_reference_t<I>>; // For concrete image it returns
+                                                                   // a const_reference
     { ima.at(p) }           -> std::same_as<image_reference_t<I>>; // idem
-    { ima.pixel(p) }    -> std::same_as<image_pixel_t<I>>; // For concrete image pixel may propagate constness
+    { ima.pixel(p) }    -> std::same_as<image_pixel_t<I>>; // For concrete image pixel may propagate
+                                                           // constness
     { ima.pixel_at(p) } -> std::same_as<image_pixel_t<I>>; // idem
   };
 
@@ -1153,8 +1165,10 @@ namespace details {
   };
 } // namespace details
 
-using AccessibleImage             = details::AsImage<details::AccessibleImage>;
-using WritableAccessibleImage     = details::AsImage<details::OutputAccessibleImage>;
+using AccessibleImage             =
+        details::AsImage<details::AccessibleImage>;
+using WritableAccessibleImage     =
+        details::AsImage<details::OutputAccessibleImage>;
 \end{minted}
 
 
@@ -1170,7 +1184,7 @@ using WritableAccessibleImage     = details::AsImage<details::OutputAccessibleIm
       \cline{1-4}
       \thead{Concept} & \thead{Modeling type} & \thead{Inherit behavior from} & \thead{Instance of type} \\
       \makecell[l]{IndexableAnd                                                                          \\ AccessibleImage}         & \texttt{IdxAccImg}    & IndexableImage, AccessibleImage                                              & \texttt{idxaccimg}       \\
-      \makecell[l]{ WritableIndexable                                                                    \\ AndAccessibleImage} & \texttt{WIdxAccImg}   & \makecell[l]{IndexableAndAccessibleImage, \\ WritableIndexableImage, \\WritableAccessibleImage} & \texttt{widxaccimg}      \\
+      \makecell[l]{WritableIndexable                                                                     \\ AndAccessibleImage} & \texttt{WIdxAccImg}   & \makecell[l]{IndexableAndAccessibleImage, \\ WritableIndexableImage, \\WritableAccessibleImage} & \texttt{widxaccimg}      \\
       \cline{1-4}
     \end{tabular}
     \smallskip
@@ -1340,7 +1354,8 @@ using WritableIndexableAndAccessibleImage = details::AsImage<details::OutputInde
     BidirectionalImage<I> &&
     std::derived_from<image_category_t<I>, raw_image_tag> &&
     requires (I ima, const I cima, int dim) {
-      { ima.data() }        -> std::convertible_to<const image_value_t<I>*>; // data() may be proxied by a view
+      { ima.data() }        -> std::convertible_to<const image_value_t<I>*>; // data() may be proxied
+                                                                             // by a view
       { cima.stride(dim) } -> std::same_as<std::ptrdiff_t>;
     };
 \end{minted}
@@ -1458,7 +1473,8 @@ concept RawImage =
   BidirectionalImage<I> &&
   std::derived_from<image_category_t<I>, raw_image_tag> &&
   requires (I ima, const I cima, int dim) {
-    { ima.data() }        -> std::convertible_to<const image_value_t<I>*>; // data() may be proxied by a view
+    { ima.data() }        -> std::convertible_to<const image_value_t<I>*>; // data() may be proxied
+                                                                           // by a view
     { cima.stride(dim) } -> std::same_as<std::ptrdiff_t>;
   };
 
@@ -1576,7 +1592,7 @@ using OutputRawImage     = details::AsImage<details::OutputRawImage>;
       \multicolumn{1}{c|}{\multirow{11}{*}{StructuringElement}} & \multirow{2}{*}{\texttt{std::regular\_invocable<SE,
       Pnt>}}                                                    & \multirow{4}{*}{\texttt{std::true\_type}}             &
       \multirow{4}{*}{\makecell[l]{\texttt{se} can called using \text{std::invoke},                                                                                                                           \\ is equality preserving and \\
-      does not modify function object                                                                                                                                                                         \\ nor arguments.}} \\
+      does not modify function                                                                                                                                                                                \\ object nor arguments.}} \\
       \multicolumn{1}{c|}{}                                     &                                                       &
                                                                 &                                                                                                                                             \\
       \multicolumn{1}{c|}{}                                     & \multirow{2}{*}{\texttt{std::regular\_invocable<SE,

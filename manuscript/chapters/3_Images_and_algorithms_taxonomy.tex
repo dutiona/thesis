@@ -1,20 +1,20 @@
 \chapter{Taxonomy of Images and Algorithms}
 \label{chap:image.algorithms.taxonomy}
 
-In this thesis, we have pursued research into how to apply all those new generic facilities from the C++ language into
-the Image processing area. This allows us to test them in a practical way on our predilection area while remembering our
-past work, both success and failures in this matter. However, as we saw in the previous chapter~\ref{chap:genericity},
-birthing concepts from code is something that is done in an emerging way. Henceforth, the first work will be to do an
-inventory of all existing image algorithms as well as an inventory of all image processing algorithms (both basic and
-more complex) we can think of. This way, we will notice behavior patterns emerging from similar image types or similar
-algorithms. We will then be able to extract behavioral patterns from this inventory in order to produce a full taxonomy
-in the form of a framework of concepts related to image processing. This chapter is structured as followed. First we
-will study how to extract behavioral pattern from a simple algorithm in order to refine it into one or multiple
-concepts. Second we will study the theory set behind images types, their conjunctions, disjunctions. We will also
-produce an inventory of image processing algorithms limited to mathematical morphologies that we can leverage for the
-final step. Third, we will study the intrinsic genericity of algorithms to produce canvas taking advantage of
-properties. Finally, we will then study behavioral pattern related to the inventory in the form of a taxonomy indexing a
-framework of concepts about image processing.
+\lettrine[lines=2]{I}{n} this thesis, we have pursued research into how to apply all those new generic facilities from
+the C++ language into the Image processing area. This allows us to test them in a practical way on our predilection area
+while remembering our past work, both success and failures in this matter. However, as we saw in the previous
+Chapter~\ref{chap:genericity}, birthing concepts from code is something that is done in an emerging way. Henceforth, the
+first work will be to do an inventory of all existing image algorithms as well as an inventory of all image processing
+algorithms (both basic and more complex) we can think of. This way, we will notice behavior patterns emerging from
+similar image types or similar algorithms. We will then be able to extract behavioral patterns from this inventory in
+order to produce a full taxonomy in the form of a framework of concepts related to image processing. This chapter is
+structured as followed. First we will study how to extract behavioral pattern from a simple algorithm in order to refine
+it into one or multiple concepts. Second we will study the theory set behind images types, their conjunctions,
+disjunctions. We will also produce an inventory of image processing algorithms limited to mathematical morphologies that
+we can leverage for the final step. Third, we will study the intrinsic genericity of algorithms to produce canvas taking
+advantage of properties. Finally, we will then study behavioral pattern related to the inventory in the form of a
+taxonomy indexing a framework of concepts about image processing.
 
 \section{Rewriting an algorithm to extract a concept}
 \label{sec:rewriting}
@@ -41,17 +41,17 @@ void gamma_correction(Image& ima, double gamma)
 \end{minted}
 
 \noindent This algorithm here performs the transformation correctly, but it also makes a lot of hypotheses. Firstly, we
-suppose that we can write in the image via the \texttt{=} operator (l.9-11): it may not be true if the image is sourced
-from a generator function. Secondly, we suppose that we have a 2D image via the double loop (l.6-7). Finally, we suppose
-we are operating on 8bits range (0-255) RGB via \texttt{'.r'}, \texttt{'.g'}, \texttt{'.b'} (l.9-11). Those hypotheses
-are unjustified. Intrinsically, all we want to say is \blockquote{\emph{For each value of \texttt{ima}, apply a gamma
-    correction on it}}. Let us proceed to make this algorithm the most generic possible by lifting those unjustified
+suppose that we can write in the image via the \texttt{=} operator (l.9--11): it may not be true if the image is sourced
+from a generator function. Secondly, we suppose that we have a 2D image via the double loop (l.6--7). Finally, we
+suppose we are operating on 8bits range (0--255) RGB via \texttt{'.r'}, \texttt{'.g'}, \texttt{'.b'} (l.9--11). Those
+hypotheses are unjustified. Intrinsically, all we want to say is \blockquote{\emph{For each value of \texttt{ima}, apply
+    a gamma correction on it}}. Let us proceed to make this algorithm the most generic possible by lifting those unjustified
 constraints one by one.
 
 
 
 \paragraph{Lifting RGB constraint:}
-First, we get rid of the 8bits color range (0-255) RGB format requirement. The loops become:
+First, we get rid of the 8bits color range (0--255) RGB format requirement. The loops become:
 
 \begin{minted}{C++}
   using value_t = typename Image::value_type;
@@ -64,15 +64,16 @@ First, we get rid of the 8bits color range (0-255) RGB format requirement. The l
       ima(x, y) = max_val * std::pow(ima(x, y) / max_val, gamma_corr);
 \end{minted}
 
-\noindent By lifting this constraint, we now require the type Image to define a nested type \texttt{Image::value\_type}
-(returned by \texttt{ima(x, y)}) on which \texttt{std::numeric\_limits} and \texttt{std::pow} are defined. This way the
-compiler will be able to check the types at compile-time and emit warning and/or errors in case it detects
-incompatibilities. We are also able to detect it beforehand using a \texttt{static\_assert} for instance.1
+\noindent By lifting this constraint, we now require the type Image to define a nested type\\
+\texttt{Image::value\_type} (returned by \texttt{ima(x, y)}) on which \texttt{std::numeric\_limits} and
+\texttt{std::pow} are defined. This way the compiler will be able to check the types at compile-time and emit warning
+and/or errors in case it detects incompatibilities. We are also able to detect it beforehand using a
+\texttt{static\_assert} for instance.1
 
 
 
 \paragraph{Lifting bi-dimensional constraint:}
-Here we need to introduce a new abstraction layer, the \emph{pixel}. A \emph{pixel} is a couple $(point, value)$. The
+Here we need to introduce a new abstraction layer, the \emph{pixel}. A \emph{pixel} is a couple \((point, value)\). The
 double loop then becomes:
 
 \begin{minted}{C++}
@@ -100,8 +101,8 @@ template <WritableImage Image>
 \end{minted}
 
 \noindent In practice the C++ keyword \texttt{const} is not enough to express the \emph{constness} or the
-\emph{mutability} of an image. Indeed, we can have an image whose pixel values are returned by computing $cos(x+y)$ (for
-a 2D point). Such an image type can be instantiated as \emph{non-const} in C++ but the values will not be
+\emph{mutability} of an image. Indeed, we can have an image whose pixel values are returned by computing \(cos(x+y)\)
+(for a 2D point). Such an image type can be instantiated as \emph{non-const} in C++ but the values will not be
 \emph{mutable}: this type will not model the \emph{WritableImage} concept.
 
 
@@ -153,13 +154,13 @@ void dilate(const InputImage& input_ima, OutputImage& output_ima)
 \end{minted}
 
 \noindent Here we are falling into the same pitfall as for the \emph{gamma correction} example: there are a lot of
-unjustified hypotheses. We suppose that we have a 2D image (l.7-8), that we can write in the \texttt{output\_image}
-(l.10, 13). We also require that the input image does not handle borders, (cf. loop index arithmetic l.7-8, 11-12).
-Additionally, the \emph{structuring element} is restricted to a $5 \times 5$ window (l.11-12) whereas we may need to
-dilate via, for instance, a $11 \times 15$ window, or a sphere. Finally, the algorithm does not exploit any potential
-properties such as the \emph{decomposability} (l.11-12) to improve its efficiency. Those hypotheses are, once again,
-unjustified. Intrinsically, all we want to say is \blockquote{For each value of \texttt{input\_ima}, take the maximum
-  of the $X \times X$ window around and then write it in \texttt{output\_ima}}.
+unjustified hypotheses. We suppose that we have a 2D image (l.7--8), that we can write in the \texttt{output\_image}
+(l.10, 13). We also require that the input image does not handle borders, (\cf loop index arithmetic l.7--8, 11--12).
+Additionally, the \emph{structuring element} is restricted to a \(5 \times 5\) window (l.11--12) whereas we may need to
+dilate via, for instance, a \(11 \times 15\) window, or a sphere. Finally, the algorithm does not exploit any potential
+properties such as the \emph{decomposability} (l.11--12) to improve its efficiency. Those hypotheses are, once again,
+unjustified. Intrinsically, all we want to say is \blockquote{For each value of \texttt{input\_ima}, take the maximum of
+  the \(X \times X\) window around and then write it in \texttt{output\_ima}}.
 
 To lift those constraints, we need a way to know which kind of \emph{structuring element} matches a specific algorithm.
 Thus, we will pass it as a parameter. Additionally, we are going to lift the first two constraints the same way we did
@@ -199,7 +200,7 @@ in~\cref{table:concept.expressions} for the required valid expressions.
   \begin{scriptsize}
     \texttt{Let \emph{Ima} be a type that models the concept \emph{Image}. Let \emph{WIma} be a type that models the
       concept \emph{WritableImage}. Then \emph{WIma} inherits all types defined for \emph{Image}. Let \emph{SE} be a
-      type that models the concept \emph{StructuringElement} . Let \emph{DSE} be a type that models the concept
+      type that models the concept \emph{StructuringElement}. Let \emph{DSE} be a type that models the concept
       \emph{Decomposable}. Then \emph{DSE} inherits all types defined for \emph{StructuringElement}. Let \emph{Pix} be a
       type that models the concept \emph{Pixel}. Then we can define:}
 
@@ -407,11 +408,11 @@ versions in~\cref{fig:fill.version.diagram}.
 \begin{figure}[htbp]
   \centering
   \subfloat[Writable image fill algorithm]{
-    $fill(I, v)\colon \forall{p}\in\mathcal{D}, I(p) = v$
+    \(fill(I, v)\colon \forall{p}\in\mathcal{D}, I(p) = v\)
   }
   \hfil
   \subfloat[Image LUT fill algorithm]{
-    $fill(I, v)\colon \forall{i}\in I.LUT, i = v$
+    \(fill(I, v)\colon \forall{i}\in I.LUT, i = v\)
   }
 
   \caption{Comparison of implementation of the \texttt{fill} algorithm for two
@@ -495,7 +496,7 @@ values are cubical complexes~\parencite{ziou.2002.cubical-complex} or layered as
 square grids (such as meshes), that are represented as graphs, etc. All of those interleaves with different research
 areas (computer vision for meshes, topological classification for complex
 cells~\parencite{movn.20.cviu,allili.2001.cubical}, graph theory and hierarchy for image
-graphes~\parencite{carlinet.2014.tip,carlinet.2015.tip,perret.2019.higra}). Finally, this image type inventory does not
+graphs~\parencite{carlinet.2014.tip,carlinet.2015.tip,perret.2019.higra}). Finally, this image type inventory does not
 help when it comes to designing an image processing library. Instead, what helps is making an inventory of image
 processing algorithms as well as what properties those algorithms can leverage to speed up their execution.
 
@@ -546,8 +547,8 @@ contents inside those GPU from the RAM memory. It's then preferred to design pip
 directly happens on each core to minimize the number of back and forth copies from the RAM.
 
 \paragraph{Cloud computing} It is a huge deal in image processing these last years as well, especially used in Deep
-learning applications. Deep neural networks are usually executed on cluster of computer through network (cloud) and
-thus are leveraging combinations of successive MapReduce~\parencite{dean.2008.mapreduce} under the hood. They can also
+learning applications. Deep neural networks are usually executed on cluster of computer through network (cloud) and thus
+are leveraging combinations of successive \emph{MapReduce}~\parencite{dean.2008.mapreduce} under the hood. They can also
 be offloaded onto or local available computers, or directly locally available GPU hardware thanks to frameworks that are
 dynamically dispatching the workload (such as
 Tensorflow/Keras~\parencite{tensorflow.2015.whitepaper,chollet.2015.keras,gulli.2017.deep},
@@ -570,7 +571,7 @@ Python code of such algorithm is naively be given in figure~\ref{code:erode.dila
   \subfloat[Erosion]{
     \includegraphics[width=1.7in]{figs/erosion_code}
   }%
-  \caption{Dilate vs. Erode algorithms.}
+  \caption{Dilate \vs Erode algorithms.}
   \label{code:erode.dilate}
 \end{figure}
 
@@ -597,7 +598,7 @@ of possible implementation details.
   \subfloat[Erosion (delegated)]{
     \includegraphics[width=1.64in]{figs/local_op_erosion_code}
   }%
-  \caption{New Dilate vs. Erode algorithms.}
+  \caption{New Dilate \vs Erode algorithms.}
   \label{code:erode.dilate.factorized}
 \end{figure}
 
@@ -669,8 +670,6 @@ def dilate(img, out, se):
 This way of thinking algorithms is far less readable than the classic way. The user does not see the loops happening,
 and it can become very messy when several passes are happening (closing, opening, hit or miss, etc.)
 
-%\FIXME{Add union find example?}
-
 
 \subsection{Heterogeneous computing: a partial solution, canvas}
 \label{subsec:heterogeneous}
@@ -690,10 +689,10 @@ The first one, the most important one is the algorithm to use in function of cer
 by the C++ language and its built-in genericity tool: template metaprogramming. Indeed, we select the most optimized
 algorithm for a particular set of data.
 
-The second one is the ability for the code to be understood by the compiler so that is is further optimized during the
-generation of the binary. Indeed, when compiling for the native architecture of a recent processor, one can use the most
-recent assembly instructions to use wide vectorized registries (AVX512). The use of a recent compiler also brings the
-help much needed.
+The second one is the ability for the code to be understood by the compiler so that it can be further optimized during
+the generation of the binary. Indeed, when compiling for the native architecture of a recent processor, one can use the
+most recent assembly instructions to use wide vectorized registries (AVX512). The use of a recent compiler also brings
+the help much needed.
 
 Finally, the third aspect is not as trivial as the first two ones. It consists in studying the structure of an algorithm
 to allow distributed computation. It also consists in studying the different architectures to select the most efficient
@@ -745,8 +744,8 @@ Finally, this data structure must also provide a neutral element (aka the identi
 \begin{itemize}
   \item \emph{boolean}. For binary operation ``and'', identity is ``true'' whereas for binary operation ``or'', identity
         is ``false''.
-  \item \emph{integer}. For binary operation $-$ and $+$, identity is $0$ whereas for binary operation $*$ and $/$,
-        identity is $1$.
+  \item \emph{integer}. For binary operation \(-\) and \(+\), identity is \(0\) whereas for binary operation \(*\) and
+        \(/\), identity is \(1\).
   \item \emph{string}. For concatenation, identity is empty string.
   \item \emph{optional} value (also known as monadic structure in Haskell programming language).
 \end{itemize}
@@ -790,10 +789,10 @@ auto local_accumulate(In input, Out output, SE se, T init, Op op)
 \end{minted}
 From this code we can deduce some very useful and easy monoids by the following triplets:
 \begin{itemize}
-  \item $(type = boolean, operator = and, neutral = true)$ is a binary erosion
-  \item $(type = boolean, operator = or, neutral = false)$ is a binary dilation
-  \item $(type = unsigned integer, operator = max, neutral = 0)$ is a dilation
-  \item $(type = signed integer, operator = min, neutral = global max)$ is an erosion
+  \item \((type = boolean, operator = and, neutral = true)\) is a binary erosion
+  \item \((type = boolean, operator = or, neutral = false)\) is a binary dilation
+  \item \((type = unsigned integer, operator = max, neutral = 0)\) is a dilation
+  \item \((type = signed integer, operator = min, neutral = global max)\) is an erosion
 \end{itemize}
 
 Now if we want to rewrite the \texttt{local\_accumulate} in an event driven paradigm, we need to identify the different
@@ -857,10 +856,10 @@ code is as fast as a non-generic handwritten dilation.
 
 Let us now delve into concepts related to the Image Processing area. Indeed, this domain has his specificities, and we
 want to improve generic image processing library design by learning from our past experiments and working with new
-techniques. The most basic usage of an image is the famous algebraic formula $y = f(x)$ where $y$ is a \emph{value}
-generated by the \emph{image} $f$ for the \emph{emph} $x$. Aside from generating a value, an image can also \emph{store}
-a value, as in $f(x) = y$ where the value is $assigned$ to the image for a given point. Those notions are the basis of
-our work and will drive the entire design.
+techniques. The most basic usage of an image is the famous algebraic formula \(y = f(x)\) where \(y\) is a \emph{value}
+generated by the \emph{image} \(f\) for the \emph{emph} \(x\). Aside from generating a value, an image can also
+\emph{store} a value, as in \(f(x) = y\) where the value is \emph{assigned} to the image for a given point. Those
+notions are the basis of our work and will drive the entire design.
 
 \subsection{The fundamentals}
 
@@ -877,14 +876,15 @@ The second fundamental brick is the concept of \emph{Point}, detailed in~\cref{t
 a bit less open than the concept \emph{Value} as it must be totally ordered. Indeed, when accessing a value stored in an
 image, whether it is about reading or mutating, it is important that there is only one accessed value.
 
-Now we introduce an abstract way to represent this relation $Value \times Point$: the Pixel. This is a well known notion
-in image processing, and it represents a couple $(point, value)$. This abstraction layer is easy to move around and
-contains facilities to read and mutate the pixel's value if possible. Indeed, not all pixels are able to mutate their
-value. If the pixel is yielded by an image that only generates values on the fly then it cannot be mutated. Henceforth,
-we introduce two new concepts: \emph{Pixel} and \emph{OutputPixel} in~\cref{table:concept.pixel.definitions}. Those two
-concepts have a very similar interface described in~\cref{table:concept.pixel.expressions}. They can both access the
-stored information: the point and the value. On top of that, the \emph{OutputPixel} can mutate the value. When
-interacting with pixels, the user will want to be able to write code as followed:
+Now we introduce an abstract way to represent this relation \(Value \times Point\): the Pixel. This is a well known
+notion in image processing, and it represents a couple \((point, value)\). This abstraction layer is easy to move around
+and contains facilities to read and mutate the pixel's value if possible. Indeed, not all pixels are able to mutate
+their value. If the pixel is yielded by an image that only generates values on the fly then it cannot be mutated.
+Henceforth, we introduce two new concepts: \emph{Pixel} and \emph{OutputPixel}
+in~\cref{table:concept.pixel.definitions}. Those two concepts have a very similar interface described
+in~\cref{table:concept.pixel.expressions}. They can both access the stored information: the point and the value. On top
+of that, the \emph{OutputPixel} can mutate the value. When interacting with pixels, the user will want to be able to
+write code as followed:
 \begin{minted}{C++}
   auto pix = Pixel();     // Get a pixel
   auto val = pix.val();   // yield the pixel value
@@ -892,7 +892,8 @@ interacting with pixels, the user will want to be able to write code as followed
   pix.val() = 42;         // Assign a value
 \end{minted}
 
-We show how those three fundamental concepts interact with each other in the diagram~\cref{fig:concept.pixel}.
+We show how those three fundamental concepts interact with each other in the\\
+diagram~\cref{fig:concept.pixel}.
 
 \begin{figure}[htbp]
   \centering
@@ -1009,7 +1010,7 @@ While being able to iterate over ranges of pixels or values is good, we are stil
 access an element directly from the image. In order to solve this predicament, first we need to define the concept of
 \emph{Index} in~\cref{table:concept.index.expressions} which we will use afterwards. This is a very simple concept that
 encapsulate an integral value. This value can be negative as we want to be able to do negative indexing in case our
-image has an extension, cf.~\cref{subsec:advanced}. The first advanced tool is represented as an \emph{IndexableImage}.
+image has an extension, \cf~\cref{subsec:advanced}. The first advanced tool is represented as an \emph{IndexableImage}.
 An element can be accessed simply by providing its index number. This concept is defined
 in~\cref{table:concept.image.definitions.2}. This introduces a simple behavioral pattern described
 in~\cref{table:concept.image.expressions.2}. With this concept, we are able to write code as followed:
@@ -1020,7 +1021,7 @@ in~\cref{table:concept.image.expressions.2}. With this concept, we are able to w
   ima[k] = 255; // Mutate the element at the index
 \end{minted}
 Being able to traverse an image through indexes is especially useful for algorithms that are aware of the number of
-elements in the image. We chose to be flexible with our indexing method (i.e. allowing signed indexes) not to fall into
+elements in the image. We chose to be flexible with our indexing method (\ie allowing signed indexes) not to fall into
 the same pitfall as the C++ core language~\parencite{stroustrup.2019.signed-unsigned-mess}. Indeed, requiring that the
 type \texttt{std::size\_t} is unsigned lead to loads of issues, the first one being a conversion issue when writing a
 simple for-loop. Solving these issues lead to the appearance of new member function \texttt{.ssize()} (for signed size)
@@ -1029,7 +1030,7 @@ Furthermore, in our specific area (image processing), it may be well-defined to 
 when, for instance, we are accessing the value of the extension of an image. This is why our indexes are signed.
 
 Additionally, we want to be able to access a value by providing a point, the same way as in the algebraic definition
-$val = image(point)$. To do so, we introduce the concept of accessibility through \emph{AccessibleImage}. This concept
+\(val = image(point)\). To do so, we introduce the concept of accessibility through \emph{AccessibleImage}. This concept
 is defined in~\cref{table:concept.image.definitions.3}. This introduces new behavior that is described
 in~\cref{table:concept.image.expressions.3}. We can notice facilities specifically including bound checking. Indeed, we
 suppose, for fast access, that the user is always picking element from the image's domain, but it is possible to bound
@@ -1060,8 +1061,8 @@ versa. Indeed, it is possible to now write such code:
   auto delta_idx = ima.delta_index(delta_pnt);
 \end{minted}
 
-Additionally it useful, for propagating algorithms, to be able to traverse images in both a forward way and a backward
-way. As it may not be possible for all images, this notion needs to be refined into a new concept
+Additionally, it is useful, for propagating algorithms, to be able to traverse images in both a forward way and a
+backward way. As it may not be possible for all images, this notion needs to be refined into a new concept
 \emph{BidirectionalImage}. This concept is defined in~\cref{table:concept.image.definitions.5} and its behavior is
 described in~\cref{table:concept.image.expressions.5}. Thanks to this concept, we are able to write code as followed:
 \begin{minted}{C++}
@@ -1125,8 +1126,8 @@ properties are:
         element. There is an equivalence in behavior when the convolution is recursively run for each smaller
         structuring element one after another, in a precise order, in a multi-pass way.
   \item incremental: ability to tell the points that are added to or removed from the range when the structuring element
-        is shifted by a basic displacement (e.g. for a \emph{2D point}, the basic displacement is $(0,1)$). Usually used
-        to compute attributes over a sliding structuring element in linear time.
+        is shifted by a basic displacement (\eg for a \emph{2D point}, the basic displacement is \((0,1)\)). Usually
+        used to compute attributes over a sliding structuring element in linear time.
 \end{itemize}
 
 \FIXME{Give examples}
