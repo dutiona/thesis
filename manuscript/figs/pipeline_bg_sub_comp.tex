@@ -14,7 +14,7 @@
 
   \node[ImageBox] (A0) []            {Background\\ \small (RGB-8)};
   \node[ViewBox]  (A1) [right=of A0] {Grayscale\\Conversion};
-  \node[ViewBox]  (A2) [right=of A1] {Substract};
+  \node[ViewBox]  (A2) [right=of A1] {Subtract};
   \node[ViewBox]  (A3) [right=of A2] {Thresholding};
   \node[AlgoBox]  (A4) [right=of A3] {Opening\\ \small(Erosion+Dilation)};
   \node[ImageBox] (A5) [below=of A4] {Output\\ \small (Gray 8-bit)};

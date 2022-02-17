@@ -941,9 +941,9 @@ pipeline and the code.
   auto img_gray = view::transform(img_color, to_gray);
   auto bg_gray  = view::transform(bg_color, to_gray);
   auto bg_blurred = gaussian2d(bg_gray,  kHSigma, kVSigma);
-  auto tmp_gray = img_gray - bg_blurred; /
+  auto tmp_gray = img_gray - bg_blurred;
   auto thresholdf = [](auto x) { return x < kThreshold; };
-  auto tmp_bin = view::transform(tmp_gray, thresholdf); /
+  auto tmp_bin = view::transform(tmp_gray, thresholdf);
   auto ero = erosion(tmp_bin, disc(kOpeningRadius));
   dilation(ero, disc(kOpeningRadius), output);
   \end{minted}
