@@ -38,7 +38,7 @@ than the target architecture level, henceforth, we will not address this topic h
 
 \FIXME{Rework style}
 
-\paragraph{History} of genericity takes its root in~\citedate[year]{backus.1978.functional}
+\paragraph{History} Genericity takes its root in~\citedate[year]{backus.1978.functional}
 when~\citeauthor{backus.1978.functional} publishes his paper about functional
 programming~\parencite{backus.1978.functional}. \citeauthor{backus.1978.functional} thinks that there exists five
 computation forms with which one can build up all the rest of the computational infrastructure. Every piece of software,
@@ -56,33 +56,34 @@ neutral element. Stepanov thinks that we extract those data structures and those
 the same way as we discover theorems and axioms in mathematics. Software is then defined on top of algebraic structures,
 and it's the software programmer's job to discover the data structures and laws that compose them.
 
-This reflection leads to the publication of~\parencite{musser.1988.generic} in which the term \emph{Generic Programming}
-first appears. ``By generic programming, we mean the definition of algorithms and data structures at an abstract or
-generic level, thereby accomplishing many related programming tasks simultaneously. The central notion is that of
-generic algorithms, which are parametrized procedural schemata that are completely independent of the underlying data
-representation and are derived from concrete, efficient algorithms.''. This article lead to the genesis of the book
-\citetitle{musser.1989.ada}~\parencite{musser.1989.ada} in which was published the first work about a generic library of
-algorithms and data structures. Then Stepanov and Lee wrote the first version of the Standard Template
-Library~\parencite{stepanov.1995.standard} in 1995. This standard template library was then incorporated alongside the
-C++ language for the release of the first ISO standard of the language in 1998 \parencite{iso.1998.cpp}. That same year
-is published~\parencite{dehnert.1998.fundamentals}. This is the first place where the term \emph{concept} appears as ``a
-set of axioms satisfied by a data type and a set of operations on it.'' This term is designed to include the complexity
-of an operation as part of an axiom in software programming. Also, it is introduced to replace the previously used
-mathematical terms that could not include this notion of complexity. It is also the first place where the notion of
-\emph{regular} type appears: ``Since we wish to extend semantics as well as syntax from built-in types to user types, we
-introduce the idea of regular type, which matches the built-in type semantics, thereby making our user-defined types
-behave like built-in types as well.'' Efforts were made by \citeauthor{gregor.2006.concepts-art}
+This reflection leads to the publication of \citetitle{musser.1988.generic}~\parencite{musser.1988.generic} in which the
+term \emph{Generic Programming} first appears. ``By generic programming, we mean the definition of algorithms and data
+structures at an abstract or generic level, thereby accomplishing many related programming tasks simultaneously. The
+central notion is that of generic algorithms, which are parametrized procedural schemata that are completely independent
+of the underlying data representation and are derived from concrete, efficient algorithms.''. This article lead to the
+genesis of the book \citetitle{musser.1989.ada}~\parencite{musser.1989.ada} in which was published the first work about
+a generic library of algorithms and data structures. Then Stepanov and Lee wrote the first version of the Standard
+Template Library~\parencite{stepanov.1995.standard} in 1995. This standard template library was then incorporated
+alongside the C++ language for the release of the first ISO standard of the language in 1998 \parencite{iso.1998.cpp}.
+That same year is published~\parencite{dehnert.1998.fundamentals}. This is the first place where the term \emph{concept}
+appears as ``a set of axioms satisfied by a data type and a set of operations on it.'' This term is designed to include
+the complexity of an operation as part of an axiom in software programming. Also, it is introduced to replace the
+previously used mathematical terms that could not include this notion of complexity. It is also the first place where
+the notion of \emph{regular} type appears: ``Since we wish to extend semantics as well as syntax from built-in types to
+user types, we introduce the idea of regular type, which matches the built-in type semantics, thereby making our
+user-defined types behave like built-in types as well.'' Efforts were made by \citeauthor{gregor.2006.concepts-art}
 in~\parencite{gregor.2006.concepts-proc,gregor.2006.concepts-art} in 2006 to introduce them into C++ but it ultimately
 failed, and the feature was pulled off of the C++ standard.
 
-Stepanov presented \emph{Generic programming} to Backus before publishing~\parencite{stepanov.2009.elements} and Backus
-``always knew that at some points he needed to figure out mutation into functional programming and one view of generic
-programming is that generic programming is functional programming with a well-defined way to handle mutation.''
-Unfortunately Backus passed away before being able to write the forewords of \citetitle{stepanov.2009.elements} book.
-The term \emph{generic programming} never appears in the book because Stepanov thought he lost control over it. It has
-evolved in practice into metaprogramming, effectively associated to C++ template metaprogramming instead of being
-associated with the underlying mathematics, algebraic structures, data structures and algorithms. This book introduces
-the \emph{require} clause on algorithms in order to achieve constrained genericity.
+Stepanov presented \emph{Generic programming} to Backus before publishing
+\citetitle{stepanov.2009.elements}~\parencite{stepanov.2009.elements} and Backus ``always knew that at some points he
+needed to figure out mutation into functional programming and one view of generic programming is that generic
+programming is functional programming with a well-defined way to handle mutation.'' Unfortunately Backus passed away
+before being able to write the forewords of \citetitle{stepanov.2009.elements} book. The term \emph{generic programming}
+never appears in the book because Stepanov thought he lost control over it. It has evolved in practice into
+metaprogramming, effectively associated to C++ template metaprogramming instead of being associated with the underlying
+mathematics, algebraic structures, data structures and algorithms. This book introduces the \emph{require} clause on
+algorithms in order to achieve constrained genericity.
 
 A workshop was help and its summary was published in 2012~\parencite{sutton.2012.concepts}, referred to as the
 \emph{Palo Alto} report, to summarize what design the committee wanted for concepts and what problem it would solve.
