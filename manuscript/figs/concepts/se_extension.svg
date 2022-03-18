@@ -2,8 +2,8 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Généré par Microsoft Visio, SVG Export se_extension.svg Page-1 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
-		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="4.38051in" height="4.08383in"
-		viewBox="0 0 315.397 294.035" xml:space="preserve" color-interpolation-filters="sRGB" class="st10">
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="4.74759in" height="3.76862in"
+		viewBox="0 0 341.827 271.341" xml:space="preserve" color-interpolation-filters="sRGB" class="st11">
 	<v:documentProperties v:langID="1036" v:metric="true" v:viewMarkup="false">
 		<v:userDefs>
 			<v:ud v:nameU="msvSubprocessMaster" v:prompt="" v:val="VT4(Rectangle)"/>
@@ -18,11 +18,12 @@
 		.st3 {fill:none;stroke:none;stroke-width:0.25}
 		.st4 {fill:#4672c4;font-family:Calibri;font-size:0.666664em}
 		.st5 {font-size:1em}
-		.st6 {marker-end:url(#mrkr4-42);stroke:#4672c4;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st6 {marker-end:url(#mrkr4-35);stroke:#4672c4;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
 		.st7 {fill:#4672c4;fill-opacity:1;stroke:#4672c4;stroke-opacity:1;stroke-width:0.28409090909091}
-		.st8 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
+		.st8 {fill:#ffffff;stroke:none;stroke-linecap:butt}
 		.st9 {fill:#3c63ac;font-family:Calibri;font-size:0.666664em}
-		.st10 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+		.st10 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
+		.st11 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
 
@@ -37,7 +38,7 @@
 		<g id="lend4">
 			<path d="M 2 1 L 0 0 L 2 -1 L 2 1 " style="stroke:none"/>
 		</g>
-		<marker id="mrkr4-42" class="st7" v:arrowType="4" v:arrowSize="2" v:setback="7.04" refX="-7.04" orient="auto"
+		<marker id="mrkr4-35" class="st7" v:arrowType="4" v:arrowSize="2" v:setback="7.04" refX="-7.04" orient="auto"
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend4" transform="scale(-3.52,-3.52) "/>
 		</marker>
@@ -50,7 +51,7 @@
 		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
 				v:shadowOffsetY="-8.50394"/>
 		<v:layer v:name="Lien" v:index="0"/>
-		<g id="shape1-1" v:mID="1" v:groupContext="shape" transform="translate(18.75,-127.884)">
+		<g id="shape1-1" v:mID="1" v:groupContext="shape" transform="translate(209.691,-112.618)">
 			<title>Rectangle.16</title>
 			<desc>Extension</desc>
 			<v:userDefs>
@@ -58,10 +59,10 @@
 				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="56.6929" cy="267.106" width="113.39" height="53.8583"/>
-			<rect x="0" y="240.177" width="113.386" height="53.8583" class="st1"/>
-			<text x="36.93" y="253.18" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Extension</text>		</g>
-		<g id="shape3-6" v:mID="3" v:groupContext="shape" transform="translate(183.159,-18.75)">
+			<v:textRect cx="56.6929" cy="244.411" width="113.39" height="53.8583"/>
+			<rect x="0" y="217.482" width="113.386" height="53.8583" class="st1"/>
+			<text x="36.93" y="230.48" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Extension</text>		</g>
+		<g id="shape3-6" v:mID="3" v:groupContext="shape" transform="translate(18.75,-18.75)">
 			<title>Rectangle.17</title>
 			<desc>Image</desc>
 			<v:userDefs>
@@ -69,10 +70,10 @@
 				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="56.6929" cy="254.35" width="113.39" height="79.3701"/>
-			<rect x="0" y="214.665" width="113.386" height="79.3701" class="st1"/>
-			<text x="44.2" y="227.67" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Image</text>		</g>
-		<g id="shape4-10" v:mID="4" v:groupContext="shape" transform="translate(18.75,-18.75)">
+			<v:textRect cx="56.6929" cy="239.997" width="113.39" height="62.687"/>
+			<rect x="0" y="208.654" width="113.386" height="62.687" class="st1"/>
+			<text x="44.2" y="221.65" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Image</text>		</g>
+		<g id="shape4-10" v:mID="4" v:groupContext="shape" transform="translate(209.691,-18.75)">
 			<title>Rectangle.20</title>
 			<desc>WithExtensionImage</desc>
 			<v:userDefs>
@@ -80,10 +81,10 @@
 				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="56.6929" cy="254.35" width="113.39" height="79.3701"/>
-			<rect x="0" y="214.665" width="113.386" height="79.3701" class="st1"/>
-			<text x="14.54" y="227.67" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>WithExtensionImage</text>		</g>
-		<g id="shape8-14" v:mID="8" v:groupContext="shape" transform="translate(183.159,-127.884)">
+			<v:textRect cx="56.6929" cy="239.997" width="113.39" height="62.687"/>
+			<rect x="0" y="208.654" width="113.386" height="62.687" class="st1"/>
+			<text x="14.54" y="221.65" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>WithExtensionImage</text>		</g>
+		<g id="shape8-14" v:mID="8" v:groupContext="shape" transform="translate(18.75,-112.618)">
 			<title>Rectangle.27</title>
 			<desc>StructuringElement</desc>
 			<v:userDefs>
@@ -91,18 +92,18 @@
 				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="56.6929" cy="267.106" width="113.39" height="53.8583"/>
-			<rect x="0" y="240.177" width="113.386" height="53.8583" class="st1"/>
-			<text x="17.2" y="253.18" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>StructuringElement</text>		</g>
-		<g id="shape9-18" v:mID="9" v:groupContext="shape" transform="translate(190.246,-23.7106)">
+			<v:textRect cx="56.6929" cy="244.411" width="113.39" height="53.8583"/>
+			<rect x="0" y="217.482" width="113.386" height="53.8583" class="st1"/>
+			<text x="17.2" y="230.48" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>StructuringElement</text>		</g>
+		<g id="shape9-18" v:mID="9" v:groupContext="shape" transform="translate(25.8366,-18.75)">
 			<title>Feuille.9</title>
 			<desc>image2D, image3D, imageComplex,</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="49.6063" cy="276.319" width="99.22" height="35.4331"/>
-			<rect x="0" y="258.602" width="99.2126" height="35.4331" class="st3"/>
-			<text x="17.93" y="273.92" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>image2D, image3D, <tspan
+			<v:textRect cx="49.6063" cy="253.624" width="99.22" height="35.4331"/>
+			<rect x="0" y="235.908" width="99.2126" height="35.4331" class="st3"/>
+			<text x="17.93" y="251.22" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>image2D, image3D, <tspan
 						x="24.53" dy="1.2em" class="st5">imageComplex, </tspan> </text>		</g>
-		<g id="shape26-22" v:mID="26" v:groupContext="shape" transform="translate(18.75,-221.427)">
+		<g id="shape26-22" v:mID="26" v:groupContext="shape" transform="translate(18.75,-198.732)">
 			<title>Rectangle.10</title>
 			<desc>Point</desc>
 			<v:userDefs>
@@ -110,86 +111,75 @@
 				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="56.6929" cy="267.106" width="113.39" height="53.8583"/>
-			<rect x="0" y="240.177" width="113.386" height="53.8583" class="st1"/>
-			<text x="46.02" y="253.18" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Point</text>		</g>
-		<g id="shape27-26" v:mID="27" v:groupContext="shape" transform="translate(24.4193,-229.931)">
+			<v:textRect cx="56.6929" cy="244.411" width="113.39" height="53.8583"/>
+			<rect x="0" y="217.482" width="113.386" height="53.8583" class="st1"/>
+			<text x="46.02" y="230.48" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Point</text>		</g>
+		<g id="shape27-26" v:mID="27" v:groupContext="shape" transform="translate(24.4193,-208.996)">
 			<title>Feuille.27</title>
 			<desc>2D (x, y); 3D (x, y, z); Complex (1 face, 2 faces)</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="51.0236" cy="285.532" width="102.05" height="17.0079"/>
-			<rect x="0" y="277.028" width="102.047" height="17.0079" class="st3"/>
-			<text x="4" y="283.13" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>2D (x, y); 3D (x, y, z); <tspan x="4"
+			<v:textRect cx="51.0236" cy="262.837" width="102.05" height="17.0079"/>
+			<rect x="0" y="254.333" width="102.047" height="17.0079" class="st3"/>
+			<text x="4" y="260.44" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>2D (x, y); 3D (x, y, z); <tspan x="4"
 						dy="1.2em" class="st5">Complex (1 face, 2 faces)</tspan></text>		</g>
-		<g id="shape28-30" v:mID="28" v:groupContext="shape" transform="translate(183.261,-221.427)">
-			<title>Rectangle.28</title>
-			<desc>Pixel</desc>
-			<v:userDefs>
-				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
-				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
-			</v:userDefs>
-			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="56.6929" cy="267.106" width="113.39" height="53.8583"/>
-			<rect x="0" y="240.177" width="113.386" height="53.8583" class="st1"/>
-			<text x="47.16" y="253.18" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Pixel</text>		</g>
-		<g id="shape29-34" v:mID="29" v:groupContext="shape" transform="translate(190.246,-227.096)">
-			<title>Feuille.29</title>
-			<desc>(pnt2D, rgb8)</desc>
-			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="49.6063" cy="284.114" width="99.22" height="19.8425"/>
-			<rect x="0" y="274.193" width="99.2126" height="19.8425" class="st3"/>
-			<text x="27.84" y="286.51" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>(pnt2D, rgb8)</text>		</g>
-		<g id="shape32-37" v:mID="32" v:groupContext="shape" v:layerMember="0" transform="translate(183.159,-147.726)">
+		<g id="shape32-30" v:mID="32" v:groupContext="shape" v:layerMember="0" transform="translate(132.136,-132.461)">
 			<title>Lien dynamique.32</title>
-			<desc>Can fit ?</desc>
+			<desc>Can fit? ext.fit(se)</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="-25.5118" cy="286.949" width="40" height="17.6036"/>
-			<path d="M0 286.95 L-43.98 286.95" class="st6"/>
-			<rect v:rectContext="textBkgnd" x="-38.8027" y="282.149" width="26.582" height="9.59985" class="st8"/>
-			<text x="-38.8" y="289.35" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Can fit ?</text>		</g>
-		<g id="shape33-45" v:mID="33" v:groupContext="shape" transform="translate(24.4193,-132.136)">
+			<v:textRect cx="38.7775" cy="264.254" width="40.88" height="27.2035"/>
+			<path d="M0 264.25 L70.51 264.25" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="23.2466" y="254.654" width="31.0619" height="19.1997" class="st8"/>
+			<text x="26.39" y="261.85" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Can fit?<v:newlineChar/><tspan
+						x="23.25" dy="1.2em" class="st5">ext.fit(se)</tspan></text>		</g>
+		<g id="shape33-39" v:mID="33" v:groupContext="shape" transform="translate(215.36,-118.004)">
 			<title>Feuille.33</title>
 			<desc>User-defined buffer or infinite pattern (mirror, persiodize)</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="51.0236" cy="281.138" width="102.05" height="25.7953"/>
-			<rect x="0" y="268.24" width="102.047" height="25.7953" class="st3"/>
-			<text x="4" y="273.94" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>User-defined buffer or <tspan x="4"
+			<v:textRect cx="51.0236" cy="258.443" width="102.05" height="25.7953"/>
+			<rect x="0" y="245.545" width="102.047" height="25.7953" class="st3"/>
+			<text x="4" y="251.24" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>User-defined buffer or <tspan x="4"
 						dy="1.2em" class="st5">infinite pattern (mirror, </tspan><tspan x="4" dy="1.2em" class="st5">persiodize)</tspan></text>		</g>
-		<g id="shape34-50" v:mID="34" v:groupContext="shape" transform="translate(187.411,-135.578)">
+		<g id="shape34-44" v:mID="34" v:groupContext="shape" transform="translate(26.2618,-119.988)">
 			<title>Feuille.34</title>
 			<desc>Disc, rectangle, sphere, cube</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="51.0236" cy="285.532" width="102.05" height="17.0079"/>
-			<rect x="0" y="277.028" width="102.047" height="17.0079" class="st3"/>
-			<text x="4" y="287.93" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Disc, rectangle, sphere, cube</text>		</g>
-		<g id="shape37-53" v:mID="37" v:groupContext="shape" v:layerMember="0" transform="translate(183.159,-51.3484)">
+			<v:textRect cx="51.0236" cy="262.837" width="102.05" height="17.0079"/>
+			<rect x="0" y="254.333" width="102.047" height="17.0079" class="st3"/>
+			<text x="4" y="265.24" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Disc, rectangle, sphere, cube</text>		</g>
+		<g id="shape37-47" v:mID="37" v:groupContext="shape" v:layerMember="0" transform="translate(132.136,-43.0069)">
 			<title>Lien dynamique.37</title>
-			<path d="M0 286.95 L-43.98 286.95" class="st6"/>
-		</g>
-		<g id="shape38-58" v:mID="38" v:groupContext="shape" v:layerMember="0" transform="translate(68.3563,-127.884)">
-			<title>Lien dynamique.38</title>
-			<path d="M7.09 294.04 L7.09 316.76" class="st6"/>
-		</g>
-		<g id="shape39-63" v:mID="39" v:groupContext="shape" v:layerMember="0" transform="translate(132.136,-241.27)">
-			<title>Lien dynamique</title>
-			<path d="M0 286.95 L44.08 286.95" class="st6"/>
-		</g>
-		<g id="shape40-68" v:mID="40" v:groupContext="shape" v:layerMember="0" transform="translate(246.99,-221.427)">
-			<title>Lien dynamique.40</title>
-			<path d="M-7.04 294.04 L-7.04 306.71 L-7.14 306.71 L-7.14 326.68" class="st6"/>
-		</g>
-		<g id="shape41-73" v:mID="41" v:groupContext="shape" v:layerMember="0" transform="translate(75.4429,-221.427)">
-			<title>Lien dynamique.41</title>
-			<path d="M0 294.04 L0 306.71 L164.41 306.71 L164.41 326.68" class="st6"/>
-		</g>
-		<g id="shape42-78" v:mID="42" v:groupContext="shape" transform="translate(24.4193,-27.254)">
-			<title>Feuille.42</title>
-			<desc>Image who can be accessed outside its definition domain, in t...</desc>
+			<desc>Models Image concept</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="51.0236" cy="281.138" width="102.05" height="25.7953"/>
-			<rect x="0" y="268.24" width="102.047" height="25.7953" class="st3"/>
-			<text x="4" y="269.14" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Image who can be accessed <tspan x="4"
-						dy="1.2em" class="st5">outside its definition </tspan><tspan x="4" dy="1.2em" class="st5">domain, in the extended </tspan><tspan
-						x="4" dy="1.2em" class="st5">domain</tspan></text>		</g>
+			<v:textRect cx="38.7775" cy="264.254" width="57.66" height="27.2035"/>
+			<path d="M0 264.25 L70.51 264.25" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="14.8561" y="254.654" width="47.843" height="19.1997" class="st10"/>
+			<text x="26.67" y="261.85" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Models<v:newlineChar/><tspan
+						x="14.86" dy="1.2em" class="st5">Image concept</tspan></text>		</g>
+		<g id="shape38-55" v:mID="38" v:groupContext="shape" v:layerMember="0" transform="translate(259.297,-112.618)">
+			<title>Lien dynamique.38</title>
+			<desc>Embedded ima_with_ext.extension()</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="7.08661" cy="286.931" width="92.97" height="27.2035"/>
+			<path d="M7.09 271.34 L7.09 295.48" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="-34.4908" y="277.331" width="83.155" height="19.1997" class="st10"/>
+			<text x="-10.45" y="284.53" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Embedded<v:newlineChar/><tspan
+						x="-34.49" dy="1.2em" class="st5">ima_with_ext.extension()</tspan></text>		</g>
+		<g id="shape39-63" v:mID="39" v:groupContext="shape" v:layerMember="0" transform="translate(68.3563,-198.732)">
+			<title>Lien dynamique</title>
+			<desc>Range of point</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="7.08661" cy="287.469" width="57.36" height="17.6036"/>
+			<path d="M7.09 271.34 L7.09 296.56" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="-16.6845" y="282.669" width="47.5425" height="9.59985" class="st10"/>
+			<text x="-16.68" y="289.87" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Range of point</text>		</g>
+		<g id="shape42-70" v:mID="42" v:groupContext="shape" transform="translate(215.36,-18.75)">
+			<title>Feuille.42</title>
+			<desc>Image which can be accessed outside its domain of definition,...</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="51.0236" cy="248.805" width="102.05" height="45.0709"/>
+			<rect x="0" y="226.27" width="102.047" height="45.0709" class="st3"/>
+			<text x="4" y="236.81" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Image which can be <tspan x="4" dy="1.2em"
+						class="st5">accessed outside its domain </tspan><tspan x="4" dy="1.2em" class="st5">of definition, in the </tspan><tspan
+						x="4" dy="1.2em" class="st5">extended domain</tspan></text>		</g>
 	</g>
 </svg>
