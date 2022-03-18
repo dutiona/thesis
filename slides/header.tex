@@ -1,0 +1,70 @@
+%\usepackage[utf8]{inputenc}
+\usepackage[]{tikz}
+%\usepackage{unicode-math}
+\usepackage{etoolbox}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\xmark}{\ding{55}}%
+
+
+\setbeamertemplate{footline}[frame number]{}
+
+
+\renewenvironment{Shaded}{\begingroup\footnotesize} {\endgroup}
+\usetikzlibrary{shapes.callouts,calc}
+
+\tikzset{
+balloon/.style={text width=10cm, draw, rounded corners},
+question/.style={balloon, fill=blue!20, rectangle callout, callout relative
+pointer={(358:1cm)}},
+answer/.style={balloon, align=right,fill=red!20, rectangle callout, callout relative pointer={(182:1cm)}}
+}
+
+
+\newcommand{\question}[1]{
+  \tikz \node[question]{#1};
+}
+
+\newcommand{\answer}[1]{
+  \tikz \node[answer]{#1};
+}
+
+
+\newcommand{\purpletext}[1]{
+  \begingroup{\color{purple}{#1}}\endgroup
+}
+
+\definecolor{coltag}{HTML}{408080}
+\newcommand{\mytag}[1]{\begingroup{\small$\it\color{coltag}#1$}\endgroup}
+
+\newcommand{\checked}{
+  {\color{green} \checkmark}
+}
+
+
+\input{../figures/common.tikz}
+
+
+\tikzset{
+  cursor/.style={rectangle,fill,minimum width=4pt,minimum height=7pt,inner sep=0,
+      pos=0.75*#1+0.13},
+  cursorbox/.style={draw,fill=gray!20},
+}
+
+\urlstyle{tt}
+
+
+\newcommand{\cursors}[3]{
+  \begin{tikzpicture}[yscale=-0.25,xscale=.2,font=\scriptsize]
+    \draw[DarkRed,latex-latex] (0,0) node[left]{Complex}  -- ++(10,0)
+    node[right]{Simple} node[cursor=#1] {};
+    \draw[DarkBlue,latex-latex] (0,1) node[left]{Slow}  -- ++(10,0)
+    node[right]{Fast} node[cursor=#2] {};
+    \draw[DarkGreen,latex-latex] (0,2) node[left]{Single use}  -- ++(10,0)
+    node[right]{Generic} node[cursor=#3] {};
+  \end{tikzpicture}
+}
+
+\xdef\nxtfc{white}
+
+\BeforeBeginEnvironment{frame}{\setbeamercolor{background canvas}{bg=\nxtfc}}
+\newcommand{\nextframecolor}[1]{\xdef\nxtfc{#1}}

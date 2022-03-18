@@ -54,7 +54,7 @@ in~\cref{fig.view.alphablend}.
 
 \begin{figure}[htbp]
   \centering
-  \includestandalone[mode=image, scale=0.7]{figs/alphablend}
+  \includestandalone[mode=image, scale=0.7]{../figures/alphablend}
 
   \caption{Alpha-blending algorithm written at image level.}
   \label{fig.view.alphablend}
@@ -67,7 +67,7 @@ blending algorithm can be rewritten in terms of views entirely, as shown in~\cre
 \begin{figure}[htbp]
   \centering
   \begin{minipage}[b]{5.5cm}
-    \includestandalone[mode=image, scale=1.0]{figs/view_ast2}
+    \includestandalone[mode=image, scale=1.0]{../figures/view_ast2}
   \end{minipage}
   \begin{minipage}[b]{5.5cm}
     \begin{minted}{c++}
@@ -345,7 +345,7 @@ due to backward compatibility.
 \begin{figure}[htbp]
   \centering
   \begin{minipage}{\linewidth}
-    \includestandalone[mode=image, width=.7\linewidth]{figs/transform_thresholding}
+    \includestandalone[mode=image, width=.7\linewidth]{../figures/transform_thresholding}
   \end{minipage}
   \caption{An image \emph{view} performing a thresholding.}
   \label{fig.view.threshold}
@@ -429,7 +429,7 @@ trees are complex for the compiler to process and can induce heavy compilation t
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=8cm]{figs/viewAST2}
+  \includegraphics[width=8cm]{../figures/viewAST2}
   \caption{Abstract Syntax Tree of the types chained by the code in~\cref{fig.lazy}}
   \label{fig.viewAST}
 \end{figure}
@@ -451,11 +451,11 @@ in-place way of doing this computation is shown in~\cref{fig.legacy.vs.view}.
 \begin{figure}[htbp]
   \centering
   \subfloat[Legacy pipeline with copy]{
-    \includegraphics[width=1.6in,align=t]{figs/blur_copy}
+    \includegraphics[width=1.6in,align=t]{../figures/blur_copy}
   }
   \hfil
   \subfloat[Modern pipeline with view]{
-    \includegraphics[width=1.6in,align=t]{figs/blur_inplace}
+    \includegraphics[width=1.6in,align=t]{../figures/blur_inplace}
   }
 
   \caption{Comparison of a legacy and a modern pipeline using \emph{algorithms} (green) and \emph{views} (purple).}
@@ -470,7 +470,7 @@ own~\parencite{zhang.2016.colorful,levin.2004.colorization,welsh.2002.transferri
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.7\linewidth]{figs/views/transform_grayscale}
+  \includegraphics[width=.7\linewidth]{../figures/views/transform_grayscale}
   \caption{Usage of transform view: grayscale.}
   \label{fig.view.grayscale}
 \end{figure}
@@ -478,11 +478,11 @@ own~\parencite{zhang.2016.colorful,levin.2004.colorization,welsh.2002.transferri
 \begin{figure}[htbp]
   \centering
   \subfloat[Clip view]{
-    \includegraphics[width=3in,align=t]{figs/clip}
+    \includegraphics[width=3in,align=t]{../figures/clip}
   }
   \hfil
   \subfloat[Filter view]{
-    \includegraphics[width=3in,align=t]{figs/filter}
+    \includegraphics[width=3in,align=t]{../figures/filter}
   }
 
   \caption{Clip and filter image adaptors that restrict the image domain by a non-regular ROI and by a predicate that
@@ -498,7 +498,7 @@ view.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.7]{figs/pipeline}
+  \includegraphics[scale=0.7]{../figures/pipeline}
   \caption{Example of a simple image processing pipeline.}
   \label{fig.view.pipeline}
 \end{figure}
@@ -515,7 +515,7 @@ illustrated by the~\cref{fig.view.comp}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.7]{figs/composition}
+  \includegraphics[scale=0.7]{../figures/composition}
   \caption{Example of a simple image processing pipeline illustrating the difference between the composition of
     algorithms and image views.}
   \label{fig.view.comp}
@@ -730,27 +730,27 @@ The~\cref{fig:border.all} illustrates all the other border policy mentioned.
 \begin{figure}[htbp]
   \centering
   \subfloat[Border \emph{None}]{
-    \includegraphics[width=1.8in,align=t]{figs/extensions/none}
+    \includegraphics[width=1.8in,align=t]{../figures/extensions/none}
   }
   \hfil
   \subfloat[Border \emph{fill} w/ $0$]{
-    \includegraphics[width=1.8in,align=t]{figs/extensions/fill}
+    \includegraphics[width=1.8in,align=t]{../figures/extensions/fill}
   }
   \hfil
   \subfloat[Border \emph{mirror}]{
-    \includegraphics[width=1.8in,align=t]{figs/extensions/mirror}
+    \includegraphics[width=1.8in,align=t]{../figures/extensions/mirror}
   }
   \hfil
   \subfloat[Border \emph{periodize}]{
-    \includegraphics[width=1.8in,align=t]{figs/extensions/periodize}
+    \includegraphics[width=1.8in,align=t]{../figures/extensions/periodize}
   }
   \hfil
   \subfloat[Border \emph{clamp}]{
-    \includegraphics[width=1.8in,align=t]{figs/extensions/clamp}
+    \includegraphics[width=1.8in,align=t]{../figures/extensions/clamp}
   }
   \hfil
   \subfloat[Border \emph{image}]{
-    \includegraphics[width=1.8in,align=t]{figs/extensions/image}
+    \includegraphics[width=1.8in,align=t]{../figures/extensions/image}
   }
 
   \caption{Border methods' breakdown.}
@@ -885,8 +885,8 @@ in~\cref{fig.inner.outer.range}.
 
 \begin{figure}[htbp]
   \centering
-  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/linear_rng}}
-  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{figs/segmented_rng}}
+  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{../figures/linear_rng}}
+  \subcaptionbox{}{\includegraphics[width=.48\linewidth]{../figures/segmented_rng}}
   \caption{Range-v3's ranges (a) \vs multidimensional ranges (b).}
   \label{fig.inner.outer.range}
 \end{figure}
@@ -924,7 +924,7 @@ threshold, erode and dilate, as shown in~\ref{fig.view.comp.sub_bg}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.7\linewidth]{figs/pipeline_bg_sub_comp}
+  \includegraphics[width=0.7\linewidth]{../figures/pipeline_bg_sub_comp}
   \caption{Background subtraction pipeline using \colorbox{lightgreen}{algorithms} and
     \colorbox{thistle}{views}.}
   \label{fig.view.comp.sub_bg}
@@ -987,14 +987,14 @@ single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
   \begin{tabular}{cccc}
     Result                                                                                                                       & Benchmark & Benchmark Pln only \\[5pt]
     \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}}   &
-    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_0}}                                                &
-    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_0}}                                                                             \\[5pt]
+    \fbox{\includegraphics[width=.29\linewidth]{../figures/bench/PlnVsOpenCV_bg_sub_0}}                                          &
+    \fbox{\includegraphics[width=.29\linewidth]{../figures/bench/PlnVsOpenCV_bg_sub_pln_0}}                                                                       \\[5pt]
     \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}}   &
-    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_1}}                                                &
-    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_1}}                                                                             \\[5pt]
+    \fbox{\includegraphics[width=.29\linewidth]{../figures/bench/PlnVsOpenCV_bg_sub_1}}                                          &
+    \fbox{\includegraphics[width=.29\linewidth]{../figures/bench/PlnVsOpenCV_bg_sub_pln_1}}                                                                       \\[5pt]
     \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}} &
-    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_6}}                                                &
-    \fbox{\includegraphics[width=.29\linewidth]{figs/bench/PlnVsOpenCV_bg_sub_pln_6}}
+    \fbox{\includegraphics[width=.29\linewidth]{../figures/bench/PlnVsOpenCV_bg_sub_6}}                                          &
+    \fbox{\includegraphics[width=.29\linewidth]{../figures/bench/PlnVsOpenCV_bg_sub_pln_6}}
   \end{tabular}
 
   \caption{Background detection: garden results.}
