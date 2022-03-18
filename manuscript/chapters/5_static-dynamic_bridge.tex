@@ -42,11 +42,11 @@ that the maintainer has to publish many bundles of his package where he wants it
 \begin{figure}[htbp]
   \centering
   \subfloat[Compile-time]{
-    \includegraphics[width=.48\linewidth]{figs/static_compiletime}
+    \includegraphics[width=.48\linewidth]{../figures/static_compiletime}
   }
   \hfil
   \subfloat[Run-time]{
-    \includegraphics[width=.48\linewidth]{figs/static_runtime}
+    \includegraphics[width=.48\linewidth]{../figures/static_runtime}
   }
   \caption{Compiled languages: compile-time (a) \vs run-time (b).}
   \label{fig:static.dynamic.compiled}
@@ -73,7 +73,7 @@ variety of bytecode format.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.6\linewidth]{figs/dynamic_pipeline}
+  \includegraphics[width=.6\linewidth]{../figures/dynamic_pipeline}
   \caption{Interpreted languages: run-time}
   \label{fig:static.dynamic.dynamic.pipeline}
 \end{figure}
@@ -100,7 +100,7 @@ approaches in order to be able to execute a binary from source code.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.9\linewidth]{figs/comp_inter_hybrid_summary}
+  \includegraphics[width=.9\linewidth]{../figures/comp_inter_hybrid_summary}
   \caption{Languages types: summary diagram}
   \label{fig:static.dynamic.summary.pipeline}
 \end{figure}
@@ -163,11 +163,11 @@ in~\cref{fig:static.vs.dynamic.genericity}.
 \begin{figure}[htbp]
   \centering
   \subfloat[C++ static genericity]{
-    \includegraphics[width=2in]{figs/cpp_static_code}
+    \includegraphics[width=2in]{../figures/cpp_static_code}
   }
   \hfil
   \subfloat[Python dynamic genericity]{
-    \includegraphics[width=2in]{figs/python_dynamic_code}
+    \includegraphics[width=2in]{../figures/python_dynamic_code}
   }
   \caption{C++ Static (a) \vs Python Dynamic (b) genericity.}
   \label{fig:static.vs.dynamic.genericity}
@@ -243,7 +243,7 @@ the information. For the sake of simplicity, we have chosen the first strategy.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.6\linewidth]{figs/type-erased_buffer}
+  \includegraphics[width=.6\linewidth]{../figures/type-erased_buffer}
   \caption{Bridge from Python to C++ via Pybind11 and a type-erased C++ class.}
   \label{fig:type-erased.buffer}
 \end{figure}
@@ -501,7 +501,7 @@ mln::image2d<float> naive_stretch(const mln::image2d<T>& src) {
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/nxndispatch_pipeline}
+  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/nxndispatch_pipeline}
   \caption{Python to C++ pipeline algorithm through the \(n \times n\) dispatcher.}
   \label{fig:static_dyn.nxndispatcher}
 \end{figure}
@@ -569,7 +569,7 @@ class ndimage {
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/naive_stretch}
+  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/naive_stretch}
   \caption{Naive stretch algorithm, pipeline to perform operations on values.}
   \label{fig:static_dyn.naive_stretch}
 \end{figure}
@@ -601,7 +601,7 @@ mln::image2d<float> fast_stretch(const mln::image2d<T>& src) {
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/fast_stretch}
+  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/fast_stretch}
   \caption{Fast stretch algorithm, pipeline to perform operations on values.}
   \label{fig:static_dyn.fast_stretch}
 \end{figure}
@@ -683,7 +683,7 @@ using this value-set to perform its operations. The new algorithm is shown in~\c
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/virtual_dispatch_stretch}
+  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/virtual_dispatch_stretch}
   \caption{Virtual dispatch stretch algorithm, pipeline to perform operations on values.}
   \label{fig:static_dyn.virtual_dispatch_stretch}
 \end{figure}
@@ -783,7 +783,7 @@ mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/virtual_dispatch_type_erased_value_stretch}
+  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/virtual_dispatch_type_erased_value_stretch}
   \caption{Virtual dispatch stretch algorithm with a type-erased value, pipeline to perform operations on values.}
   \label{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}
 \end{figure}
@@ -950,7 +950,7 @@ value-set which is shown in~\cref{fig:stretch.injected.python.code}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/static_dynamic_bridge/python_injected_value_set_stretch}
+  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/python_injected_value_set_stretch}
   \caption{Stretch algorithm with an injected value-set from Python code, pipeline to perform operations on values.}
   \label{fig:static_dyn.python_injected_value_set_stretch}
 \end{figure}

@@ -380,7 +380,7 @@ algorithms can take advantage of.
 
 % \begin{figure}[htbp]
 %   \centering
-%   \includegraphics[width=.5\linewidth]{figs/fill_version_diagram}
+%   \includegraphics[width=.5\linewidth]{../figures/fill_version_diagram}
 %   \caption{Diagram of the two versions of the fill algorithm.}
 %   \label{fig:fill.version.diagram}
 % \end{figure}
@@ -444,7 +444,7 @@ auto dilate(Img img, SE se) {
   \hfill
   \begin{minipage}[r]{0.48\linewidth}
     \centering
-    \includegraphics[scale=0.5]{figs/dilation_specialization_diagram}
+    \includegraphics[scale=0.5]{../figures/dilation_specialization_diagram}
   \end{minipage}
   \caption{Dilate algorithm (left) with decomposable structuring element and its specialization diagram (right).}
   \label{fig:dilation.specialization.alg.diagram}
@@ -458,11 +458,11 @@ implemented using low level and fast primitives such as \texttt{memset} to incre
 \begin{figure}[htbp]
   \centering
   \subfloat[Different versions of \emph{fill} algorithms]{
-    \includegraphics[width=1.9in]{figs/image_version}
+    \includegraphics[width=1.9in]{../figures/image_version}
   }%
   \hfil
   \subfloat[Specialization existing within a version]{
-    \includegraphics[width=2.9in]{figs/image_version_specialization}
+    \includegraphics[width=2.9in]{../figures/image_version_specialization}
   }%
   \caption{Set of algorithms version (a) and its specialization existing within a set (b).}
   \label{fig:image.version.vs.specialization}
@@ -544,11 +544,11 @@ Python code of such algorithm is naively be given in figure~\ref{code:erode.dila
 \begin{figure}[htbp]
   \centering
   \subfloat[Dilation]{
-    \includegraphics[width=1.7in]{figs/dilation_code}
+    \includegraphics[width=1.7in]{../figures/dilation_code}
   }%
   \hfil
   \subfloat[Erosion]{
-    \includegraphics[width=1.7in]{figs/erosion_code}
+    \includegraphics[width=1.7in]{../figures/erosion_code}
   }%
   \caption{Dilate \vs Erode algorithms.}
   \label{code:erode.dilate}
@@ -566,16 +566,16 @@ of possible implementation details.
 \begin{figure}[htbp]
   \centering
   \subfloat[Local algorithm with custom operator]{
-    \includegraphics[width=3.28in]{figs/local_op_code}
+    \includegraphics[width=3.28in]{../figures/local_op_code}
   }%
   \vfil
   \smallskip
   \subfloat[Dilation (delegated)]{
-    \includegraphics[width=1.64in]{figs/local_op_dilation_code}
+    \includegraphics[width=1.64in]{../figures/local_op_dilation_code}
   }%
   \hfil
   \subfloat[Erosion (delegated)]{
-    \includegraphics[width=1.64in]{figs/local_op_erosion_code}
+    \includegraphics[width=1.64in]{../figures/local_op_erosion_code}
   }%
   \caption{New Dilate \vs Erode algorithms.}
   \label{code:erode.dilate.factorized}
@@ -876,7 +876,7 @@ diagram~\cref{fig:concept.pixel}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/pixel}
+  \includegraphics[width=.8\linewidth]{../figures/concepts/pixel}
   \caption{Pixel concept.}
   \label{fig:concept.pixel}
 \end{figure}
@@ -942,7 +942,7 @@ We show how the concept \emph{Domain} flows from the previous concepts in the di
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/domain}
+  \includegraphics[width=.8\linewidth]{../figures/concepts/domain}
   \caption{Domain concept.}
   \label{fig:concept.domain}
 \end{figure}
@@ -976,7 +976,7 @@ We show the diagram building up the image concept from the previous concepts in~
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/image}
+  \includegraphics[width=.8\linewidth]{../figures/concepts/image}
   \caption{Image concept.}
   \label{fig:concept.image}
 \end{figure}
@@ -1080,7 +1080,7 @@ We show how those concepts are defined from one another in the diagram shown i~\
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/images_all}
+  \includegraphics[width=.8\linewidth]{../figures/concepts/images_all}
   \caption{All images concepts. \FIXME{Donner du sens aux flèches}}
   \label{fig:concept.images}
 \end{figure}
@@ -1165,7 +1165,7 @@ diagram shown in~\cref{fig:concept.se_extension}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{figs/concepts/se_extension}
+  \includegraphics[width=.8\linewidth]{../figures/concepts/se_extension}
   \caption{Structuring element and Extension concepts.}
   \label{fig:concept.se_extension}
 \end{figure}

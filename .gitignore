@@ -30,3 +30,6 @@
 *.synctex(busy)
 /**/_minted-*/
 .DS_Store
+slides/reveal.js
+slides/*.html
+roynard.thesis.2022.tar.gz
