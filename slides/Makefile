@@ -2,24 +2,32 @@ PANDOC = pandoc --slide-level=2 --verbose -t beamer -H header.tex -V classoption
 SRC = $(filter-out trash.md, $(wildcard *.md))
 PDF = $(SRC:.md=.pdf)
 
-all: $(PDF) handout compressed html
+all: $(PDF) handout web compressed
 
 %.pdf : %.md
 	$(PANDOC) $< -o $@
 
-handout :
-	$(PANDOC) -V handout slides.md -o slides.handout.pdf
-	pdfjam slides.handout.pdf --nup 2x2 --keepinfo \
+%.handout.pdf : %.md
+	$(PANDOC) -V handout $< -o $@
+	pdfjam $@ --nup 2x2 --keepinfo \
 		--paper letterpaper --frame true --scale 0.9 \
 		--suffix "nup"
-	mv slides.handout-nup.pdf slides.handout.pdf 
+	mv $(basename $@)-nup.pdf $@
 
-compressed :
-	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=slides.compressed.pdf slides.pdf
-	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=slides.handout.compressed.pdf slides.handout.pdf
+handout : $(PDF:.pdf=.handout.pdf)
 
-html : install
-	pandoc --slide-level=2 --verbose -f markdown -t revealjs -s slides.md -o slides.html
+%.html : %.md
+	pandoc --slide-level=2 --verbose -f markdown -t revealjs -s $< -o $@
+
+web : install $(PDF:.pdf=.html)
+
+%.compressed.pdf : %.md
+	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $^).pdf
+
+%.handout.compressed.pdf : %.md
+	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $^).handout.pdf
+
+compressed : $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.handout.compressed.pdf)
 
 install :
 	bash ./install_reveal.sh

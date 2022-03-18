@@ -11,4 +11,4 @@ all : $(PDF)
 
 clean :
 	latexmk -C *.tex
-	rm -rf $(PDF:.pdf=.bbl)
+	rm -rf build _minted-*

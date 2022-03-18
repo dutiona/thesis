@@ -7,8 +7,10 @@ all : $(PDF) compressed
 %.pdf : %.tex
 	$(TEX) $^ -jobname="$(basename $^)"
 
-compressed :
-	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=main.compressed.pdf main.pdf
+%.compressed.pdf : %.tex
+	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $^).pdf
+
+compressed : $(PDF:.pdf=.compressed.pdf)
 
 clean :
 	latexmk -C *.tex
