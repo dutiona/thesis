@@ -1,11 +1,12 @@
 TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
-SRC = $(filter-out trash.tex main.old.tex, $(wildcard *.tex))
+SRC = $(filter-out flyleaf.tex trash.tex main.old.tex, $(wildcard *.tex))
+DEP = flyleaf.tex bibliography.bib $(wildcard chapters/*.tex)
 PDF = $(SRC:.tex=.pdf)
 
 all : $(PDF) compressed
 
-%.pdf : %.tex
-	$(TEX) $^ -jobname="$(basename $^)"
+%.pdf : %.tex ${DEP}
+	$(TEX) $< -jobname="$(basename $<)"
 
 %.compressed.pdf : %.tex
 	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $^).pdf

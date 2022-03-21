@@ -1,0 +1,124 @@
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+%    Page de garde (flyleaf.tex)   %
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+% Dorian Depriester, 2014
+
+\makeatletter
+\def\@school{school}
+\newcommand{\school}[1]{
+  \def\@school{#1}
+}
+
+\def\@speciality{Speciality}
+\newcommand{\speciality}[1]{
+  \def\@speciality{#1}
+}
+
+\def\@ED{Doctoral School}
+\newcommand{\ED}[1]{
+  \def\@ED{#1}
+}
+\def\@address{Address}
+\newcommand{\address}[1]{
+  \def\@address{#1}
+}
+
+\def\@director{Director}
+\newcommand{\director}[1]{
+  \def\@director{#1}
+}
+
+\def\@advisor{Advisor}
+\newcommand{\advisor}[1]{
+  \def\@advisor{#1}
+}
+\def\@jurya{}{}{}
+\newcommand{\jurya}[3]{
+  \def\@jurya{#1,	& #2	& #3\\}
+}
+\def\@juryb{}{}{}
+\newcommand{\juryb}[3]{
+  \def\@juryb{#1,	& #2	& #3\\}
+}
+\def\@juryc{}{}{}
+\newcommand{\juryc}[3]{
+  \def\@juryc{#1,	& #2	& #3\\}
+}
+\def\@juryd{}{}{}
+\newcommand{\juryd}[3]{
+  \def\@juryd{#1,	& #2	& #3\\}
+}
+\def\@jurye{}{}{}
+\newcommand{\jurye}[3]{
+  \def\@jurye{#1,	& #2	& #3\\}
+}
+\def\@juryf{}{}{}
+\newcommand{\juryf}[3]{
+  \def\@juryf{#1,	& #2	& #3\\}
+}
+\def\@juryg{}{}{}
+\newcommand{\juryg}[3]{
+  \def\@juryg{#1,	& #2	& #3\\}
+}
+\def\@juryh{}{}{}
+\newcommand{\juryh}[3]{
+  \def\@juryh{#1,	& #2	& #3\\}
+}
+\def\@juryi{}{}{}
+\newcommand{\juryi}[3]{
+  \def\@juryi{#1,	& #2	& #3\\}
+}
+\makeatother
+
+\makeatletter
+\newcommand{\flyleaf}{
+  \newgeometry{top=2.5cm, bottom=2.5cm, left=2cm, right=1cm}
+  \begin{titlepage}
+    \centering
+    \includegraphics[width=0.2\textwidth]{../images/EDITE.png}
+    \hfill
+    \includegraphics[width=0.2\textwidth]{../images/epita.pdf}
+    \hfill
+    \includegraphics[width=0.2\textwidth]{../images/lrde-big.png}\\
+    \vspace{1cm}
+    {\Large \@ED}\\
+    \vspace{1cm}
+    {\huge \bfseries{Doctoral Thesis}}\\
+    \vspace{1cm}
+    {\bfseries submitted to fullfil requirements for the degree of Doctor of}\\
+    \vspace{0.5cm}
+    \includegraphics[width=0.3\textwidth]{../images/Logo_of_Sorbonne_University.pdf}\\
+    %{\huge\bfseries \@school}\\
+    \vspace{0.5cm}
+    {\Large{\bfseries with the Doctoral Speciality of ``\@speciality''}}\\
+    \vspace{1cm}
+    {\LARGE \bfseries{\@title}} \\
+    \vspace{1cm}
+    \textit{presented and defended to the public by}\\
+    \vspace{0.5cm}
+    {\Large {\bfseries \@author}} \\
+    \vspace{0.2cm}
+    on the \@date \\
+    \textit{before distinguished members of the jury}\\
+    \vspace{0.2cm}
+    \begin{tabular}{>{\bfseries}lll}
+      \large Jury \\
+      \@jurya
+      \@juryb
+      \@juryc
+      \@juryd
+      \@jurye
+      \@juryf
+      \@juryg
+      \@juryh
+      \@juryi
+    \end{tabular}
+    \vfill
+    Director: {\bfseries \@director}\\
+    Advisor: {\bfseries \@advisor}\\
+    \vfill
+    \@address
+  \end{titlepage}
+
+  \restoregeometry
+}

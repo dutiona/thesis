@@ -1,0 +1,131 @@
+\documentclass[11pt,a4paper]{article}
+%\documentclass[11pt,a4paper,draft]{book}
+\usepackage[inner=3cm,textwidth=16cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+% \usepackage[numbers]{natbib}
+\usepackage[mode=buildmissing]{standalone}
+\usepackage{tikz}
+\usepackage{float}
+%\usepackage{placeins}
+%\usepackage{refcheck}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{minted}
+\usepackage{booktabs}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{tikz-uml}
+\usepackage{threeparttable}
+\usepackage[]{siunitx}
+\usepackage{makecell}
+\usepackage{graphbox}
+\usepackage{diagbox}
+\usepackage[draft]{fixme}
+\usepackage{makecell}
+%\usepackage{bibentry}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathabx}
+\usepackage{cleveref}
+%\usepackage{svg}
+\usepackage{lettrine}
+%\usepackage{wrapfig}
+%\usepackage[backend=biber,style=alphabetic,sorting=ynt]{biblatex}
+%\usepackage[backend=biber,sorting=ynt,style=numeric]{biblatex}
+%\usepackage[backend=biber,sorting=ynt,style=draft,backref=true]{biblatex}
+\usepackage[backend=biber,
+            defernumbers=true,
+            sorting=ynt,
+            style=numeric,
+            %style=draft,
+            backref=true]{biblatex}
+
+% This allows for an additional line-breaking pass with the amount of
+% "tolerable" white space per line increased by 1em.
+% Needed for overfull hbox in bibliography
+% \emergencystretch=1em
+\usepackage[final]{microtype}
+
+\usepackage[section]{placeins}
+
+\usepackage{epstopdf}
+\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{convert #1 \OutputFile}
+\AppendGraphicsExtensions{.tif}
+
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\eqmark}{{\bf \(\approx\)}}
+
+\newcommand{\eg}{e.g.}
+\newcommand{\ie}{i.e.}
+\newcommand{\cf}{cf.}
+\newcommand{\vs}{vs.}
+\newcommand{\pros}{pros.}
+\newcommand{\cons}{cons.}
+
+\definecolor{lightgray}{rgb}{0.83, 0.83, 0.83}
+\definecolor{lightblue}{rgb}{0.68, 0.85, 0.9}
+\definecolor{lightgreen}{rgb}{0.56, 0.93, 0.56}
+\definecolor{thistle}{rgb}{0.85, 0.75, 0.85}
+
+\newcommand{\FIXME}[1]{{\color{red}#1}}
+\newcommand{\PLAGIAT}[1]{{\color{magenta}#1}}
+
+% Reset chapter number after each part
+% \makeatletter
+% \@addtoreset{chapter}{part}
+% \makeatother
+
+%\renewcommand{\baselinestretch}{1}
+
+\usetikzlibrary{3d,calc,positioning}
+\tikzumlset{font=\scriptsize\tt}
+\setminted{fontsize=\scriptsize}
+
+\renewcommand\UrlFont{\color{blue}\rmfamily}
+
+\input{flyleaf.tex}
+
+\author{Michaël \textsc{Roynard}}
+\title{Generic programming in modern C++ for Image Processing}
+\date{\today}
+\ED{Doctoral School n°130: \'{E}cole Doctorale Informatique, Télécommunications et \'{E}lectronique (EDITE)}
+\speciality{Software Engineering \& Image Processing}
+\director{Pr. Thierry \textsc{G\'{e}raud}}
+\advisor{Dr. Edwin \textsc{Carlinet}}
+\jurya{Pr. XX XXX}{XXX XXX}{President}
+\juryb{Pr. XX XXX}{XXX XXX}{Reporter}
+\juryc{Pr. XX XXX}{XXX XXX}{Reporter}
+\juryd{Dr. XX XXX}{XXX XXX}{Jury member}
+\jurye{Dr. XX XXX}{XXX XXX}{Jury member}
+\school{Sorbonne University}
+\address{
+	\textbf{Laboratoire de Recherche et de Développement de l'EPITA (LRDE)}\\ 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France
+}
+
+\begin{document}
+%
+\flyleaf
+
+\input{chapters/0_resume_long.tex}
+
+\clearpage
+
+\appendix
+
+% This allows for an additional line-breaking pass with the amount of
+% "tolerable" white space per line increased by 1em.
+% Needed for overfull hbox in bibliography
+\emergencystretch=1em
+
+\label{sec:references}
+\printbibliography[heading=bibintoc,title={References}]
+
+
+\end{document}
