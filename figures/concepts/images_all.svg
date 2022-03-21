@@ -3,7 +3,7 @@
 <!-- Généré par Microsoft Visio, SVG Export images_all.svg Page-1 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
 		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="5.65863in" height="4.49721in"
-		viewBox="0 0 407.421 323.799" xml:space="preserve" color-interpolation-filters="sRGB" class="st8">
+		viewBox="0 0 407.421 323.799" xml:space="preserve" color-interpolation-filters="sRGB" class="st10">
 	<v:documentProperties v:langID="1036" v:metric="true" v:viewMarkup="false">
 		<v:userDefs>
 			<v:ud v:nameU="msvSubprocessMaster" v:prompt="" v:val="VT4(Rectangle)"/>
@@ -20,7 +20,9 @@
 		.st5 {font-size:1em}
 		.st6 {marker-end:url(#mrkr4-46);stroke:#4672c4;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
 		.st7 {fill:#4672c4;fill-opacity:1;stroke:#4672c4;stroke-opacity:1;stroke-width:0.28409090909091}
-		.st8 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+		.st8 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
+		.st9 {fill:#3c63ac;font-family:Calibri;font-size:0.499992em}
+		.st10 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
 
@@ -107,9 +109,9 @@
 				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="56.6929" cy="284.114" width="113.39" height="79.3701"/>
-			<rect x="0" y="244.429" width="113.386" height="79.3701" class="st1"/>
-			<text x="18.59" y="257.43" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>BidirectionalImage</text>		</g>
+			<v:textRect cx="60.2362" cy="284.114" width="120.48" height="79.3701"/>
+			<rect x="0" y="244.429" width="120.472" height="79.3701" class="st1"/>
+			<text x="22.13" y="257.43" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>BidirectionalImage</text>		</g>
 		<g id="shape24-25" v:mID="24" v:groupContext="shape" transform="translate(64.1043,-18.75)">
 			<title>Rectangle.24</title>
 			<desc>IndexableAndAccessibleImage</desc>
@@ -121,7 +123,7 @@
 			<v:textRect cx="70.8661" cy="281.28" width="141.74" height="85.0394"/>
 			<rect x="0" y="238.76" width="141.732" height="85.0394" class="st1"/>
 			<text x="9.47" y="251.76" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>IndexableAndAccessibleImage</text>		</g>
-		<g id="shape25-29" v:mID="25" v:groupContext="shape" transform="translate(275.285,-248.923)">
+		<g id="shape25-29" v:mID="25" v:groupContext="shape" transform="translate(268.199,-248.923)">
 			<title>Rectangle.27</title>
 			<desc>ReversibleMDRange</desc>
 			<v:userDefs>
@@ -129,9 +131,9 @@
 				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="56.6929" cy="296.87" width="113.39" height="53.8583"/>
-			<rect x="0" y="269.941" width="113.386" height="53.8583" class="st1"/>
-			<text x="15.71" y="282.94" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>ReversibleMDRange</text>		</g>
+			<v:textRect cx="60.2362" cy="296.87" width="120.48" height="53.8583"/>
+			<rect x="0" y="269.941" width="120.472" height="53.8583" class="st1"/>
+			<text x="19.25" y="282.94" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>ReversibleMDRange</text>		</g>
 		<g id="shape27-33" v:mID="27" v:groupContext="shape" transform="translate(150.561,-230.64)">
 			<title>Feuille.27</title>
 			<desc>image2D, image3D, imageComplex,</desc>
@@ -148,46 +150,71 @@
 				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
-			<v:textRect cx="56.6929" cy="281.28" width="113.39" height="85.0394"/>
-			<rect x="0" y="238.76" width="113.386" height="85.0394" class="st1"/>
-			<text x="35.52" y="251.76" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>RawImage</text>		</g>
+			<v:textRect cx="60.2362" cy="281.28" width="120.48" height="85.0394"/>
+			<rect x="0" y="238.76" width="120.472" height="85.0394" class="st1"/>
+			<text x="39.06" y="251.76" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>RawImage</text>		</g>
 		<g id="shape29-41" v:mID="29" v:groupContext="shape" v:layerMember="0" transform="translate(193.081,-223.411)">
 			<title>Lien dynamique</title>
+			<desc>Refines concept Image</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="7.08661" cy="334.429" width="64.54" height="15.2035"/>
 			<path d="M7.09 323.8 L7.09 338.02" class="st6"/>
-		</g>
-		<g id="shape30-47" v:mID="30" v:groupContext="shape" v:layerMember="0" transform="translate(335.522,-248.923)">
+			<rect v:rectContext="textBkgnd" x="-20.5002" y="330.829" width="55.1739" height="7.20016" class="st8"/>
+			<text x="-20.5" y="336.23" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Refines concept Image</text>		</g>
+		<g id="shape30-49" v:mID="30" v:groupContext="shape" v:layerMember="0" transform="translate(321.348,-248.923)">
 			<title>Lien dynamique.30</title>
-			<path d="M-3.54 323.8 L-3.54 336.47 L-10.63 336.47 L-10.63 363.53" class="st6"/>
-		</g>
-		<g id="shape31-52" v:mID="31" v:groupContext="shape" v:layerMember="0" transform="translate(256.86,-263.096)">
-			<title>Lien dynamique.31</title>
-			<path d="M0 323.8 L12.09 323.8 L12.09 344.31 L68.03 344.31 L68.03 377.7" class="st6"/>
-		</g>
+			<desc>views::reverse( ima.pixels())</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="16.8766" cy="345.757" width="46.3" height="22.4034" transform="rotate(-90)"/>
+			<path d="M7.09 323.8 L7.09 363.53" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="-364.224" y="9.67694" width="36.9341" height="14.4001" transform="rotate(-90)"
+					class="st8"/>
+			<text x="-364.22" y="15.08" transform="rotate(-90)" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>views::reverse(<v:newlineChar/><tspan
+						x="-360.68" dy="1.2em" class="st5">ima.pixels())</tspan></text>		</g>
 		<g id="shape32-57" v:mID="32" v:groupContext="shape" v:layerMember="0" transform="translate(68.3563,-251.191)">
 			<title>Lien dynamique.32</title>
+			<desc>ima[index]</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="0.794677" cy="348.219" width="35.35" height="15.2035" transform="rotate(-90)"/>
 			<path d="M7.09 323.8 L7.09 365.8" class="st6"/>
-		</g>
-		<g id="shape34-62" v:mID="34" v:groupContext="shape" v:layerMember="0" transform="translate(143.474,-263.096)">
+			<rect v:rectContext="textBkgnd" x="-361.213" y="-2.80502" width="25.9887" height="7.20016" transform="rotate(-90)"
+					class="st8"/>
+			<text x="-361.21" y="2.6" transform="rotate(-90)" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>ima[index]</text>		</g>
+		<g id="shape34-64" v:mID="34" v:groupContext="shape" v:layerMember="0" transform="translate(143.474,-244.346)">
 			<title>Lien dynamique.34</title>
-			<path d="M0 323.8 L-5 323.8 L-5 342.04 L-68.03 342.04 L-68.03 377.7" class="st6"/>
-		</g>
-		<g id="shape35-67" v:mID="35" v:groupContext="shape" v:layerMember="0" transform="translate(75.4429,-122.781)">
+			<desc>Refines Concept Image</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="-35.4828" cy="337.259" width="45.91" height="22.4034"/>
+			<path d="M0 323.8 L-37.18 323.8 L-37.18 358.95" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="-53.7549" y="330.059" width="36.5444" height="14.4001" class="st8"/>
+			<text x="-44.45" y="335.46" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Refines<v:newlineChar/><tspan
+						x="-53.75" dy="1.2em" class="st5">Concept Image</tspan></text>		</g>
+		<g id="shape35-72" v:mID="35" v:groupContext="shape" v:layerMember="0" transform="translate(75.4429,-122.781)">
 			<title>Lien dynamique.35</title>
-			<path d="M0 323.8 L0 330.14 L59.53 330.14 L59.53 335.75" class="st6"/>
+			<path d="M0 323.8 L0 330.14 L29.44 330.14 L29.44 335.75" class="st6"/>
 		</g>
-		<g id="shape36-72" v:mID="36" v:groupContext="shape" v:layerMember="0" transform="translate(200.167,-122.781)">
+		<g id="shape36-77" v:mID="36" v:groupContext="shape" v:layerMember="0" transform="translate(200.167,-122.781)">
 			<title>Lien dynamique.36</title>
-			<path d="M0 323.8 L0 330.14 L-65.2 330.14 L-65.2 335.75" class="st6"/>
+			<path d="M0 323.8 L0 330.14 L-32.92 330.14 L-32.92 335.75" class="st6"/>
 		</g>
-		<g id="shape37-77" v:mID="37" v:groupContext="shape" v:layerMember="0" transform="translate(205.837,-54.1831)">
+		<g id="shape37-82" v:mID="37" v:groupContext="shape" v:layerMember="0" transform="translate(205.837,-54.1831)">
 			<title>Lien dynamique.37</title>
+			<desc>Refines concept IndexableAndAccessible</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="30.8519" cy="305.562" width="68.05" height="22.4034"/>
 			<path d="M0 316.71 L55.32 316.71" class="st6"/>
-		</g>
-		<g id="shape38-82" v:mID="38" v:groupContext="shape" v:layerMember="0" transform="translate(331.978,-122.781)">
+			<rect v:rectContext="textBkgnd" x="1.5119" y="298.362" width="58.6802" height="14.4001" class="st8"/>
+			<text x="11.44" y="303.76" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Refines concept<v:newlineChar/><tspan
+						x="1.51" dy="1.2em" class="st5">IndexableAndAccessible</tspan></text>		</g>
+		<g id="shape38-90" v:mID="38" v:groupContext="shape" v:layerMember="0" transform="translate(321.348,-122.781)">
 			<title>Lien dynamique.38</title>
-			<path d="M-7.09 323.8 L-7.09 332.92" class="st6"/>
-		</g>
-		<g id="shape39-87" v:mID="39" v:groupContext="shape" transform="translate(27.2539,-129.301)">
+			<desc>Refines concept BidirectionalImage</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="6.60646" cy="330.875" width="95.28" height="15.2035"/>
+			<path d="M7.09 323.8 L7.09 335.75" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="-36.349" y="327.276" width="85.9112" height="7.20016" class="st8"/>
+			<text x="-36.35" y="332.68" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Refines concept BidirectionalImage</text>		</g>
+		<g id="shape39-97" v:mID="39" v:groupContext="shape" transform="translate(27.2539,-129.301)">
 			<title>Feuille.39</title>
 			<desc>Data accessible when an index is provided</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
@@ -195,7 +222,7 @@
 			<rect x="0" y="292.051" width="96.378" height="31.748" class="st3"/>
 			<text x="4" y="305.53" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Data accessible when an <tspan x="4"
 						dy="1.2em" class="st5">index is provided</tspan></text>		</g>
-		<g id="shape40-91" v:mID="40" v:groupContext="shape" transform="translate(151.978,-130.435)">
+		<g id="shape40-101" v:mID="40" v:groupContext="shape" transform="translate(151.978,-130.435)">
 			<title>Feuille.40</title>
 			<desc>Data accessible when a point is provided</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
@@ -203,7 +230,7 @@
 			<rect x="0" y="292.051" width="96.378" height="31.748" class="st3"/>
 			<text x="4" y="305.53" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Data accessible when a <tspan x="4"
 						dy="1.2em" class="st5">point is provided</tspan></text>		</g>
-		<g id="shape41-95" v:mID="41" v:groupContext="shape" transform="translate(276.703,-131.569)">
+		<g id="shape41-105" v:mID="41" v:groupContext="shape" transform="translate(276.703,-131.569)">
 			<title>Feuille.41</title>
 			<desc>Data can be browsed from start to finish and from finish to s...</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
@@ -211,7 +238,7 @@
 			<rect x="0" y="292.051" width="96.378" height="31.748" class="st3"/>
 			<text x="4" y="300.73" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Data can be browsed from <tspan x="4"
 						dy="1.2em" class="st5">start to finish and from </tspan><tspan x="4" dy="1.2em" class="st5">finish to start</tspan></text>		</g>
-		<g id="shape42-100" v:mID="42" v:groupContext="shape" transform="translate(69.7736,-29.5217)">
+		<g id="shape42-110" v:mID="42" v:groupContext="shape" transform="translate(69.7736,-29.5217)">
 			<title>Feuille.42</title>
 			<desc>Facilities to convert point to index and vice versa is provided</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
@@ -219,7 +246,7 @@
 			<rect x="0" y="292.051" width="130.394" height="31.748" class="st3"/>
 			<text x="4" y="305.53" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Facilities to convert point to index <tspan
 						x="4" dy="1.2em" class="st5">and vice versa is provided</tspan></text>		</g>
-		<g id="shape43-104" v:mID="43" v:groupContext="shape" transform="translate(276.703,-28.3878)">
+		<g id="shape43-114" v:mID="43" v:groupContext="shape" transform="translate(276.703,-28.3878)">
 			<title>Feuille.43</title>
 			<desc>Direct access to the data buffer (pointer arithmetic possible)</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
@@ -227,5 +254,22 @@
 			<rect x="0" y="292.051" width="96.378" height="31.748" class="st3"/>
 			<text x="4" y="300.73" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Direct access to the data <tspan x="4"
 						dy="1.2em" class="st5">buffer (pointer arithmetic </tspan><tspan x="4" dy="1.2em" class="st5">possible)</tspan></text>		</g>
+		<g id="shape45-119" v:mID="45" v:groupContext="shape" v:layerMember="0" transform="translate(256.86,-243.78)">
+			<title>Lien dynamique.45</title>
+			<desc>Refines Concept Image</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="42.47" cy="336.692" width="45.91" height="22.4034"/>
+			<path d="M0 323.8 L40.78 323.8 L40.78 358.39" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="24.1979" y="329.492" width="36.5444" height="14.4001" class="st8"/>
+			<text x="33.5" y="334.89" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Refines<v:newlineChar/><tspan
+						x="24.2" dy="1.2em" class="st5">Concept Image</tspan></text>		</g>
+		<g id="shape47-127" v:mID="47" v:groupContext="shape" transform="translate(110.551,-109.134)">
+			<title>Feuille.47</title>
+			<desc>Refines both concepts</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="26.2205" cy="319.972" width="52.45" height="7.65354"/>
+			<rect x="0" y="316.146" width="52.441" height="7.65354" class="st3"/>
+			<text x="5.71" y="317.57" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Refines both<v:newlineChar/><tspan
+						x="11.63" dy="1.2em" class="st5">concepts</tspan></text>		</g>
 	</g>
 </svg>
