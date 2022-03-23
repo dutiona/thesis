@@ -10,7 +10,7 @@ algorithms (both basic and more complex) we can think of. This way, we will noti
 similar image types or similar algorithms. We will then be able to extract behavioral patterns from this inventory in
 order to produce a full taxonomy in the form of a framework of concepts related to image processing. This chapter is
 structured as followed. First we will study how to extract behavioral pattern from a simple algorithm in order to refine
-it into one or multiple concepts. Second we will study the theory set behind images types, their conjunctions,
+it into one or multiple concepts. Second we will study the theory set behind image types, their conjunctions,
 disjunctions. We will also produce an inventory of image processing algorithms limited to mathematical morphologies that
 we can leverage for the final step. Third, we will study the intrinsic genericity of algorithms to produce canvas taking
 advantage of properties. Finally, we will then study behavioral pattern related to the inventory in the form of a
@@ -356,7 +356,7 @@ concept Decomposable =
 \end{figure}
 
 
-\section{Images types viewed as Sets: version, specialization \& inventory}
+\section{Image types viewed as Sets: version, specialization \& inventory}
 \label{sec:image.set}
 
 Achieving true genericity in a satisfactory way is a complex problem that has components of different levels. The first
@@ -373,7 +373,7 @@ consider the set of supported set of image types shown in figure~\ref{fig:image.
 refer to different image families as subtype. Indeed, an image with a LUT is subtype of the (global) Image type. This
 notion of sub-typing is important because it may be abstracted behind an interface. A user can manipulate an image type
 without knowing its specific subtype. This induces that the sub-typing facility may be handled internally in the library
-with dynamic dispatching code (with run-time overhead). Each image processing library has its own way of handling
+with dynamic dispatching code (with runtime overhead). Each image processing library has its own way of handling
 sub-typing. More generally, the model used to handle it is previously described in~\cref{subsec:different.approaches}.
 Indeed, subtypes are handled the same way as their super-type but the fact that they have additional properties the
 algorithms can take advantage of.
@@ -468,7 +468,7 @@ implemented using low level and fast primitives such as \texttt{memset} to incre
   \label{fig:image.version.vs.specialization}
 \end{figure}
 
-Making a full inventory of images types is not possible as there are many families of image types, each family may
+Making a full inventory of image types is not possible as there are many families of image types, each family may
 intersect with each other, images may have some particular properties at some points, those properties may appear in
 several families of image types. We can nonetheless cite a few to illustrate our points. There exists image-type whose
 values are cubical complexes~\parencite{ziou.2002.cubical-complex} or layered as hexagonal or triangular grid instead of
@@ -489,7 +489,7 @@ image's extension (defining border's behavior) and structuring element (disc, re
 Such algorithms are widely used in mathematical morphology. Dilation, erosion, closing, opening, gradient, rank filter
 are all local algorithms, as well as stencil-type algorithms such as union-find, max-tree or skeletonize. Finally, the
 third set of image processing algorithms is the global one. This set contains algorithms where computing the current
-pixel requires to knowledge about what was previously computed for the previous pixels. Champfer distance transform,
+pixel requires to knowledge about what was previously computed for the previous pixels. Chamfer distance transform,
 labeling, watershed, hierarchy structures related algorithms are in this category.
 
 
@@ -1186,10 +1186,30 @@ void my_algorithm(Img img) {
 
 \section{Summary}
 
-In this chapter, we have demonstrated how it is possible to extract concepts from algorithms. We have then offered a
-taxonomy of image processing algorithms in order to extract those concepts. We then discuss and dig further the generic
-aspects of algorithms by introducing the notion of canvas which enables taking advantage of opportunities to do
-heterogeneous computation while remaining user-friendly. Finally, we offer and justify a detailed taxonomy of concepts
-related to image processing area.
+In this chapter, we present that concepts are not designed after data structures but after algorithms. Indeed, a concept
+consists in extracting a consistent behavioral pattern from a piece of code (algorithm) and name it to give him more
+meaning. Through a simple but concrete example, we present in a didactic way how to extract concepts from an image
+processing algorithm (gamma correction).
 
-\FIXME{Rework summary}
+This chapter then proceeds to explain how, in theory, image types are related to each other. We present the set of
+different image types and how algorithms exist in those sets, which introduce the notion of \emph{version} of an
+algorithm. An algorithm will have different \emph{versions} for each image types set it supports. We distinguish it from
+an algorithm \emph{specialization}, the latter being the ability to use an opportunity (related to a property) to make
+an optimization and increase performances.
+
+This chapter then proceed to describe the notion how algorithm canvas which is the result flowing from the taxonomy of
+image processing algorithms. Indeed, there are three main algorithm families: the pixel-wise algorithms (binary
+threshold), the local algorithms (dilation) and the global algorithms (Chamfer distance transform). We focus primarily
+on local algorithms and how they can all be written through the same canvas of code. Indeed, for instance, the only
+difference between a dilation and an erosion is the operator (max \vs min). We then discuss ways to exploit these canvas
+to possibly solve heterogeneous computing issues.
+
+Finally, this chapter introduces our first main contribution: a complete taxonomy related to the image processing area.
+We first introduce fundamental concepts such as \emph{point}, \emph{pixel}, \emph{domain} and \emph{image}. We then
+motivate and introduce advanced concepts related to images and the different way to access data (forward, backward
+traversing, indexing, direct access to underlying buffer, \ldots). In the end, we introduce the concepts related to
+orbiting notions such as \emph{structuring element}, \emph{neighborhood} and \emph{extension} (border management) which
+are necessary to be able to work with local algorithms.
+
+The next chapter will make use of the presented concepts to introduce the second main contribution of this thesis: the
+\emph{image views}.

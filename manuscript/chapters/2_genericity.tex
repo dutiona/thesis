@@ -36,26 +36,24 @@ the lazy-computing techniques is used to generate new types on-the-fly. Hencefor
 generic facilities to handle their own internal set of types. This thesis addresses genericity at the input level rather
 than the target architecture level, henceforth, we will not address this topic here.
 
-
-\FIXME{Rework style}
-
 \paragraph{History} Genericity takes its root in~\citedate[year]{backus.1978.functional}
 when~\citeauthor{backus.1978.functional} publishes his paper about functional
 programming~\parencite{backus.1978.functional}. \citeauthor{backus.1978.functional} thinks that there exists five
 computation forms with which one can build up all the rest of the computational infrastructure. Every piece of software,
-in theory, is built from those five functional forms. Furthermore, the initial work of Backus does not use the
-possibility offered by mutations in his five computational forms. These forms will lead to the birth of the functional
-programming paradigm (notably famous for its value immutability). Stepanov, a mathematician, thinks that those forms are
-theorems. He also thinks that there is an infinite number of theorem (as in mathematics) and that reducing their number
-to five for software programming is taking things a little too far. He publishes in
-1987~\parencite{stepanov.1987.higher} that one cannot ignore the mutability of states if one wants to achieve maximum
+for \citeauthor{backus.1978.functional}, is built from those five functional forms. Furthermore, the initial work of
+\citeauthor{backus.1978.functional} does not use the possibility offered by mutations in his five computational forms.
+These forms will lead to the birth of the functional programming paradigm (notably famous for its value immutability).
+Stepanov, a mathematician, thinks that those forms are theorems. He also thinks that there is an infinite number of
+theorem (as in mathematics) and that reducing their number to five for software programming is reductive. He publishes
+in 1987~\parencite{stepanov.1987.higher} that one cannot ignore the mutability of states if one wants to achieve maximum
 efficiency. Stepanov reasons about software programming by drawing a parallel with algebraic structures. Indeed, let us
-consider the classical parallel computation model. In this model, it is needed to be able to reorder computation in
-order to have a reduction that works. \emph{Reordering computation} can be reworded as \emph{associative property} of an
-algebraic structure: the monoid which is a triplet consisting of a data structure, an associative binary operation and a
-neutral element. Stepanov thinks that we extract those data structures and those laws/properties from software program
-the same way as we discover theorems and axioms in mathematics. Software is then defined on top of algebraic structures,
-and it's the software programmer's job to discover the data structures and laws that compose them.
+consider the classical parallel computation model (map-reduce~\parencite{dean.2008.mapreduce}). In this model, being
+able to reorder computation is a prerequisite in order to have a reduction that works. \emph{Reordering computation} can
+be reworded as the \emph{associative property} of an algebraic structure, the monoid~\parencite{dean.2019.monoids} which
+is a triplet consisting of a data structure, an associative binary operation and a neutral element. Stepanov thinks that
+we extract those data structures and those laws/properties from software program the same way as we discover theorems
+and axioms in mathematics. Software would then defined on top of algebraic structures, and it's the software
+programmer's job to discover the data structures and laws that compose them.
 
 This reflection leads to the publication of \citetitle{musser.1988.generic}~\parencite{musser.1988.generic} in which the
 term \emph{Generic Programming} first appears. ``By generic programming, we mean the definition of algorithms and data
@@ -64,49 +62,57 @@ central notion is that of generic algorithms, which are parametrized procedural 
 of the underlying data representation and are derived from concrete, efficient algorithms.''. This article lead to the
 genesis of the book \citetitle{musser.1989.ada}~\parencite{musser.1989.ada} in which was published the first work about
 a generic library of algorithms and data structures. Then Stepanov and Lee wrote the first version of the Standard
-Template Library~\parencite{stepanov.1995.standard} in 1995. This standard template library was then incorporated
-alongside the C++ language for the release of the first ISO standard of the language in 1998 \parencite{iso.1998.cpp}.
-That same year is published~\parencite{dehnert.1998.fundamentals}. This is the first place where the term \emph{concept}
-appears as ``a set of axioms satisfied by a data type and a set of operations on it.'' This term is designed to include
-the complexity of an operation as part of an axiom in software programming. Also, it is introduced to replace the
-previously used mathematical terms that could not include this notion of complexity. It is also the first place where
-the notion of \emph{regular} type appears: ``Since we wish to extend semantics as well as syntax from built-in types to
-user types, we introduce the idea of regular type, which matches the built-in type semantics, thereby making our
-user-defined types behave like built-in types as well.'' Efforts were made by \citeauthor{gregor.2006.concepts-art}
-in~\parencite{gregor.2006.concepts-proc,gregor.2006.concepts-art} in 2006 to introduce them into C++ but it ultimately
-failed, and the feature was pulled off of the C++ standard.
+Template Library~\parencite{stepanov.1995.standard} in 1995 which is a carefully crafted library of basic algorithms to
+manipulate algebraic structures (data structures) that is still an authority to this day. This standard template library
+was then incorporated alongside the C++ language for the release of the first ISO standard of the language in 1998
+\parencite{iso.1998.cpp}. That same year is published~\parencite{dehnert.1998.fundamentals}. This is the first place
+where the term \emph{concept} appears as ``a set of axioms satisfied by a data type and a set of operations on it.''
+This term is designed to include the complexity of an operation as part of an axiom in software programming. Also, it is
+introduced to replace the previously used mathematical terms that could not carry the notion of complexity. It is also
+the first place where the notion of \emph{regular} type appears: ``Since we wish to extend semantics as well as syntax
+from built-in types to user types, we introduce the idea of regular type, which matches the built-in type semantics,
+thereby making our user-defined types behave like built-in types as well.'' Efforts were made by
+\citeauthor{gregor.2006.concepts-art} in~\parencite{gregor.2006.concepts-proc,gregor.2006.concepts-art} in 2006 to
+introduce them into C++11~\parencite{iso.2011.cpp}, but it ultimately failed, and the feature was pulled off of the C++
+standard~\parencite{seymour.2009.concepts}. This had major consequences on the language. Indeed, the standard body did
+not publish a standard for 13 years, which is a long period in the information technologies area, leading to adoption of
+more recent, more maintained/evolving languages by the industry. The standard body then decided to review its
+publication process and has set a 3 years deadline in between each new standard release. Features must be ready in due
+date before being merged into the next standard version or else they are delayed to the next standard version (3 years
+later). The standard body decided that it will not wait for a feature to be ready to publish its next release.
 
-Stepanov presented \emph{Generic programming} to Backus before publishing
-\citetitle{stepanov.2009.elements}~\parencite{stepanov.2009.elements} and Backus ``always knew that at some points he
-needed to figure out mutation into functional programming and one view of generic programming is that generic
-programming is functional programming with a well-defined way to handle mutation.'' Unfortunately Backus passed away
-before being able to write the forewords of \citetitle{stepanov.2009.elements} book. The term \emph{generic programming}
-never appears in the book because Stepanov thought he lost control over it. It has evolved in practice into
+Before publishing \citetitle{stepanov.2009.elements}~\parencite{stepanov.2009.elements}, Stepanov presented his view of
+\emph{Generic programming} to Backus. Backus ``always knew that at some points he needed to figure out mutation into
+functional programming and one view of generic programming is that generic programming is functional programming with a
+well-defined way to handle mutation.'' Unfortunately Backus passed away before being able to write the forewords of
+\citetitle{stepanov.2009.elements} book~\parencite{parent.2018.generic-programming}. The term \emph{generic programming}
+never appears in his book because Stepanov thought he lost control over it. In practice, it has evolved into
 metaprogramming, effectively associated to C++ template metaprogramming instead of being associated with the underlying
 mathematics, algebraic structures, data structures and algorithms. This book introduces the \emph{require} clause on
 algorithms in order to achieve constrained genericity.
 
-A workshop was help and its summary was published in 2012~\parencite{sutton.2012.concepts}, referred to as the
-\emph{Palo Alto} report, to summarize what design the committee wanted for concepts and what problem it would solve.
-\citetitle{stepanov.2009.elements} argues that just having constrained template was already incredibly useful, and the
-STL could be described in terms of \emph{require} clauses. This subset becomes known as ``concepts light'' and was
-enriched to become later what would be standardized in C++20.
+In order to pursue the introduction of concepts into the C++ language, a workshop was held in 2012 and its summary was
+published in \citetitle{sutton.2012.concepts}~\parencite{sutton.2012.concepts}. It is referred to as the \emph{Palo
+  Alto} report, and it summarizes what design the committee wanted for concepts and what problem(s) it would solve.
+Indeed, in \citetitle{stepanov.2009.elements} argues that just having constrained template was already incredibly
+useful, and the STL could be described in terms of \emph{require} clauses. This subset becomes known as ``concepts
+light'' and was enriched to become later what would be standardized in C++20.
 
 Stepanov then published \citetitle{stepanov.2014.mathematics}~\parencite{stepanov.2014.mathematics} that traces the
 history of algorithms and ties the history of mathematics with the history of generic programming. Indeed, Stepanov
 already gave a lecture in 2003~\parencite{stepanov.2003.gcm} where he traces in particular the history of the algorithm
-of gcd/gcm for 2500 years and explain how successive generation of mathematicians improved on by always looking for more
+of gcd/gcm for 2500 years and explain how successive generation of mathematicians improved it by always looking for more
 generic ways to solve the same problem. In essence, the book presents generic programming as an extension of the
 evolution of mathematical algorithms over time. In this book, Stepanov also reclaims the term of \emph{generic
-  programming} and differentiates it from template metaprogramming once and for all.
+  programming} and differentiates it from template metaprogramming once and for all. Stepanov also states that ``Generic
+programming is about abstracting and classifying algorithms and data structures. It gets its inspiration from
+Knuth~\parencite{knuth.2014.art} and not from type theory. Its goal is the incremental construction of systematic
+catalogs of useful, efficient and abstract algorithms and data structures. Such an undertaking is still a dream.''
 
-In this book Stepanov states that ``Generic programming is about abstracting and classifying algorithms and data
-structures. It gets its inspiration from Knuth~\parencite{knuth.2014.art} and not from type theory. Its goal is the
-incremental construction of systematic catalogs of useful, efficient and abstract algorithms and data structures. Such
-an undertaking is still a dream.'' Stepanov thought of STL as a starting point to a very large library of data
-structures and algorithms, written in a generic form, that would all work together nicely. STL is intended to be an
-example of how industry should move forward and work on building a large library of this form. Hopefully, this is the
-direction the C++ standard committee is going toward.
+Stepanov thought of STL as a starting point to a very large library of data structures and algorithms, written in a
+generic form, that would all work together nicely. STL is intended to be an example of how industry should move forward
+and work on building a large library of this form. Hopefully, this is the direction the C++ standard committee is going
+toward.
 
 \paragraph{Genericity within libraries} It is described by the cardinality of how many use-cases it can handle.
 Libraries always provides their own data structures, to represent and to give a meaning to the data the user wants to
@@ -143,8 +149,8 @@ holding. Dynamically typed programming languages are PHP, Python, JavaScript, Pe
 The consequence of being able to tell which type a variable is holding at all time (statically-typed language) is
 two-fold. For the developer, it is easier to reason about code and to spot bugs. For the compiler, it is possible to
 generate optimized binary code specific to this data type (vectorization, etc.). The consequence of being able to morph
-the types a variable can hold at run-time is mainly to serve prototyping purpose. When tweaking a Jupyter notebook, it
-is much appreciated not to be limited to a single type for each variable to be able to iterate on the prototype much
+the types a variable can hold at runtime is mainly to serve prototyping purpose. When tweaking a Jupyter notebook, it is
+much appreciated not to be limited to a single type for each variable to be able to iterate on the prototype much
 faster.
 
 In image processing, an image \(Im\) is defined on a domain \(\mathcal{D}\) (which contains points) by the relation
@@ -545,13 +551,13 @@ iterators and especially \emph{parametrized modules}. A module in CLU is represe
 would call it a class where the data structure correspond to the member variables and the operations correspond to the
 member functions (or methods). In CLU, the clusters can be parametrized which is a way to introduce the notion of
 parametric polymorphism. Indeed, clusters offered the ability to define a generic data structure and its functions whose
-behavior will not change whatever type the cluster is parametrized with. At first, type-safety was enforced at run-time
+behavior will not change whatever type the cluster is parametrized with. At first, type-safety was enforced at runtime
 in CLU. Later, \emph{where clauses} were introduced to specify specific requirements over cluster type parameters. This
 had the consequence of allowing only the operations required in the where clause to be used in the cluster
 implementation code. This enables proper compile-type checks, type-safety and the compilation into a simple native and
 optimized code by the compiler. The following code illustrates how to create a cluster (or class) named \emph{vector},
-declaring a set of member functions and requiring a specific behavior (operator \(=\) and \(<\)) from its underlying stored
-elements:
+declaring a set of member functions and requiring a specific behavior (operator \(=\) and \(<\)) from its underlying
+stored elements:
 
 \begin{minted}{cobol}
   vector = cluster [T: type] is
@@ -563,8 +569,8 @@ elements:
 
 When implementing the member functions declared for \texttt{vector}, the only valid operations that can be performed on
 a value of type \texttt{T} are \texttt{equal} (\(=\) for comparison) and \texttt{less} (\(<\) for ordering). In CLU the
-actual instantiation of the parameter (here \texttt{T}) is done at run-time. Indeed, each type is represented by a
-descriptor, even a parametrized type parameter. At run-time, a concrete type is used to instantiate the cluster. To
+actual instantiation of the parameter (here \texttt{T}) is done at runtime. Indeed, each type is represented by a
+descriptor, even a parametrized type parameter. At runtime, a concrete type is used to instantiate the cluster. To
 achieve this, the placeholder type descriptor is replaced by the one of the actual concrete type at this moment. The
 instantiation can then be considered dynamic which differs from the C++ compilation model where the template
 instantiation is considered static (\ie done at compile-time). The \pros and \cons of this approach are discussed
@@ -1376,11 +1382,30 @@ scope of possibilities for the future.
 \section{Summary}
 
 In this chapter we have presented the origin of generic programming, which goes as far
-as~\citedate[year]{musser.1988.generic}. We then proceeds to demonstrate how genericity can be achieved within libraries
-and what programming languages features enables it. Second, we discuss how true generic facilities are built-in
-programming languages thanks to template metaprogramming techniques in a first time. In a second time, we discuss how
-new built-in programming language features such as concepts are finally reaching a state of generic programming as
-describe in~\parencite{dehnert.1998.fundamentals}. Finally, we discuss how the current state of generic programming via
-template metaprogramming, which is bound to the static world, interacts with the dynamic world.
+as~\citedate[year]{musser.1988.generic} and how it has evolved to be integrated in the Ada programming language and then
+the C++ programming language. Afterwards, it has evolved into the notion of \emph{concept} which completes the toolbox
+required to be able to fully make use of generic programming without resorting to obscure tweaks and tools.
 
-\FIXME{Rework summary}
+This chapter explores the possibilities of achieving the notion of genericity from within a library. Indeed, there are
+three techniques enabling the user to write a high level algorithm once that can run on every type. They are the
+\emph{code duplication} approach, the \emph{generalization} approach and the \emph{inclusion and parametric
+  polymorphism} approach. We present in~\cref{table:gen.approaches} the result of the comparison of these approaches with
+regard to the features that we are interested in. We also discuss the limitations linked to the usage of those
+approaches by comparing OpenCV, scikit-Image and Pylene which make use of the four techniques at different level to
+achieve different goals. Furthermore, we have identified limitations related to the underlying data type, the structure of the
+domain, the optimizations and discuss the performances through a concrete benchmark presented
+in~\cref{fig:gen.bench.square.disc}.
+
+This chapter also explores how the notion of genericity is achieved with the programming languages. We retrace how Ada
+implemented it and then how C++ permitted the expression of require-clauses (concept) as soon as C++98, even though it
+was limited at that time. We explore how template metaprogramming techniques have been developed and have evolved,
+alongside the C++ programming language itself, to finally reach a point in 2020 (C++20) where it is possible to write
+concepts in C++.
+
+Finally, this chapter presents the inherent limitation of C++ templates, which is that they remain in the static world
+(compile time). Genericity (in the sense C++ template) does not exist in the final shipped binary to the user. The final
+user, in its dynamic world (runtime) cannot use a generic (C++ code) tool. We discuss the different approaches possible
+to bridge this gap between the static (compile-time) and dynamic (runtime) world.
+
+The next chapter will make extensive use of Genericity to present the first contribution of this thesis: a taxonomy of
+concepts related to Image processing.

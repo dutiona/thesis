@@ -338,7 +338,7 @@ concept ViewImage =
 Having images as views is a very important property as it simplify greatly the reasoning when performance is needed.
 This allows the user to pass his images everywhere without worrying about dangling data buffer expiring around the
 corner. It also enables us to have a library design similar to the C++'s standard library which the user is familiar
-with and, why not, have standard algorithm and standard view work on our images types. All of these are the main reason
+with and, why not, have standard algorithm and standard view work on our image types. All of these are the main reason
 why we decided to adopt this design. However, unlike the standard library, as we are not required to work with iterator
 due to backward compatibility.
 
@@ -424,7 +424,7 @@ auto i = view::transform(h,
 
 The tree of type resulting from this view chaining is illustrated by~\cref{fig.viewAST}. It illustrates how chaining
 views with each other result in the formation of an abstract tree that records the operations to perform. This model
-enables building complex computational trees via views while keeping efficient performance at run-time. However, those
+enables building complex computational trees via views while keeping efficient performance at runtime. However, those
 trees are complex for the compiler to process and can induce heavy compilation time overhead.
 
 \begin{figure}[htb]

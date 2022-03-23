@@ -5,51 +5,54 @@
 
 \lettrine[lines=2]{N}{owadays} \emph{Computer Vision} and \emph{Image Processing (IP)} are omnipresent in the day-to-day
 life of the people. It is present each time we pass by a CCTV camera, each time we go to the hospital do an MRI, each
-time we drive our car and pass in front of a speed camera and each time we use our computer, smartphone or tablet. We
-just cannot avoid it anymore. The systems using this technology are sometimes simple and, sometimes, more complex. Also,
-the usage made of this technology has several purposes: space observation, medical, quality of life improvement,
-surveillance, control, autonomous system, etc. Henceforth, Image processing has a wide range of research and despite
-having a mass of previous of work already contributed to, there are still a lot to explore.
+time we drive our car and pass in front of a speed camera and each time we use our computer, smartphone or tablet. It
+cannot be avoided it anymore. The systems using this technology are sometimes simple and, sometimes, more complex. Also,
+the usage made of this technology has many purposes such as space observation, medical, quality of life improvement,
+surveillance, control, autonomous system, etc. Henceforth, \emph{Image Processing} has a wide range of research and
+despite having a mass of previous of work already contributed to, there are still a lot to explore.
 
 Let us take the example of a modern smartphone application which provides facial recognition in order to recognize
-people whom are featuring inside a photo. To provide accurate result, this application will have to do a lot of
-different processing. Indeed, there are a lot of elements to handle. We can list (non exhaustively) the weather, the
-light exposition, the resolution, the orientation, the number of person, the localization of the person, the distinction
-between humans and objects/animals, etc. All of these is in order to finally recognizing the person(s) inside the photo.
-What the application does not tell you is the complexity of the image processing pipeline behind the scene that can not
-even be executed in its entirety on one's device (smartphone, tablet, \ldots). Indeed, image processing is costly in
-computing resources and would not meet the time requirement desired by the user if the entire pipeline was executed on
-the device. Furthermore, for the final part which is ``recognize the person on the photo'', one needs to feed the
-pre-processed photo to a neural network trained beforehand through deep learning techniques in order to give an accurate
-response. There exists technologies able to embed neural network into mobile phone such as
-MobileNets~\parencite{howard.2017.mobilenets} but it is still limited. It can detect a human being inside a photo but
-not give the answer about whom this human being is for instance. That is why, accurate neural network system usually are
-abstracted away in cloud technologies making them available only via Internet. When uploading his image, the user does
-not imagine the amount of technologies and computing power that will be used to find who is on the photo.
+people whom are featuring inside a photo. To provide an accurate result, this application will have to do a lot of
+different processing through several steps. In addition, there are a lot of variables to handle. We can list (non
+exhaustively) the weather, the light exposition, the resolution, the orientation, the number of person, the localization
+of the person, the distinction between humans and objects/animals, etc. All of these elements needs to be carefully
+handled in order to finally recognize the person(s) inside the photo. What the application does not tell you is the
+complexity of the image processing pipeline behind the scene that, most of the time, cannot even be executed in its
+entirety on one's device (smartphone, tablet, \ldots). Indeed, image processing is costly in computing resources and
+would not meet the time requirement desired by the user if the entire pipeline was executed on the device. Furthermore,
+for the final part which is ``recognize the person on the photo'', the application needs to feed the pre-processed photo
+to a neural network trained beforehand through deep learning techniques in order to give an accurate response. There
+exists technologies capable of embedding neural network into mobile phone such as
+MobileNets~\parencite{howard.2017.mobilenets}, but it remains limited in terms of operational capabilities. It can
+detect a human being inside a photo but not give the answer about whom this human being is for instance. That is why,
+accurate neural network system usually are abstracted away in cloud technologies making them available only via
+Internet. When uploading his image, the user does not imagine the amount of technologies and computing power that will
+be used to find who appear on the photo.
 
 We now understand that in order to build applications that interact with photos or videos nowadays, we need to be able
 to do accurate, fast and scalable image processing on a multitude of devices (smartphone, tablet, \ldots). In order to
 achieve this goal, image processing practitioners needs to have two kinds of tools at their disposal. One will be the
-prototyping environment, a toolbox which allow the practitioner to develop, test and improve its application logic.
-The other is the production environment which deploy the viable version of the application that was developed by the
+prototyping environment, a toolbox which allow the practitioner to develop, test and improve its application logic. The
+second one is the production environment which deploys the viable version of the application that was developed by the
 practitioner. Both environment may not have the same needs. On one hand, the prototyping environment usually requires to
 have a fast feedback loop for testing, an availability of state-of-the-art algorithms and existing software. This way
-the practitioner can easily build upon them and be fast enough in order not to keep waiting for results when testing
-many prototypes. On the other hand, the production environment must be stable, resilient, fast and scalable.
+the practitioner can easily build on top of them and be fast enough so that he does not wait a long time to get the
+results when testing many prototypes. On the other hand, the production environment must be stable, resilient, fast and
+scalable.
 
-When looking at standards in the industry nowadays, we notice that Python is the main choice for prototyping. Also,
-Python may not be enough so that a viable prototype can be pushed in production with minimal changes afterwards. We find
-it non-ideal that the practitioner cannot take advantages of many optimization opportunities, both in terms of algorithm
-efficiency and better hardware usage, when proceeding this way. It would be much more efficient to have basic low level
-building blocks that can be adapted to fit as mush use cases as possible. This way, the practitioner can easily build
-upon them when designing its application. We distinguish two kinds of use cases. The first one is about the multiplicity
-of types or algorithms the practitioner is facing. The second one is about the diversity of hardware the practitioner
-may want to run his program. The goal is to have building blocks that can be intelligent enough to take advantage of
-many optimization opportunities, with regard to both input data types/algorithms and target hardware. Then the
-practitioner would have a huge performance improvement, by default, without specifically tweaking its application. As
-such, the concept of genericity was introduced. It aims at providing a common ground about how an image should behave
-when passed to basic algorithms needed for complex applications. This way, in theory, one only needs to write the
-algorithm once for it to work with any given kind of image.
+When looking at standards in the industry nowadays, we notice that the \emph{Python} programming language is the main
+choice for prototyping. However, Python may not be suitable to push a viable prototype in production with minimal
+changes afterwards. We find it non-ideal that the practitioner cannot take advantages of many optimization
+opportunities, both in terms of algorithm efficiency and better hardware usage, when proceeding this way. It would be
+much more efficient to have basic low level building blocks that can be adapted to fit as mush use cases as possible.
+This way, the practitioner can easily build on top of them when designing its application. We distinguish two kinds of
+use cases. The first one is about the multiplicity of types or algorithms the practitioner is facing. The second one is
+about the diversity of hardware the practitioner may want to run his program. The goal is to have building blocks that
+can be intelligent enough to take advantage of many optimization opportunities, with regard to both input data
+types/algorithms and target hardware. Then the practitioner would have a huge performance improvement, by default,
+without specifically tweaking his application. As such, the concept of genericity was introduced. It aims at providing a
+common ground about how an image should behave when passed to basic algorithms needed for complex applications. This
+way, in theory, one only needs to write the algorithm once for it to work with any given kind of image.
 
 
 \section*{Different data types and algorithms}

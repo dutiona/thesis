@@ -45,10 +45,10 @@ that the maintainer has to publish many bundles of his package where he wants it
     \includegraphics[width=.48\linewidth]{../figures/static_compiletime}
   }
   \hfil
-  \subfloat[Run-time]{
+  \subfloat[Runtime]{
     \includegraphics[width=.48\linewidth]{../figures/static_runtime}
   }
-  \caption{Compiled languages: compile-time (a) \vs run-time (b).}
+  \caption{Compiled languages: compile-time (a) \vs runtime (b).}
   \label{fig:static.dynamic.compiled}
 \end{figure}
 
@@ -74,7 +74,7 @@ variety of bytecode format.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.6\linewidth]{../figures/dynamic_pipeline}
-  \caption{Interpreted languages: run-time}
+  \caption{Interpreted languages: runtime}
   \label{fig:static.dynamic.dynamic.pipeline}
 \end{figure}
 
@@ -109,7 +109,7 @@ approaches in order to be able to execute a binary from source code.
 
 Compiled programming languages usually have poor support of introspection facilities. At best, static reflection is
 available at compile-time, but dynamic reflection is not an option. The structure of the program does not change at
-runtime. Some flexibility exists when delving into the area of hot-swapping dynamic libraries at run-time, however these
+runtime. Some flexibility exists when delving into the area of hot-swapping dynamic libraries at runtime, however these
 techniques drags alongside security-related issues that injecting possible foreign machine code into one's program may
 generate.
 Interpreted programming languages usually have very developed introspection facilities. Dynamic reflection at
@@ -133,7 +133,7 @@ static information:
 This means that, while the information may not be known at compile-time, we are able to write (or, more accurately,
 generate) code dedicated for those common types that we know constitutes a large portion of the use cases. Furthermore,
 we can write optimized portion of code dedicated to handle some particular known types that the program will use when it
-encounters them at run-time.
+encounters them at runtime.
 On the other hand, the following information are always dynamic:
 \begin{itemize}
   \item Image's actual values,
