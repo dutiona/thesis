@@ -1,4 +1,4 @@
-BUNDLE_DIR = "roynard.thesis.2022"
+BUNDLE_DIR = roynard.thesis.2022
 SUBDIRS = figures manuscript slides
 
 all : $(SUBDIRS) bundle
