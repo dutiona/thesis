@@ -4,10 +4,6 @@
 % Dorian Depriester, 2014
 
 \makeatletter
-\def\@school{school}
-\newcommand{\school}[1]{
-  \def\@school{#1}
-}
 
 \def\@speciality{Speciality}
 \newcommand{\speciality}[1]{
@@ -23,50 +19,41 @@
   \def\@address{#1}
 }
 
-\def\@director{Director}
-\newcommand{\director}[1]{
-  \def\@director{#1}
-}
-
-\def\@advisor{Advisor}
-\newcommand{\advisor}[1]{
-  \def\@advisor{#1}
-}
 \def\@jurya{}{}{}
 \newcommand{\jurya}[3]{
-  \def\@jurya{#1,	& #2	& #3\\}
+  \def\@jurya{#3	& #1	& #2\\}
 }
 \def\@juryb{}{}{}
 \newcommand{\juryb}[3]{
-  \def\@juryb{#1,	& #2	& #3\\}
+  \def\@juryb{#3	& #1	& #2\\}
 }
 \def\@juryc{}{}{}
 \newcommand{\juryc}[3]{
-  \def\@juryc{#1,	& #2	& #3\\}
+  \def\@juryc{#3	& #1	& #2\\}
 }
 \def\@juryd{}{}{}
 \newcommand{\juryd}[3]{
-  \def\@juryd{#1,	& #2	& #3\\}
+  \def\@juryd{#3	& #1	& #2\\}
 }
 \def\@jurye{}{}{}
 \newcommand{\jurye}[3]{
-  \def\@jurye{#1,	& #2	& #3\\}
+  \def\@jurye{#3	& #1	& #2\\}
 }
 \def\@juryf{}{}{}
 \newcommand{\juryf}[3]{
-  \def\@juryf{#1,	& #2	& #3\\}
+  \def\@juryf{#3	& #1	& #2\\}
 }
 \def\@juryg{}{}{}
 \newcommand{\juryg}[3]{
-  \def\@juryg{#1,	& #2	& #3\\}
+  \def\@juryg{#3	& #1	& #2\\}
 }
 \def\@juryh{}{}{}
 \newcommand{\juryh}[3]{
-  \def\@juryh{#1,	& #2	& #3\\}
+  \def\@juryh{#1	& #2	& #3\\}
 }
 \def\@juryi{}{}{}
 \newcommand{\juryi}[3]{
-  \def\@juryi{#1,	& #2	& #3\\}
+  \def\@juryi{#3	& #1	& #2\\}
 }
 \makeatother
 
@@ -88,7 +75,6 @@
     {\bfseries submitted to fulfill requirements for the degree of Doctor of}\\
     \vspace{0.5cm}
     \includegraphics[width=0.3\textwidth]{../images/Logo_of_Sorbonne_University.pdf}\\
-    %{\huge\bfseries \@school}\\
     \vspace{0.5cm}
     {\Large{\bfseries with the Doctoral Speciality of ``\@speciality''}}\\
     \vspace{1cm}
@@ -99,10 +85,11 @@
     {\Large {\bfseries \@author}} \\
     \vspace{0.2cm}
     on the \@date \\
-    \textit{before distinguished members of the jury}\\
-    \vspace{0.2cm}
-    \begin{tabular}{>{\bfseries}lll}
-      \large Jury \\
+    \vspace{0.5cm}
+    \textit{before distinguished members of the {\bfseries Jury}:}\\
+    \vspace{0.1cm}
+    \begin{tabular}{l>{\bfseries}ll}
+      \hline
       \@jurya
       \@juryb
       \@juryc
@@ -112,10 +99,8 @@
       \@juryg
       \@juryh
       \@juryi
+      \hline
     \end{tabular}
-    \vfill
-    Director: {\bfseries \@director}\\
-    Advisor: {\bfseries \@advisor}\\
     \vfill
     \@address
   \end{titlepage}
@@ -128,25 +113,13 @@
 \date{\today}
 \ED{Doctoral School n°130: \'{E}cole Doctorale Informatique, Télécommunications et \'{E}lectronique (EDITE)}
 \speciality{Software Engineering \& Image Processing}
-\director{Pr. Thierry \textsc{G\'{e}raud}}
-\advisor{Dr. Edwin \textsc{Carlinet}}
-\jurya{Pr. XX XXX}{XXX XXX}{President}
-\juryb{Pr. XX XXX}{XXX XXX}{Reporter}
-\juryc{Pr. XX XXX}{XXX XXX}{Reporter}
-\juryd{Dr. XX XXX}{XXX XXX}{Jury member}
-\jurye{Dr. XX XXX}{XXX XXX}{Jury member}
-\school{Sorbonne University}
+\jurya{Pr. Hugues Talbot}{CentraleSupélec / Universit\'{e} Paris Saclay}{President}
+\juryb{Pr. Benjamin Perret}{ESIEE / LIGM / Universi\'{e} Gustave Eiffel}{Reporter}
+\juryc{? Pr. David Coeurjolly ?}{CNRS / LIRIS}{Reporter}
+\juryd{Dr. Camille Kurtz}{LIPADE / SIP Lab / Universit\'{e} Paris Cit\'{e}}{Jury member}
+\jurye{Dr. Joël Falcou}{LRI / Universi\'{e} Paris Saclay}{Jury member}
+\juryf{Pr. Thierry G\'{e}raud}{EPITA LRDE}{Director}
+\juryg{Dr. Edwin Carlinet}{EPITA LRDE}{Advisor}
 \address{
   \textbf{Laboratoire de Recherche et de Développement de l'EPITA (LRDE)}\\ 14-16 rue Voltaire, 94270 Le Kremlin-Bicêtre, France
 }
-
-%* examinateurs :
-%* Camille Kurtz (Université de Paris) u-paris.fr
-%* Joël Falcou (LRI) lri.fr
-
-%* rapporteurs :
-%* Benjamin Perret (ESIEE, auteur de HIGRA) esiee.fr
-% ???? * David Coeurjolly (CNRS, LIRIS, auteur de DGTAL)
-
-%* président :
-%* Hugues Talbot (Centrale Supelec) centralesupelec.fr
