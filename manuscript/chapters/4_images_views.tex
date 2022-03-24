@@ -1061,11 +1061,11 @@ People familiar with functional programming may notice similarities with these l
 that take a function as argument: the operator or the predicate to apply for each pixel; we do not iterate by hand on
 the image pixels.
 
-\paragraph{Views improve re-usability.} The code snippets above are simple but not very re-usable. However, following the
-functional programming paradigm, it is quite easy to define new views, because some image adaptors can be considered as
-\emph{high-order functions} for which we can bind some parameters. In~\cref{fig.view.highorder}, we show how the
+\paragraph{Views improve re-usability.} The code snippets above are simple but not very re-usable. However, following
+the functional programming paradigm, it is quite easy to define new views, because some image adaptors can be considered
+as \emph{high-order functions} for which we can bind some parameters. In~\cref{fig.view.highorder}, we show how the
 primitive \emph{transform} can be used to create a view summing two images and a view operator performing the grayscale
-conversion as well as the sub-quantization which can be reused afterward\footnote{These functions could have been
+conversion as well as the sub-quantization which can be reused afterwards\footnote{These functions could have been
   written in a more generic way for more re-usability, but this is not the purpose here.}.
 
 \begin{figure}
