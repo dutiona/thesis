@@ -152,20 +152,24 @@ namespace mln::py
 {
   mln::ndbuffer_image from_numpy(pybind11::array arr)
   {
-    if (!pybind11::detail::check_flags(arr.ptr(), pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_))
+    if (!pybind11::detail::check_flags(arr.ptr(),
+    pybind11::detail::npy_api::NPY_ARRAY_C_CONTIGUOUS_))
       throw std::invalid_argument("Array should be C contiguous");
     auto                base = arr.base();
     const auto          info = arr.request();
     mln::sample_type_id type = get_sample_type(info.format);
     if (type == mln::sample_type_id::OTHER)
       throw std::invalid_argument(fmt::format(
-          "Invalid dtype argument (Got dtype format {} expected types: [u]int[8, 16, 32, 64], float, double or bool)",
+          "Invalid dtype argument (Got dtype format {} expected types:"
+          " [u]int[8, 16, 32, 64], float, double or bool)",
           info.format));
-    const bool is_rgb8 = info.ndim == 3 && info.shape[2] == 3 && type == mln::sample_type_id::UINT8;
+    const bool is_rgb8 = info.ndim == 3 && info.shape[2] == 3 &&
+                          type == mln::sample_type_id::UINT8;
     const auto pdim    = info.ndim - (is_rgb8 ? 1 : 0);
     if (pdim > mln::PYLENE_NDBUFFER_DEFAULT_DIM)
       throw std::invalid_argument(
-          fmt::format("Invalid number of dimension from numpy array (Got {} but should be less than {})", pdim,
+          fmt::format("Invalid number of dimension from numpy array"
+                      " (Got {} but should be less than {})", pdim,
                       mln::PYLENE_NDBUFFER_DEFAULT_DIM));
     int            size[mln::PYLENE_NDBUFFER_DEFAULT_DIM]    = {0};
     std::ptrdiff_t strides[mln::PYLENE_NDBUFFER_DEFAULT_DIM] = {0};
@@ -176,7 +180,8 @@ namespace mln::py
     }
     const auto sample_type = is_rgb8 ? mln::sample_type_id::RGB8 : type;
     auto       res =
-        mln::ndbuffer_image::from_buffer(reinterpret_cast<std::byte*>(info.ptr), sample_type, pdim, size, strides);
+        mln::ndbuffer_image::from_buffer(reinterpret_cast<std::byte*>(info.ptr),
+                                         sample_type, pdim, size, strides);
     if (base && pybind11::isinstance<mln::internal::ndbuffer_image_data>(base))
       res.__data() = pybind11::cast<std::shared_ptr<mln::internal::ndbuffer_image_data>>(base);
     return res;
@@ -195,8 +200,8 @@ namespace mln::py
     }
 
     /* For the moment, restrict RGB8 image to 2D image */
-    const bool               is_rgb8 = img.pdim() == 2 && img.sample_type() == mln::sample_type_id::RGB8;
-    const auto               ndim    = img.pdim() + (is_rgb8 ? 1 : 0);
+    const bool is_rgb8 = img.pdim() == 2 && img.sample_type() == mln::sample_type_id::RGB8;
+    const auto ndim    = img.pdim() + (is_rgb8 ? 1 : 0);
     std::vector<std::size_t> strides(ndim, 1);
     std::vector<std::size_t> shapes(ndim, 3);
     auto                     descr = get_sample_type(img.sample_type());
@@ -209,12 +214,14 @@ namespace mln::py
 
     auto res = pybind11::reinterpret_steal<pybind11::object>(api.PyArray_NewFromDescr_(
         api.PyArray_Type_, descr.release().ptr(), ndim, reinterpret_cast<Py_intptr_t*>(shapes.data()),
-        reinterpret_cast<Py_intptr_t*>(strides.data()), reinterpret_cast<void*>(img.buffer()), flags, nullptr));
+        reinterpret_cast<Py_intptr_t*>(strides.data()),
+        reinterpret_cast<void*>(img.buffer()), flags, nullptr));
 
     if (!res)
       throw std::runtime_error("Unable to create the numpy array in ndimage -> array");
     if (data)
-      // **Steal** a reference to data (https://numpy.org/devdocs/reference/c-api/array.html#c.PyArray_SetBaseObject)
+      // **Steal** a reference to data
+      // (https://numpy.org/devdocs/reference/c-api/array.html#c.PyArray_SetBaseObject)
       api.PyArray_SetBaseObject_(res.ptr(), data.release().ptr());
     return res;
   }
@@ -223,7 +230,8 @@ namespace mln::py
   {
     if (!pybind11::detail::get_global_type_info(typeid(mln::internal::ndbuffer_image_data)))
     {
-      pybind11::class_<mln::internal::ndbuffer_image_data, std::shared_ptr<mln::internal::ndbuffer_image_data>>(
+      pybind11::class_<mln::internal::ndbuffer_image_data,
+        std::shared_ptr<mln::internal::ndbuffer_image_data>>(
           m, "ndbuffer_image_data");
     }
   }
@@ -275,16 +283,19 @@ namespace mln::py
     pybind11::class_<mln::se::disc_non_decomp>(m, "disc").def(
         pybind11::init([](float radius) { return mln::se::disc_non_decomp{radius}; }));
 
-    pybind11::class_<mln::se::disc>(m, "disc_decomposable").def(pybind11::init([](float radius) {
-      return mln::se::disc{radius};
+    pybind11::class_<mln::se::disc>(m, "disc_decomposable").def(
+      pybind11::init([](float radius) {
+        return mln::se::disc{radius};
     }));
 
-    pybind11::class_<mln::se::rect2d_non_decomp>(m, "rect2d").def(pybind11::init([](int width, int height) {
-      return mln::se::rect2d_non_decomp{width, height};
+    pybind11::class_<mln::se::rect2d_non_decomp>(m, "rect2d").def(
+      pybind11::init([](int width, int height) {
+        return mln::se::rect2d_non_decomp{width, height};
     }));
 
-    pybind11::class_<mln::se::rect2d>(m, "rect2d_decomposable").def(pybind11::init([](int width, int height) {
-      return mln::se::rect2d{width, height};
+    pybind11::class_<mln::se::rect2d>(m, "rect2d_decomposable").def(
+      pybind11::init([](int width, int height) {
+        return mln::se::rect2d{width, height};
     }));
   }
 
@@ -298,8 +309,8 @@ namespace mln::py
 \label{appendix:static-dynamic-bridge.mm}
 
 This module defines the routines that are exposed and available from Python. It is divided in three sub-parts. First is
-the \(n \times n\) dispatcher code. Second is the value set mechanic. Third is the code exposing the mathematical morphology
-algorithms.
+the \(n \times n\) dispatcher code. Second is the value set mechanic. Third is the code exposing the mathematical
+morphology algorithms.
 
 \subsection{The \(\protect n \times n\) dispatcher}
 \label{appendix:static-dynamic-bridge.mm.nndispatcher}
@@ -708,7 +719,8 @@ namespace details
   }
 
   template <template <typename> class Op, typename... Args>
-  auto call_template_op_from_type_info(const std::type_info& tid) -> std::optional<std::variant<Op<Args>...>>
+  auto call_template_op_from_type_info(const std::type_info& tid)
+    -> std::optional<std::variant<Op<Args>...>>
   {
     std::optional<std::variant<Op<Args>...>> v = std::nullopt;
 
@@ -726,7 +738,8 @@ namespace details
   };
 
   template <class... Ts>
-  auto any_to_variant_cast_type_list(std::any a, type_list<Ts...>) -> std::optional<std::variant<Ts...>>
+  auto any_to_variant_cast_type_list(std::any a, type_list<Ts...>)
+    -> std::optional<std::variant<Ts...>>
   {
     return any_to_variant_cast<Ts...>(a);
   }
@@ -738,8 +751,9 @@ namespace details
     return call_template_op_from_type_info<Op, Ts...>(tid);
   }
 
-  using supported_types = type_list<std::uint8_t, std::uint16_t, std::uint32_t, std::uint64_t, std::int8_t,
-                                    std::int16_t, std::int32_t, std::int64_t, float, double>;
+  using supported_types = type_list<std::uint8_t, std::uint16_t, std::uint32_t,
+                                    std::uint64_t, std::int8_t, std::int16_t,
+                                    std::int32_t, std::int64_t, float, double>;
 
   template <class T, class U, class C = std::common_type_t<T, U>>
   C max(const T& a, const U& b)
@@ -782,7 +796,8 @@ namespace mln
 
   type_erased_value type_erased_value::max() const
   {
-    auto op = details::call_template_op_from_type_info_type_list<limit_max>(tid(), details::supported_types{});
+    auto op = details::call_template_op_from_type_info_type_list<limit_max>(tid(),
+                details::supported_types{});
 
     auto ret = std::visit([](auto op_) -> std::any { return {op_()}; }, *op);
     return {ret, *vs_};
@@ -796,7 +811,8 @@ namespace mln
 
   type_erased_value type_erased_value::min() const
   {
-    auto op = details::call_template_op_from_type_info_type_list<limit_min>(tid(), details::supported_types{});
+    auto op = details::call_template_op_from_type_info_type_list<limit_min>(tid(),
+                details::supported_types{});
 
     auto ret = std::visit([](auto op_) -> std::any { return {op_()}; }, *op);
     return {ret, *vs_};
@@ -804,7 +820,8 @@ namespace mln
 
   type_erased_value type_erased_value::sup() const
   {
-    auto op = details::call_template_op_from_type_info_type_list<limit_max>(tid(), details::supported_types{});
+    auto op = details::call_template_op_from_type_info_type_list<limit_max>(tid(),
+                details::supported_types{});
 
     auto ret = std::visit([](auto op_) -> std::any { return {op_()}; }, *op);
     return {ret, *vs_};
@@ -812,7 +829,8 @@ namespace mln
 
   type_erased_value type_erased_value::inf() const
   {
-    auto op = details::call_template_op_from_type_info_type_list<limit_min>(tid(), details::supported_types{});
+    auto op = details::call_template_op_from_type_info_type_list<limit_min>(tid(),
+                details::supported_types{});
 
     auto ret = std::visit([](auto op_) -> std::any { return {op_()}; }, *op);
     return {ret, *vs_};
@@ -898,7 +916,11 @@ namespace mln
     auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
 
     if (lhs && rhs)
-      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {details::max(lhs_, rhs_)}; }, *lhs, *rhs)};
+      return {
+        std::visit([](auto lhs_, auto rhs_) -> std::any {
+                      return {details::max(lhs_, rhs_)};
+                   }, *lhs, *rhs)
+      };
     else
     {
       auto absl = std::any_cast<type_erased_value>(l);
@@ -913,7 +935,11 @@ namespace mln
     auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
 
     if (lhs && rhs)
-      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {details::min(lhs_, rhs_)}; }, *lhs, *rhs)};
+      return {
+        std::visit([](auto lhs_, auto rhs_) -> std::any {
+                      return {details::min(lhs_, rhs_)};
+                   }, *lhs, *rhs)
+      };
     else
     {
       auto absl = std::any_cast<type_erased_value>(l);
@@ -928,7 +954,11 @@ namespace mln
     auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
 
     if (lhs && rhs)
-      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ + rhs_}; }, *lhs, *rhs)};
+      return {
+        std::visit([](auto lhs_, auto rhs_) -> std::any {
+                      return {lhs_ + rhs_};
+                   }, *lhs, *rhs)
+      };
     else
     {
       auto absl = std::any_cast<type_erased_value>(l);
@@ -943,7 +973,11 @@ namespace mln
     auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
 
     if (lhs && rhs)
-      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ - rhs_}; }, *lhs, *rhs)};
+      return {
+        std::visit([](auto lhs_, auto rhs_) -> std::any {
+                      return {lhs_ - rhs_};
+                   }, *lhs, *rhs)
+      };
     else
     {
       auto absl = std::any_cast<type_erased_value>(l);
@@ -958,7 +992,11 @@ namespace mln
     auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
 
     if (lhs && rhs)
-      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ * rhs_}; }, *lhs, *rhs)};
+      return {
+        std::visit([](auto lhs_, auto rhs_) -> std::any {
+                      return {lhs_ * rhs_};
+                   }, *lhs, *rhs)
+      };
     else
     {
       auto absl = std::any_cast<type_erased_value>(l);
@@ -973,7 +1011,11 @@ namespace mln
     auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
 
     if (lhs && rhs)
-      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ / rhs_}; }, *lhs, *rhs)};
+      return {
+        std::visit([](auto lhs_, auto rhs_) -> std::any {
+                      return {lhs_ / rhs_};
+                   }, *lhs, *rhs)
+      };
     else
     {
       auto absl = std::any_cast<type_erased_value>(l);
@@ -988,7 +1030,11 @@ namespace mln
     auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
 
     if (lhs && rhs)
-      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {lhs_ % rhs_}; }, *lhs, *rhs)};
+      return {
+        std::visit([](auto lhs_, auto rhs_) -> std::any {
+                      return {lhs_ % rhs_};
+                   }, *lhs, *rhs)
+      };
     else
     {
       auto absl = std::any_cast<type_erased_value>(l);
@@ -1003,7 +1049,11 @@ namespace mln
     auto rhs = details::any_to_variant_cast_type_list(r, details::supported_types{});
 
     if (lhs && rhs)
-      return {std::visit([](auto lhs_, auto rhs_) -> std::any { return {details::pow(lhs_, rhs_)}; }, *lhs, *rhs)};
+      return {
+        std::visit([](auto lhs_, auto rhs_) -> std::any {
+                      return {details::pow(lhs_, rhs_)};
+                   }, *lhs, *rhs)
+      };
     else
     {
       auto absl = std::any_cast<type_erased_value>(l);
@@ -1275,7 +1325,8 @@ namespace mln::py
 namespace my
 {
   template <class T>
-  mln::image2d<float> slow_stretch(const mln::image2d<T>& src, const mln::value_set<pybind11::object>& py_vs)
+  mln::image2d<float> slow_stretch(const mln::image2d<T>& src,
+                                    const mln::value_set<pybind11::object>& py_vs)
   {
     mln::image2d<float> res = mln::transform(src, [&py_vs](auto val) -> float {
       auto anymax  = py_vs.max();                        // returns std::any of pybind11:object
@@ -1309,14 +1360,15 @@ namespace my
     mln::image2d<float> res  = mln::transform(src, [&vs, &vs_f](auto val) -> float {
       // simulate having an image<type_erased_value>
       auto anyval = std::any{val}; // std::any of T
-                                    // type_erased_value of std::any of T aware of value-set of T
+                                   // type_erased_value of std::any of T aware of value-set of T
       auto abs_anyval = mln::type_erased_value{anyval, vs};
       // instantiate a value-set for type_erased_value
       auto abs_vs = mln::value_set<mln::type_erased_value>{abs_anyval};
       auto anyabs_anymax =
           abs_vs.max(); // returns std::any of type_erased_value
                         // cast underlying std::any of type_erased_value of std::any of T into
-                        // std::any of type_erased_value of std::any of float aware of value-set for float
+                        // std::any of type_erased_value of std::any of float
+                        // aware of value-set for float
       auto anyabs_fanyval = abs_vs.template cast<T, float>(std::any{abs_anyval}, &vs_f);
       auto anyabs_fanymax = abs_vs.template cast<T, float>(anyabs_anymax, &vs_f);
       // dispatch on known type, find a type_erased_value, then call
@@ -1440,7 +1492,8 @@ namespace
   {
     if (input.pdim() == 2)
     {
-      return mln::py::visit<stretch_virtual_dispatch_type_erased_value_operator_t>(input.sample_type(), input);
+      return mln::py::visit<stretch_virtual_dispatch_type_erased_value_operator_t>(
+              input.sample_type(), input);
     }
     else
     {
@@ -1449,7 +1502,8 @@ namespace
     }
   }
 
-  using se_t = std::variant<mln::se::disc, mln::se::disc_non_decomp, mln::se::rect2d, mln::se::rect2d_non_decomp>;
+  using se_t = std::variant<mln::se::disc, mln::se::disc_non_decomp,
+                            mln::se::rect2d, mln::se::rect2d_non_decomp>;
 
   template <typename T>
   struct dilate2d_operator_t
@@ -1474,8 +1528,9 @@ namespace
     if (input.pdim() == 2)
     {
       return std::visit(
-          [&input](const auto& se_) { return mln::py::visit<dilate2d_operator_t>(input.sample_type(), input, se_); },
-          se);
+          [&input](const auto& se_) {
+            return mln::py::visit<dilate2d_operator_t>(input.sample_type(), input, se_);
+          }, se);
     }
     else
     {
@@ -1791,12 +1846,12 @@ if __name__ == "__main__":
         "test_slow()", globals=locals(), number=10)
     print("Benchmarking done...")
 
-    print(
-        "Native value-set with native C++ value-type: {0:.4f}sec".format(cpp_fast_ret))
-    print(
-        "Value-set with virtual dispatch with native C++ value-type: {0:.4f}sec".format(cpp_virtual_dispatch_ret))
-    print(
-        "Value-set with virtual dispatch with C++ type-erased values: {0:.4f}sec".format(cpp_virtual_dispatch_type_erased_value_ret))
-    print(
-        "Injected Python value-set with native C++ value-type: {0:.4f}sec".format(cpp_python_vs_ret))
+    print("Native value-set with native C++ value-type: {0:.4f}sec"
+          .format(cpp_fast_ret))
+    print("Value-set with virtual dispatch with native C++ value-type: {0:.4f}sec"
+          .format(cpp_virtual_dispatch_ret))
+    print("Value-set with virtual dispatch with C++ type-erased values: {0:.4f}sec"
+          .format(cpp_virtual_dispatch_type_erased_value_ret))
+    print("Injected Python value-set with native C++ value-type: {0:.4f}sec"
+          .format(cpp_python_vs_ret))
 \end{minted}
