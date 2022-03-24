@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{book}
+\documentclass[11pt,a4paper]{article}
 %\documentclass[11pt,a4paper,draft]{book}
 \usepackage[inner=3cm,textwidth=16cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage[utf8]{inputenc}
@@ -45,8 +45,7 @@
             %style=draft,
             backref=true]{biblatex}
 
-\DeclareBibliographyCategory{cited}
-\AtEveryCitekey{\addtocategory{cited}{\thefield{entrykey}}}
+
 \addbibresource{bibliography.bib}
 
 % This allows for an additional line-breaking pass with the amount of
@@ -94,87 +93,22 @@
 
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 
-
 \input{flyleaf.tex}
 
 
 \begin{document}
-
+%
 \flyleaf
 
-\cleardoublepage
-
-
-\input{chapters/acknowledgement.tex}
-
-\cleardoublepage
+\clearpage
 
 \input{chapters/abstracts.tex}
 
-\cleardoublepage
+\clearpage
 
-\chapter*{Long summary}
-\label{chap:long_summary}
-\input{chapters/0_long_summary_en.tex}
-
-\cleardoublepage
-
-\chapter*{R\'{e}sum\'{e} long}
-\label{chap:resume_long}
+\section{R\'{e}sum\'{e} long}
 \input{chapters/0_long_summary_fr.tex}
-
-\cleardoublepage
-
-\tableofcontents
-\label{table.of.contents}
-
-\listoffigures
-\label{list.of.figures}
-
-\listoftables
-\label{list.of.tables}
-
-\cleardoublepage
-
-
-\part{Context}
-\label{part:context}
-
-\input{chapters/1_introduction.tex}
-
-\cleardoublepage
-
-\input{chapters/2_genericity.tex}
-
-\cleardoublepage
-
-
-\part{Contribution}
-\label{part:contribution}
-
-\input{chapters/3_Images_and_algorithms_taxonomy.tex}
-
-\cleardoublepage
-
-\input{chapters/4_images_views.tex}
-
-\cleardoublepage
-
-\input{chapters/5_static-dynamic_bridge.tex}
-
-
-\part{Continuation}
-\label{part:continuation}
-
-\cleardoublepage
-
-\input{chapters/6_conclusion_and_perspectives.tex}
-
-\cleardoublepage
-
-
-\part{Appendices}
-\label{part:annexes}
+\clearpage
 
 \appendix
 
@@ -183,19 +117,8 @@
 % Needed for overfull hbox in bibliography
 \emergencystretch=1em
 
-\chapter{Bibliography}
-\label{chap:bibliography}
-
-\nocite{*}
-
-\printbibliography[category=cited,heading=bibintoc,title={References}]
-\printbibliography[notcategory=cited,heading=bibintoc,title={Further reading}]
-
-\cleardoublepage
-
-\input{chapters/7_appendix_concepts_and_archetypes.tex}
-
-\input{chapters/8_appendix_benchmark_static-dynamic_bridge.tex}
+\label{sec:references}
+\printbibliography[heading=bibintoc,title={References}]
 
 
 \end{document}
