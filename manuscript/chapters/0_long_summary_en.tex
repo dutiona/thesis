@@ -540,10 +540,15 @@ an intermediate bytecode. Then, this bytecode is interpreted via an interpreter 
   \label{fig:type-erased.buffer}
 \end{figure}
 
-In this chapter, we have designed many solutions to solve several kinds of issues. However, layering one abstraction
-layer after another, or even calling Python code does come with performance cost. This is why we have run a benchmark to
-outline the cost of our solutions. This benchmark compares the four version of our stretch algorithm. The result is
-shown in~\cref{table:static.dynamic.perfs}.
+In this chapter, we design many solutions to solve several kinds of issues related to the bridge between the static and
+the dynamic world. We present our hybrid solution that is able to make our C++ templated library (static) available from
+Python (dynamic). We discuss several ways of achieving this feat, their \pros and their \cons. Also, we introduce a new
+abstraction layer, the value-set, which is a standard way to manipulate an underlying image value usable when
+implementing image processing algorithms. This new abstraction layer enables the user to inject code from Python-side
+into already-complied C++ routines. However, layering one abstraction layer after another, or even calling Python code
+does come with performance cost. This is why we have run a benchmark to outline the cost of our solutions. This
+benchmark compares the four version of our stretch algorithm whose implementation and usage are detailed in the chapter.
+The result is shown in~\cref{table:static.dynamic.perfs}.
 
 \begin{table}[htbp]
   \footnotesize
