@@ -9,8 +9,8 @@ C++, Objective-C, Objective-C++, Fortran, Ada, D, Go, and BRIG (HSAIL)) as well 
 (x86), x86--64, ARM, SPARC, etc.). Henceforth, we can say that gcc is a generic compiler. At this point it is important
 to note that even though a tool is deemed generic, there is a scope on what the tool can do and what the tool cannot do.
 A compiler despite supporting many languages and architectures, will not be able to make a phone call or a coffee. As
-such it is important to note that genericity is an aspect that qualifies something. We will now study the generic aspect
-related to libraries and programming languages.
+such it is important to note that genericity is an aspect that qualifies something. We will now studies the generic
+aspects related to libraries and programming languages.
 
 This thesis voluntary leaves out the generic aspect related to the target architecture. Indeed, being able to write
 and/or generate code that is able to run on a large array of different hardware architecture is a field of research on
@@ -117,20 +117,20 @@ toward.
 \paragraph{Genericity within libraries} It is described by the cardinality of how many use-cases it can handle.
 Libraries always provides their own data structures, to represent and to give a meaning to the data the user wants to
 process, as well as algorithms to process those data and provide different type of results. A library will be then
-labeled as \emph{generic}~\parencite{musser.1994.algorithm} when (i) its data structure allows the user to express
+labeled as \emph{generic}~\parencite{musser.1994.algorithm} when (i) its data structures allow the user to express
 himself fully with no limitation and when (ii) its algorithm bank is large enough to do anything the user would want to
 do with its data. In reality such a library does not exist and there are always limitations. Studying those limitations
-and what reason motivates them is the key to understand how to surpass them in the future, by developing new hardware
-and/or software support for new feature enabling more genericity.
+and what reasons motivate them is the key to understand how to surpass them in the future, by developing new hardware
+and/or software support for new features enabling more genericity.
 
-\paragraph{Genericity within programming language} It is described by the ability of the language to execute a code
-statement over a large amount of data structures~\parencite{dehnert.1998.fundamentals}, be they native (char, int,
-\ldots) or user defined. It is nowadays primordial for a programming language to be able to do so. Indeed, in a world
-where Information Technologies are everywhere, the amount of code written by software developers is staggering. And with
-it so is the amount of bugs and security vulnerabilities. Being able to natively have a programming language that
-enables to do \emph{more} by writing \emph{less} mathematically results in a reduced development and maintenance cost.
-Programming languages offers many ways to achieve genericity which is dependent of the language intrinsic specificities:
-compiled or interpreted, native or emulated, etc.
+\paragraph{Genericity within programming languages} It is described by the ability of the language to execute the same
+code over a large amount of data structures~\parencite{dehnert.1998.fundamentals}, be they native (char, int, \ldots) or
+user defined. It is nowadays primordial for a programming language to be able to do so. Indeed, in a world where
+Information Technologies are everywhere, the amount of code written by software developers is staggering. And with it so
+is the amount of bugs and security vulnerabilities. Being able to natively have a programming language that enables to
+do \emph{more} by writing \emph{less} mathematically results in a reduced development and maintenance cost. Programming
+languages offers many ways to achieve genericity which is dependent of the language intrinsic specificities: compiled or
+interpreted, native or emulated, etc.
 
 Before delving into the specifics of what genericity implies for libraries and programming languages, let us introduce
 some vocabulary for the sake of comprehension. First is the notion of \emph{type}. A \emph{type} (or \emph{data type})
@@ -541,7 +541,7 @@ very easily based on type property which may induce almost no runtime overhead, 
 chosen in the library.
 
 
-\section{Genericity within programming language}
+\section{Genericity within programming languages}
 \label{sec:gen.genericity.within.programming.languages}
 
 Genericity is a more than 45 years old notion. It was first introduced alongside the CLU language in 1974 by Barbara

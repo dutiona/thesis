@@ -131,15 +131,57 @@ statique et le monde dynamique.
 \subsection*{Programmation générique (généricité)}
 
 
-En langage naturel, nous disons que quelque chose est générique quand il peut répondre à plusieurs objectifs à la fois
-tout en étant décemment efficace. Par exemple, un ordinateur est un outil générique qui permet de rédiger des documents,
-d'accéder à des e-mails, de parcourir Internet, jouer à des jeux vidéo, regarder des films, lire des e-books etc. En
-programmation, on dira qu'un outil est générique lorsqu'il peut répondre à plusieurs objectifs. Par exemple, le
-compilateur gcc peut compiler plusieurs langages de programmation (C, C++, Objective-C, Objective-C++, Fortran, Ada, D,
-Go et BRIG (HSAIL)) ainsi que cibler plusieurs architectures (IA-32 (x86), x86--64, ARM, SPARC, etc.). Désormais, on
-peut dire que gcc est un compilateur générique. À ce stade, il est important de noter que même si un outil est considéré
-comme générique, il y a une portée sur ce que l'outil peut faire et ce qu'il ne peut pas faire. Un compilateur malgré la
-prise en charge de nombreuses langues et architectures, ne pourra pas passer un appel téléphonique ou un café. Comme tel
-c'est important de noter que la généricité est un aspect qui qualifie quelque chose. Nous allons maintenant étudier
-l'aspect générique lié à bibliothèques et langages de programmation.
+En les langages naturels, nous disons que quelque chose est générique quand il peut répondre à plusieurs objectifs à la
+fois, tout en étant étant un minimyum efficace. Par exemple, un ordinateur est un outil générique qui permet de rédiger
+des documents, d'accéder à des e-mails, de parcourir Internet, jouer à des jeux vidéo, regarder des films, lire des
+e-books etc. En programmation, on dira qu'un outil est générique lorsqu'il peut répondre à plusieurs objectifs. Par
+exemple, le compilateur gcc peut compiler plusieurs langages de programmation (C, C++, Objective-C, Objective-C++,
+Fortran, Ada, D, Go et BRIG (HSAIL)) ainsi que cibler plusieurs architectures (IA-32 (x86), x86--64, ARM, SPARC, etc.).
+Désormais, on peut dire que gcc est un compilateur générique. À ce stade, il est important de noter que même si un outil
+est considéré comme générique, il y a une limitation quant à ce que l'outil peut faire et ce qu'il ne peut pas faire. Un
+compilateur malgré la prise en charge de nombreuses langues et architectures, ne pourra pas passer un appel téléphonique
+ou faire un café. De ce fait, il est important de noter que la généricité est un aspect qui qualifie quelque chose. Dans
+ce chapitre nous étudions les aspects génériques liés aux bibliothèques et aux langages de programmation.
 
+Cette thèse volontaire laisse de côté l'aspect générique lié à l'architecture cible. En effet, savoir écrire et/ou
+générer du code capable de s'exécuter sur un large éventail d'architectures matérielles différentes est un domaine de
+recherche à lui tout seul et n'est pas l'objet principal de cette thèse. Il est également connu sous le nom de
+\emph{informatique hétérogène}. Au lieu de cela, nous allons se concentrer sur les aspects liés à la généricité au
+niveau de la bibliothèque et au niveau du langage de programmation.
+
+\paragraph{Généricité au sein des bibliothèques} Elle est décrite par la cardinalité du nombre de cas d'utilisation
+qu'elle peut gérer. Les bibliothèques fournissent toujours leurs propres structures de données, pour représenter et
+donner un sens aux données que l'utilisateur veut traiter, ainsi que des algorithmes pour traiter ces données et fournir
+différents types de résultats. Une bibliothèque sera alors cataloguée comme
+\emph{générique}~\parencite{musser.1994.algorithm} lorsque (i) ses structures de données permet à l'utilisateur de
+s'exprimer entièrement, sans limitation et lorsque (ii) sa banque d'algorithmes est suffisamment grande pour faire tout
+ce que l'utilisateur voudrait faire avec ses données. En réalité, une telle bibliothèque n'existe pas et il y a toujours
+des limitations. Étudier ces limites et quelles raisons les motivent est la clé pour comprendre comment les dépasser à
+l'avenir, en développant le support de nouveaux matériels et/ou logiciel pour de nouvelles fonctionnalités permettant
+plus de généricité.
+
+\paragraph{Généricité dans les langage de programmation} Elle est décrite par la capacité du langage à exécuter le même
+code sur une grande quantité de structures de données~\parencite{dehnert.1998.fundamentals}, qu'elles soient natives
+(char, int, \ldots) ou définies par l'utilisateur. Il est aujourd'hui primordial qu'un langage de programmation puisse
+le faire. En effet, dans un monde où les technologies de l'information sont omniprésentes, la quantité de code écrit par
+les développeurs de logiciels est faramineuse. Et il en va de même pour la quantité de bogues et de vulnérabilités de
+sécurité. Pouvoir avoir nativement un langage de programmation qui permet de faire \emph{plus} en écrivant \emph{moins}
+se traduit mathématiquement par un coût de développement et de maintenance réduit. Les langages de programmation offrent
+de nombreuses façons d'atteindre la généricité qui dépendent des spécificités intrinsèques des langages : compilé ou
+interprété, natif ou émulé, etc.
+
+Avant d'entrer dans les détails de ce que la généricité implique pour les bibliothèques et les langages de
+programmation, introduisons un peu de vocabulaire pour mieux comprendre. La première est la notion de \emph{type}. Un
+\emph{type} (ou \emph{type de données}) est un attribut de données qui indique au compilateur ou à l'interpréteur
+comment le programmeur a l'intention d'utiliser les données. Plus le langage de programmation prend en charge les types
+de données de base (également appelés types primitifs) tels que les nombres entiers, les virgules flottantes nombres,
+booléens et caractères (ASCII, Unicode, etc.). Cet attribut de données définit l'opération qui peut être effectuée sur
+les données, la signification des données et la taille des données en mémoire (les données peuvent alors être stockées
+sur le tas, pile, etc.). Un type de données fournit un ensemble de valeurs à partir desquelles une expression (\ie
+variable, fonction, etc.) peut prendre son valeurs. Parmi les langages de programmation, on peut distinguer ceux qui
+sont dynamiquement types et ceux qui sont statiquement tapé. Les langages typés statiquement sont ceux dont les
+variables sont déclarées contenant un type spécifique. Cette variable ne peut contenir des données d'un autre type dans
+la portée où il est déclaré. Les langages de programmation à typage statique sont Ada, C, C++, Java, Rouille, Go, Scala.
+Les langages à types dynamiques sont ceux dont les variables peuvent être réassignées avec une valeur de type différent
+de celui qu'il était initialement déclaré détenir. Le type de variable est ensuite modifié dynamiquement pour s'adapter
+à la nouvelle valeur en portant. Les langages de programmation à typage dynamique sont PHP, Python, JavaScript, Perl.
