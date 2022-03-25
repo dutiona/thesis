@@ -31,7 +31,7 @@ be used to find who appear on the photo.
 
 We now understand that in order to build applications that interact with photos or videos nowadays, we need to be able
 to do accurate, fast and scalable image processing on a multitude of devices (smartphone, tablet, \ldots). In order to
-achieve this goal, image processing practitioners needs to have two kinds of tools at their disposal. One will be the
+achieve this goal, image processing practitioners needs to have two kinds of tools at their disposal. The first is the
 prototyping environment, a toolbox which allow the practitioner to develop, test and improve its application logic. The
 second one is the production environment which deploys the viable version of the application that was developed by the
 practitioner. Both environment may not have the same needs. On one hand, the prototyping environment usually requires to
@@ -49,7 +49,7 @@ This way, the practitioner can easily build on top of them when designing its ap
 use cases. The first one is about the multiplicity of types or algorithms the practitioner is facing. The second one is
 about the diversity of hardware the practitioner may want to run his program. The goal is to have building blocks that
 can be intelligent enough to take advantage of many optimization opportunities, with regard to both input data
-types/algorithms and target hardware. Then the practitioner would have a huge performance improvement, by default,
+types/algorithms and target hardware. Then the practitioner would have an important performance improvement, by default,
 without specifically tweaking his application. As such, the concept of genericity was introduced. It aims at providing a
 common ground about how an image should behave when passed to basic algorithms needed for complex applications. This
 way, in theory, one only needs to write the algorithm once for it to work with any given kind of image.
@@ -182,16 +182,17 @@ Video++~\parencite{garrigues.2014.video++}, Generic Graphic Library~\parencite{k
 Milena~\parencite{levillain.2009.ismm,levillain.2010.icip} and
 Olena~\parencite{olena.2000.www,levillain.2011.phd,geraud.2012.hdr,levillain.2014.ciarp}.
 
-\paragraph{Domain Specific Languages (DSL)} They are tools developed when a library developer deem he is unable to
-express the concepts and abstraction layers he wants to express through publishing a library. In this case, the barrier
-is often the programming language itself and so the developer does think that another layer of abstraction above the
-programming language would be a good thing. It leads to the genesis of a new programming language in some cases like
-Halide~\parencite{ragankelley.2013.halide} and SYCL~\parencite{brown.2019.heterogeneous,wong.2019.heterogeneous} but can
-also be a case of having the current programming language be ``upgraded'' to include another subset of features that are
-not natively included. This is often the case in C++ where we have in-language DSL like
-Eigen~\parencite{guennebaud.2010.eigen}, Blaze~\parencite{iglberger.2012.blaze,iglberger.2012_1.blaze},
-Blitz++~\parencite{veldhuizen.2000.blitz} or Armadillo~\parencite{sanderson.2016.armadillo}. They leverage a possibility
-of the C++ programming language (\emph{expression templates}~\parencite{veldhuizen.1995.expression}) to achieve it.
+\paragraph{Domain Specific Languages (DSL)~\parencite{deursen.2000.DSL}} They are tools developed when a library
+developer deem he is unable to express the concepts and abstraction layers he wants to express through publishing a
+library. In this case, the barrier is often the programming language itself and so the developer does think that another
+layer of abstraction above the programming language would be a good thing. It leads to the genesis of a new programming
+language in some cases like Halide~\parencite{ragankelley.2013.halide} and
+SYCL~\parencite{brown.2019.heterogeneous,wong.2019.heterogeneous} but can also be a case of having the current
+programming language be ``upgraded'' to include another subset of features that are not natively included. This is often
+the case in C++ where we have in-language DSL like Eigen~\parencite{guennebaud.2010.eigen},
+Blaze~\parencite{iglberger.2012.blaze,iglberger.2012_1.blaze}, Blitz++~\parencite{veldhuizen.2000.blitz} or
+Armadillo~\parencite{sanderson.2016.armadillo}. They leverage a possibility of the C++ programming language
+(\emph{expression templates}~\parencite{veldhuizen.1995.expression}) to achieve it.
 
 
 \section*{Topic of this thesis}
@@ -220,47 +221,47 @@ there are plenty of example of user-friendly and efficient code which is not gen
 Scikit-image~\parencite{vanderwalt.2014.skimage} and OpenCV~\parencite{bradski.2000.opencv} that are easy to use and
 efficient (lot of handwritten SIMD/GPU code) but not generic due to the design choices.
 
-In this thesis, we chose to work on an image processing library though continuing the work on
+In this thesis, we chose to work on an image processing library through continuing the work on
 Pylene~\parencite{carlinet.2018.pylena}. But only working at library level would restrict the usability of our work and
 thus its impact. That is why we aim to reach prototyping users through providing a package that can be used in dynamic
 language such as Python without sacrificing efficiency. In particular, we aim to be useable in a Jupyter notebook. It is
 a very important goal for us to reach a usability able to permeate into the educational side which is a strength of
 Python. In this library, we demonstrate how to achieve genericity and efficiency while remaining easy to use all at the
-same time. The scope of this library would be to specialize in mathematical morphology as well as providing very
-versatile image types. We leverage the modern C++ language and its many new features related to genericity and
-performance to break this rule in the image processing area. Finally, we attempt, through a static/dynamic bridge, to
-bring low level tools and concepts from the static world to the high level and dynamic prototyping world for a better
-diffusion and ease of use.
+same time. In doing so, we are endeavoring to breakthrough the rule previously cited. The scope of this library is
+limited to mathematical morphology and to the provision of very versatile image types. We leverage the modern C++
+language and its many new features related to genericity and performance to breakthrough this rule in the image
+processing area. Finally, we attempt, to bring low level tools and concepts from the static world to the high level and
+dynamic prototyping world for a better diffusion and ease of use, thanks to a bridge between those two worlds.
 
 With this philosophy in mind, this manuscript aims at presenting our thesis work related to the C++ language applied to
 the Image Processing domain. It is organized as followed:
 
-\paragraph{Generic Programming (genericity)~\ref{chap:genericity}} It presents a state-of-the-art overview about the
-notion of genericity. We explain its origin, how it has evolved (especially within the C++ language), what issues it is
-solving, what issues it is creating. We explain why image processing and genericity work well together. Finally, we tour
-around existing facilities that allows genericity (intrinsically restricted to compiled language) to exists in the
-dynamic world (with interpreted languages such as Python).
+\paragraph{Generic Programming (genericity)~\ref{chap:genericity}} This chapter presents a state-of-the-art overview
+about the notion of genericity. We explain its origin, how it has evolved (especially within the C++ language), what
+issues it is solving, what issues it is creating. We explain why image processing and genericity work well together.
+Finally, we tour around existing facilities that allows genericity (intrinsically restricted to compiled language) to
+exists in the dynamic world (with interpreted languages such as Python).
 
-\paragraph{Taxonomy for Image Processing: Image types and Algorithms~\ref{chap:image.algorithms.taxonomy}} It presents
-our first contribution which is a comprehensive work in the image processing area around the taxonomy of different
-images families as well of different algorithms families. This part explains, among others, the notion of concept and
-how it applies to the image processing domain. We explain how to extract a concept from existing code, how to leverage
-it to make code more efficient and readable. We finally offer our take about a collection of concepts related to image
-processing area.
+\paragraph{Taxonomy for Image Processing: Image types and Algorithms~\ref{chap:image.algorithms.taxonomy}} This chapter
+presents our first contribution in the image processing area which is a comprehensive work consisting in the the
+taxonomy of different images families as well of different algorithms families. This chapter explains, among others, the
+notion of concept and how it applies to the image processing domain. We explain how to extract a concept from existing
+code, how to leverage it to make code more efficient and readable. We finally offer our take in the form of a collection
+of concepts related to image processing area.
 
-\paragraph{Images Views~\ref{chap:image_views}} It presents our second contribution which is a generalization of the
-concept of View (from the C++ language, the work on ranges~\parencite{niebler.2018.ranges}) to images. This allows the
-creation of lightweight, cheap-to-copy images. It also enables a much simpler way to design image processing pipeline by
-chaining operations directly in the code in an intuitive way. Ranges are the cement of news design to ease the use of
-image into algorithms which can further extend their generic behavior. Finally, we discuss the concept of lazy
-evaluation and the impacts of views on performance.
+\paragraph{Images Views~\ref{chap:image_views}} This chapter presents our second contribution which is a generalization
+of the concept of View (from the C++ language, the work on ranges~\parencite{niebler.2018.ranges}) to images. This
+allows the creation of lightweight, cheap-to-copy images. It also enables a much simpler way to design image processing
+pipeline by chaining operations directly in the code in an intuitive way. Ranges are the cement of new designs to ease
+the use of image into algorithms which can further extend their generic behavior. Finally, we discuss the concept of
+lazy evaluation and the impacts of views on performance.
 
-\paragraph{A bridge between the static world and the dynamic world~\ref{chap:static_dynamic_bridge}} It presents our
-third contribution which is a way to grant access to the generic facilities of a compiled language (such as C++) to a
-dynamic language (such as Python) to ease the gap between the prototyping phase and the production phase. Indeed, it is
-really not obvious to be able to conciliate generic code from C++ whose genericity is resolved at compilation-time (we
-call this the ``static world''), and dynamic code from Python which rely on pre-compiled package binaries to achieve an
-efficient communication between the dynamic code and the library (we call this the ``dynamic world''). We also cannot
-ask of the user to provide a compiler each time he wants to use our library from Python. In this part, we discuss what
-are the existing solutions that can be considered as well as their \pros and \cons We then discuss how we designed a
-hybrid solution to make a bridge between the static world and the dynamic world: a static-dynamic bridge.
+\paragraph{A bridge between the static world and the dynamic world~\ref{chap:static_dynamic_bridge}} This chapter
+presents our third contribution which is a way to grant access to the generic facilities of a compiled language (such as
+C++) to a dynamic language (such as Python) to ease the gap crossing between the prototyping phase and the production
+phase. Indeed, it is really not obvious to be able to conciliate generic code from C++ whose genericity is resolved at
+compilation-time (we call this the ``static world''), and dynamic code from Python which rely on pre-compiled package
+binaries (we call this the ``dynamic world''), to achieve an efficient communication between the dynamic code and the
+library. We also cannot ask of the user to provide and use a compiler each time he wants to use our library from Python.
+In this chapter, we discuss what are the existing solutions that can be considered as well as their \pros and \cons. We
+then discuss how we designed a hybrid solution to make the bridge between the static world and the dynamic world.

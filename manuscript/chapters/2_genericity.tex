@@ -527,7 +527,7 @@ disqualify the library from being able to select, for instance, a new, custom st
 dilation. As a matter of fact, all the supported structuring elements must be listed in advance and code must be
 compiled for each supported type. This induces a strong inertia when the practitioner wants to try out new things not
 yet supported by the library. This also defeats the initial purpose of being generic. Indeed, one would expect a generic
-library to work with any type and not just a specified set of pre-compiled types. Being able to break through this limit
+library to work with any type and not just a specified set of pre-compiled types. Being able to breakthrough this limit
 is addressed more in-depth in~\cref{chap:static_dynamic_bridge}.
 
 
@@ -1365,9 +1365,9 @@ libraries (.dll on Windows and .so on Linux) into the wrapper to provide the use
 \paragraph{Cython~\parencite{behnel.2010.cython}} It attempts to solve the issue of the Python inherent language
 slowness due to its interpreted nature by providing a facility able to transpile a Python program into a C program so
 that a genuine C compiler (with extensions) is able to compile it and to link it against the Python/C API in order to
-achieve a huge performance gain at the cost of near zero knowledge of the complex Python/C API for the user. This novel
-solution essentially bypass the work of a JIT compiler (that would be used by a programming language using bytecode such
-as Java or C\#) and just offload it onto well known/proven solution: the machine's C compiler.
+achieve an important performance gain at the cost of near zero knowledge of the complex Python/C API for the user. This
+novel solution essentially bypass the work of a JIT compiler (that would be used by a programming language using
+bytecode such as Java or C\#) and just offload it onto well known/proven solution: the machine's C compiler.
 
 \paragraph{AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy} and
   Xeus-cling~\parencite{quantstack.2021.xeus-cling}} are all solutions aiming to generate automatically Python bindings

@@ -50,19 +50,19 @@ but the complexity would still leak through the API anyway. That is way the othe
 perform those restriction upstream from the algorithm transparently so that the downstream algorithm is easy to write,
 understand and maintain. In order to achieve this, we need to raise the abstraction level around images by one layer so
 that we can work at the image level. The alpha blending algorithm would then be written as shown
-in~\cref{fig.view.alphablend}.
+in~\cref{fig:view.alphablend}.
 
 \begin{figure}[htbp]
   \centering
   \includestandalone[mode=image, scale=0.7]{../figures/alphablend}
 
   \caption{Alpha-blending algorithm written at image level.}
-  \label{fig.view.alphablend}
+  \label{fig:view.alphablend}
 \end{figure}
 
 This way to express an algorithm is achieved by introducing \emph{views} to image processing. An image now is a view and
 can be restricted/projected/manipulated however the user need before feeding it to an algorithm. Even the whole alpha
-blending algorithm can be rewritten in terms of views entirely, as shown in~\cref{fig.new.alphablend}.
+blending algorithm can be rewritten in terms of views entirely, as shown in~\cref{fig:new.alphablend}.
 
 \begin{figure}[htbp]
   \centering
@@ -81,7 +81,7 @@ blending algorithm can be rewritten in terms of views entirely, as shown in~\cre
     \bigskip
   \end{minipage}
   \caption{Alpha-blending, generic implementation with \emph{views}, expression tree.}
-  \label{fig.new.alphablend}
+  \label{fig:new.alphablend}
 \end{figure}
 
 Being able to perform powerful manipulation on images before feeding them to algorithms completely nullify the initial
@@ -348,11 +348,11 @@ due to backward compatibility.
     \includestandalone[mode=image, width=.7\linewidth]{../figures/transform_thresholding}
   \end{minipage}
   \caption{An image \emph{view} performing a thresholding.}
-  \label{fig.view.threshold}
+  \label{fig:view.threshold}
 \end{figure}
 
 In our design, all images are lightweight (cheap-to-copy) objects with shared ownership over the data. A view image is a
-non-owning image that only stores pointers, as shown in~\cref{fig.view.threshold}. A concrete image stores the data. The
+non-owning image that only stores pointers, as shown in~\cref{fig:view.threshold}. A concrete image stores the data. The
 only difference between a view and a concrete image is given by a trait \texttt{image\_view} which will check the
 \texttt{view} property of the given image to tell whether it is a concrete owning image type or not. Compared to the
 C++20 ranges views model, mechanism prevent errors resulting from dangling references and confusing ownership of data.
@@ -372,7 +372,7 @@ clipping or filtering) is as simple as restricting the domain with a view and ap
 resulting sub-image.
 
 \emph{Lazy-evaluation} combined with the view \emph{chaining} allows the user to write clear and very efficient code
-whose evaluation is delayed till very last moment as shown in~\cref{fig.lazy} (see \parencite{geraud.2018.gtgdmm} for
+whose evaluation is delayed till very last moment as shown in~\cref{fig:lazy} (see \parencite{geraud.2018.gtgdmm} for
 additional examples). Neither memory allocation nor computation are performed; the image \(i\) has just recorded all the
 operations required to compute its values.
 
@@ -419,10 +419,10 @@ auto i = view::transform(h,
   \end{minipage}
 
   \caption{Lazy-evaluation and \emph{view} chaining.}
-  \label{fig.lazy}
+  \label{fig:lazy}
 \end{figure}
 
-The tree of type resulting from this view chaining is illustrated by~\cref{fig.viewAST}. It illustrates how chaining
+The tree of type resulting from this view chaining is illustrated by~\cref{fig:viewAST}. It illustrates how chaining
 views with each other result in the formation of an abstract tree that records the operations to perform. This model
 enables building complex computational trees via views while keeping efficient performance at runtime. However, those
 trees are complex for the compiler to process and can induce heavy compilation time overhead.
@@ -430,8 +430,8 @@ trees are complex for the compiler to process and can induce heavy compilation t
 \begin{figure}[htb]
   \centering
   \includegraphics[width=8cm]{../figures/viewAST2}
-  \caption{Abstract Syntax Tree of the types chained by the code in~\cref{fig.lazy}}
-  \label{fig.viewAST}
+  \caption{Abstract Syntax Tree of the types chained by the code in~\cref{fig:lazy}}
+  \label{fig:viewAST}
 \end{figure}
 
 
@@ -446,7 +446,7 @@ the fact we still have the ability to write into the image. A legacy way of obta
 create a temporary single-channel image to extract the green channel of the original RGB image so that the temporary
 image could then be blurred. The final step would have then been to copy the values of the temporary blurred image back
 into the green channel of the original image. The comparison, including the memory used, between the legacy way and the
-in-place way of doing this computation is shown in~\cref{fig.legacy.vs.view}.
+in-place way of doing this computation is shown in~\cref{fig:legacy.vs.view}.
 
 \begin{figure}[htbp]
   \centering
@@ -459,11 +459,11 @@ in-place way of doing this computation is shown in~\cref{fig.legacy.vs.view}.
   }
 
   \caption{Comparison of a legacy and a modern pipeline using \emph{algorithms} (green) and \emph{views} (purple).}
-  \label{fig.legacy.vs.view}
+  \label{fig:legacy.vs.view}
 \end{figure}
 
 On the other hand, when considering the view \(g: (r,g,b) \mapsto 0.2126*r+0.7152*g+0.0722*b\) that compute the gray
-level of a color triplet (as shown in~\cref{fig.view.grayscale}), the ability to write a value into the image cannot be
+level of a color triplet (as shown in~\cref{fig:view.grayscale}), the ability to write a value into the image cannot be
 preserved. Indeed, one would need an inverse function that is able to deduce the original color triplet from the gray
 level to be able to write back into the original image. This operation alone is a whole field of research on its
 own~\parencite{zhang.2016.colorful,levin.2004.colorization,welsh.2002.transferring}
@@ -472,7 +472,7 @@ own~\parencite{zhang.2016.colorful,levin.2004.colorization,welsh.2002.transferri
   \centering
   \includegraphics[width=.7\linewidth]{../figures/views/transform_grayscale}
   \caption{Usage of transform view: grayscale.}
-  \label{fig.view.grayscale}
+  \label{fig:view.grayscale}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -487,10 +487,10 @@ own~\parencite{zhang.2016.colorful,levin.2004.colorization,welsh.2002.transferri
 
   \caption{Clip and filter image adaptors that restrict the image domain by a non-regular ROI and by a predicate that
     selects only even pixels.}
-  \label{fig.view.clip}
+  \label{fig:view.clip}
 \end{figure}
 
-Similarly, a view can apply a restriction on an image domain. In~\cref{fig.view.clip}, we show the adaptor
+Similarly, a view can apply a restriction on an image domain. In~\cref{fig:view.clip}, we show the adaptor
 \texttt{clip(input, roi)} that restricts the image to a non-regular \texttt{roi} and \texttt{filter(input, predicate)}
 that restricts the domain based on a predicate. All subsequent operations on those images will only affect the selected
 pixels. In this case of restriction, the ability to write data back into the original image is preserved through the
@@ -500,25 +500,25 @@ view.
   \centering
   \includegraphics[scale=0.7]{../figures/pipeline}
   \caption{Example of a simple image processing pipeline.}
-  \label{fig.view.pipeline}
+  \label{fig:view.pipeline}
 \end{figure}
 
 Views feature many interesting properties that change the way we program an image processing application. To illustrate
 those features, let us consider the following image processing pipeline: (Start) Load an input RGB-8 2D image (a
 classical HDR photography) (A) Convert it in grayscale (B) Sub-quantize to 8-bits (C) Perform the grayscale dilation of
-the image (End) Save the resulting 2D 8-bit grayscale image; as described in~\cref{fig.view.pipeline}. This pipeline is
+the image (End) Save the resulting 2D 8-bit grayscale image; as described in~\cref{fig:view.pipeline}. This pipeline is
 expressed with two notions. The first notion is composition of \colorbox{lightgreen}{algorithms} (\(A \rightarrow B
 \rightarrow C\)) in order to achieve the desired result. The second notion is the composition of
 \colorbox{thistle}{views} (\(Input \rightarrow A \rightarrow B\)) which overlaps partially with the algorithm part. This
 express that part of the algorithm is performed lazily only when we perform the last part (C). Those two notions are
-illustrated by the~\cref{fig.view.comp}.
+illustrated by the~\cref{fig:view.comp}.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.7]{../figures/composition}
   \caption{Example of a simple image processing pipeline illustrating the difference between the composition of
     algorithms and image views.}
-  \label{fig.view.comp}
+  \label{fig:view.comp}
 \end{figure}
 
 There are six properties one want to keep track when working with views: \emph{forward}, \emph{writable},
@@ -815,7 +815,7 @@ of a project.
 
 The ranges for C++20's standard library and its views face the same issue. It was not rare for someone to need 90sec to
 compile the calendar toy example of the library which just contains code that displays a given month in the classic
-printed format (day number-of-month correctly displayed in column corresponding to the day of week label). This huge
+printed format (day number-of-month correctly displayed in column corresponding to the day of week label). This massive
 compile time is due to early compiler implementation needing massive RAM usage for template type and having to swap when
 the computer running the compilation was out of RAM. Now compilers have optimized the whole process, but the combination
 behind the types can still be an issue. Introducing complex view code in a program that is compiled often may not be a
@@ -881,14 +881,14 @@ solved this problem by augmenting range-v3's ranges with our own multidimensiona
 contiguity on the last dimension to provide the compiler code it can optimize. Which means that each for-loop that
 traverses the whole n-dimensional image can be transformed into a double for-loop whose inner loop is guaranteed to be a
 contiguous row. This way we have now an outer range as well as an inner range, as illustrated
-in~\cref{fig.inner.outer.range}.
+in~\cref{fig:inner.outer.range}.
 
 \begin{figure}[htbp]
   \centering
   \subcaptionbox{}{\includegraphics[width=.48\linewidth]{../figures/linear_rng}}
   \subcaptionbox{}{\includegraphics[width=.48\linewidth]{../figures/segmented_rng}}
   \caption{Range-v3's ranges (a) \vs multidimensional ranges (b).}
-  \label{fig.inner.outer.range}
+  \label{fig:inner.outer.range}
 \end{figure}
 
 Thanks to this new design we can now rewrite our algorithm with a double for-loop for the image traversing. Hopefully it
@@ -920,18 +920,18 @@ the multidimensional outer range.
 In order to have a relevant discussion on performance, we decided to implement a real world image processing pipeline:
 the background subtraction. It is used to detect changes in image sequences~\parencite{opencv.bg_sub}. It is mainly used
 when regions of interest are foreground objects. The pipeline components include: subtraction, Gaussian filtering,
-threshold, erode and dilate, as shown in~\ref{fig.view.comp.sub_bg}.
+threshold, erode and dilate, as shown in~\ref{fig:view.comp.sub_bg}.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\linewidth]{../figures/pipeline_bg_sub_comp}
   \caption{Background subtraction pipeline using \colorbox{lightgreen}{algorithms} and
     \colorbox{thistle}{views}.}
-  \label{fig.view.comp.sub_bg}
+  \label{fig:view.comp.sub_bg}
 \end{figure}
 
 The first thing that we notice is that the implementation of the pipeline using views is transcribed very explicitly in
-the code, as shown in~\cref{fig.view.comp.sub_bg.view_code}. There is a direct correspondence between the graphic
+the code, as shown in~\cref{fig:view.comp.sub_bg.view_code}. There is a direct correspondence between the graphic
 pipeline and the code.
 
 \begin{figure}
@@ -949,7 +949,7 @@ pipeline and the code.
   \end{minted}
   \caption{Pipeline implementation with \colorbox{thistle}{\emph{views}}. Highlighted code uses \emph{views} by
     prefixing operators with the namespace \texttt{view}.}
-  \label{fig.view.comp.sub_bg.view_code}
+  \label{fig:view.comp.sub_bg.view_code}
 \end{figure}
 
 For our benchmark, we have decided to run the algorithm on an original set of image to detect a changing foreground.
@@ -1014,7 +1014,7 @@ single-threaded) with an opening of disc of radius 32 on 10 MPix RGB images (the
     Pylene (views)     & \(2.13s\) \mystd{164ms} & 51 MB        & \mydelta{-52}            \\
     \bottomrule
   \end{tabular}
-  \caption{Benchmarks of the pipeline \cref{fig.view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average
+  \caption{Benchmarks of the pipeline \cref{fig:view.comp.sub_bg} on a dataset (12 images) of 10MPix images. Average
     computation time and memory usage of implementations with/without \emph{views} and with OpenCV as a baseline.}
   \label{table:views.perf}
   %\vspace{-1em}
@@ -1027,10 +1027,10 @@ advantages of views in pipelines. First, we have to be cautious about the real b
 Here, most of the time is spent in algorithms that are not eligible for view transformation. Thus, depending on the
 operations of the pipeline, views may not improve processing time. Nevertheless, using views does not degrade
 performance neither (only 1\% in this experiment). It seems to show that using views does not introduce performance
-penalties and may even be beneficial in lightweight pipelines as the one in~\cref{fig.view.pipeline}. On the memory
-side, views reduce drastically the memory usage (also seen in~\cref{fig.legacy.vs.view}) which is beneficial when
+penalties and may even be beneficial in lightweight pipelines as the one in~\cref{fig:view.pipeline}. On the memory
+side, views reduce drastically the memory usage (also seen in~\cref{fig:legacy.vs.view}) which is beneficial when
 developing applications which are memory constrained. From the developer standpoint, it requires only few changes in the
-code as shown in~\cref{fig.view.comp.sub_bg.view_code} — the implementation of the algorithms remain the same — which is
+code as shown in~\cref{fig:view.comp.sub_bg.view_code} — the implementation of the algorithms remain the same — which is
 a real advantage for software maintenance.
 
 
@@ -1038,15 +1038,15 @@ a real advantage for software maintenance.
 
 \paragraph{Views are composable.} One of the most important feature in a pipeline design (generally, in software
 engineering) is \emph{object composition}. It enables composing simple blocks into complex ones. Those complex blocks
-can then be managed as if they were still simple blocks. In~\cref{fig.view.pipeline}, we have 3 simple image operators
+can then be managed as if they were still simple blocks. In~\cref{fig:view.pipeline}, we have 3 simple image operators
 \emph{Image}~\(\rightarrow\)~\emph{Image} (the grayscale conversion, the sub-quantization, the dilation). As shown
-in~\cref{fig.view.comp}, algorithm composition would consider these 3 simple operators as a single complex operator
+in~\cref{fig:view.comp}, algorithm composition would consider these 3 simple operators as a single complex operator
 \emph{Image}~\(\rightarrow\)~\emph{Image} that could then be used in another even more complex processing pipeline. Just
 like algorithms, image views are composable, \eg a view of the view of an image is still an image.
-In~\cref{fig.view.comp}, we compose the input image with a grayscale transform view and a sub-quantization view that
+In~\cref{fig:view.comp}, we compose the input image with a grayscale transform view and a sub-quantization view that
 then feeds the dilation algorithm.
 
-\paragraph{Views improve usability.} The code to compose images in~\cref{fig.view.comp} is almost as simple as:
+\paragraph{Views improve usability.} The code to compose images in~\cref{fig:view.comp} is almost as simple as:
 
 \begin{minted}{c++}
 auto input = imread(...);
@@ -1063,7 +1063,7 @@ the image pixels.
 
 \paragraph{Views improve re-usability.} The code snippets above are simple but not very re-usable. However, following
 the functional programming paradigm, it is quite easy to define new views, because some image adaptors can be considered
-as \emph{high-order functions} for which we can bind some parameters. In~\cref{fig.view.highorder}, we show how the
+as \emph{high-order functions} for which we can bind some parameters. In~\cref{fig:view.highorder}, we show how the
 primitive \emph{transform} can be used to create a view summing two images and a view operator performing the grayscale
 conversion as well as the sub-quantization which can be reused afterwards\footnote{These functions could have been
   written in a more generic way for more re-usability, but this is not the purpose here.}.
@@ -1085,22 +1085,22 @@ auto MyComplexImage = subquantize16to8b(togray(A));
   \end{minted}
 
   \caption{Using high-order primitive views to create custom view operators.}
-  \label{fig.view.highorder}
+  \label{fig:view.highorder}
 \end{figure}
 
 \paragraph{Views for lazy computing.} Because the operation is recorded within the image view, this new image type
-allows fundamental image types to be mixed with algorithms. In~\cref{fig.view.highorder}, the creation of views does not
+allows fundamental image types to be mixed with algorithms. In~\cref{fig:view.highorder}, the creation of views does not
 involve any computation in itself but rather delays the computation until the expression \texttt{v(p)} is invoked.
 Because views can be composed, the evaluation can be delayed quite far. Image adaptors are \emph{template
   expressions}~\parencite{veldhuizen.1995.expression, veldhuizen.2000.blitz} as they record the \emph{expression} used to
-generate the image as a template parameter. A view actually represents an expression tree (\cref{fig.new.alphablend}).
+generate the image as a template parameter. A view actually represents an expression tree (\cref{fig:new.alphablend}).
 
 \paragraph{Views for performance.} With a classical design, each operation of the pipeline is implemented on ``its
 own''. Each operation requires memory to be allocated for the output image and also, each operation requires that the
 image is fully traversed. This design is simple, flexible, composable, but is not memory efficient nor computation
 efficient. With the lazy evaluation approach, the image is traversed only once (when the dilation is applied) that has
 two benefits. First, there are no intermediate images which is very memory effective. Second, traversing the image is
-faster thanks to a better memory cache usage. Indeed, in our example (\cref{fig.view.pipeline}), processing a RGB16
+faster thanks to a better memory cache usage. Indeed, in our example (\cref{fig:view.pipeline}), processing a RGB16
 pixel from the dilation algorithm directly converts it in grayscale, then sub-quantize it to 8-bits, and finally makes
 it available for the dilation algorithm. It acts \emph{as if} we were writing an optimal operator that would combine all
 these operations. This approach is somewhat related to the kernel-fusing operations available in some HPC

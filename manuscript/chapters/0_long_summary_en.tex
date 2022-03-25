@@ -29,7 +29,7 @@ be used to find who appear on the photo.
 
 We now understand that in order to build applications that interact with photos or videos nowadays, we need to be able
 to do accurate, fast and scalable image processing on a multitude of devices (smartphone, tablet, \ldots). In order to
-achieve this goal, image processing practitioners needs to have two kinds of tools at their disposal. One will be the
+achieve this goal, image processing practitioners needs to have two kinds of tools at their disposal. The first is the
 prototyping environment, a toolbox which allow the practitioner to develop, test and improve its application logic. The
 second one is the production environment which deploys the viable version of the application that was developed by the
 practitioner. Both environment may not have the same needs. On one hand, the prototyping environment usually requires to
@@ -47,7 +47,7 @@ This way, the practitioner can easily build on top of them when designing its ap
 use cases. The first one is about the multiplicity of types or algorithms the practitioner is facing. The second one is
 about the diversity of hardware the practitioner may want to run his program. The goal is to have building blocks that
 can be intelligent enough to take advantage of many optimization opportunities, with regard to both input data
-types/algorithms and target hardware. Then the practitioner would have a huge performance improvement, by default,
+types/algorithms and target hardware. Then the practitioner would have an important performance improvement, by default,
 without specifically tweaking his application. As such, the concept of genericity was introduced. It aims at providing a
 common ground about how an image should behave when passed to basic algorithms needed for complex applications. This
 way, in theory, one only needs to write the algorithm once for it to work with any given kind of image.
@@ -61,55 +61,57 @@ notably generic and efficient library in C++ is Boost~\parencite{boost.2021}: it
 use. Components such as Boost.Graph, Boost.Fusion or Boost.Spirit are hard to use. Also, a library which is generic and
 easy to use is the Json parser written by Niels Lohmann~\parencite{nlohmann.2021.json} it strives to handle every use
 case while remaining very easy to integrate and to use in user code (syntax really close to native Json in C++ code by
-providing DSL to parse C++ constructs into JSON). However, this has a cost and the parser is slower than Json parser
-optimized for speed such as simdjson~\parencite{lemire.2021.simdjson} whose aim is to ``parse gigabytes of JSON per
-second''. Finally, there are plenty of example of user-friendly and efficient code which is not generic. We can cite
+providing DSL Domain Specific Language)~\parencite{deursen.2000.DSL} to parse C++ constructs into JSON). However, this
+has a cost and the parser is slower than Json parser optimized for speed such as
+simdjson~\parencite{lemire.2021.simdjson} whose aim is to ``parse gigabytes of JSON per second''. Finally, there are
+plenty of example of user-friendly and efficient code which is not generic. We can cite
 Scikit-image~\parencite{vanderwalt.2014.skimage} and OpenCV~\parencite{bradski.2000.opencv} that are easy to use and
 efficient (lot of handwritten SIMD/GPU code) but not generic due to the design choices.
 
-In this thesis, we chose to work on an image processing library though continuing the work on
+In this thesis, we chose to work on an image processing library through continuing the work on
 Pylene~\parencite{carlinet.2018.pylena}. But only working at library level would restrict the usability of our work and
 thus its impact. That is why we aim to reach prototyping users through providing a package that can be used in dynamic
 language such as Python without sacrificing efficiency. In particular, we aim to be useable in a Jupyter notebook. It is
 a very important goal for us to reach a usability able to permeate into the educational side which is a strength of
 Python. In this library, we demonstrate how to achieve genericity and efficiency while remaining easy to use all at the
-same time. The scope of this library would be to specialize in mathematical morphology as well as providing very
-versatile image types. We leverage the modern C++ language and its many new features related to genericity and
-performance to break this rule in the image processing area. Finally, we attempt, through a static/dynamic bridge, to
-bring low level tools and concepts from the static world to the high level and dynamic prototyping world for a better
-diffusion and ease of use.
+same time. In doing so, we are endeavoring to breakthrough the rule previously cited. The scope of this library is
+limited to mathematical morphology and to the provision of very versatile image types. We leverage the modern C++
+language and its many new features related to genericity and performance to breakthrough this rule in the image
+processing area. Finally, we attempt, to bring low level tools and concepts from the static world to the high level and
+dynamic prototyping world for a better diffusion and ease of use, thanks to a bridge between those two worlds.
 
 With this philosophy in mind, this manuscript aims at presenting our thesis work related to the C++ language applied to
 the Image Processing domain. It is organized as followed:
 
-\paragraph{Generic Programming (genericity)} It presents a state-of-the-art overview about the notion of genericity. We
-explain its origin, how it has evolved (especially within the C++ language), what issues it is solving, what issues it
-is creating. We explain why image processing and genericity work well together. Finally, we tour around existing
-facilities that allows genericity (intrinsically restricted to compiled language) to exists in the dynamic world (with
-interpreted languages such as Python).
+\paragraph{Generic Programming (genericity)} This chapter presents a state-of-the-art overview about the notion of
+genericity. We explain its origin, how it has evolved (especially within the C++ language), what issues it is solving,
+what issues it is creating. We explain why image processing and genericity work well together. Finally, we tour around
+existing facilities that allows genericity (intrinsically restricted to compiled language) to exists in the dynamic
+world (with interpreted languages such as Python).
 
-\paragraph{Taxonomy for Image Processing: Image types and Algorithms} It presents our first contribution which is a
-comprehensive work in the image processing area around the taxonomy of different images families as well of different
-algorithms families. This part explains, among others, the notion of concept and how it applies to the image processing
-domain. We explain how to extract a concept from existing code, how to leverage it to make code more efficient and
-readable. We finally offer our take about a collection of concepts related to image processing area.
+\paragraph{Taxonomy for Image Processing: Image types and Algorithms} This chapter presents our first contribution in
+the image processing area which is a comprehensive work consisting in the the taxonomy of different images families as
+well of different algorithms families. This chapter explains, among others, the notion of concept and how it applies to
+the image processing domain. We explain how to extract a concept from existing code, how to leverage it to make code
+more efficient and readable. We finally offer our take in the form of a collection of concepts related to image
+processing area.
 
-\paragraph{Images Views} It presents our second contribution which is a generalization of the concept of View (from the
-C++ language, the work on ranges~\parencite{niebler.2018.ranges}) to images. This allows the creation of lightweight,
-cheap-to-copy images. It also enables a much simpler way to design image processing pipeline by chaining operations
-directly in the code in an intuitive way. Ranges are the cement of news design to ease the use of image into algorithms
-which can further extend their generic behavior. Finally, we discuss the concept of lazy evaluation and the impacts of
-views on performance.
+\paragraph{Images Views} This chapter presents our second contribution which is a generalization of the concept of View
+(from the C++ language, the work on ranges~\parencite{niebler.2018.ranges}) to images. This allows the creation of
+lightweight, cheap-to-copy images. It also enables a much simpler way to design image processing pipeline by chaining
+operations directly in the code in an intuitive way. Ranges are the cement of new designs to ease the use of image into
+algorithms which can further extend their generic behavior. Finally, we discuss the concept of lazy evaluation and the
+impacts of views on performance.
 
-\paragraph{A bridge between the static world and the dynamic world} It presents our third contribution which is a way to
-grant access to the generic facilities of a compiled language (such as C++) to a dynamic language (such as Python) to
-ease the gap between the prototyping phase and the production phase. Indeed, it is really not obvious to be able to
-conciliate generic code from C++ whose genericity is resolved at compilation-time (we call this the ``static world''),
-and dynamic code from Python which rely on pre-compiled package binaries to achieve an efficient communication between
-the dynamic code and the library (we call this the ``dynamic world''). We also cannot ask of the user to provide a
-compiler each time he wants to use our library from Python. In this part, we discuss what are the existing solutions
-that can be considered as well as their \pros and \cons We then discuss how we designed a hybrid solution to make a
-bridge between the static world and the dynamic world: a static-dynamic bridge.
+\paragraph{A bridge between the static world and the dynamic world} This chapter presents our third contribution which
+is a way to grant access to the generic facilities of a compiled language (such as C++) to a dynamic language (such as
+Python) to ease the gap crossing between the prototyping phase and the production phase. Indeed, it is really not
+obvious to be able to conciliate generic code from C++ whose genericity is resolved at compilation-time (we call this
+the ``static world''), and dynamic code from Python which rely on pre-compiled package binaries (we call this the
+``dynamic world''), to achieve an efficient communication between the dynamic code and the library. We also cannot ask
+of the user to provide and use a compiler each time he wants to use our library from Python. In this chapter, we discuss
+what are the existing solutions that can be considered as well as their \pros and \cons. We then discuss how we designed
+a hybrid solution to make the bridge between the static world and the dynamic world.
 
 
 \subsection*{Generic programming (genericity)}
@@ -205,8 +207,8 @@ computational shape and can be factorized together.
 
   \text{The same code run on all these inputs.}
 
-  \caption{Watershed algorithm applied to three different image types.}
-  \label{fig:type.vs.algo}
+  \caption[]{Watershed algorithm applied to three different image types.}
+  \label{summary:fig:type.vs.algo}
 \end{figure}
 
 In this chapter we present the origin of generic programming, which goes as far as~\citedate[year]{musser.1988.generic}
@@ -217,7 +219,7 @@ make use of generic programming without resorting to obscure tweaks and tools.
 \begin{table}[htbp]
   \centering
   \begin{threeparttable}
-    \caption{Genericity approaches: \pros~\& \cons}
+    \caption[]{Genericity approaches: \pros~\& \cons}
     \begin{tabular}[width=0.8\linewidth]{l|ccccc}
       Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
       \hline
@@ -236,18 +238,18 @@ make use of generic programming without resorting to obscure tweaks and tools.
       \item[4] One IA: one implementation per algorithm.
       \item[4] EA: explicit abstractions / constrained genericity.
     \end{tablenotes}
-    \label{table:gen.approaches}
+    \label{summary:table:gen.approaches}
   \end{threeparttable}
 \end{table}
 
 This chapter explores the possibilities of achieving the notion of genericity from within a library. Indeed, there are
 three techniques enabling the user to write a high level algorithm once that can run on every type. They are the
 \emph{code duplication} approach, the \emph{generalization} approach and the \emph{inclusion and parametric
-  polymorphism} approach. We present in~\cref{table:gen.approaches} the result of the comparison of these approaches with
-regard to the features that we are interested in. We also discuss the limitations linked to the usage of those
-approaches by comparing OpenCV, scikit-Image and Pylene which make use of the four techniques at different level to
-achieve different goals. Furthermore, we have identified limitations related to the underlying data type, the structure
-of the domain, the optimizations and discuss the performances through a concrete benchmark.
+  polymorphism} approach. We present in~\cref{summary:table:gen.approaches} the result of the comparison of these
+approaches with regard to the features that we are interested in. We also discuss the limitations linked to the usage of
+those approaches by comparing OpenCV, scikit-Image and Pylene which make use of the four techniques at different level
+to achieve different goals. Furthermore, we have identified limitations related to the underlying data type, the
+structure of the domain, the optimizations and discuss the performances through a concrete benchmark.
 
 This chapter also explores how the notion of genericity is achieved with the programming languages. We retrace how Ada
 implemented it and then how C++ permitted the expression of require-clauses (concept) as soon as C++98, even though it
@@ -296,14 +298,14 @@ processing algorithm (gamma correction).
   \subfloat[Specialization existing within a version]{
     \includegraphics[width=2.9in]{../figures/image_version_specialization}
   }%
-  \caption{Set of algorithms version (a) and its specialization existing within a set (b).}
-  \label{fig:image.version.vs.specialization}
+  \caption[]{Set of algorithms version (a) and its specialization existing within a set (b).}
+  \label{summary:fig:image.version.vs.specialization}
 \end{figure}
 
 This chapter then proceeds to explain how, in theory, image types are related to each other. We present the set of
 different image types and how algorithms exist in those sets, which introduce the notion of \emph{version} of an
 algorithm. An algorithm will have different \emph{versions} for each image types set it supports. We distinguish it
-(in~\cref{fig:image.version.vs.specialization}) from an algorithm \emph{specialization}, the latter being the ability to
+(in~\cref{summary:fig:image.version.vs.specialization}) from an algorithm \emph{specialization}, the latter being the ability to
 use an opportunity (related to a property) to make an optimization and increase performances.
 
 This chapter then proceed to describe the notion how algorithm canvas which is the result flowing from the taxonomy of
@@ -316,13 +318,13 @@ to possibly solve heterogeneous computing issues.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{../figures/concepts/image}
-  \caption{Image concept.}
-  \label{fig:concept.image}
+  \caption[]{Image concept.}
+  \label{summary:fig:concept.image}
 \end{figure}
 
 Finally, this chapter introduces our first main contribution: a complete taxonomy related to the image processing area.
 We first introduce fundamental concepts such as \emph{point}, \emph{pixel}, \emph{domain} and \emph{image} (illustrated
-in~\cref{fig:concept.image}). We then motivate and introduce advanced concepts related to images and the different way
+in~\cref{summary:fig:concept.image}). We then motivate and introduce advanced concepts related to images and the different way
 to access data (forward, backward traversing, indexing, direct access to underlying buffer, \ldots). In the end, we
 introduce the concepts related to orbiting notions such as \emph{structuring element}, \emph{neighborhood} and
 \emph{extension} (border management) which are necessary to be able to work with local algorithms.
@@ -379,19 +381,19 @@ but the complexity would still leak through the API anyway. That is way the othe
 perform those restriction upstream from the algorithm transparently so that the downstream algorithm is easy to write,
 understand and maintain. In order to achieve this, we need to raise the abstraction level around images by one layer so
 that we can work at the image level. The alpha blending algorithm would then be written as shown
-in~\cref{fig.view.alphablend}.
+in~\cref{summary:fig:view.alphablend}.
 
 \begin{figure}[htbp]
   \centering
   \includestandalone[mode=image, scale=0.7]{../figures/alphablend}
 
-  \caption{Alpha-blending algorithm written at image level.}
-  \label{fig.view.alphablend}
+  \caption[]{Alpha-blending algorithm written at image level.}
+  \label{summary:fig:view.alphablend}
 \end{figure}
 
 This way to express an algorithm is achieved by introducing \emph{views} to image processing. An image now is a view and
 can be restricted/projected/manipulated however the user need before feeding it to an algorithm. Even the whole alpha
-blending algorithm can be rewritten in terms of views entirely, as shown in~\cref{fig.new.alphablend}.
+blending algorithm can be rewritten in terms of views entirely, as shown in~\cref{summary:fig:new.alphablend}.
 
 \begin{figure}[htbp]
   \centering
@@ -409,8 +411,8 @@ blending algorithm can be rewritten in terms of views entirely, as shown in~\cre
     \bigskip
     \bigskip
   \end{minipage}
-  \caption{Alpha-blending, generic implementation with \emph{views}, expression tree.}
-  \label{fig.new.alphablend}
+  \caption[]{Alpha-blending, generic implementation with \emph{views}, expression tree.}
+  \label{summary:fig:new.alphablend}
 \end{figure}
 
 Being able to perform powerful manipulation on images before feeding them to algorithms completely nullify the initial
@@ -434,29 +436,29 @@ This way, view greatly increase what the user can do by writing less code.
 \begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.7]{../figures/pipeline}
-  \caption{Example of a simple image processing pipeline.}
-  \label{fig.view.pipeline}
+  \caption[]{Example of a simple image processing pipeline.}
+  \label{summary:fig:view.pipeline}
 \end{figure}
 
 In this chapter, we see that \emph{views are composable}. One of the most important feature in a pipeline design
 (generally, in software engineering) is \emph{object composition}. It enables composing simple blocks into complex ones.
-Those complex blocks can then be managed as if they were still simple blocks. In~\cref{fig.view.pipeline}, we have 3
+Those complex blocks can then be managed as if they were still simple blocks. In~\cref{summary:fig:view.pipeline}, we have 3
 simple image operators \emph{Image}~\(\rightarrow\)~\emph{Image} (the grayscale conversion, the sub-quantization, the
-dilation). As shown in~\cref{fig.view.comp}, algorithm composition would consider these 3 simple operators as a single
+dilation). As shown in~\cref{summary:fig:view.comp}, algorithm composition would consider these 3 simple operators as a single
 complex operator \emph{Image}~\(\rightarrow\)~\emph{Image} that could then be used in another even more complex
 processing pipeline. Just like algorithms, image views are composable, \eg a view of the view of an image is still an
-image. In~\cref{fig.view.comp}, we compose the input image with a grayscale transform view and a sub-quantization view
+image. In~\cref{summary:fig:view.comp}, we compose the input image with a grayscale transform view and a sub-quantization view
 that then feeds the dilation algorithm.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.7]{../figures/composition}
-  \caption{Example of a simple image processing pipeline illustrating the difference between the composition of
+  \caption[]{Example of a simple image processing pipeline illustrating the difference between the composition of
     algorithms and image views.}
-  \label{fig.view.comp}
+  \label{summary:fig:view.comp}
 \end{figure}
 
-Also, \emph{views improve usability}. The code to compose images in~\cref{fig.view.comp} is almost as simple as:
+Also, \emph{views improve usability}. The code to compose images in~\cref{summary:fig:view.comp} is almost as simple as:
 
 \begin{minted}{c++}
 auto input = imread(...);
@@ -473,7 +475,7 @@ the image pixels.
 
 Furthermore, \emph{views improve re-usability}. The code snippets above are simple but not very re-usable. However,
 following the functional programming paradigm, it is quite easy to define new views, because some image adaptors can be
-considered as \emph{high-order functions} for which we can bind some parameters. In~\cref{fig.view.highorder}, we show
+considered as \emph{high-order functions} for which we can bind some parameters. In~\cref{summary:fig:view.highorder}, we show
 how the primitive \emph{transform} can be used to create a view summing two images and a view operator performing the
 grayscale conversion as well as the sub-quantization which can be reused afterwards\footnote{These functions could have
   been written in a more generic way for more re-usability, but this is not the purpose here.}.
@@ -494,23 +496,23 @@ auto input = imread(...);
 auto MyComplexImage = subquantize16to8b(togray(A));
   \end{minted}
 
-  \caption{Using high-order primitive views to create custom view operators.}
-  \label{fig.view.highorder}
+  \caption[]{Using high-order primitive views to create custom view operators.}
+  \label{summary:fig:view.highorder}
 \end{figure}
 
 In addition, \emph{views are lazy computed}. Because the operation is recorded within the image view, this new image
-type allows fundamental image types to be mixed with algorithms. In~\cref{fig.view.highorder}, the creation of views
+type allows fundamental image types to be mixed with algorithms. In~\cref{summary:fig:view.highorder}, the creation of views
 does not involve any computation in itself but rather delays the computation until the expression \texttt{v(p)} is
 invoked. Because views can be composed, the evaluation can be delayed quite far. Image adaptors are \emph{template
   expressions}~\parencite{veldhuizen.1995.expression, veldhuizen.2000.blitz} as they record the \emph{expression} used to
-generate the image as a template parameter. A view actually represents an expression tree (\cref{fig.new.alphablend}).
+generate the image as a template parameter. A view actually represents an expression tree (\cref{summary:fig:new.alphablend}).
 
 Also, \emph{views are efficient}. With a classical design, each operation of the pipeline is implemented on ``its own''.
 Each operation requires memory to be allocated for the output image and also, each operation requires that the image is
 fully traversed. This design is simple, flexible, composable, but is not memory efficient nor computation efficient.
 With the lazy evaluation approach, the image is traversed only once (when the dilation is applied) that has two
 benefits. First, there are no intermediate images which is very memory effective. Second, traversing the image is faster
-thanks to a better memory cache usage. Indeed, in our example (\cref{fig.view.pipeline}), processing a RGB16 pixel from
+thanks to a better memory cache usage. Indeed, in our example (\cref{summary:fig:view.pipeline}), processing a RGB16 pixel from
 the dilation algorithm directly converts it in grayscale, then sub-quantize it to 8-bits, and finally makes it available
 for the dilation algorithm. It acts \emph{as if} we were writing an optimal operator that would combine all these
 operations. This approach is somewhat related to the kernel-fusing operations available in some HPC
@@ -536,8 +538,8 @@ an intermediate bytecode. Then, this bytecode is interpreted via an interpreter 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.6\linewidth]{../figures/type-erased_buffer}
-  \caption{Bridge from Python to C++ via Pybind11 and a type-erased C++ class.}
-  \label{fig:type-erased.buffer}
+  \caption[]{Bridge from Python to C++ via Pybind11 and a type-erased C++ class.}
+  \label{summary:fig:type-erased.buffer}
 \end{figure}
 
 In this chapter, we design many solutions to solve several kinds of issues related to the bridge between the static and
@@ -574,7 +576,7 @@ The result is shown in~\cref{table:static.dynamic.perfs}.
     \\
     \bottomrule
   \end{tabular}
-  \caption{Benchmarks of all our version of the stretch algorithm.}
+  \caption[]{Benchmarks of all our version of the stretch algorithm.}
   \label{table:static.dynamic.perfs}
 \end{table}
 
@@ -587,14 +589,14 @@ once the prototype needs to scale to a production environment.
 
 \paragraph{Continuation: JIT-based solutions, \pros and \cons}
 
-Our hybrid solution certainly has advantages, but the huge disadvantage is the slowness of injecting our own types from
-the Python side. There exists another solution that this thesis did not have the opportunity to study in-depth. This
-solution is based on a known technology: the Just-In-Time (JIT) compilation. Indeed, it is a technology already used by
-interpreted languages such as Java or PHP to generate on-the-fly native and optimized machine code for the section of
-the source code that is considered ``hot'' by the interpreter. A source code is ``hot'' when it is executed a lot: the
-end-user would gain paying the compilation time once to have this code executed faster several times later on. When
-applying this strategy to our problematic, it would mean that the user must be able to compile native machine code from
-the templated generic C++ code by injected the requested type when it is used. Such an operation shift heavily the
+Our hybrid solution certainly has advantages, but one massive disadvantage is the slowness of injecting our own types
+from the Python side. There exists another solution that this thesis did not have the opportunity to study in-depth.
+This solution is based on a known technology: the Just-In-Time (JIT) compilation. Indeed, it is a technology already
+used by interpreted languages such as Java or PHP to generate on-the-fly native and optimized machine code for the
+section of the source code that is considered ``hot'' by the interpreter. A source code is ``hot'' when it is executed a
+lot: the end-user would gain paying the compilation time once to have this code executed faster several times later on.
+When applying this strategy to our problematic, it would mean that the user must be able to compile native machine code
+from the templated generic C++ code by injected the requested type when it is used. Such an operation shift heavily the
 burden on the user, and it is well-known that compiling C++ code is notably \emph{complicated} and \emph{slow}. In
 addition, the library needs to be able to auto-generate Python binding once the code is compiled. There are several
 solutions to achieve this process.
@@ -649,8 +651,8 @@ the naive solution will be very complex to use with lots of parameters. If one w
 to use, then it will be not very efficient by default. Finally, if one wants a solution to be easy to use and efficient
 then it will not be very generic. In this thesis, we try to demonstrate how to break this rule in three steps.
 
-The first step, illustrated in~\cref{chap:image.algorithms.taxonomy}, was to make an inventory of image types and
-families as well as different image processing algorithms. The aim was to produce a comprehensive taxonomy of types
+The first step, illustrated in the chapter \emph{Taxonomy for Image Processing}, was to make an inventory of image types
+and families as well as different image processing algorithms. The aim was to produce a comprehensive taxonomy of types
 (pixel, image, structuring elements, \ldots) and algorithms related to image processing in order to be able to write
 concepts (in the sense of C++ concepts). This first step delimits the perimeter of what the author means by
 \emph{genericity}. From this starting point, it becomes easier to write image processing algorithms by default, just by
