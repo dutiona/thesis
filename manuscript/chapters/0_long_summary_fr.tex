@@ -126,3 +126,20 @@ compilateur à chaque fois qu'il veut utiliser notre bibliothèque depuis Python
 sont les solutions existantes qui peuvent être envisagées ainsi que leurs avantages et inconvénients. Nous discutons
 ensuite de la manière dont nous avons conçu et réalisé une solution hybride pour arriver à faire ce pont entre le monde
 statique et le monde dynamique.
+
+
+\subsection*{Programmation générique (généricité)}
+
+
+En langage naturel, nous disons que quelque chose est générique quand il peut répondre à plusieurs objectifs à la fois
+tout en étant décemment efficace. Par exemple, un ordinateur est un outil générique qui permet de rédiger des documents,
+d'accéder à des e-mails, de parcourir Internet, jouer à des jeux vidéo, regarder des films, lire des e-books etc. En
+programmation, on dira qu'un outil est générique lorsqu'il peut répondre à plusieurs objectifs. Par exemple, le
+compilateur gcc peut compiler plusieurs langages de programmation (C, C++, Objective-C, Objective-C++, Fortran, Ada, D,
+Go et BRIG (HSAIL)) ainsi que cibler plusieurs architectures (IA-32 (x86), x86--64, ARM, SPARC, etc.). Désormais, on
+peut dire que gcc est un compilateur générique. À ce stade, il est important de noter que même si un outil est considéré
+comme générique, il y a une portée sur ce que l'outil peut faire et ce qu'il ne peut pas faire. Un compilateur malgré la
+prise en charge de nombreuses langues et architectures, ne pourra pas passer un appel téléphonique ou un café. Comme tel
+c'est important de noter que la généricité est un aspect qui qualifie quelque chose. Nous allons maintenant étudier
+l'aspect générique lié à bibliothèques et langages de programmation.
+
