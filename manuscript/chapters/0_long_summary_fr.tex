@@ -85,11 +85,11 @@ sacrifier les performances. En particulier, nous visons la disponibilité d'util
 objectif très important pour nous est d'être utilisable en milieu éducatif, ce qui est une force de Python. Dans cette
 bibliothèque, nous montrons comment être générique et performant, tout en restant facile à utiliser. Ce faisant, nous
 nous efforçons de casser la règle citée précédemment. Le périmètre de la bibliothèque se limite à la morphologie
-mathématique et la fourniture de types d'images versatiles. Nous tirons parti du langage C++ moderne et de ses
-nombreuses nouvelles fonctionnalités liées à la généricité et à la performance pour dépasser cette règle dans la zone de
-traitement d'image. Enfin, nous tentons, d'apporter les outils et les concepts de bas niveau du monde statique au monde
-du prototypage de haut niveau et dynamique pour une meilleure diffusion et facilité d'utilisation, grâce un pont entre
-ces deux mondes.
+mathématique~\parencite{najman.2013.mathematical,geraud.2010.book} et la fourniture de types d'images versatiles. Nous
+tirons parti du langage C++ moderne et de ses nombreuses nouvelles fonctionnalités liées à la généricité et à la
+performance pour dépasser cette règle dans la zone de traitement d'image. Enfin, nous tentons, d'apporter les outils et
+les concepts de bas niveau du monde statique au monde du prototypage de haut niveau et dynamique pour une meilleure
+diffusion et facilité d'utilisation, grâce un pont entre ces deux mondes.
 
 C'est avec cette philosophie à l'esprit que ce manuscrit présente notre travail de thèse lié au langage C++ appliqué au
 traitement d'images. Il est organisé comme suit :
@@ -233,7 +233,7 @@ factorisés ensemble.
   \text{Le même code tourne sur toutes ces différentes données d'entrée.}
 
   \caption[]{Algorithme de ligne de partage des eaux appliqué à trois types d'image différents.}
-  \label{summary:fig:type.vs.algo}
+  \label{resume:fig:type.vs.algo}
 \end{figure}
 
 La généricité peut avoir deux significations différentes selon les personnes à qui vous demandez. Par exemple, certaines
@@ -243,7 +243,7 @@ générique pour gérer tous les cas d'utilisation possibles. Ni l'un ni l'autre
 compréhension, nous utiliserons des mots différents pour chacun de ces cas. Un outil assez générique pour gérer un grand
 nombre de cas d'utilisation sera appelé \emph{versatile}. Enfin, pour un outil dont le but est de fournir une un
 environnement de programmation capable de gérer le code de n'importe quel cas d'utilisation, nous utiliserons le terme
-\emph{generic}. Dans cette thèse, la généricité concernera le code. La figure~\ref{summary:fig:type.vs.algo} illustre ce
+\emph{généric}. Dans cette thèse, la généricité concernera le code. La~\cref{resume:fig:type.vs.algo} illustre ce
 résultat de la même implémentation générique de l'algorithme de ligne de partage des eaux appliqué sur une image 2D, un
 graphe ainsi qu'un maillage.
 
@@ -275,19 +275,20 @@ sans recourir à des techniques et outils obscurs.
       \item[4] Une IA: une seule implémentation par algorithme.
       \item[4] AE: abstraction explicite / généricité contrainte.
     \end{tablenotes}
-    \label{summary:table:gen.approaches}
+    \label{resume:table:gen.approaches}
   \end{threeparttable}
 \end{table}
 
 Ce chapitre explore les possibilités de réaliser de la programmation générique au sein d'une bibliothèque. En effet, il
 y a trois techniques permettant à l'utilisateur d'écrire une seule fois un algorithme de haut niveau pouvant s'exécuter
 sur tous les types. Elles sont les approches de \emph{duplication de code}, de \emph{généralisation} et de
-\emph{polymorphisme d'inclusion et paramétrique}. Nous présentons dans~\cref{summary:table:gen.approaches} le résultat
-de la comparaison de ces approches par rapport aux aspects qui nous intéressent. Nous abordons également les limitations
-liées à l'utilisation de ces approches en comparant OpenCV, Scikit-image et Pylene qui utilisent les quatre techniques à
-différents niveaux pour atteindre différents objectifs de généricité, de performance et de facilité d'utilisation. De
-plus, nous avons identifié des limites liées au type de données sous-jacent, à la structure du domaine et aux
-optimisations sur lesquelles nous discuterons des performances via un benchmark concret.
+\emph{polymorphisme d'inclusion et paramétrique}~\parencite{gibbons.2007.datatype}. Nous présentons
+dans~\cref{resume:table:gen.approaches} le résultat de la comparaison de ces approches par rapport aux aspects qui nous
+intéressent. Nous abordons également les limitations liées à l'utilisation de ces approches en comparant OpenCV,
+Scikit-image et Pylene qui utilisent les quatre techniques à différents niveaux pour atteindre différents objectifs de
+généricité, de performance et de facilité d'utilisation. De plus, nous avons identifié des limites liées au type de
+données sous-jacent, à la structure du domaine et aux optimisations sur lesquelles nous discuterons des performances via
+un benchmark concret.
 
 Ce chapitre explore également comment la programmation générique est gérée dans les langages de programmation. Nous
 retraçons comment Ada l'a implémenté, et ensuite comment C++ a permis l'expression de clauses contraintes \emph{require}
@@ -302,31 +303,97 @@ générique (code C++). Nous discutons des différentes approches possibles pour
 (à la compilation) et dynamique (à l'exécution).
 
 Le chapitre suivant fera un large usage de la généricité pour présenter la première contribution de cette thèse : une
-taxonomie des notions liées au traitement d'images.
+taxonomie des concepts liés au traitement d'images.
 
 
 \subsection*{Taxonomie pour le traitement d'images : types d'images et algorithmes}
 
 
-Dans cette thèse, nous avons poursuivi la recherche sur la façon d'appliquer toutes ces nouvelles fonctionnalités
-génériques du langage C++ dans la zone de traitement d'image. Cela nous permet de les tester de manière pratique sur
-notre zone de prédilection tout en nous souvenant de nos travail passé, à la fois les succès et les échecs en la
-matière. Cependant, comme nous l'avons vu dans le chapitre précédent (Programmation générique (généricité)), faire
-naître des concepts à partir du code est quelque chose qui se fait de manière émergente. Désormais, les premiers travaux
-seront être de faire un inventaire de tous les algorithmes d'images existants ainsi qu'un inventaire de tous les
-algorithmes de traitement d'images (les deux basiques et plus complexes) auxquels nous pouvons penser. De cette façon,
-nous remarquerons des modèles de comportement émergeant de types d'images similaires ou algorithmes similaires. Nous
-pourrons alors extraire des schémas comportementaux de cet inventaire afin de produire un bilan complet taxonomie sous
-la forme d'un cadre de concepts liés au traitement d'images. Ce chapitre est structuré comme suit. Dans un premier
-temps, nous étudierons comment extraire un schéma comportemental d'un algorithme simple afin de le raffiner en un ou
-plusieurs notions. Dans un second temps nous étudierons la théorie des types d'images, leurs conjonctions, disjonctions.
-Nous produirons également un inventaire des algorithmes de traitement d'images limités aux morphologies mathématiques
-que nous pouvons exploiter pour la version finale étape. Troisièmement, nous étudierons la généricité intrinsèque des
-algorithmes pour produire des canevas tirant parti des propriétés. Enfin, nous étudierons ensuite les schémas
-comportementaux liés à l'inventaire sous la forme d'une taxonomie indexant un cadre de concepts sur le traitement
-d'images.
+Dans cette thèse, nous avons recherché la meilleure façon d'appliquer les nouvelles fonctionnalités génériques du
+langage C++ dans le domaine du traitement d'image. Cela nous permet de les tester de manière pratique sur notre zone de
+prédilection tout en nous souvenant de nos travail passé, à la fois les succès et les échecs en la matière. Cependant,
+comme nous l'avons vu dans le chapitre précédent (Programmation générique (généricité)), faire naître des concepts à
+partir due code est quelque chose qui se fait de manière émergente. Désormais, les premiers travaux seront de faire un
+inventaire de tous les algorithmes d'images existants ainsi que de tous les algorithmes de traitement d'images (les deux
+basiques et plus complexes) auxquels nous pouvons penser. De cette façon, nous remarquerons des modèles de comportement
+émergeant de types d'images similaires ou algorithmes similaires. Nous pourrons alors extraire des schémas
+comportementaux de cet inventaire afin de produire une taxonomie complète sous la forme d'un environnement constitué de
+concepts liés au traitement d'images. Ce chapitre est structuré comme suit. Dans un premier temps, nous étudierons
+comment extraire un schéma comportemental d'un algorithme simple afin de l'affiner en un ou plusieurs concepts. Dans un
+second temps nous étudierons la théorie des ensembles de types d'images, leurs conjonctions et disjonctions. Nous
+produirons également un inventaire des algorithmes de traitement d'images limité à la morphologies mathématiques que
+nous pouvons exploiter pour l'étape finale. Troisièmement, nous étudierons la généricité intrinsèque des algorithmes
+pour produire des canevas tirant parti des propriétés (liées aux types). Enfin, nous étudierons les schémas
+comportementaux, relatifs à l'inventaire pré-établi des algorithmes, sous la forme d'une taxonomie inscrite dans un
+environnement de concepts relatifs au traitement d'images.
 
-Dans ce chapitre, nous présentons que les concepts ne sont pas conçus après des structures de données mais après des
-algorithmes. En effet, une notion consiste à extraire un schéma comportemental cohérent d'un bout de code (algorithme)
-et à le nommer pour lui donner plus signification. A travers un exemple simple mais concret, nous présentons de manière
-didactique comment extraire des concepts d'une image algorithme de traitement (correction gamma).
+Dans ce chapitre, nous présentons que les concepts ne sont pas conçus d'après des structures de données mais d'après des
+algorithmes. En effet, un concept consiste à extraire un schéma comportemental cohérent d'un bout de code (algorithme)
+et à le nommer pour lui donner une signification. A travers un exemple simple mais concret, nous présentons de manière
+didactique comment extraire des concepts d'un algorithme de traitement d'image (correction gamma).
+
+\begin{figure}[htbp]
+  \centering
+  \subfloat[Differentes versions de l'algorithm \emph{fill} ]{
+    \includegraphics[width=1.9in]{../figures/image_version}
+  }%
+  \hfil
+  \subfloat[Specialisation existant au sein d'une version]{
+    \includegraphics[width=2.9in]{../figures/image_version_specialization}
+  }%
+  \caption[]{Ensemble des versions d'algorithme (a) et de ses spécialisations existant au sein d'une version (b).}
+  \label{resume:fig:image.version.vs.specialization}
+\end{figure}
+
+Ce chapitre explique ensuite comment, en théorie, les types d'images sont liés les uns aux autres. Nous présentons
+l'ensemble de différents types d'images et comment les algorithmes existent dans ces ensembles, qui introduisent la
+notion de \emph{version} d'un algorithme. Un algorithme aura différentes \emph{versions} pour chaque ensemble de types
+d'images qu'il prend en charge. Nous le distinguons (in~\cref{resume:fig:image.version.vs.specialization}) à partir d'un
+algorithme \emph{spécialisation}, cette dernière étant la possibilité de profiter d'une opportunité (liée à un bien)
+pour faire une optimisation et augmenter les performances.
+
+Ce chapitre décrit ensuite la notion de canevas d'algorithme qui est le résultat découlant de la taxonomie de
+algorithmes de traitement d'images. En effet, il existe trois grandes familles d'algorithmes : les algorithmes pixel-wise (binary
+seuil), les algorithmes locaux (dilatation) et les algorithmes globaux (Chamfer distance transform). Nous nous concentrons principalement
+sur les algorithmes locaux et comment ils peuvent tous être écrits à travers le même canevas de code. En effet, par exemple, le seul
+différence entre une dilatation et une érosion est l'opérateur (max \vs min). Nous discutons ensuite des moyens d'exploiter ces canevas
+pour éventuellement résoudre des problèmes informatiques hétérogènes.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\linewidth]{../figures/concepts/image}
+  \caption[]{Image concept.}
+  \label{resume:fig:concept.image}
+\end{figure}
+
+Enfin, ce chapitre introduit notre première contribution principale : une taxonomie complète liée au domaine du traitement d'image.
+Nous introduisons d'abord des concepts fondamentaux tels que \emph{point}, \emph{pixel}, \emph{domaine} et \emph{image} (illustrés
+dans~\cref{resume:fig:concept.image}). Nous motivons et introduisons ensuite des concepts avancés liés aux images et aux différentes manières
+pour accéder aux données (traversée avant, arrière, indexation, accès direct au tampon sous-jacent, \ ldots). En fin de compte, nous
+introduire les concepts liés aux notions orbitales telles que \emph{élément structurant}, \emph{voisinage} et
+\emph{extension} (gestion des frontières) qui sont nécessaires pour pouvoir travailler avec des algorithmes locaux.
+
+Le chapitre suivant utilisera les concepts présentés pour introduire la deuxième contribution principale de cette thèse : la
+\emph{vues d'images}.
+
+
+\subsection*{Les Vues d'Image}
+
+
+Cette notion de vues n'est pas nouvelle~\parencite{novak.1997.reuse} et est apparue naturellement en Traitement d'image avec
+Milena~\parencite{geraud.2012.ipolmeeting,levillain.2010.icip} sous le nom de
+\emph{morpher}~\parencite{levillain.2009.ismm, geraud.2012.hdr}. Il était toujours utile de pouvoir projeter une image
+à travers un prisme qui pourrait extraire des informations spécifiques à son sujet sans avoir besoin de copier le tampon de données sous-jacent. Dans
+des temps modernes, le langage C++ (20) introduit aussi ce mécanisme avec les ranges~\parencite{niebler.2014.ranges}
+installations pour les \emph{collections non propriétaires}. Il est nommé \emph{views} et permet à l'utilisateur d'accéder au contenu d'un
+conteneur (vecteur, carte) à travers un prisme. Chez Pylène, nous avons décidé d'aligner le système de nommage sur ce qui a été décidé dans
+C++20 afin de ne pas dérouter l'utilisateur. De cette façon, une vue \texttt{transform} dans le traitement d'image fera la même chose
+sur une image que la vue de transformation dans la bibliothèque de plage standard fait sur un conteneur. Les \emph{vues} présentent les
+propriétés suivantes : \emph{pas cher à copier}, \emph{non-propriétaire} (ne \emph{possède} aucun tampon de données), \emph{paresseux
+  évaluation} (l'accès à la valeur d'un pixel peut nécessiter des calculs) et \emph{composition}. Lorsqu'il est chaîné, le compilateur
+construit un \emph{arbre d'expressions} (ou \emph{modèle d'expression} tel qu'utilisé dans de nombreuses bibliothèques de calcul scientifique telles que
+as Eigen~\parencite{guennebaud.2010.eigen}), il connaît donc à la compilation le type de la composition et assure une
+0-overhead à l'évaluation. Nous allons d'abord motiver l'utilisation de \emph{vues} dans le traitement d'image. Nous présenterons ensuite la
+principales vues utilisées en traitement d'images. Ensuite, nous discuterons de la façon dont les vues d'image diffèrent de celle utilisée dans les plages de C++ et
+leurs principales propriétés (en particulier comment ils conservent/suppriment les propriétés de l'image parente) à travers un béton
+exemple : la gestion des politiques frontalières et d'extension. Enfin, nous discuterons des limites d'une telle conception.
