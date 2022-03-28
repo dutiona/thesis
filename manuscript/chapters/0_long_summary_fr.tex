@@ -134,9 +134,9 @@ statique et le monde dynamique.
 En les langages naturels, nous disons que quelque chose est générique quand il peut répondre à plusieurs objectifs à la
 fois, tout en étant un minimum efficace. Par exemple, un ordinateur est un outil générique qui permet de rédiger des
 documents, d'accéder à des e-mails, de parcourir Internet, jouer à des jeux vidéo, regarder des films, lire des e-books
-etc. En programmation, on dira qu'un outil est générique lorsqu'il peut répondre à plusieurs objectifs. Par exemple, le
-compilateur gcc peut compiler plusieurs langages de programmation (C, C++, Objective-C, Objective-C++, Fortran, Ada, D,
-Go et BRIG (HSAIL)) ainsi que cibler plusieurs architectures (IA-32 (x86), x86--64, ARM, SPARC, etc.). Désormais, on
+etc. En programmation, l'on dira qu'un outil est générique lorsqu'il peut répondre à plusieurs objectifs. Par exemple,
+le compilateur gcc peut compiler plusieurs langages de programmation (C, C++, Objective-C, Objective-C++, Fortran, Ada,
+D, Go et BRIG (HSAIL)) ainsi que cibler plusieurs architectures (IA-32 (x86), x86--64, ARM, SPARC, etc.). Désormais, on
 peut dire que gcc est un compilateur générique. À ce stade, il est important de noter que même si un outil est considéré
 comme générique, il y a une limitation quant à ce que l'outil peut faire et ce qu'il ne peut pas faire. Un compilateur
 malgré la prise en charge de nombreuses langues et architectures, ne pourra pas passer un appel téléphonique ou faire un
@@ -179,13 +179,13 @@ virgules flottantes, les types booléens et les chaînes de caractères (ASCII, 
 définit les opérations qui peuvent être effectuées sur les données, la signification des données ainsi que la taille des
 données en mémoire (les données peuvent alors être stockées sur le tas, la pile, etc.). Un type de données fournit un
 ensemble de valeurs à partir desquelles une expression (\cad variable, fonction, etc.) peut prendre ces valeurs. Parmi
-les langages de programmation, on peut distinguer ceux qui sont dynamiquement typés et ceux qui sont statiquement typés.
-Les langages typés statiquement sont ceux dont les variables sont déclarées contenant un type spécifique. Cette variable
-ne peut contenir des données d'un autre type dans le champ où elle est déclarée. Les langages de programmation à typage
-statique sont Ada, C, C++, Java, Rust, Go et Scala. Des langages à types dynamiques sont ceux dont les variables peuvent
-être réassignées avec une valeur de type différent de celui avec lequel elle a été initialement déclarée. Le type de
-variable est ensuite modifié dynamiquement pour s'adapter à la nouvelle valeur qu'elle porte. Des langages de
-programmation à typage dynamique sont PHP, Python, JavaScript et Perl.
+les langages de programmation, nous peuvons distinguer ceux qui sont dynamiquement typés et ceux qui sont statiquement
+typés. Les langages typés statiquement sont ceux dont les variables sont déclarées contenant un type spécifique. Cette
+variable ne peut contenir des données d'un autre type dans le champ où elle est déclarée. Les langages de programmation
+à typage statique sont Ada, C, C++, Java, Rust, Go et Scala. Des langages à types dynamiques sont ceux dont les
+variables peuvent être réassignées avec une valeur de type différent de celui avec lequel elle a été initialement
+déclarée. Le type de variable est ensuite modifié dynamiquement pour s'adapter à la nouvelle valeur qu'elle porte. Des
+langages de programmation à typage dynamique sont PHP, Python, JavaScript et Perl.
 
 La conséquence de pouvoir dire quel type une variable contient à tout moment (langage à typage statique) est double.
 Pour le développeur, il est plus facile de raisonner sur le code et de repérer les bugs. Pour le compilateur, il est
@@ -534,7 +534,7 @@ appliquer pour chaque pixel ; nous n'itérons pas à la main sur les pixels de l
 De plus, les \emph{vues améliorent la ré-utilisabilité}. Les extraits de code ci-dessus sont simples mais peu
 réutilisables. Cependant, suivant le paradigme de la programmation fonctionnelle, il est assez facile de définir de
 nouvelles vues, car certains adaptateurs d'image peuvent être considérées comme des \emph{fonctions d'ordre supérieur}
-pour lesquelles on peut lier certains paramètres, comme on le ferait avec la technique de
+pour lesquelles nous pouvons lier certains paramètres, comme nous le ferions avec la technique de
 currying~\parencite{hanus.1995.curry}. Dans~\cref{resume:fig:view.highorder}, nous montrons comment la primitive
 \emph{transform} peut être utilisée pour créer une vue additionnant deux images et un opérateur de vue effectuant la
 conversion en niveaux de gris ainsi que la sous-quantification réutilisable par la suite\footnote{Ces fonctions auraient
@@ -724,40 +724,41 @@ offrent d'excellentes voie de recherche pour l'avenir et l'auteur est impatient 
 \subsection*{Conclusion}
 
 
-Le travail présenté dans cette thèse par l'auteur a suivi un arc narratif très clair. L'accent a d'abord été mis sur
-présenter ce qu'est la notion de programmation générique (généricité), son histoire et comment chacun peut se rapporter
-à son quotidien utilisation, en particulier lorsqu'elle est appliquée au traitement d'images. La généricité est une
-notion vieille de 4 décennies qui a évolué et trouvé une utilisation dans un domaine très moderne de notre société. En
-particulier, dans le traitement d'images, il est largement utilisé pour construire des applications utilisées dans le
-monde entier. Cependant, il a été démontré à quel point il peut être difficile de mettre en œuvre des solutions reposant
-sur la généricité. En effet, il existe une règle de trois liant généricité, performance et facilité d'utilisation. La
-règle stipule qu'on ne peut avoir que deux de ces objets en sacrifiant le troisième. Si l'on veut être générique et
-efficace, alors la solution naïve sera très complexe à utiliser avec beaucoup de paramètres. Si l'on veut qu'une
-solution soit générique et facile à utiliser, alors ce ne sera pas très efficace par défaut. Enfin, si l'on veut une
-solution simple d'utilisation et efficace alors ce ne sera pas très générique. Dans cette thèse, nous essayons de
-démontrer comment briser cette règle en trois étapes.
+Le travail présenté dans cette thèse par l'auteur suit un arc narratif très clair. L'accent a d'abord été mis sur la
+présentation de ce qu'est la notion de programmation générique (généricité), son histoire et comment chacun(e) peut la
+comprendre, notamment dans sa vie de tout les jours, et en particulier lorsqu'elle est appliquée au traitement d'images.
+La généricité est une notion vieille de 4 décennies qui a évolué et trouvé une utilisation dans des domaines très
+modernes de notre société. En effet, Le traitement d'images est largement utilisé pour construire des applications
+utilisées dans le monde entier. Cependant, il a été démontré à quel point il peut être difficile de mettre en \oeuvre
+des solutions reposant sur la généricité. En effet, il existe une règle de trois liant généricité, performance et
+facilité d'utilisation. La règle stipule qu'on ne peut avoir que deux de ces notions qu'en sacrifiant le troisième. Si
+l'on veut être générique et efficace, alors la solution naïve sera très complexe à utiliser avec beaucoup de paramètres.
+Si l'on veut qu'une solution soit générique et facile à utiliser, alors elle ne sera pas très efficace par défaut.
+Enfin, si l'on veut une solution simple d'utilisation et efficace alors elle ne sera pas très générique. Dans cette
+thèse, nous essayons de démontrer comment briser cette règle, et ce, en trois étapes.
 
-La première étape, illustrée dans le chapitre \emph{Taxonomy for Image Processing}, consistait à faire un inventaire des
-types d'images et familles ainsi que différents algorithmes de traitement d'images. L'objectif était de produire une
-taxonomie complète des types (pixel, image, éléments structurants, \ldots) et algorithmes liés au traitement d'image
-afin de pouvoir écrire concepts (au sens des concepts C++). Cette première étape délimite le périmètre de ce que
-l'auteur entend par \emph{généricité}. A partir de ce point de départ, il devient plus facile d'écrire des algorithmes
-de traitement d'image par défaut, juste en en s'appuyant sur ces concepts. De plus, différents concepts existent pour
-permettre aux implémenteurs d'algorithmes d'exploiter les propriétés (décomposabilité des éléments structurants,
-contiguïté du buffer de l'image, \ldots) afin d'atteindre des performances maximales.
+La première étape, illustrée dans le chapitre \emph{Taxonomy for Image Processing}, a consisté à faire un inventaire des
+types et familles d'images ainsi que des différents algorithmes de traitement d'images. L'objectif a été de produire une
+taxonomie complète des types (pixel, image, éléments structurants, \ldots) et algorithmes (locaux, globaux, \ldots) liés
+au traitement d'image afin de pouvoir extraire les Concepts (au sens Concepts C++). Cette première étape délimite le
+périmètre de ce que l'auteur englobe dans la notion de \emph{généricité}. A partir de ce point de départ, il devient
+plus facile d'écrire des algorithmes de traitement d'image, juste en en s'appuyant sur ces concepts. De plus, différents
+concepts existent pour permettre aux développeurs d'algorithmes d'exploiter des propriétés (décomposabilité des éléments
+structurants, contiguïté du buffer de l'image, \ldots) afin d'atteindre des performances maximales.
 
-A ce stade, on raisonne encore à un niveau bas (pixel) ce qui génère le besoin de concevoir une couche d'abstraction
-dans afin de permettre un prototypage rapide pour des opérations simples tout en garantissant une empreinte mémoire très
+A ce stade, nous raisonnons encore à un niveau bas (pixel) ce qui génère le besoin de designer une couche d'abstraction
+afin de permettre un prototypage rapide pour des opérations simples tout en garantissant une empreinte mémoire très
 faible et proche de zéro impact sur les performances. Pour cette raison, nous étendons le concept de \emph{vues} du
-standard C++ (2020) aux images et concevoir ce que la notion de \emph{vue d'image}. Nous faisons également le choix de
-conception d'avoir une image bon marché à copier (données partagées buffer) par défaut afin de fusionner l'image
-concrète et les vues du point de vue de l'utilisateur. L'évaluation paresseuse, qui se produit systématiquement lorsque
-l'utilisation des vues permet un gain de performances lors du découpage d'images volumineuses. Dans le cas où l'ensemble
-l'image est traitée, nous avons pu tout de même retenir des performances très satisfaisantes qui restent stables. Aussi,
-nous montrons à travers cas d'utilisation concrets, tels que l'algorithme pixel par pixel et la gestion des frontières
-comment l'utilisation des vues simplifie grandement comment écrire des algorithmes de traitement d'image plus complexes
-et efficaces par défaut. Nous montrons enfin les limites de cette approche, avec un accent particulier sur la vitesse de
-parcours d'une image, un cas d'utilisation obligatoire que nous devons maîtriser.
+standard C++ (2020) aux images et nous clarifions la notion de \emph{vue d'image}. Nous faisons également le choix de
+conception d'avoir une image légère, peu coûteuses à copier (données partagées buffer) par défaut afin de fusionner
+l'image concrète et les vues du point de vue de l'utilisateur. L'évaluation paresseuse, qui se produit systématiquement
+lors de l'utilisation des vues permet un gain de performances lors du découpage d'images volumineuses. Dans le cas où
+l'image est traitée dans son entièreté, nous sommes tout de même capable d'obtenir des performances très satisfaisantes
+qui restent stables. Aussi, nous montrons, à travers des cas d'utilisation concrets tels que les algorithmes
+fonctionnant pixel par pixel et la gestion des frontières, comment l'utilisation des vues simplifie grandement la façon
+d'écrire des algorithmes de traitement d'image plus complexes et efficaces par défaut. Nous montrons enfin les limites
+de cette approche, avec un accent particulier sur la vitesse de parcours d'une image, qui est un cas d'utilisation
+obligatoire que nous devons maîtriser.
 
 Enfin, cette thèse a porté son attention sur la manière dont il est possible de distribuer ce logiciel au traitement
 d'image communauté qui travaille principalement avec Python. Le dernier ouvrage concentre ses efforts sur la recherche

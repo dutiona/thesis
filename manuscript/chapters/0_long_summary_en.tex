@@ -663,27 +663,27 @@ explore them.
 
 
 The work presented in this thesis by the author followed a very clear narrative arc. The emphasis was first shown on
-presenting what is the notion of generic programming (genericity), its story and how anyone can relate to its day to day
-usage, especially when applied to image processing. Genericity is a 4-decades years old notion that has evolved and
-found usage in very modern area of our society. In particular, in image processing, it is widely used to build modern
-applications used all around the world. However, it was demonstrated how difficult it can be to implement solutions
-relying on genericity. Indeed, there is a rule of three tying genericity, performance and ease of use. The rule states
-that one can only have two of those items by sacrificing the third one. If one wants to be generic and efficient, then
-the naive solution will be very complex to use with lots of parameters. If one wants a solution to be generic and easy
-to use, then it will be not very efficient by default. Finally, if one wants a solution to be easy to use and efficient
-then it will not be very generic. In this thesis, we try to demonstrate how to break this rule in three steps.
+presenting what is the notion of generic programming (genericity), its story and how anyone can relate in his day-to-day
+life, especially when applied to image processing. Genericity is a 4-decades years old notion that has evolved and found
+usage in very modern areas of our society. Indeed, image processing is widely used to build modern applications used all
+around the world. However, it was demonstrated how difficult it can be to implement solutions relying on genericity.
+Indeed, there is a rule of three tying genericity, performance and ease of use. The rule states that one can only have
+two of those items by sacrificing the third one. If one wants to be generic and efficient, then the naive solution will
+be very complex to use with lots of parameters. If one wants a solution to be generic and easy to use, then it will be
+not very efficient by default. Finally, if one wants a solution to be easy to use and efficient then it will not be very
+generic. In this thesis, we try to demonstrate how to break this rule in three steps.
 
 The first step, illustrated in the chapter \emph{Taxonomy for Image Processing}, was to make an inventory of image types
 and families as well as different image processing algorithms. The aim was to produce a comprehensive taxonomy of types
 (pixel, image, structuring elements, \ldots) and algorithms related to image processing in order to be able to write
 concepts (in the sense of C++ concepts). This first step delimits the perimeter of what the author means by
-\emph{genericity}. From this starting point, it becomes easier to write image processing algorithms by default, just by
-relying on those concepts. Furthermore, different concepts exist to enable algorithm implementers to leverage properties
+\emph{genericity}. From this starting point, it becomes easier to write image processing algorithms, just by relying on
+those concepts. Furthermore, different concepts exist to enable algorithm implementers to leverage properties
 (structuring elements' decomposability, image's buffer contiguous, \ldots) in order to achieve maximum performance.
 
 At this point, we are still reasoning at a low level (pixel) which generates the need to design an abstraction layer in
 order to enable fast prototyping for simple operations while guarantying very small memory footprint and near-zero
-performance impact. Fir this reason, we expand the concept of \emph{views} from the C++ standard (2020) to images and
+performance impact. For this reason, we expand the concept of \emph{views} from the C++ standard (2020) to images and
 design what the notion of \emph{image view}. We also make the design choice to have cheap-to-copy image (shared data
 buffer) by default in order to merge concrete image and views from the user point of view. The lazy-evaluation, that
 systematically happens when using views allows performance gain when clipping larges images. In the case where the whole
