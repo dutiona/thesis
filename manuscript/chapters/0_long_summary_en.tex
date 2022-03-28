@@ -155,9 +155,9 @@ Before delving into the specifics of what genericity implies for libraries and p
 some vocabulary for the sake of comprehension. First is the notion of \emph{type}. A \emph{type} (or \emph{data type})
 is an attribute of data which tells the compiler or interpreter how the programmer intends to use the data. Most
 programming language support basic data types (also called primitive types) such as integer numbers, floating point
-numbers, boolean and characters (ASCII, Unicode, etc.). This data attribute defines the operation that can be done on
-the data, the meaning of the data and the size of the data in memory (the data can then be stored on the heap, stack,
-etc.). A data type provides a set of values from which an expression (\ie variable, function, etc.) may take its
+numbers, boolean and characters (ASCII, Unicode, etc.). This data attribute defines the operations that can be performed
+on the data, the meaning of the data and the size of the data in memory (the data can then be stored on the heap, stack,
+etc.). A data type provides a set of values from which an expression (\ie variable, function, etc.) may take those
 values. Among programming language, we can distinguish those who are dynamically types and those that are statically
 typed. Statically typed languages are those whose variables are declared holding a specific type. This variable cannot
 hold data from another type in the scope it is declared. Statically typed programming languages are Ada, C, C++, Java,
@@ -168,18 +168,18 @@ holding. Dynamically typed programming languages are PHP, Python, JavaScript, Pe
 The consequence of being able to tell which type a variable is holding at all time (statically-typed language) is
 two-fold. For the developer, it is easier to reason about code and to spot bugs. For the compiler, it is possible to
 generate optimized binary code specific to this data type (vectorization, etc.). The consequence of being able to morph
-the types a variable can hold at runtime is mainly to serve prototyping purpose. When tweaking a Jupyter notebook, it is
+the type a variable can hold at runtime is mainly to serve prototyping purpose. When tweaking a Jupyter notebook, it is
 much appreciated not to be limited to a single type for each variable to be able to iterate on the prototype much
 faster.
 
 In image processing, an image \(Im\) is defined on a domain \(\mathcal{D}\) (which contains points) by the relation
-\(\forall x \in \mathcal{D}, y = Im(x)\) where y is the value of the image \(Im\) for the point \(x\). This definition
-always translates into a complex data structure when transposed into a programming language. This data structure must be
-aware of the data buffer containing the image data as well as information about the size and dimensions of the image.
-Furthermore, to add to the difficulty, the information needed to define precisely the data structure is not always known
-when writing the source code. Indeed, a very simple use-case consists in reading an image from a file to load it in
-memory. The file can contain an image of varying data type and the program should still work properly. There are
-multiple approach to solve this issue, and we are addressing them in this chapter.
+\(\forall x \in \mathcal{D}, y = Im(x)\) where \(y\) is the value of the image \(Im\) for the point \(x\). This
+definition always translates into a complex data structure when transposed into a programming language. This data
+structure must be aware of the data buffer containing the image data as well as information about the size and
+dimensions of the image. Furthermore, to add to the difficulty, the information needed to define precisely the data
+structure is not always known when writing the source code. Indeed, a very simple use-case consists in reading an image
+from a file to load it in memory. The file can contain an image of varying data type and the program should still work
+properly. There are multiple approach to solve this issue, and we are addressing them in this chapter.
 
 Projecting the notion of genericity to Image Processing, we can deduce that we need two important aspects in order to be
 generic. First, we need to decorrelate the data structures and its topology and underlying data from the algorithms.
@@ -211,10 +211,19 @@ computational shape and can be factorized together.
   \label{summary:fig:type.vs.algo}
 \end{figure}
 
+Genericity can have two different meanings depending on the people you ask. For instance, some will argue that
+genericity is high level and qualifies a tool which is ``generic enough'' to handle all of his use-cases. Others will
+argue that genericity is about how the code is written: generic enough to handle all the use cases possibles. Neither is
+wrong. However, for the sake of comprehension we will use different words for each of these cases. A tool generic enough
+to handle a lot of use-case will be called \emph{versatile}. Finally, for a tool whose aim is to provide a programming
+framework to handle code of any use-case we will use \emph{generic}. In this thesis, genericity will be about code. The
+figure~\ref{summary:fig:type.vs.algo} illustrates this result of the same generic watershed implementation applied on an
+image 2D, a graph as well as a mesh.
+
 In this chapter we present the origin of generic programming, which goes as far as~\citedate[year]{musser.1988.generic}
 and how it has evolved to be integrated in the Ada programming language and then the C++ programming language.
-Afterwards, it has evolved into the notion of \emph{concept} which completes the toolbox required to be able to fully
-make use of generic programming without resorting to obscure tweaks and tools.
+Afterwards, it has evolved even further with the notion of \emph{concept} which completes the toolbox required to be
+able to fully make use of generic programming without resorting to obscure tweaks and tools.
 
 \begin{table}[htbp]
   \centering
@@ -247,7 +256,7 @@ three techniques enabling the user to write a high level algorithm once that can
 \emph{code duplication} approach, the \emph{generalization} approach and the \emph{inclusion and parametric
   polymorphism} approach. We present in~\cref{summary:table:gen.approaches} the result of the comparison of these
 approaches with regard to the features that we are interested in. We also discuss the limitations linked to the usage of
-those approaches by comparing OpenCV, scikit-Image and Pylene which make use of the four techniques at different level
+those approaches by comparing OpenCV, Scikit-Image and Pylene which make use of the four techniques at different level
 to achieve different goals. Furthermore, we have identified limitations related to the underlying data type, the
 structure of the domain, the optimizations and discuss the performances through a concrete benchmark.
 

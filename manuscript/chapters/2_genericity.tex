@@ -136,9 +136,9 @@ Before delving into the specifics of what genericity implies for libraries and p
 some vocabulary for the sake of comprehension. First is the notion of \emph{type}. A \emph{type} (or \emph{data type})
 is an attribute of data which tells the compiler or interpreter how the programmer intends to use the data. Most
 programming language support basic data types (also called primitive types) such as integer numbers, floating point
-numbers, boolean and characters (ASCII, Unicode, etc.). This data attribute defines the operation that can be done on
-the data, the meaning of the data and the size of the data in memory (the data can then be stored on the heap, stack,
-etc.). A data type provides a set of values from which an expression (\ie variable, function, etc.) may take its
+numbers, boolean and characters (ASCII, Unicode, etc.). This data attribute defines the operations that can be performed
+on the data, the meaning of the data and the size of the data in memory (the data can then be stored on the heap, stack,
+etc.). A data type provides a set of values from which an expression (\ie variable, function, etc.) may take those
 values. Among programming language, we can distinguish those who are dynamically types and those that are statically
 typed. Statically typed languages are those whose variables are declared holding a specific type. This variable cannot
 hold data from another type in the scope it is declared. Statically typed programming languages are Ada, C, C++, Java,
@@ -154,14 +154,14 @@ much appreciated not to be limited to a single type for each variable to be able
 faster.
 
 In image processing, an image \(Im\) is defined on a domain \(\mathcal{D}\) (which contains points) by the relation
-\(\forall x \in \mathcal{D}, y = Im(x)\) where y is the value of the image \(Im\) for the point \(x\). This definition
-always translates into a complex data structure when transposed into a programming language. This data structure must be
-aware of the data buffer containing the image data as well as information about the size and dimensions of the image.
-Furthermore, to add to the difficulty, the information needed to define precisely the data structure is not always known
-when writing the source code. Indeed, a very simple use-case consists in reading an image from a file to load it in
-memory. The file can contain an image of varying data type and the program should still work properly. There are
-multiple approach to solve this issue, and we will address them in the following~\cref{sec:gen.within.libraries}
-and~\cref{sec:gen.genericity.within.programming.languages}.
+\(\forall x \in \mathcal{D}, y = Im(x)\) where \(y\) is the value of the image \(Im\) for the point \(x\). This
+definition always translates into a complex data structure when transposed into a programming language. This data
+structure must be aware of the data buffer containing the image data as well as information about the size and
+dimensions of the image. Furthermore, to add to the difficulty, the information needed to define precisely the data
+structure is not always known when writing the source code. Indeed, a very simple use-case consists in reading an image
+from a file to load it in memory. The file can contain an image of varying data type and the program should still work
+properly. There are multiple approach to solve this issue, and we will address them in the
+following~\cref{sec:gen.within.libraries} and~\cref{sec:gen.genericity.within.programming.languages}.
 
 
 
@@ -1383,15 +1383,15 @@ scope of possibilities for the future.
 
 In this chapter we present the origin of generic programming, which goes as far as~\citedate[year]{musser.1988.generic}
 and how it has evolved to be integrated in the Ada programming language and then the C++ programming language.
-Afterwards, it has evolved into the notion of \emph{concept} which completes the toolbox required to be able to fully
-make use of generic programming without resorting to obscure tweaks and tools.
+Afterwards, it has evolved even further with the notion of \emph{concept} which completes the toolbox required to be
+able to fully make use of generic programming without resorting to obscure tweaks and tools.
 
 This chapter explores the possibilities of achieving the notion of genericity from within a library. Indeed, there are
 three techniques enabling the user to write a high level algorithm once that can run on every type. They are the
 \emph{code duplication} approach, the \emph{generalization} approach and the \emph{inclusion and parametric
   polymorphism} approach. We present in~\cref{table:gen.approaches} the result of the comparison of these approaches with
 regard to the features that we are interested in. We also discuss the limitations linked to the usage of those
-approaches by comparing OpenCV, scikit-Image and Pylene which make use of the four techniques at different level to
+approaches by comparing OpenCV, Scikit-Image and Pylene which make use of the four techniques at different level to
 achieve different goals. Furthermore, we have identified limitations related to the underlying data type, the structure of the
 domain, the optimizations and discuss the performances through a concrete benchmark presented
 in~\cref{fig:gen.bench.square.disc}.
