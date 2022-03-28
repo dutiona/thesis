@@ -619,6 +619,13 @@ C++ code by injected the requested type when it is used. Such an operation shift
 is well-known that compiling C++ code is notably \emph{complicated} and \emph{slow}. In addition, the library needs to
 be able to auto-generate Python binding once the C++ code is compiled. There are several solutions to reach this point.
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.6\linewidth]{../figures/dynamic_pipeline}
+  \caption{Interpreted languages: runtime}
+  \label{summary:fig:static.dynamic.dynamic.pipeline}
+\end{figure}
+
 The first solution is to basically use system call to the compilers to actually \emph{compile} C++ code once the
 templated types are known and explicitly instantiated in the source code. This solution requires careful code-generation
 design and that the user actually possess a compiler on his computer. Furthermore, the user must resolve all the
