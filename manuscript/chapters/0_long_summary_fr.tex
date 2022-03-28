@@ -561,12 +561,12 @@ auto MyComplexImage = subquantize16to8b(togray(A));
 \end{figure}
 
 De plus, \emph{les vues sont calculées paresseusement}. L'opération étant enregistrée dans la vue d'image, ce nouveau
-type d'image permet de mélanger des types d'images fondamentaux avec des algorithmes. Dans~\cref{fig:view.highorder}, la
-création de vues n'implique aucun calcul en soi mais retarde plutôt le calcul jusqu'à ce que l'expression \texttt{v(p)}
-soit invoqué. Parce que les vues peuvent être composées, l'évaluation peut être assez retardée. Les adaptateurs d'image
-sont des \emph{expression template}~\parencite{veldhuizen.1995.expression, veldhuizen.2000.blitz} car ils enregistrent
-les \emph{expressions} utilisées pour générer l'image en tant que paramètre template. Une vue représente en fait un
-arbre d'expressions (\cref{fig:new.alphablend}).
+type d'image permet de mélanger des types d'images fondamentaux avec des algorithmes.
+Dans~\cref{resume:fig:view.highorder}, la création de vues n'implique aucun calcul en soi mais retarde plutôt le calcul
+jusqu'à ce que l'expression \texttt{v(p)} soit invoqué. Parce que les vues peuvent être composées, l'évaluation peut
+être assez retardée. Les adaptateurs d'image sont des \emph{expression template}~\parencite{veldhuizen.1995.expression,
+  veldhuizen.2000.blitz} car ils enregistrent les \emph{expressions} utilisées pour générer l'image en tant que paramètre
+template. Une vue représente en fait un arbre d'expressions (\cref{resume:fig:new.alphablend}).
 
 \emph{Les vues sont efficaces}. Avec un design classique, chaque opération de la pipeline est implémentée << par
 elle-même >>. Chaque opération nécessite que de la mémoire lui soit allouée pour l'image de sortie et, également, chaque
@@ -587,7 +587,7 @@ même si cette sélection n'est faite qu'à la toute fin de la pipeline de trait
 Enfin, les \emph{vues améliorent la productivité}. Tous les algorithmes de traitement d'image fonctionnant pixel par
 pixel peuvent (et doivent) être réécrits intuitivement en utilisant une vue en une seule ligne. Les vues
 \emph{transform} sont la clé permettant ce point. Cela implique qu'il existe un nouveau niveau d'abstraction disponible
-pour le traiteur d'image lors du prototypage de son algorithme. Le temps passé à la mise en \oeuvre des fonctionnalités
+pour le traiteur d'image lors du prototypage de son algorithme. Le temps passé à la mise en \oe{}uvre des fonctionnalités
 est réduite, donc le temps de la boucle de rétroaction est également réduit. Cela amène naturellement un gain de
 productivité au traiteur d'image.
 
@@ -614,7 +614,7 @@ le montre statique et le monde dynamique. Nous présentons notre solution hybrid
 bibliothèque générique C++ (statique) à partir de Python (dynamique). Nous discutons à propos des différentes façons de
 réaliser ce pont, leurs avantages et leurs inconvénients. Aussi, nous introduisons une nouvelle couche d'abstraction, le
 value-set, qui est un moyen standard de manipuler les valeurs sous-jacentes d'une image, utilisable lors de la mise en
-\oeuvre d'algorithmes de traitement d'images. Cette nouvelle couche d'abstraction permet notament à l'utilisateur
+\oe{}uvre d'algorithmes de traitement d'images. Cette nouvelle couche d'abstraction permet notament à l'utilisateur
 d'injecter du code côté Python dans des routines C++ déjà compilées. Cependant, superposer une couche d'abstraction
 après l'autre, ou même appeler du code Python entraine forcément un coût du côté des performances. C'est pourquoi nous
 avons réalisé un benchmark pour exposer clairement le coût de nos différentes solutions. Ce benchmark compare les quatre
@@ -662,7 +662,7 @@ fois que le prototype doit être déployé dans un environnement de production.
 Notre solution hybride a certainement des avantages, mais l'énorme inconvénient est la lenteur pour injecter nos propres
 types depuis Python. Il existe une autre solution que cette thèse n'a pas eu l'occasion d'approfondir. Cette solution
 est basée sur une technologie connue : la compilation Just-In-Time (JIT) qui a été illustrée précédemment
-in~\cref{fig:static.dynamic.dynamic.pipeline} (et qui elle-même repose sur la notion de programmation
+in~\cref{resume:fig:static.dynamic.dynamic.pipeline} (et qui elle-même repose sur la notion de programmation
 générative~\parencite{czarnecki.2000.generative}). Des bibliothèques telles que AsmJit~\parencite{kobalicek.2011.asmjit}
 sont capables d'émettre du code machine directement en effectuant un appel depuis du code C++. En effet, c'est une
 technologie déjà utilisée par les langages interprétés tels que Java ou PHP pour générer à la volée du code machine
@@ -710,7 +710,7 @@ une interface avec Python et permet à l'utilisateur d'utiliser la bibliothèque
 une bibliothèque Python. Enfin, Pythran est un compilateur << avancé >> pour un sous-ensemble du langage Python, axé sur
 le calcul scientifique. Il prend un code Python annoté avec quelques descriptions dans son interface et le transforme en
 un module Python natif avec la même interface, mais en espérant qu'il soit plus rapide. Pythran tire parti du
-multic\oeur et des instructions SIMD pour transformer son sous-ensemble du langage Python en code C++ fortement
+multic\oe{}ur et des instructions SIMD pour transformer son sous-ensemble du langage Python en code C++ fortement
 générique instancié pour des types optimisés bien particuliers. Toutes ces infrastructures, cependant, ont un coût élevé
 en terme de taille de binaire. En effet, un compilateur C++ n'est pas petit et l'embarquer avec la bibliothèque de
 traitement d'image peut facilement avoir un impact considérable sur la taille du binaire final. Sans l'infrastructure
@@ -729,7 +729,7 @@ présentation de ce qu'est la notion de programmation générique (généricité
 comprendre, notamment dans sa vie de tout les jours, et en particulier lorsqu'elle est appliquée au traitement d'images.
 La généricité est une notion vieille de 4 décennies qui a évolué et trouvé une utilisation dans des domaines très
 modernes de notre société. En effet, Le traitement d'images est largement utilisé pour construire des applications
-utilisées dans le monde entier. Cependant, il a été démontré à quel point il peut être difficile de mettre en \oeuvre
+utilisées dans le monde entier. Cependant, il a été démontré à quel point il peut être difficile de mettre en \oe{}uvre
 des solutions reposant sur la généricité. En effet, il existe une règle de trois liant généricité, performance et
 facilité d'utilisation. La règle stipule qu'on ne peut avoir que deux de ces notions qu'en sacrifiant le troisième. Si
 l'on veut être générique et efficace, alors la solution naïve sera très complexe à utiliser avec beaucoup de paramètres.
@@ -767,7 +767,7 @@ ses efforts sur la recherche de la meilleure façon de concevoir un pont statiqu
 au traiteur d'image. Cette dernière contribution explore ce dilemme et propose de l'aborder avec une solution hybride
 dont le design et les motivations sont expliqués en profondeur. Cette solution hybride s'appuie sur la technique de
 l'effacement de type qui offre une compatibilité les \emph{NumPy.array}~\parencite{harris.2020.numpy}. Ce type (effacé)
-est alors capable de se convertire au sein d'un dispatcher de cardinalité \(n \fois n\) (dimension et type sous-jacent)
+est alors capable de se convertire au sein d'un dispatcher de cardinalité \(n \times n\) (dimension et type sous-jacent)
 dans un type C++ templaté concret optimisé. Cette solution explique aussi comment écrire très simplement le code << glue
 >> permettant d'exposer en Python des algorithmes déjà existants (en C++) grâce à une mécanique de dispatch fortement
 inspirée du standard C++ (\texttt{std::visit}, \texttt{std::variant}). Le but de cette solution est de regrouper en un

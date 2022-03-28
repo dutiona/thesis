@@ -514,11 +514,12 @@ auto MyComplexImage = subquantize16to8b(togray(A));
 \end{figure}
 
 In addition, \emph{views are lazy computed}. Because the operation is recorded within the image view, this new image
-type allows fundamental image types to be mixed with algorithms. In~\cref{fig:view.highorder}, the creation of views
-does not involve any computation in itself but rather delays the computation until the expression \texttt{v(p)} is
+type allows fundamental image types to be mixed with algorithms. In~\cref{summary:fig:view.highorder}, the creation of
+views does not involve any computation in itself but rather delays the computation until the expression \texttt{v(p)} is
 invoked. Because views can be composed, the evaluation can be delayed quite far. Image adaptors are \emph{template
   expressions}~\parencite{veldhuizen.1995.expression, veldhuizen.2000.blitz} as they record the \emph{expression} used to
-generate the image as a template parameter. A view actually represents an expression tree (\cref{fig:new.alphablend}).
+generate the image as a template parameter. A view actually represents an expression tree
+(\cref{summary:fig:new.alphablend}).
 
 Also, \emph{views are efficient}. With a classical design, each operation of the pipeline is implemented on ``its own''.
 Each operation requires memory to be allocated for the output image and also, each operation requires that the image is
@@ -607,7 +608,7 @@ viable solution once the prototype needs to scale to a production environment.
 Our hybrid solution certainly has advantages, but the huge disadvantage is the slowness of injecting our own types from
 the Python side. There exists another solution that this thesis did not have the opportunity to study in-depth. This
 solution is based on a known technology: the Just-In-Time (JIT) compilation which has been previously illustrated
-in~\cref{fig:static.dynamic.dynamic.pipeline} (and which itself is based on the notion of generative
+in~\cref{summary:fig:static.dynamic.dynamic.pipeline} (and which itself is based on the notion of generative
 programming~\parencite{czarnecki.2000.generative}). Library such as AsmJit~\parencite{kobalicek.2011.asmjit} are able to
 emit machine code directly by making call in C++ code. Indeed, it is a technology already used by interpreted languages
 such as Java or PHP to generate on-the-fly native and optimized machine code for the section of the source code that is
