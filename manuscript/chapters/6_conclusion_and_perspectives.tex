@@ -51,14 +51,14 @@ solution is obviously the code bloat with the resulting binary size exploding ex
 types multiplied by the number of algorithms multiplied by the number of additional supported data (structuring
 elements, label map, etc.)
 
-We conclude this thesis by offering new avenue of research around the JIT-compilation area to further improve the bridge
-between the static and the dynamic world. The author thinks that this avenue is worth exploring, especially with the
-already promising existing tools (Xeus-cling, Cppyy, Cython, AutoWIG) in order to solve the code bloat issue. We would
-only compile what the user need, but the entry price may be to statically link a C++ interpreter (LLVM/cling?) into the
-binary which in itself would greatly bloat it. It may be possible, however, to rely on the user's system-wide
-infrastructure so that the maintenance does not distribute a whole C++ interpreter/compiler alongside his image
-processing library binary. This is still a new area of research and the author would very much want to delve into it to
-study what is possible to achieve as of today with those tools for the image processing community.
+We conclude this thesis by offering new avenue of research around the Just-In-Time (JIT) compilation area to further
+improve the bridge between the static and the dynamic world. The author thinks that this avenue is worth exploring,
+especially with the already promising existing tools (Xeus-cling, Cppyy, Cython, AutoWIG, Pythran) in order to solve the
+code bloat issue. Indeed, we would only compile what the user need, but the entry price may be to statically link a C++
+interpreter (LLVM/cling?) into the binary which in itself would greatly bloat it. It may be possible, however, to rely
+on the user's system-wide infrastructure so that the maintenance does not distribute a whole C++ interpreter/compiler
+alongside his image processing library binary. This is still a new area of research and the author would very much want
+to delve into it to study what is possible to achieve as of today with those tools for the image processing community.
 
 
 % "Understanding why software fails is important, but the real challenge is understanding why software works.

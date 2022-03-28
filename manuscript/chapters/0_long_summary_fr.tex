@@ -760,32 +760,35 @@ d'écrire des algorithmes de traitement d'image plus complexes et efficaces par 
 de cette approche, avec un accent particulier sur la vitesse de parcours d'une image, qui est un cas d'utilisation
 obligatoire que nous devons maîtriser.
 
-Enfin, cette thèse a porté son attention sur la manière dont il est possible de distribuer ce logiciel au traitement
-d'image communauté qui travaille principalement avec Python. Le dernier ouvrage concentre ses efforts sur la recherche
-de la meilleure façon de concevoir un pont statique (compile-time, templated C++) --- dynamique (runtime, Python
-notebook) pour apporter ces notions (concepts et vues) au praticien, efficacement. Ce dernier ouvrage explore ce dilemme
-et propose de l'aborder avec une solution hybride dont la conception est expliquée en profondeur. Cette solution hybride
-s'appuie sur un type effacé qui offre compatibilité avec un \emph{NumPy.array}~\parencite{harris.2020.numpy}. Il est
-alors capable de se lancer à l'intérieur d'un \(n \fois n\) répartiteur (dimension et type sous-jacent) dans un type C++
-modélisé concret optimisé. Cette solution aussi expliquer comment écrire très simplement le code glue permettant
-d'exposer en Python des algorithmes déjà existants (en C++) grâce à une mécanique de dispatch fortement inspirée du
-standard C++ (\texttt{std::visit}, \texttt{std::variant}). le Le but de cette solution était de regrouper en un seul
-endroit dans le code tous les types supportés dans les répartiteurs pour à des fins de maintenance ainsi qu'un travail
-minimal exigeant de la part de l'implémenteur d'algorithmes pour exposer leurs algorithmes, tout cela tout en gardant
-les performances natives. En effet, aucune copie superflue n'est effectuée grâce à \emph{pybind11} \emph{type-caster},
-et une conversion est effectuée du type effacé vers le type natif. Tout le travail qui est fait dans l'algorithme est
-effectué sur le type natif optimisé. Enfin, cette solution offre un moyen d'injecter Python personnalisé types dans la
-bibliothèque à des fins de prototypage, grâce à une nouvelle couche d'abstraction, au prix de lourdes performances
-perte. L'inconvénient de cette solution est évidemment le gonflement du code avec la taille binaire résultante qui
-explose de façon exponentielle avec le nombre de types pris en charge multiplié par le nombre d'algorithmes multiplié
-par le nombre d'autres données supportées (éléments structurants, label map, etc.)
+Enfin, dans cette thèse, nous avons porté notre attention sur la manière dont il est possible de distribuer ce logiciel
+à la communauté des traiteurs d'image qui travaille principalement avec Python. Cette dernière contribution concentre
+ses efforts sur la recherche de la meilleure façon de concevoir un pont statique (C++ template, temps de la compilation)
+--- dynamique (notebook Jupyter Python, moment de l'exécution) pour apporter efficacement ces notions (concepts et vues)
+au traiteur d'image. Cette dernière contribution explore ce dilemme et propose de l'aborder avec une solution hybride
+dont le design et les motivations sont expliqués en profondeur. Cette solution hybride s'appuie sur la technique de
+l'effacement de type qui offre une compatibilité les \emph{NumPy.array}~\parencite{harris.2020.numpy}. Ce type (effacé)
+est alors capable de se convertire au sein d'un dispatcher de cardinalité \(n \fois n\) (dimension et type sous-jacent)
+dans un type C++ templaté concret optimisé. Cette solution explique aussi comment écrire très simplement le code << glue
+>> permettant d'exposer en Python des algorithmes déjà existants (en C++) grâce à une mécanique de dispatch fortement
+inspirée du standard C++ (\texttt{std::visit}, \texttt{std::variant}). Le but de cette solution est de regrouper en un
+seul endroit dans le code tous les types supportés dans les dispatcher pour faciliter la maintenance ainsi qu'un travail
+minimal exigé de la part de la personne qui implémente d'algorithmes pour les exposer au Python, tout cela en gardant
+des performances natives. En effet, aucune copie superflue n'est effectuée grâce à \emph{pybind11} et son
+\emph{type-caster}: uniquement une conversion est effectuée du type effacé vers le type natif. Tout le travail qui est
+fait dans l'algorithme est effectué sur le type natif optimisé. Enfin, cette solution offre un moyen d'injecter des
+types Python personnalisés types dans la bibliothèque C++ générique à des fins de prototypage, grâce à une nouvelle
+couche d'abstraction, mais au prix de lourdes pertes de performance. L'inconvénient de cette solution est évidemment le
+gonflement de la taille du binaire résultante qui explose de façon exponentielle avec le nombre de types pris en charge
+multiplié par le nombre d'algorithmes multiplié par le nombre d'autres données supportées (éléments structurants, label
+map, etc.)
 
-Nous concluons cette thèse en proposant de nouvelles pistes de recherche autour du domaine de la compilation JIT pour
-améliorer encore le pont entre le monde statique et le monde dynamique. L'auteur pense que cette piste mérite d'être
-explorée, surtout avec la des outils existants déjà prometteurs (Xeus-cling, Cppyy, Cython, AutoWIG) afin de résoudre le
-problème de gonflement du code. Nous serions ne compilez que ce dont l'utilisateur a besoin, mais le prix d'entrée peut
-être de lier statiquement un interpréteur C++ (LLVM/cling?) binaire qui en soi le gonflerait grandement. Il peut être
-possible, cependant, de se fier à l'ensemble du système de l'utilisateur infrastructure pour que la maintenance ne
-distribue pas tout un interpréteur/compilateur C++ à côté de son image binaire de la bibliothèque de traitement. Il
-s'agit encore d'un domaine de recherche nouveau et l'auteur souhaiterait vivement l'approfondir pour étudier ce qu'il
-est possible de réaliser dès aujourd'hui avec ces outils pour la communauté du traitement d'images.
+Nous concluons cette thèse en proposant de nouvelles pistes de recherche autour du domaine de la compilation
+Just-In-Time (JIT) pour améliorer encore le pont entre le monde statique et le monde dynamique. L'auteur pense que cette
+piste mérite d'être explorée, surtout avec les outils existants déjà prometteurs (Xeus-cling, Cppyy, Cython, AutoWIG,
+Pythran) afin de résoudre le problème de gonflement du binaire. En effet, nous ne devrions compiler que ce dont
+l'utilisateur a besoin, mais le prix d'entrée peut être d'embarquer statiquement un interpréteur C++ (LLVM/cling?) dans
+son binaire, ce qui en soi le gonflerait grandement. Il peut être possible, cependant, de s'appuyer sur l'infrastructure
+système de l'utilisateur pour que le mainteneur ne soit pas obligé de distribuer un interpréteur/compilateur C++ en même
+temps que le binaire de sa bibliothèque de traitement d'image. Il s'agit encore d'un domaine de recherche nouveau et
+l'auteur souhaiterait vivement l'approfondir pour étudier ce qu'il est possible de réaliser dès aujourd'hui avec ces
+outils pour la communauté du traitement d'images.
