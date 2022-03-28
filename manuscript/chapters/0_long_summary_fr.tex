@@ -587,7 +587,7 @@ même si cette sélection n'est faite qu'à la toute fin de la pipeline de trait
 Enfin, les \emph{vues améliorent la productivité}. Tous les algorithmes de traitement d'image fonctionnant pixel par
 pixel peuvent (et doivent) être réécrits intuitivement en utilisant une vue en une seule ligne. Les vues
 \emph{transform} sont la clé permettant ce point. Cela implique qu'il existe un nouveau niveau d'abstraction disponible
-pour le traiteur d'image lors du prototypage de son algorithme. Le temps passé à la mise en oeuvre des fonctionnalités
+pour le traiteur d'image lors du prototypage de son algorithme. Le temps passé à la mise en \oeuvre des fonctionnalités
 est réduite, donc le temps de la boucle de rétroaction est également réduit. Cela amène naturellement un gain de
 productivité au traiteur d'image.
 
@@ -614,7 +614,7 @@ le montre statique et le monde dynamique. Nous présentons notre solution hybrid
 bibliothèque générique C++ (statique) à partir de Python (dynamique). Nous discutons à propos des différentes façons de
 réaliser ce pont, leurs avantages et leurs inconvénients. Aussi, nous introduisons une nouvelle couche d'abstraction, le
 value-set, qui est un moyen standard de manipuler les valeurs sous-jacentes d'une image, utilisable lors de la mise en
-oeuvre d'algorithmes de traitement d'images. Cette nouvelle couche d'abstraction permet notament à l'utilisateur
+\oeuvre d'algorithmes de traitement d'images. Cette nouvelle couche d'abstraction permet notament à l'utilisateur
 d'injecter du code côté Python dans des routines C++ déjà compilées. Cependant, superposer une couche d'abstraction
 après l'autre, ou même appeler du code Python entraine forcément un coût du côté des performances. C'est pourquoi nous
 avons réalisé un benchmark pour exposer clairement le coût de nos différentes solutions. Ce benchmark compare les quatre
@@ -659,58 +659,66 @@ fois que le prototype doit être déployé dans un environnement de production.
 
 \paragraph{Continuité : Solutions basées sur le JIT, avantages et inconvénients}
 
-Notre solution hybride a certainement des avantages, mais l'énorme inconvénient est la lenteur à injecter nos propres
-types à partir de le côté Python. Il existe une autre solution que cette thèse n'a pas eu l'occasion d'approfondir. Ce
-solution est basée sur une technologie connue : la compilation Just-In-Time (JIT) qui a été illustrée précédemment
-in~\cref{fig:static.dynamic.dynamic.pipeline} (et qui lui-même repose sur la notion de générative
-programmation~\parencite{czarnecki.2000.generative}). Des bibliothèques telles que
-AsmJit~\parencite{kobalicek.2011.asmjit} sont capables de émettre du code machine directement en effectuant un appel en
-code C++. En effet, c'est une technologie déjà utilisée par les langages interprétés tels que Java ou PHP pour générer à
-la volée du code machine natif et optimisé pour la section du code source qui est considéré comme "chaud" par
-l'interprète. Un code source est ``chaud'' lorsqu'il est beaucoup exécuté : l'utilisateur final gagnerait payer le temps
-de compilation une fois pour que ce code soit exécuté plus rapidement plusieurs fois par la suite. Lors de l'application
-de cette stratégie à notre problématique, cela signifierait que l'utilisateur doit être capable de compiler du code
-machine natif à partir du modèle générique Le code C++ injecte le type demandé lorsqu'il est utilisé. Une telle
-opération déplace fortement la charge sur l'utilisateur, et il est bien connu que compiler du code C++ est notamment
-\emph{compliqué} et \emph{lent}. De plus, la bibliothèque doit être capable de générer automatiquement la liaison Python
-une fois le code compilé. Il existe plusieurs solutions pour réaliser ce procédé.
+Notre solution hybride a certainement des avantages, mais l'énorme inconvénient est la lenteur pour injecter nos propres
+types depuis Python. Il existe une autre solution que cette thèse n'a pas eu l'occasion d'approfondir. Cette solution
+est basée sur une technologie connue : la compilation Just-In-Time (JIT) qui a été illustrée précédemment
+in~\cref{fig:static.dynamic.dynamic.pipeline} (et qui elle-même repose sur la notion de programmation
+générative~\parencite{czarnecki.2000.generative}). Des bibliothèques telles que AsmJit~\parencite{kobalicek.2011.asmjit}
+sont capables d'émettre du code machine directement en effectuant un appel depuis du code C++. En effet, c'est une
+technologie déjà utilisée par les langages interprétés tels que Java ou PHP pour générer à la volée du code machine
+natif et optimisé pour la section du code source qui est considéré comme << chaud >> par l'interprèteur. Un code source
+est << chaud >> lorsqu'il est beaucoup exécuté : l'utilisateur final gagnerait beaucoup à payer le temps de compilation
+une fois pour que ce code soit exécuté plus rapidement plusieurs fois par la suite. Appliquer cette solution à notre
+problématique signifierait que l'utilisateur devrait être capable de compiler du code machine natif à partir du code C++
+générique en injectant le type demandé, en tant que paramètre template, lorsqu'il est utilisé. Une telle opération
+déplace fortement une charge sur l'utilisateur (compilation), et il est bien connu que compiler du code C++ est
+notoirement \emph{compliqué} et \emph{lent}. De plus, la bibliothèque doit être capable de générer automatiquement
+l'interface la liant au Python une fois le code C++ compilé. Il existe plusieurs solutions pour arriver à nos fins.
 
-La première solution consiste essentiellement à utiliser l'appel système aux compilateurs pour réellement
-\emph{compiler} le code C++ une fois que le les types modélisés sont connus et explicitement instanciés dans le code
-source. Cette solution nécessite une génération de code minutieuse conception et que l'utilisateur possède effectivement
-un compilateur sur son ordinateur. De plus, l'utilisateur doit résoudre tous les dépendances de bibliothèque, telles que
-\emph{freeimage} pour IO, etc. Cette solution a été conçue dans le VCSN bibliothèque~\parencite{demaille.2013.vcsn}. En
-effet, à chaque fois que l'utilisateur déclare un nouvel automate dans son notebook Jupyter, le code source
-correspondant est compilé au premier plan puis mis en cache. C'est une solution très périlleuse à mettre en place
-lorsque l'environnement d'exécution final (OS, logiciels installés) n'est pas bien connu à l'avance. De nos jours, le
-problème peut être moindre, cependant, il nécessite toujours de maintenir à la fois la bibliothèque et la solution de
-conteneur pour l'utiliser.
+La première solution consiste basiquement à faire des appels système aux compilateurs pour réellement \emph{compiler} le
+code C++ une fois que le/les types template sont connus et explicitement instanciés dans le code source. Cette solution
+nécessite une génération de code minutieuse et que l'utilisateur possède un compilateur fonctionnel sur son ordinateur.
+De plus, l'utilisateur doit résoudre toutes les dépendances de la bibliothèque, comme par exmple que \emph{freeimage}
+pour IO, etc. Cette solution a été conçue dans la bibliothèque VCSN~\parencite{demaille.2013.vcsn}. En effet, à chaque
+fois que l'utilisateur déclare un nouvel automate dans son notebook Jupyter, le code source correspondant est compilé en
+arrière plan puis est mis en cache. C'est une solution très périlleuse à mettre en place lorsque l'environnement
+d'exécution final (OS, logiciels installés) n'est pas bien connu à l'avance. De nos jours, le problème peut être
+moindre, cependant, il nécessite toujours de maintenir à la fois la bibliothèque et la solution de conteneur pour
+l'utiliser (Docker).
+
+La deuxième solution est d'utiliser Cython~\parencite{behnel.2010.cython}. C'est une infrastructure de transpilation qui
+transforme un code source Python directement dans du code source du langage C afin qu'il puisse être compilé par un
+compilateur C standard simplement en linkant contre l'API Python/C. Cela supprime la charge d'écrire la routine de
+génération de code minutieuse, les appels système au compilateur C++ et supprime le besoin de résoudre toutes les
+dépendances. Cette infrastructure s'occupe de tout pour l'utilisateur. De plus, en le transpilant en code C, la
+compilation sera plus rapide, car un compilateur C est plus rapide qu'un compilateur C++. Cython prend même en charge
+les template C++~\parencite{behnel.2022.cython-template} qui sont obligatoires pour notre cas d'utilisation.
 
 La troisième solution consiste à s'appuyer sur des projets récents qui reposent tous sur l'infrastructure LLVM. Nous
-pouvons notez notamment AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy},
-Xeus-cling~\parencite{quantstack.2021.xeus-cling} et Pythran~\parencite{guelton.2015.pythran}. AutoWIG a en interne code
-basé sur LLVM/Clang pour analyser le code C++ afin de générer et compiler une liaison Swig Python à l'aide de Mako
-moteur de template. AutoWIG, couplé à Cython permettrait à l'utilisateur, par exemple, de générer du code C lié à un
-structure Python personnalisée. Ensuite, un simple appel à AutoWIG analysera le code C et l'injectera dans la
-bibliothèque C++ pour générer les liaisons appropriées pour l'utilisateur. Quant à Cppyy, il est basé sur LLVM/Cling, un
-interpréteur C++, et peut interpréter directement le code C++ à partir d'une chaîne Python. Cela permet d'injecter
-facilement des types personnalisés, qu'ils soient dans du code Python (transpilé avec Cython) ou du code C++
-(directement interprété par Cling). Ensuite, l'infrastructure génère le liaison appropriée à partir de la bibliothèque
-C++ basée sur un modèle pour le type injecté. Xeus-cling est un noyau Jupyter prêt à l'emploi et permettre l'utilisation
-du code C++ directement à partir d'un bloc-notes. Cela contourne complètement le besoin d'une liaison Python dans la
-première place et permettre à l'utilisateur d'utiliser la bibliothèque depuis le bloc-notes comme s'il utilisait une
-bibliothèque Python. Enfin, Pythran est un compilateur avancé pour un sous-ensemble du langage Python, axé sur le calcul
-scientifique. Il prend un modèle Python annoté avec quelques descriptions d'interface et le transforme en un module
-Python natif avec le même interface, mais j'espère plus rapide. Pythran tire parti des instructions multicœurs et SIMD
-pour transformer son sous-ensemble de le langage Python en code C++ fortement modélisé instancié pour des types
-optimisés particuliers. Tous ceux les infrastructures, cependant, ont un coût élevé en termes de taille binaire. En
-effet, un compilateur C++ n'est pas petit et l'embarquer avec la bibliothèque de traitement d'image peut facilement
-avoir un impact considérable sur le binaire final. Sans le LLVM infrastructure, le binaire peut peser environ 3 Mo. Avec
-l'infrastructure LLVM, le poids binaire au strict minimum 50 Mo. De plus, ces solutions peuvent ne pas être
-immédiatement plus rapides. En effet, lors du prototypage aller-retour avec une variété de types, l'utilisateur peut ne
-pas être impatient d'attendre de longues compilations à chaque fois qu'il teste avec une nouvelle itération de son
-travailler. Malgré ces faits, ces solutions offrent une excellente voie de recherche pour l'avenir et l'auteur est
-impatient de enfiler ces chemins.
+pouvons notamment citer AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy},
+Xeus-cling~\parencite{quantstack.2021.xeus-cling} et Pythran~\parencite{guelton.2015.pythran}. AutoWIG a du code <<
+maison >> basé sur LLVM/Clang pour analyser le code C++ afin de générer et compiler un interface Python via Swig à
+l'aide du moteur de template Mako. AutoWIG, couplé à Cython permettrait à l'utilisateur, par exemple, de générer du code
+C lié à une structure Python personnalisée. Ensuite, un simple appel à AutoWIG analysera le code C et l'injectera dans
+la bibliothèque C++ pour générer l'interface utilisable par l'utilisateur. En ce qui concerne Cppyy, il est basé sur
+LLVM/Cling, un interpréteur C++, et peut interpréter directement du code C++ à partir d'une chaîne de caractère Python.
+Cela permet d'injecter facilement des types personnalisés, qu'ils soient dans du code Python (transpilé avec Cython) ou
+du code C++ (directement interprété par Cling). Ensuite, l'infrastructure génère l'interface utilisable à partir de la
+bibliothèque C++ générique pour le type injecté demandé. Xeus-cling est un noyau Jupyter prêt à l'emploi permettant
+l'utilisation du code C++ directement à partir d'un notebook. Cela permet de contourner complètement le besoin d'avoir
+une interface avec Python et permet à l'utilisateur d'utiliser la bibliothèque depuis un notebook comme s'il s'agissait
+une bibliothèque Python. Enfin, Pythran est un compilateur << avancé >> pour un sous-ensemble du langage Python, axé sur
+le calcul scientifique. Il prend un code Python annoté avec quelques descriptions dans son interface et le transforme en
+un module Python natif avec la même interface, mais en espérant qu'il soit plus rapide. Pythran tire parti du
+multic\oeur et des instructions SIMD pour transformer son sous-ensemble du langage Python en code C++ fortement
+générique instancié pour des types optimisés bien particuliers. Toutes ces infrastructures, cependant, ont un coût élevé
+en terme de taille de binaire. En effet, un compilateur C++ n'est pas petit et l'embarquer avec la bibliothèque de
+traitement d'image peut facilement avoir un impact considérable sur la taille du binaire final. Sans l'infrastructure
+LLVM, le binaire peut peser environ 3 Mo. Avec l'infrastructure LLVM, le poids du binaire devient au strict minimum 50
+Mo. De plus, ces solutions peuvent ne pas être immédiatement plus rapides. En effet, lors du prototypage et des
+multiples aller-retour avec une variété de types, l'utilisateur peut ne pas être patient et attendre les longs temps de
+compilations à chaque fois qu'il teste avec une nouvelle itération de son travaille. Malgré cela, ces solutions
+offrent d'excellentes voie de recherche pour l'avenir et l'auteur est impatient de les explorer.
 
 
 \subsection*{Conclusion}

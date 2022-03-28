@@ -1020,16 +1020,17 @@ paying the compilation time once to have this code executed faster several times
 to our problematic, it would mean that the user must be able to compile native machine code from the templated generic
 C++ code by injected the requested type when it is used. Such an operation shift heavily the burden on the user, and it
 is well-known that compiling C++ code is notably \emph{complicated} and \emph{slow}. In addition, the library needs to
-be able to auto-generate Python binding once the code is compiled. There are several solutions to achieve this process.
+be able to auto-generate Python binding once the C++ code is compiled. There are several solutions to achieve this
+process.
 
 The first solution is to basically use system call to the compilers to actually \emph{compile} C++ code once the
 templated types are known and explicitly instantiated in the source code. This solution requires careful code-generation
 design and that the user actually possess a compiler on his computer. Furthermore, the user must resolve all the
 library dependencies, such as \emph{freeimage} for IO etc. This solution was engineered in the VCSN
 library~\parencite{demaille.2013.vcsn}. Indeed, each time the user declared a new automaton in his Jupyter notebook,
-corresponding source code is compiled in the foreground and then cached. It is a very perilous solution to implement
+corresponding source code is compiled in the background and then cached. It is a very perilous solution to implement
 when the final execution environment (OS, installed software) is not well-known in advance. Nowadays, the issue may be
-lesser, however, it still requires to maintain both the library and the container solution to use it.
+lesser, however, it still requires to maintain both the library and the container solution to use it (Docker).
 
 The second solution is to use Cython~\parencite{behnel.2010.cython}. It is a transpiling infrastructure which transform
 a Python source code directly into C-language source code so that it can be compiled by a standard C compiler just by
@@ -1060,4 +1061,4 @@ infrastructure the binary may weight around 3MB. With the LLVM infrastructure, t
 50MB. Also, these solutions may not be immediately faster. Indeed, when prototyping back and forth with a variety of
 types, the user may not be eager to wait for long compilations times each time he is testing with a new iteration of his
 work. Despite those facts, those solutions offers great avenue of research for the future and the author is eager to
-thread those paths.
+explore them.
