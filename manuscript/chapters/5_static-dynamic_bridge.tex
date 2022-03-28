@@ -1001,9 +1001,9 @@ The result is shown in~\cref{table:static.dynamic.perfs}.
 This benchmark shows that each time an abstraction layer is added on top of the baseline, the user must expect a
 \(10\times\) slowness factor in his code performance. Also, calling Python code is immensely slower (\(2300\times\) !)
 than the baseline. This renews the interest there is to recompile the templated C++ library with an additional known
-type than injecting it from Python long time running code. Being able to inject Python code ease prototyping and
-increase the speed at which the user can write his code. However, the benchmark shows that this is not a viable solution
-once the prototype needs to scale to a production environment.
+type than injecting it from Python code taking long time to execute. Being able to inject Python code ease prototyping
+and increase the speed at which the user can write his code. However, the benchmark shows that this is not a viable
+solution once the prototype needs to scale to a production environment.
 
 
 \subsection{Continuation: JIT-based solutions, \pros and \cons}

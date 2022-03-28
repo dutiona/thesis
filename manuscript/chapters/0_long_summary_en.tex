@@ -565,7 +565,7 @@ implementing image processing algorithms. This new abstraction layer enables the
 into already-complied C++ routines. However, layering one abstraction layer after another, or even calling Python code
 does come with performance cost. This is why we have run a benchmark to outline the cost of our solutions. This
 benchmark compares the four version of our stretch algorithm whose implementation and usage are detailed in the chapter.
-The result is shown in~\cref{table:static.dynamic.perfs}.
+The result is shown in~\cref{summary:table:static.dynamic.perfs}.
 
 \begin{table}[htbp]
   \footnotesize
@@ -592,15 +592,15 @@ The result is shown in~\cref{table:static.dynamic.perfs}.
     \bottomrule
   \end{tabular}
   \caption[]{Benchmarks of all our version of the stretch algorithm.}
-  \label{table:static.dynamic.perfs}
+  \label{summary:table:static.dynamic.perfs}
 \end{table}
 
 This benchmark shows that each time an abstraction layer is added on top of the baseline, the user must expect a
 \(10\times\) slowness factor in his code performance. Also, calling Python code is immensely slower (\(2300\times\) !)
 than the baseline. This renews the interest there is to recompile the templated C++ library with an additional known
-type than injecting it from Python long time running code. Being able to inject Python code ease prototyping and
-increase the speed at which the user can write his code. However, the benchmark shows that this is not a viable solution
-once the prototype needs to scale to a production environment.
+type than injecting it from Python for code taking long time to execute. Being able to inject Python code ease
+prototyping and increase the speed at which the user can write his code. However, the benchmark shows that this is not a
+viable solution once the prototype needs to scale to a production environment.
 
 \paragraph{Continuation: JIT-based solutions, \pros and \cons}
 
