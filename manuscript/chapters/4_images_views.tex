@@ -1,10 +1,10 @@
 \chapter{Image views}
 \label{chap:image_views}
 
-\lettrine[lines=2]{T}{his} concept of views is not new and naturally appeared in Image processing with Milena under the
-name of \emph{morpher}~\parencite{levillain.2009.ismm, geraud.2012.hdr}. It was always useful to be able to project an
-image through a prism that could extract specific information about it without the need to copy the underlying data
-buffer. In modern days, the language C++ (20) also introduces this mechanism with the
+\lettrine[lines=2]{T}{his} concept of views is not new~\parencite{novak.1997.reuse} and naturally appeared in Image
+processing with Milena under the name of \emph{morpher}~\parencite{levillain.2009.ismm, geraud.2012.hdr}. It was always
+useful to be able to project an image through a prism that could extract specific information about it without the need
+to copy the underlying data buffer. In modern days, the language C++ (20) also introduces this mechanism with the
 ranges~\parencite{niebler.2014.ranges} facilities for \emph{non-owning collections}. It is named \emph{views} and allows
 the user to access the content of a container (vector, map) through a prism. In Pylene, we decided to align the naming
 system after what was decided in C++20 in order not to confuse the user. This way, a \texttt{transform} view in image
@@ -563,8 +563,8 @@ the base properties of a concrete image.
   \end{scriptsize}
 \end{table}
 
-Also, we may want to extend the property preservation discussion to other concepts we saw in the previous
-Chapter~\ref{chap:image.algorithms.taxonomy}, especially the concepts of structuring element and extension.
+Also, we may want to extend the property preservation discussion to other concepts we saw in the
+previous~\cref{chap:image.algorithms.taxonomy}, especially the concepts of structuring element and extension.
 
 \section{Decorating images to ease border management}
 \label{sec:border.management}
@@ -607,10 +607,10 @@ struct borderless_image {
 Attempting to use this image in a local algorithm that works with a structuring element as the structuring element does
 not fit inside the image when considering the behavior on the borders. However, instead of narrowing the region of
 interest, it is possible to make a view that will return an image from which the behavior at the border is well-defined.
-Referring to the taxonomy from the previous Chapter~\ref{chap:image.algorithms.taxonomy} we remember that we can
-construct a custom extension type for the sake of an example (as described in~\cref{subsec:local.se.ext}). This example
-will decorate the image so that the border is always filled with a specific value. The following code shows how we can
-write such an extension:
+Referring to the taxonomy from the previous~\cref{chap:image.algorithms.taxonomy} we remember that we can construct a
+custom extension type for the sake of an example (as described in~\cref{subsec:local.se.ext}). This example will
+decorate the image so that the border is always filled with a specific value. The following code shows how we can write
+such an extension:
 \begin{minted}{C++}
 template <class ValueType>
 struct FillExt {
@@ -920,7 +920,7 @@ the multidimensional outer range.
 In order to have a relevant discussion on performance, we decided to implement a real world image processing pipeline:
 the background subtraction. It is used to detect changes in image sequences~\parencite{opencv.bg_sub}. It is mainly used
 when regions of interest are foreground objects. The pipeline components include: subtraction, Gaussian filtering,
-threshold, erode and dilate, as shown in~\ref{fig:view.comp.sub_bg}.
+threshold, erode and dilate, as shown in~\cref{fig:view.comp.sub_bg}.
 
 \begin{figure}[htbp]
   \centering
@@ -1063,10 +1063,11 @@ the image pixels.
 
 \paragraph{Views improve re-usability.} The code snippets above are simple but not very re-usable. However, following
 the functional programming paradigm, it is quite easy to define new views, because some image adaptors can be considered
-as \emph{high-order functions} for which we can bind some parameters. In~\cref{fig:view.highorder}, we show how the
-primitive \emph{transform} can be used to create a view summing two images and a view operator performing the grayscale
-conversion as well as the sub-quantization which can be reused afterwards\footnote{These functions could have been
-  written in a more generic way for more re-usability, but this is not the purpose here.}.
+as \emph{high-order functions} for which we can bind some parameters, as one would do with the curry
+technique~\parencite{hanus.1995.curry}. In~\cref{fig:view.highorder}, we show how the primitive \emph{transform} can be
+used to create a view summing two images and a view operator performing the grayscale conversion as well as the
+sub-quantization which can be reused afterwards\footnote{These functions could have been written in a more generic way
+  for more re-usability, but this is not the purpose here.}.
 
 \begin{figure}
   \begin{minted}{c++}

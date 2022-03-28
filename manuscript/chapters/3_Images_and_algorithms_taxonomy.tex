@@ -3,18 +3,19 @@
 
 \lettrine[lines=2]{I}{n} this thesis, we have pursued research into how to apply all those new generic facilities from
 the C++ language into the Image processing area. This allows us to test them in a practical way on our predilection area
-while remembering our past work, both success and failures in this matter. However, as we saw in the previous
-Chapter~\ref{chap:genericity}, birthing concepts from code is something that is done in an emerging way. Henceforth, the
-first work will be to do an inventory of all existing image algorithms as well as an inventory of all image processing
-algorithms (both basic and more complex) we can think of. This way, we will notice behavior patterns emerging from
-similar image types or similar algorithms. We will then be able to extract behavioral patterns from this inventory in
-order to produce a full taxonomy in the form of a framework of concepts related to image processing. This chapter is
-structured as followed. First we will study how to extract behavioral pattern from a simple algorithm in order to refine
-it into one or multiple concepts. Second we will study the theory set behind image types, their conjunctions,
-disjunctions. We will also produce an inventory of image processing algorithms limited to mathematical morphologies that
-we can leverage for the final step. Third, we will study the intrinsic genericity of algorithms to produce canvas taking
-advantage of properties. Finally, we will then study behavioral pattern related to the inventory in the form of a
-taxonomy indexing a framework of concepts about image processing.
+while remembering our past work, both success and failures in this matter. However, as we saw in the previous Chapter
+(Generic programming (genericity)), birthing concepts from code is something that is done in an emerging way.
+Henceforth, the first work will be to do an inventory of all existing image algorithms as well as an inventory of all
+image processing algorithms (both basic and more complex) we can think of. This way, we will notice behavior patterns
+emerging from similar image types or similar algorithms. We will then be able to extract behavioral patterns from this
+inventory in order to produce a full taxonomy in the form of a framework of concepts related to image processing. This
+chapter is structured as followed. First we will study how to extract behavioral pattern from a simple algorithm in
+order to refine it into one or multiple concepts. Second we will study the theory set behind image types, their
+conjunctions, disjunctions. We will also produce an inventory of image processing algorithms limited to mathematical
+morphologies that we will leverage for the final step. Third, we will study the intrinsic genericity of algorithms to
+produce canvas taking advantage of properties (linked to the types). Finally, we will study behavioral patterns, related
+to the pre-established inventory of algorithms, in the form of a taxonomy engrave into a framework of concepts related
+to image processing.
 
 \section{Rewriting an algorithm to extract a concept}
 \label{sec:rewriting}
@@ -299,7 +300,7 @@ define a simple \emph{Image concept}, there are already a large amount of prereq
 \label{term:regular}\emph{Regular}, \emph{Pixel} and \emph{ForwardRange}. Those \emph{concepts} are basic but are also
 tightly linked to the \emph{concept} in the STL~\parencite{carter.2018.concepts}. We refer to the STL \emph{concepts} as
 \emph{fundamental concepts}. \emph{Fundamentals concepts} are the basic building blocks on which we work to build our
-own \emph{concepts}. We show the C++20 code implementing those \emph{concepts} in~\ref{code:concept.cpp20}.
+own \emph{concepts}. We show the C++20 code implementing those \emph{concepts} in~\cref{code:concept.cpp20}.
 
 \begin{figure}[htbp]
 
@@ -365,18 +366,21 @@ conversion from one type to a super-type under the hood. The second step is to s
 underlying data type for each pixel. Indeed, the structure of an image is decorrelated from the underlying data type.
 The third step is to write image processing algorithms for each set of image type. Fourthly, the performance trade-off
 shall be negligible if not null. Finally, the final step is to provide a high degree of friendliness for the end user.
-Ease of use is always to be considered.
+Ease of use is always to be considered, as notation (as in writting code) is a tool of
+thought~\parencite{iverson.2007.notation}. Indeed, ``By relieving the brain of all unnecessary work, a good notation
+sets it free to concentrate on more advanced problems, and in effect increases the mental power of the
+race.''~\parencite{cajori.1993.history}.
 
 Considering the available options to achieve our goal, the parametric polymorphism approach is the way to go. This
 allows the implementer to design image types and algorithms with behavior in mind. To illustrate this remark, let us
-consider the set of supported set of image types shown in figure~\ref{fig:image.version.vs.specialization}. We usually
-refer to different image families as subtype. Indeed, an image with a LUT is subtype of the (global) Image type. This
-notion of sub-typing is important because it may be abstracted behind an interface. A user can manipulate an image type
-without knowing its specific subtype. This induces that the sub-typing facility may be handled internally in the library
-with dynamic dispatching code (with runtime overhead). Each image processing library has its own way of handling
-sub-typing. More generally, the model used to handle it is previously described in~\cref{subsec:different.approaches}.
-Indeed, subtypes are handled the same way as their super-type but the fact that they have additional properties the
-algorithms can take advantage of.
+consider the set of supported set of image types shown in~\cref{fig:image.version.vs.specialization}. We usually refer
+to different image families as subtype. Indeed, an image with a LUT is subtype of the (global) Image type. This notion
+of sub-typing is important because it may be abstracted behind an interface. A user can manipulate an image type without
+knowing its specific subtype. This induces that the sub-typing facility may be handled internally in the library with
+dynamic dispatching code (with runtime overhead). Each image processing library has its own way of handling sub-typing.
+More generally, the model used to handle it is previously described in~\cref{subsec:different.approaches}. Indeed,
+subtypes are handled the same way as their super-type but the fact that they have additional properties the algorithms
+can take advantage of.
 
 % \begin{figure}[htbp]
 %   \centering
@@ -412,17 +416,17 @@ are two subsets: images whose pixels are writable and images whose data type are
   each one of these subsets, if there is a way to implement an algorithm then we have a \emph{version} of this algorithm}.
 
 Sometimes, it is possible to take advantage of a property on a particular image set, that may be correlated to an
-external data, to write the algorithm in a more efficient way. When those properties are linked to the types, this is
-call \emph{specialization}. For instance, when considering a dilation algorithm, if the structuring element (typically
-the disc) is decomposable then we can branch on an algorithm taking advantage of this opportunity: decompose the
-dilation disc into small vectors and apply each one of them on the image through multiple passes. The speed-up comparing
-to a single pass with a large dilation disc is really significant (illustrated in~\ref{fig:gen.bench.square.disc}). The
-code in~\ref{fig:dilation.specialization.alg.diagram} illustrate how an algorithm can be written to take advantage of
-the structuring element's decomposability property. The algorithm will first decompose the structuring element into
-smaller 1D periodic lines. It will then recursively call itself with those lines to do the multi-pass and thanks to
-known optimizations on periodic lines~\parencite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram
-outlining the different specialization of the dilation algorithm used is show alongside
-in~\cref{fig:dilation.specialization.alg.diagram}.
+external data, to write the algorithm in a more efficient way. When those properties are linked to the types, it is
+called algorithm \emph{specialization}~\parencite{jarvi.2006.specialization-article}. For instance, when considering a
+dilation algorithm, if the structuring element (typically the disc) is decomposable then we can branch on an algorithm
+taking advantage of this opportunity: decompose the dilation disc into small vectors and apply each one of them on the
+image through multiple passes. The speed-up comparing to a single pass with a large dilation disc is really significant
+(illustrated in~\cref{fig:gen.bench.square.disc}). The code in~\cref{fig:dilation.specialization.alg.diagram} illustrate
+how an algorithm can be written to take advantage of the structuring element's decomposability property. The algorithm
+will first decompose the structuring element into smaller 1D periodic lines. It will then recursively call itself with
+those lines to do the multi-pass and thanks to known optimizations on periodic
+lines~\parencite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram outlining the different
+specialization of the dilation algorithm used is show alongside in~\cref{fig:dilation.specialization.alg.diagram}.
 
 \begin{figure}[htbp]
   \begin{minipage}[l]{0.48\linewidth}
@@ -450,21 +454,21 @@ auto dilate(Img img, SE se) {
   \label{fig:dilation.specialization.alg.diagram}
 \end{figure}
 
-The figure~\ref{fig:image.version.vs.specialization} shows how an algorithm specialization may exist in a set of algorithms
+The~\cref{fig:image.version.vs.specialization} shows how an algorithm specialization may exist in a set of algorithms
 version. In this figure there exists a specialization of algorithms when it is known that the data buffer has the
 following property: its memory is contiguous. This implies that, for example, an algorithm like \texttt{fill} can be
 implemented using low level and fast primitives such as \texttt{memset} to increase its efficiency.
 
 \begin{figure}[htbp]
   \centering
-  \subfloat[Different versions of \emph{fill} algorithms]{
+  \subfloat[Different versions of \emph{fill} algorithm]{
     \includegraphics[width=1.9in]{../figures/image_version}
   }%
   \hfil
   \subfloat[Specialization existing within a version]{
     \includegraphics[width=2.9in]{../figures/image_version_specialization}
   }%
-  \caption{Set of algorithms version (a) and its specialization existing within a set (b).}
+  \caption{Set of algorithm version (a) and its specialization existing within a version (b).}
   \label{fig:image.version.vs.specialization}
 \end{figure}
 
@@ -472,8 +476,8 @@ Making a full inventory of image types is not possible as there are many familie
 intersect with each other, images may have some particular properties at some points, those properties may appear in
 several families of image types. We can nonetheless cite a few to illustrate our points. There exists image-type whose
 values are cubical complexes~\parencite{ziou.2002.cubical-complex} or layered as hexagonal or triangular grid instead of
-square grids (such as meshes), that are represented as graphs, etc. All of those interleaves with different research
-areas (computer vision for meshes, topological classification for complex
+square grids (such as meshes), that are represented as graphs~\parencite{meyer.2009.ismm}, etc. All of those interleaves
+with different research areas (computer vision for meshes, topological classification for complex
 cells~\parencite{movn.20.cviu,allili.2001.cubical}, graph theory and hierarchy for image
 graphs~\parencite{carlinet.2014.tip,carlinet.2015.tip,perret.2019.higra}). Finally, this image type inventory does not
 help when it comes to designing an image processing library. Instead, what helps is making an inventory of image
@@ -539,7 +543,7 @@ data. Algorithms will then finally aggregate the results (\emph{reduce}) to outp
 them, or display them. It is important to dissociate the route the data will go through and the processing pipeline
 logic. Both have their own specificities. In this thesis, we make a parallel, at small scale, between processing
 pipeline logic and image processing algorithms. First let us study two basic algorithms: dilation and erosion. The
-Python code of such algorithm is naively be given in figure~\ref{code:erode.dilate}.
+Python code of such algorithm is naively be given in~\cref{code:erode.dilate}.
 
 \begin{figure}[htbp]
   \centering
@@ -556,12 +560,12 @@ Python code of such algorithm is naively be given in figure~\ref{code:erode.dila
 
 The algorithms are almost written the same way. The only change is the operation \emph{min} and \emph{max} when
 selecting the value to keep. As such, we can easily see a way to factorize code by passing the operator as an argument.
-The algorithms can then be rewritten as shown in figure~\ref{code:erode.dilate.factorized}. In this last example, we
-have one piece of code which is in charge of abstracting the way an image is traversed: it is the canvas. We also have
-other pieces of code which carry the logic of the operations, calling the canvas and providing the logic to apply from
-within the canvas. This way of decomposing the code offers the opportunity of writing more specific heterogeneous logic
-for the traversing code so that the other parts of the code that carry the operator logic remains unaware and unburdened
-of possible implementation details.
+The algorithms can then be rewritten as shown in~\cref{code:erode.dilate.factorized}. In this last example, we have one
+piece of code which is in charge of abstracting the way an image is traversed: it is the canvas. We also have other
+pieces of code which carry the logic of the operations, calling the canvas and providing the logic to apply from within
+the canvas. This way of decomposing the code offers the opportunity of writing more specific heterogeneous logic for the
+traversing code so that the other parts of the code that carry the operator logic remains unaware and unburdened of
+possible implementation details.
 
 \begin{figure}[htbp]
   \centering
@@ -588,7 +592,7 @@ This approach is very much compatible with the inventory of the algorithms we di
 Indeed, for the point-wise family of algorithms, it is hardly an issue as they can all be written in terms of
 views~\cref{chap:image_views}. For the second family, which consists in all the local algorithm, they may be abstracted
 behind an algorithm canvas where the user provides the work to do at each point of the algorithm. For instance, a single
-pass local algorithm will always have shape given in~\ref{code:local.algorithm.canvas}. Finally, for third family which
+pass local algorithm will always have shape given in~\cref{code:local.algorithm.canvas}. Finally, for third family which
 consists in all the algorithm that propagate their computation while traversing the image. It is way less easy to
 provide an algorithmic canvas as each algorithm has its own way to propagate changes curing its computation.
 
@@ -619,7 +623,7 @@ calculation on a GPU. More generally, all optimization done through heterogeneou
 default even if the user is not an area expert.
 
 Despite all these advantages, one big disadvantage is the readability of the algorithm user-side. For instance, the
-dilation algorithm is rewritten in figure~\ref{code:local.algorithm.dilate}.
+dilation algorithm is rewritten in~\cref{code:local.algorithm.dilate}.
 
 \begin{figure}[htbp]
   \centering
@@ -1147,9 +1151,8 @@ concept for each strategy we identified:
 Those concepts are defined in~\cref{table:concept.extensions.definitions} and their behavior is described
 in~\cref{table:concept.extensions.expressions}. All those concepts allow us to introduce the final refined image
 concepts: \emph{WithExtensionImage} as well as \emph{ConcreteImage} and \emph{ViewImage}. Those two last will be seen in
-detail in the next Chapter~\ref{chap:image_views}. Those concepts are defined
-in~\cref{table:concept.image.definitions.7}. Their behavior is described in~\cref{table:concept.image.expressions.7}. It
-is now possible to write the following code:
+detail in the next~\cref{chap:image_views}. Those concepts are defined in~\cref{table:concept.image.definitions.7}.
+Their behavior is described in~\cref{table:concept.image.expressions.7}. It is now possible to write the following code:
 \begin{minted}{C++}
   template <class I, class SE>
   my_local_algorithm(I input, SE se) {
@@ -1187,7 +1190,7 @@ void my_algorithm(Img img) {
 \section{Summary}
 
 In this chapter, we present that concepts are not designed after data structures but after algorithms. Indeed, a concept
-consists in extracting a consistent behavioral pattern from a piece of code (algorithm) and name it to give him more
+consists in extracting a consistent behavioral pattern from a piece of code (algorithm) and name it to give him a
 meaning. Through a simple but concrete example, we present in a didactic way how to extract concepts from an image
 processing algorithm (gamma correction).
 

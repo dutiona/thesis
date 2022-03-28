@@ -21,7 +21,7 @@ Language) to write code that will run on GPUs. In pure C++ there exists several 
 algebra, dense and sparse arithmetic which are optimized to produced very optimized code (vectorized instruction
 support, parallel execution etc.). The most popular libraries are Eigen~\parencite{guennebaud.2010.eigen},
 Blaze~\parencite{iglberger.2012_1.blaze,iglberger.2012_2.blaze,iglberger.2012.blaze},
-Blitz++~\parencite{veldhuizen.2000.blitz} and
+Blitz++~\parencite{veldhuizen.2000.blitz,veldhuizen.1998.arrays} and
 Armadillo~\parencite{sanderson.2016.armadillo,sanderson.2016.armadillo-art,sanderson.2018.armadillo-proc} leveraging
 \emph{expression templates}~\parencite{veldhuizen.1995.expression} to achieve their goal. Also, we note that Eigen is
 compatible with GPU source code~\parencite{guennebaud.2010.eigen-cuda} and can be used inside Cuda kernels. A Cuda
@@ -58,11 +58,12 @@ programmer's job to discover the data structures and laws that compose them.
 This reflection leads to the publication of \citetitle{musser.1988.generic}~\parencite{musser.1988.generic} in which the
 term \emph{Generic Programming} first appears. ``By generic programming, we mean the definition of algorithms and data
 structures at an abstract or generic level, thereby accomplishing many related programming tasks simultaneously. The
-central notion is that of generic algorithms, which are parametrized procedural schemata that are completely independent
-of the underlying data representation and are derived from concrete, efficient algorithms.''. This article lead to the
-genesis of the book \citetitle{musser.1989.ada}~\parencite{musser.1989.ada} in which was published the first work about
-a generic library of algorithms and data structures. Then Stepanov and Lee wrote the first version of the Standard
-Template Library~\parencite{stepanov.1995.standard} in 1995 which is a carefully crafted library of basic algorithms to
+central notion is that of generic algorithms, which are parametrized procedural
+schemata~\parencite{goguen.1984.parametrized} that are completely independent of the underlying data representation and
+are derived from concrete, efficient algorithms.''. This article lead to the genesis of the book
+\citetitle{musser.1989.ada}~\parencite{musser.1989.ada} in which was published the first work about a generic library of
+algorithms and data structures. Then Stepanov and Lee wrote the first version of the Standard Template
+Library~\parencite{stepanov.1995.standard} in 1995 which is a carefully crafted library of basic algorithms to
 manipulate algebraic structures (data structures) that is still an authority to this day. This standard template library
 was then incorporated alongside the C++ language for the release of the first ISO standard of the language in 1998
 \parencite{iso.1998.cpp}. That same year is published~\parencite{dehnert.1998.fundamentals}. This is the first place
@@ -93,10 +94,10 @@ algorithms in order to achieve constrained genericity.
 
 In order to pursue the introduction of concepts into the C++ language, a workshop was held in 2012 and its summary was
 published in \citetitle{sutton.2012.concepts}~\parencite{sutton.2012.concepts}. It is referred to as the \emph{Palo
-  Alto} report, and it summarizes what design the committee wanted for concepts and what problem(s) it would solve.
-Indeed, in \citetitle{stepanov.2009.elements} argues that just having constrained template was already incredibly
-useful, and the STL could be described in terms of \emph{require} clauses. This subset becomes known as ``concepts
-light'' and was enriched to become later what would be standardized in C++20.
+  Alto} report, and it summarizes what design the committee wanted for concepts and what problem(s) it would
+solve~\parencite{stroustrup.2012.concept}. Indeed, in \citetitle{stepanov.2009.elements} argues that just having
+constrained template was already incredibly useful, and the STL could be described in terms of \emph{require} clauses.
+This subset becomes known as ``concepts light'' and was enriched to become later what would be standardized in C++20.
 
 Stepanov then published \citetitle{stepanov.2014.mathematics}~\parencite{stepanov.2014.mathematics} that traces the
 history of algorithms and ties the history of mathematics with the history of generic programming. Indeed, Stepanov
@@ -203,16 +204,16 @@ genericity is high level and qualifies a tool which is ``generic enough'' to han
 argue that genericity is about how the code is written: generic enough to handle all the use cases possibles. Neither is
 wrong. However, for the sake of comprehension we will use different words for each of these cases. A tool generic enough
 to handle a lot of use-case will be called \emph{versatile}. Finally, for a tool whose aim is to provide a programming
-framework to handle code of any use-case we will use \emph{generic}. In this thesis, genericity will be about code. The
-figure~\ref{fig:type.vs.algo} illustrates this result of the same generic watershed implementation applied on an image
-2D, a graph as well as a mesh.
+framework to handle code of any use-case we will use \emph{generic}. In this thesis, genericity will be about code.
+The~\cref{fig:type.vs.algo} illustrates this result of the same generic watershed implementation applied on an image 2D,
+a graph as well as a mesh.
 
 In image processing, there are three main axes around which genericity is applying. The first axis is about the data type:
 gray level or RGB color (8-bits, 10-bits), decimal (double) and so on. The second axis, is about the structure of the
 image: a contiguous buffer (2D or 3D), a graph, a look-up table and so on. Finally, the third axis is about additional
 data that can be fed to image processing algorithms: structuring element (disc, ball, square, cube), labels
 (classification), maps, border information and so on. In the end, an image is just a point within this space of
-possibilities, illustrated in~\ref{fig:gen.espaceSAV}. Nowadays, it is not reasonable to have specific code for every
+possibilities, illustrated in~\cref{fig:gen.espaceSAV}. Nowadays, it is not reasonable to have specific code for every
 existing possibility within this space. It is all the more true when one wants efficiency.
 
 \begin{figure}[htbp]
@@ -246,7 +247,7 @@ types with near-native performance. Let us first explain briefly how we achieved
 \label{subsec:different.approaches}
 
 First, let us consider the morphological \emph{dilation} that takes two inputs: an image and a flat structuring element
-(SE). The set of some possible inputs is depicted in~\ref{fig:gen.espaceSAV}. Without genericity, with \(s\) the number
+(SE). The set of some possible inputs is depicted in~\cref{fig:gen.espaceSAV}. Without genericity, with \(s\) the number
 of image type, \(v\) the number of value type and \(k\) the number of structuring elements, one would have to write \(s
 * v * k\) different \emph{dilation} routine.
 
@@ -261,7 +262,7 @@ Then, each time a new type is introduced, all the algorithm must be rewritten fo
 time a new algorithm is introduced, it must support all the existing types and thus be written multiple times. This
 approach does not scale well when the complexity of algorithms grows, and the number of data types increases. Neither it
 does allow the implementer to easily make use of optimization opportunities that can be offered by different data types
-having a common property. This translates into heavy switch/case statement in the code as show in~\ref{code:gen.exhau}
+having a common property. This translates into heavy switch/case statement in the code as show in~\cref{code:gen.exhau}
 that illustrate how the \emph{fill} algorithm needs to dispatch according to the input data type.
 
 \begin{figure}[htbp]
@@ -305,7 +306,7 @@ processing pipeline will then consist in three steps. First convert the input im
 process the super-type into the algorithm pipeline requested by the user, finally convert back the resulting image into
 the specific image type the user is expecting. This approach offers the advantage of being maintainable. Adding a new
 image type is just a matter of providing the two conversions facilities: to and from the super-type. Adding an algorithm
-is also just a matter of writing it once for the super-type. This mechanism is shown in~\ref{code:gen.generalized}.
+is also just a matter of writing it once for the super-type. This mechanism is shown in~\cref{code:gen.generalized}.
 However, one must keep in mind that the conversion can be costly. Also, processing the super-type may induce a
 significant performance trade-off while processing the original type would be much faster. Furthermore, it is not always
 possible to find this common denominator when enumerating through some esoteric data types. Finally, the provided
@@ -340,11 +341,11 @@ CImg generalize its data type to a 4D image type templated by its underlying dat
 \paragraph{Inclusion \& Parametric polymorphism approach} They consist in extracting behavior patterns from algorithms
 to group them into logical brick called \emph{concepts} (for static parametric polymorphism), or \emph{interface} (for
 dynamic inclusion polymorphism). Each algorithm will require a set of behavior pattern that the inputs need to satisfy.
-In C++, it can be done either by using inclusion polymorphism, or by using parametric polymorphism, as shown
-in~\ref{code:gen.inclupoly}. In~\parencite{roynard.2019.rrpr}, we leverage a new C++20 feature (the concept) to show how
-it is possible to turn an algorithm, specific to an image type, into a more abstract, generic one that does not induce
-any performance loss. This approach, especially applied to image processing, will be seen more in-depth
-in~\cref{chap:image.algorithms.taxonomy}.
+In C++, it can be done either by using inclusion polymorphism, or by using parametric
+polymorphism~\parencite{gibbons.2007.datatype}, as shown in~\cref{code:gen.inclupoly}. In~\parencite{roynard.2019.rrpr},
+we leverage a new C++20 feature (the concept) to show how it is possible to turn an algorithm, specific to an image
+type, into a more abstract, generic one that does not induce any performance loss. This approach, especially applied to
+image processing, will be seen more in-depth in~\cref{chap:image.algorithms.taxonomy}.
 
 \begin{figure}[htb]
   \centering
@@ -369,10 +370,10 @@ in~\cref{chap:image.algorithms.taxonomy}.
 
 Multiple libraries exist and leverage this approach to try to achieve a high genericity degree as well as high
 performance by offering varied abstract facilities over image types and underlying data types. Those are
-ITK~\parencite{johnson.2013.ITKSoftwareGuideThirdEdition}, Boost.GIL~\parencite{bourdev.2006.bgil},
+ITK~\parencite{johnson.2013.ITKSoftwareGuideThirdEdition,yoo.2002.engineering}, Boost.GIL~\parencite{bourdev.2006.bgil},
 Vigra~\parencite{kothe.2011.generic}, GrAL~\parencite{berti.2006.gral}, DGTal~\parencite{coeurjolly.2016.dgtal},
-Milena~\parencite{levillain.2009.ismm,levillain.2010.icip},
-Olena~\parencite{olena.2000.www,levillain.2011.phd,geraud.2012.hdr,levillain.2014.ciarp} and
+Milena~\parencite{geraud.2012.ipolmeeting,levillain.2009.ismm,levillain.2010.icip},
+Olena~\parencite{olena.2000.www,geraud.2000.europlop,levillain.2011.phd,geraud.2012.hdr,levillain.2014.ciarp} and
 Pylena~\parencite{carlinet.2018.pylena}. Most of them have been written in complex C++ whose details remain visible from
 the user standpoint and thus are often difficult and complex to handle. It is also harder to debug because errors in
 highly templated code shows up very deep in compiler error trace.
@@ -706,15 +707,15 @@ This language construct is very useful when developing generic libraries because
 types, and even chain them. It is also possible to perform checks to extract information about those types. We can
 easily write an \texttt{is\_const} metafunction if we need it.
 
-In image processing in particular, the usage of traits in the generic library
-Milena~\parencite{levillain.2009.ismm,levillain.2010.icip} was very useful to achieve standard ways to compute very
-useful types from other complex type. From the image processing definition of an image type, we can already see a number
-of traits that a generic library would want to provide. Indeed, it would be useful to be able to extract the type of the
-domain (box2d, box3d, etc.), the type of the point (point2d, point3d, \ldots), the underlying value type (uint8, rgb8,
-etc.) and so on. We can also already see emerging consistency issues between those types. Indeed, a box3d domain would
-not accept access via a point2D. It would instead require a point3d. All those issues will be addressed later in
-the~\cref{chap:image.algorithms.taxonomy}. However, we can already give here minimal working example as to how type
-traits are especially useful in a generic image processing library. First let us define some minimal data structures:
+In image processing in particular, the usage of traits in the generic library Milena was very useful to achieve standard
+ways to compute very useful types from other complex type. From the image processing definition of an image type, we can
+already see a number of traits that a generic library would want to provide. Indeed, it would be useful to be able to
+extract the type of the domain (box2d, box3d, etc.), the type of the point (point2d, point3d, \ldots), the underlying
+value type (uint8, rgb8, etc.) and so on. We can also already see emerging consistency issues between those types.
+Indeed, a box3d domain would not accept access via a point2D. It would instead require a point3d. All those issues will
+be addressed later in the~\cref{chap:image.algorithms.taxonomy}. However, we can already give here minimal working
+example as to how type traits are especially useful in a generic image processing library. First let us define some
+minimal data structures:
 
 \begin{minted}{C++}
   struct point2d {int x, y; };
@@ -942,11 +943,11 @@ paradigm.
 
 Each time a leaf class in the hierarchy inherit from a base class, the concepts are checked. The syntax is not really
 intuitive, especially writing the function pointers to check that their prototype is confirming a certain behavior, but
-it was all what was available at that time. To be completely exhaustive, the library implementing this paradigm,
-Milena~\parencite{levillain.2010.icip, levillain.2009.ismm} featured another powerful tool which allows one to require
-only concept class into input data for algorithms. Inside the algorithm it was then possible to get back the concrete
-class and use it as if it was originally passed as an argument. To do so, it was needed to add a member field to the
-concept class named \texttt{exact\_t} that kept track of the leaf class into the concept checking class.
+it was all what was available at that time. To be completely exhaustive, the library implementing this paradigm, Milena
+featured another powerful tool which allows one to require only concept class into input data for algorithms. Inside the
+algorithm it was then possible to get back the concrete class and use it as if it was originally passed as an argument.
+To do so, it was needed to add a member field to the concept class named \texttt{exact\_t} that kept track of the leaf
+class into the concept checking class.
 
 \begin{minted}{C++}
   template <class I>
@@ -1036,11 +1037,11 @@ statement is justified by the work achieved in the Standard Template Library (ST
 in C++ whose algorithms are implemented and designed in a way where they work with all the built-in collections (linked
 list, vector, etc.). Let us take the example of the algorithm \texttt{fill(Collection c, Value v)} which set the same
 value for all the element of a collection (see~\cref{code:gen.fill}). There are three main requirements here that are
-not related to the underlying type of \emph{Collection}. First, we check (l.2~\ref{code:gen.fill}) that we are actually
+not related to the underlying type of \emph{Collection}. First, we check (l.2~\cref{code:gen.fill}) that we are actually
 filling the collection with the correct type of value. Indeed, it would not make sense, for instance, to assign an RGB
 triplet color into a pixel from a grayscale image. Secondly, we need to be able to iterate over all the element of the
-collection (l.4~\ref{code:gen.fill}). Finally, we need to be able to write a value into the collection
-(l.5~\ref{code:gen.fill}). This requires the collection not to be read-only, or the collection's values not to be
+collection (l.4~\cref{code:gen.fill}). Finally, we need to be able to write a value into the collection
+(l.5~\cref{code:gen.fill}). This requires the collection not to be read-only, or the collection's values not to be
 yielded on-the-fly. This allows us to deduce what is called a \emph{concept}: a breakdown of all the requirement about
 the behavior of our collection. When writing down what a \emph{concept} should require, one should always respect this
 rule: \blockquote{\emph{It is not the types that define the concepts: it is the algorithms}}. Concepts in C++ are not
@@ -1088,7 +1089,7 @@ nature~\parencite{ritter.1990.cvgi,geraud.2000.icpr,darbon.2002.ismm,levillain.2
 writing an image processing algorithm, there is always a way to express it with a high level of genericity. For
 instance, if it is possible to write a morphological dilation in a way that does not care about the underlying value
 type, the domain nor the structuring element specificities. The most abstract way to write a dilation is shown
-in~\ref{code:gen.dilate}.
+in~\cref{code:gen.dilate}.
 
 \begin{figure}[htbp]
   \centering
@@ -1113,9 +1114,9 @@ This implementation introduces three concepts at line 1: \emph{Image}, \emph{Wri
 requirements for each one of them.
 
 \paragraph{Image} It is the most basic representation of what an image should be. An image should (a) provide a way to
-access its domain (l.3~\ref{code:gen.dilate}) and (b) a way to iterate over its points (l.4~\ref{code:gen.dilate}). This
-then allows us later to (c) access to the value returned by the image at this point (l.5~\ref{code:gen.dilate}). To this
-point the value is only accessed in read-only. We can then write the following two concepts:
+access its domain (l.3~\cref{code:gen.dilate}) and (b) a way to iterate over its points (l.4~\cref{code:gen.dilate}).
+This then allows us later to (c) access to the value returned by the image at this point (l.5~\cref{code:gen.dilate}).
+To this point the value is only accessed in read-only. We can then write the following two concepts:
 \begin{minted}{C++}
   template <typename I>
   concept Image = requires {
@@ -1134,7 +1135,7 @@ omitted here.
 
 \paragraph{WritableImage} It is a more specific concept based on the previous \emph{Image} concept. It requires that the
 image's value can be (d) accessed to be modified: the user should be able to write into the image's value accessed by a
-specific point (l.6~\ref{code:gen.dilate}). We can then write the following two concepts:
+specific point (l.6~\cref{code:gen.dilate}). We can then write the following two concepts:
 \begin{minted}{C++}
   template <typename WI>
   concept WritableImage = Image<WI>
@@ -1169,7 +1170,7 @@ only the fast and optimized code remains. This brings a new distinction between 
 compile time) and the dynamic world (what is decided at runtime). The more is decided at compile time the smaller,
 faster the binary will because there is work less to do at runtime. By following this principle, one can think of some
 properties that are known ahead of time (at compilation) when writing one's image processing algorithm. For instance,
-when considering the example of the dilation whose code is shown in~\ref{code:gen.dilate}, we can see that the property
+when considering the example of the dilation whose code is shown in~\cref{code:gen.dilate}, we can see that the property
 about the decomposability of the structuring element is linked to the type. This means that when the structuring
 element's type is of a disc, or a square, the compiler will know at compile time that it is decomposable. To tell the
 compiler to take advantage of a property at compile time, C++ has a language construct named \emph{if-constexpr}. The

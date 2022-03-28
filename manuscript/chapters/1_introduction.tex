@@ -102,9 +102,9 @@ around a fast feedback loop. The developing environment must be easily accessibl
 practitioner can judge quickly whether one library will answer his needs. The documentation of the library must be
 exhaustive and didactic with examples. When prototyping, the library must provide fast feedback loops, as in a Python
 notebook for instance. Finally, it must be easily integrated in a standard ecosystem such as being able to work with
-NumPy's array~\parencite{oliphant.2006.numpy,harris.2020.numpy} natively without imposing its own types. To sum up,
-practitioner's programmatic skills do not need to be high as his main goal is to focus on algorithms and mathematics
-formulas.
+NumPy's array~\parencite{oram.2007.numpy,oliphant.2006.numpy,harris.2020.numpy} natively without imposing its own types.
+To sum up, practitioner's programmatic skills do not need to be high as his main goal is to focus on algorithms and
+mathematics formulas.
 
 \paragraph{The contributor} He is an advanced user of a library who is very comfortable with its inner working,
 philosophy, aims, strengths and potential shortcomings. As such, he is able to add new specific features to library, fix
@@ -149,9 +149,10 @@ Their aim is to be useable by end users while supporting a large set of popular 
 \paragraph{Command line utilities} They are binaries that perform one operation or more invocable from a console
 interface or from a shell script through a command line interface (CLI). This CLI usually offers several options to pass
 data and/or information to the programs in order to have an action happening. The information can be, for instance, the
-input image path, the output image name and the name of a mathematical morphology algorithm to apply. Usually command
-line utilities come as projects such as ImageMagick~\parencite{imagemagick.2021},
-GraphicsMagick~\parencite{graphicsmagick.2021} or MegaWave~\parencite{froment.2012.megawave,froment.2004.megawave2}.
+input image path, the output image name and the name of a mathematical
+morphology~\parencite{najman.2013.mathematical,geraud.2010.book} algorithm to apply. Usually command line utilities come
+as projects such as ImageMagick~\parencite{imagemagick.2021}, GraphicsMagick~\parencite{graphicsmagick.2021} or
+MegaWave~\parencite{froment.2012.megawave,froment.2004.megawave2}.
 
 \paragraph{Visual programming environment} They are software that allow the user to graphically and intuitively link one
 or several image processing operations while interactively displaying the result. The processing can easily be modified,
@@ -179,7 +180,7 @@ have: IPP~\parencite{taylor.2004.intel}, ITK~\parencite{johnson.2013.ITKSoftware
 Boost.GIL~\parencite{bourdev.2006.bgil}, Vigra~\parencite{kothe.2011.generic}, GrAL~\parencite{berti.2006.gral},
 DGTal~\parencite{coeurjolly.2016.dgtal}, OpenCV~\parencite{bradski.2000.opencv}, CImg~\parencite{tschumperle.2012.cimg},
 Video++~\parencite{garrigues.2014.video++}, Generic Graphic Library~\parencite{kolas.2000.gegl}
-Milena~\parencite{levillain.2009.ismm,levillain.2010.icip} and
+Milena~\parencite{geraud.2012.ipolmeeting,levillain.2009.ismm,levillain.2010.icip} and
 Olena~\parencite{olena.2000.www,levillain.2011.phd,geraud.2012.hdr,levillain.2014.ciarp}.
 
 \paragraph{Domain Specific Languages (DSL)~\parencite{deursen.2000.DSL}} They are tools developed when a library
@@ -190,9 +191,10 @@ language in some cases like Halide~\parencite{ragankelley.2013.halide} and
 SYCL~\parencite{brown.2019.heterogeneous,wong.2019.heterogeneous} but can also be a case of having the current
 programming language be ``upgraded'' to include another subset of features that are not natively included. This is often
 the case in C++ where we have in-language DSL like Eigen~\parencite{guennebaud.2010.eigen},
-Blaze~\parencite{iglberger.2012.blaze,iglberger.2012_1.blaze}, Blitz++~\parencite{veldhuizen.2000.blitz} or
-Armadillo~\parencite{sanderson.2016.armadillo}. They leverage a possibility of the C++ programming language
-(\emph{expression templates}~\parencite{veldhuizen.1995.expression}) to achieve it.
+Blaze~\parencite{iglberger.2012.blaze,iglberger.2012_1.blaze},
+Blitz++~\parencite{veldhuizen.2000.blitz,veldhuizen.1998.arrays} or Armadillo~\parencite{sanderson.2016.armadillo}. They
+leverage a possibility of the C++ programming language (\emph{expression
+  templates}~\parencite{veldhuizen.1995.expression}) to achieve it.
 
 
 \section*{Topic of this thesis}
@@ -228,10 +230,11 @@ language such as Python without sacrificing efficiency. In particular, we aim to
 a very important goal for us to reach a usability able to permeate into the educational side which is a strength of
 Python. In this library, we demonstrate how to achieve genericity and efficiency while remaining easy to use all at the
 same time. In doing so, we are endeavoring to breakthrough the rule previously cited. The scope of this library is
-limited to mathematical morphology and to the provision of very versatile image types. We leverage the modern C++
-language and its many new features related to genericity and performance to breakthrough this rule in the image
-processing area. Finally, we attempt, to bring low level tools and concepts from the static world to the high level and
-dynamic prototyping world for a better diffusion and ease of use, thanks to a bridge between those two worlds.
+limited to mathematical morphology~\parencite{najman.2013.mathematical,geraud.2010.book} and to the provision of very
+versatile image types. We leverage the modern C++ language and its many new features related to genericity and
+performance to breakthrough this rule in the image processing area. Finally, we attempt, to bring low level tools and
+concepts from the static world to the high level and dynamic prototyping world for a better diffusion and ease of use,
+thanks to a bridge between those two worlds.
 
 With this philosophy in mind, this manuscript aims at presenting our thesis work related to the C++ language applied to
 the Image Processing domain. It is organized as followed:
