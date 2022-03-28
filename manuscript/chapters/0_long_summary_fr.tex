@@ -282,8 +282,8 @@ sans recourir à des techniques et outils obscurs.
 Ce chapitre explore les possibilités de réaliser de la programmation générique au sein d'une bibliothèque. En effet, il
 y a trois techniques permettant à l'utilisateur d'écrire une seule fois un algorithme de haut niveau pouvant s'exécuter
 sur tous les types. Elles sont les approches de \emph{duplication de code}, de \emph{généralisation} et de
-\emph{polymorphisme d'inclusion et paramétrique}~\parencite{gibbons.2007.datatype}. Nous présentons
-dans~\cref{resume:table:gen.approaches} le résultat de la comparaison de ces approches par rapport aux aspects qui nous
+\emph{polymorphisme d'inclusion et paramétrique}~\parencite{gibbons.2007.datatype}. Nous présentons dans
+la~\cref{resume:table:gen.approaches} le résultat de la comparaison de ces approches par rapport aux aspects qui nous
 intéressent. Nous abordons également les limitations liées à l'utilisation de ces approches en comparant OpenCV,
 Scikit-image et Pylene qui utilisent les quatre techniques à différents niveaux pour atteindre différents objectifs de
 généricité, de performance et de facilité d'utilisation. De plus, nous avons identifié des limites liées au type de
@@ -345,55 +345,250 @@ didactique comment extraire des concepts d'un algorithme de traitement d'image (
   \label{resume:fig:image.version.vs.specialization}
 \end{figure}
 
-Ce chapitre explique ensuite comment, en théorie, les types d'images sont liés les uns aux autres. Nous présentons
-l'ensemble de différents types d'images et comment les algorithmes existent dans ces ensembles, qui introduisent la
+Ce chapitre explique ensuite comment, en théorie, les types d'images sont reliés les uns aux autres. Nous présentons
+l'ensemble de différents types d'images et comment les algorithmes existent dans ces ensembles, ce qui introduit la
 notion de \emph{version} d'un algorithme. Un algorithme aura différentes \emph{versions} pour chaque ensemble de types
-d'images qu'il prend en charge. Nous le distinguons (in~\cref{resume:fig:image.version.vs.specialization}) à partir d'un
-algorithme \emph{spécialisation}, cette dernière étant la possibilité de profiter d'une opportunité (liée à un bien)
-pour faire une optimisation et augmenter les performances.
+d'images qu'il prend en charge. Nous le distinguons (in~\cref{resume:fig:image.version.vs.specialization}) des
+\emph{spécialisation} d'algorithmes, cette dernière étant la possibilité de profiter d'une opportunité (liée à une
+propriété) pour faire une optimisation et augmenter les performances.
 
-Ce chapitre décrit ensuite la notion de canevas d'algorithme qui est le résultat découlant de la taxonomie de
-algorithmes de traitement d'images. En effet, il existe trois grandes familles d'algorithmes : les algorithmes pixel-wise (binary
-seuil), les algorithmes locaux (dilatation) et les algorithmes globaux (Chamfer distance transform). Nous nous concentrons principalement
-sur les algorithmes locaux et comment ils peuvent tous être écrits à travers le même canevas de code. En effet, par exemple, le seul
-différence entre une dilatation et une érosion est l'opérateur (max \vs min). Nous discutons ensuite des moyens d'exploiter ces canevas
-pour éventuellement résoudre des problèmes informatiques hétérogènes.
+Ce chapitre décrit ensuite la notion de canevas d'algorithme qui est le résultat découlant de la taxonomie des
+algorithmes de traitement d'images. En effet, il existe trois grandes familles d'algorithmes : les algorithmes
+fonctionnant pixel par pixel (binarisation), les algorithmes locaux (dilatation) et les algorithmes globaux (Chamfer
+distance transform). Nous nous concentrons principalement sur les algorithmes locaux et comment ils peuvent tous être
+écrits à travers le même canevas de code. En effet, par exemple, la seule différence entre une dilatation et une érosion
+est l'opérateur (max \vs min). Nous discutons ensuite des possibilités offertes par l'exploitation de ces canevas pour
+possiblement résoudre des problèmes informatiques hétérogènes.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.8\linewidth]{../figures/concepts/image}
-  \caption[]{Image concept.}
+  \caption[]{Concept Image.}
   \label{resume:fig:concept.image}
 \end{figure}
 
-Enfin, ce chapitre introduit notre première contribution principale : une taxonomie complète liée au domaine du traitement d'image.
-Nous introduisons d'abord des concepts fondamentaux tels que \emph{point}, \emph{pixel}, \emph{domaine} et \emph{image} (illustrés
-dans~\cref{resume:fig:concept.image}). Nous motivons et introduisons ensuite des concepts avancés liés aux images et aux différentes manières
-pour accéder aux données (traversée avant, arrière, indexation, accès direct au tampon sous-jacent, \ ldots). En fin de compte, nous
-introduire les concepts liés aux notions orbitales telles que \emph{élément structurant}, \emph{voisinage} et
-\emph{extension} (gestion des frontières) qui sont nécessaires pour pouvoir travailler avec des algorithmes locaux.
+Enfin, ce chapitre introduit notre première contribution principale : une taxonomie complète relative au domaine du
+traitement d'image. Nous introduisons d'abord des concepts fondamentaux tels que \emph{point}, \emph{pixel},
+\emph{domaine} et \emph{image} (illustrés dans la~\cref{resume:fig:concept.image}). Nous motivons et introduisons
+ensuite des concepts avancés liés aux images et aux différentes manières d'accéder aux données (parcours en avant,
+renversé, indexation, accès direct à la mémoire tampon sous-jacente, \ ldots). En fin de compte, nous introduisons les
+concepts liés aux notions gravitant autour le traitement d'image, telles que les \emph{éléments structurant}, les
+\emph{voisinages} et les \emph{extensions} (gestion des bordures) qui sont nécessaires pour pouvoir travailler avec des
+algorithmes locaux.
 
-Le chapitre suivant utilisera les concepts présentés pour introduire la deuxième contribution principale de cette thèse : la
-\emph{vues d'images}.
+Le chapitre suivant utilisera les concepts présentés pour introduire la deuxième contribution principale de cette thèse
+: les \emph{vues d'images}.
 
 
 \subsection*{Les Vues d'Image}
 
 
-Cette notion de vues n'est pas nouvelle~\parencite{novak.1997.reuse} et est apparue naturellement en Traitement d'image avec
-Milena~\parencite{geraud.2012.ipolmeeting,levillain.2010.icip} sous le nom de
-\emph{morpher}~\parencite{levillain.2009.ismm, geraud.2012.hdr}. Il était toujours utile de pouvoir projeter une image
-à travers un prisme qui pourrait extraire des informations spécifiques à son sujet sans avoir besoin de copier le tampon de données sous-jacent. Dans
-des temps modernes, le langage C++ (20) introduit aussi ce mécanisme avec les ranges~\parencite{niebler.2014.ranges}
-installations pour les \emph{collections non propriétaires}. Il est nommé \emph{views} et permet à l'utilisateur d'accéder au contenu d'un
-conteneur (vecteur, carte) à travers un prisme. Chez Pylène, nous avons décidé d'aligner le système de nommage sur ce qui a été décidé dans
-C++20 afin de ne pas dérouter l'utilisateur. De cette façon, une vue \texttt{transform} dans le traitement d'image fera la même chose
-sur une image que la vue de transformation dans la bibliothèque de plage standard fait sur un conteneur. Les \emph{vues} présentent les
-propriétés suivantes : \emph{pas cher à copier}, \emph{non-propriétaire} (ne \emph{possède} aucun tampon de données), \emph{paresseux
-  évaluation} (l'accès à la valeur d'un pixel peut nécessiter des calculs) et \emph{composition}. Lorsqu'il est chaîné, le compilateur
-construit un \emph{arbre d'expressions} (ou \emph{modèle d'expression} tel qu'utilisé dans de nombreuses bibliothèques de calcul scientifique telles que
-as Eigen~\parencite{guennebaud.2010.eigen}), il connaît donc à la compilation le type de la composition et assure une
-0-overhead à l'évaluation. Nous allons d'abord motiver l'utilisation de \emph{vues} dans le traitement d'image. Nous présenterons ensuite la
-principales vues utilisées en traitement d'images. Ensuite, nous discuterons de la façon dont les vues d'image diffèrent de celle utilisée dans les plages de C++ et
-leurs principales propriétés (en particulier comment ils conservent/suppriment les propriétés de l'image parente) à travers un béton
-exemple : la gestion des politiques frontalières et d'extension. Enfin, nous discuterons des limites d'une telle conception.
+Cette notion de vues n'est pas nouvelle~\parencite{novak.1997.reuse} et est apparue naturellement en Traitement d'image
+avec Milena~\parencite{geraud.2012.ipolmeeting,levillain.2010.icip} sous le nom de
+\emph{morpher}~\parencite{levillain.2009.ismm, geraud.2012.hdr}. Il était toujours utile de pouvoir projeter une image à
+travers un prisme qui pourrait extraire des informations spécifiques à son sujet sans avoir besoin de copier la mémoire
+tampon des données sous-jacentes. Aujourd'hui (2020), le langage C++ (norme 20) introduit aussi ce mécanisme avec les
+ranges~\parencite{niebler.2014.ranges} pour les \emph{collections non-propriétaire} (de leur mémoire). Il est nommé
+\emph{vues} (view) et permet à l'utilisateur d'accéder au contenu d'un conteneur (vector, map) à travers un prisme. Dans
+Pylene, nous avons décidé de nous aligner avec la nomenclature décidée dans C++20 afin de ne pas dérouter l'utilisateur.
+De cette façon, une vue \texttt{transform} dans le traitement d'image fera la même chose sur une image que ce que la vue
+\texttt{transform} fait sur un conteneur (collection) dans la bibliothèque de ranges standard. Les \emph{vues}
+présentent les propriétés suivantes : \emph{copie quasi-gratuite}, \emph{non-propriétaire} (ne \emph{possède} aucune
+tampon mémoire contenant des données), \emph{évaluation paresseuse} (l'accès à la valeur d'un pixel peut nécessiter des
+calculs) et \emph{compositable}. Lorsque les vues sont chaînées, le compilateur construit un \emph{arbre d'expressions}
+(ou \emph{expression template} tel qu'utilisé dans de nombreuses bibliothèques de calcul scientifique telles que as
+Eigen~\parencite{guennebaud.2010.eigen}), il connaît donc à la compilation le type de la composition finale et s'assure
+qu'il n'y ait pas de surcoût en performance à l'execution (0-overhead). Tout d'abord nous motivons l'utilisation des
+\emph{vues} dans le traitement d'image, ensuite nous présentons les principales vues utilisées en traitement d'images.
+Enfin, nous discuterons de la façon dont les vues d'image diffèrent de celles utilisées dans les ranges de C++ et leurs
+principales propriétés (en particulier comment elles conservent/suppriment les propriétés de l'image parente) à travers
+un exemple concret : la gestion des bordures et des extensions. Enfin, nous discuterons des limites lées à ce design.
+
+En traitement d'images, un algorithme s'écrit naïvement en prenant une ou plusieurs données d'entrée (parmis lesquelles
+figure la/les image(s) d'entrée), en effectuant un traitement sur ces données d'entrée puis en retournant les données
+résultantes (ou une erreur). Prenons par exemple l'exemple de l'algorithme mélange alpha (alpha-blending) qui peut être
+implémenté en C++ naïf comme suit :
+\begin{minted}{C++}
+  void blend_inplace(const uint8_t* ima1, uint8_t* ima2, float alpha,
+  int width, int height, int stride1, int stride2) {
+    for (int y = 0; y < height; ++y) {
+      const uint8_t* iptr = ima1 + y * stride1;
+      uint8_t* optr = ima2 + y * stride2;
+      for (int x = 0; x < width; ++x)
+        optr[x] = iptr[x] * alpha + optr[x] * (1-alpha);
+    }
+  }
+\end{minted}
+
+Ce code a plusieurs défauts. Il fait des hypothèses fortes sur les images d'entrée : la contiguïté de ses données dans
+sa mémoire tampon et sa forme (2D). Supposons que notre utilisateur veuille maintenant restreindre l'algorithme à une
+région spécifique à l'intérieur de l'image. Le mainteneur devrait alors fournir une surcharge de fonction pour
+l'algorithme avec un argument d'entrée supplémentaire correspondant à la région d'intérêt. Supposons que l'utilisateur
+veuille maintenant prendre en charge la manipulation d'images 3D. Le mainteneur devrait maintenant fournir fournir deux
+surcharges de fonction supplémentaires avec un argument de \emph{pas} supplémentaire (un pour l'algorithme de base, un
+l'algorithme prenant en compte une région d'intérêt). Supposons maintenant que l'utilisateur souhaite uniquement
+manipuler le canal de couleur rouge. Maintenant le mainteneur doit prendre en charge et ajouter des surcharges de
+fonctions supplémentaires pour chaque canal et/ou type de couleur. La complexité augmente grandement pour chaque points
+de customisation que le mainteneur souhaite offrir à l'utilisateur. Bien sûr, il est possible d'empêcher la duplication
+de code grâce à une utilisation intelligente des techniques d'ingénierie informatique (factorisation de code, etc.) mais
+la complexité fuiterait toujours à travers l'API dans une certaine mesure. C'est ainsi que l'autre solution consiste à
+permettre à l'utilisateur de effectuer ces restrictions en amont de l'algorithme de manière transparente afin que
+l'algorithme en aval soit facile à écrire, comprendre et maintenir. Pour y parvenir, nous devons augmenter le niveau
+d'abstraction autour des images d'un niveau afin que nous puissions travailler au directement niveau de l'image.
+L'algorithme de mélange alpha (alpha-blending) s'écrirait alors comme indiqué dans la~\cref{resume:fig:view.alphablend}.
+
+\begin{figure}[htbp]
+  \centering
+  \includestandalone[mode=image, scale=0.7]{../figures/alphablend}
+
+  \caption[]{Algorithme mélange alpha (alpha-blending) écrit a niveau de l'image.}
+  \label{resume:fig:view.alphablend}
+\end{figure}
+
+Cette façon d'exprimer un algorithme est obtenue en introduisant des \emph{vues} dans le traitement d'image. Une image
+est maintenant une vue et peut être restreinte/projetée/manipulée selon les besoins de l'utilisateur avant de la
+transmettre à un algorithme. Même l'algorithme de mélange alpha (alpha-blending) peut entièrement être réécrit en termes
+de vues, comme montré dans ~\cref{resume:fig:new.alphablend}.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[b]{5.5cm}
+    \includestandalone[mode=image, scale=1.0]{../figures/view_ast2}
+  \end{minipage}
+  \begin{minipage}[b]{5.5cm}
+    \begin{minted}{c++}
+    auto alphablend =
+      [](auto ima1, auto ima2, float alpha) {
+        return alpha * ima1 + (1 - alpha) * ima2;
+      };
+    \end{minted}
+    \bigskip
+    \bigskip
+    \bigskip
+  \end{minipage}
+  \caption[]{Mélange alpha (alpha-blending), implementation générique avec les \emph{views}, et son arbre d'expression.}
+  \label{resume:fig:new.alphablend}
+\end{figure}
+
+Être capable d'effectuer de puissantes manipulations sur les images avant de les passer aux algorithmes annule
+complètement le problème initale qui consiste à avoir plusieurs surcharge de fonctions pour un même algorithme tout en
+maintenant et en documentant toutes les arguments optionnels associés. En effet, pour effectuer la transformation de
+mélange alpha (alpha-blending) sur l'image d'entrée, tout ce que l'utilisateur doit faire est :
+\begin{minted}{C++}
+  auto ima1, ima2 = /* ... */;
+  auto ima_blended = alphablend(ima1, ima2, 0.2);
+\end{minted}
+Si l'utilisateur souhaite restreindre la région à mélanger ou le canal de couleur sur lequel travailler, il lui suffit
+d'écrire le modification suivante :
+\begin{minted}{C++}
+  auto roi = /* ... */;
+  auto blended_roi = alphablend(view::clip(ima1, roi), view::clip(ima2, roi), 0.2);
+  auto blended_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
+\end{minted}
+La restriction est faite en amont de l'algorithme et propagée en aval sans augmenter la complexité du code. De cette
+façon, la vue augmente considérablement ce que l'utilisateur peut faire tout en écrivant moins de code.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.7]{../figures/pipeline}
+  \caption[]{Exemple d'une pipeline de traitement d'image simple.}
+  \label{resume:fig:view.pipeline}
+\end{figure}
+
+Dans ce chapitre, nous voyons que \emph{les vues sont composables}. L'une des caractéristiques les plus importantes dans
+la conception d'une pipeline (généralement, en génie logiciel) est la \emph{composition d'objets}. Elle permet de
+composer des blocs simples en blocs complexes. Ces blocs complexes peuvent alors être gérés comme s'il s'agissait encore
+de blocs simples. Dans~\cref{resume:fig:view.pipeline}, nous avons 3 opérateurs d'image simples
+\emph{Image}~\(\rightarrow\)~\emph{Image} (la conversion en niveaux de gris, la sous-quantification et la dilatation).
+Comme indiqué dans la~\cref{resume:fig:view.comp}, la composition de l'algorithme considérerait ces 3 opérateurs simples
+comme un seul opérateur complexe \emph{Image}~\(\rightarrow\)~\emph{Image} qui pourrait ensuite être utilisé dans un
+autre encore plus complexe pipeline de traitement. Tout comme les algorithmes, les vues d'image sont composables, \prex,
+une vue de la vue d'une image est toujours un image. Dans ~\cref{resume:fig:view.comp}, nous composons l'image d'entrée
+avec une vue de transformation en niveaux de gris et une vue de sous-quantification qui alimente ensuite l'algorithme de
+dilatation.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.7]{../figures/composition}
+  \caption[]{Exemple d'une pipeline de traitement d'image simple illustrant la différence entre la composition
+    d'algorithmes et la composition de vues d'image.}
+  \label{resume:fig:view.comp}
+\end{figure}
+
+Aussi, les \emph{vues améliorent l'utilisabilité}. Le code pour composer des images dans ~\cref{resume:fig:view.comp}
+est presque aussi simple que :
+
+\begin{minted}{c++}
+  auto input = imread(...);
+  auto A = transform(input, [](rgb16 x) -> float {
+    return (x.r + x.g + x.b) / 3.f; }; );
+  auto MyComplexImage = transform(A, [](float x)
+    -> uint8_t { return (x / 256 + .5f); }; );
+\end{minted}
+
+Les personnes familiarisées avec la programmation fonctionnelle peuvent remarquer des similitudes avec ces langages où
+\emph{transform} (\emph{map}) et \emph{filter} sont des opérateurs de séquence. Les vues utilisent le paradigme
+fonctionnel et sont créées par des fonctions qui prennent une fonction en argument : l'opérateur ou le prédicat à
+appliquer pour chaque pixel ; nous n'itérons pas à la main sur les pixels de l'image.
+
+De plus, les \emph{vues améliorent la ré-utilisabilité}. Les extraits de code ci-dessus sont simples mais peu
+réutilisables. Cependant, suivant le paradigme de la programmation fonctionnelle, il est assez facile de définir de
+nouvelles vues, car certains adaptateurs d'image peuvent être considérées comme des \emph{fonctions d'ordre supérieur}
+pour lesquelles on peut lier certains paramètres, comme on le ferait avec la technique de
+currying~\parencite{hanus.1995.curry}. Dans~\cref{resume:fig:view.highorder}, nous montrons comment la primitive
+\emph{transform} peut être utilisée pour créer une vue additionnant deux images et un opérateur de vue effectuant la
+conversion en niveaux de gris ainsi que la sous-quantification réutilisable par la suite\footnote{Ces fonctions auraient
+  pu être écrites de manière plus générique pour plus de ré-utilisabilité, mais ce n'est pas le but ici.}.
+
+\begin{figure}
+  \begin{minted}{c++}
+auto operator+(Image A, Image B) {
+  return transform(A, B, std::plus<>());
+}
+auto togray = [](Image A) { return transform(A, [](auto x)
+  { return (x.r + x.g + x.b) / 3.f; };)
+};
+auto subquantize16to8b = [](Image A) { return transform(A,
+  [](float x) { return uint8_t(x / 256 +.5f); });
+};
+
+auto input = imread(...);
+auto MyComplexImage = subquantize16to8b(togray(A));
+  \end{minted}
+
+  \caption[]{Utilisation de fonctions d'ordre supérieur pour créer des opérateurs de vues personnalisées.}
+  \label{resume:fig:view.highorder}
+\end{figure}
+
+De plus, \emph{les vues sont calculées paresseusement}. L'opération étant enregistrée dans la vue d'image, ce nouveau
+type d'image permet de mélanger des types d'images fondamentaux avec des algorithmes. Dans~\cref{fig:view.highorder}, la
+création de vues n'implique aucun calcul en soi mais retarde plutôt le calcul jusqu'à ce que l'expression \texttt{v(p)}
+soit invoqué. Parce que les vues peuvent être composées, l'évaluation peut être assez retardée. Les adaptateurs d'image
+sont des \emph{expression template}~\parencite{veldhuizen.1995.expression, veldhuizen.2000.blitz} car ils enregistrent
+les \emph{expressions} utilisées pour générer l'image en tant que paramètre template. Une vue représente en fait un
+arbre d'expressions (\cref{fig:new.alphablend}).
+
+\emph{Les vues sont efficaces}. Avec un design classique, chaque opération de la pipeline est implémentée << par
+elle-même >>. Chaque opération nécessite que de la mémoire lui soit allouée pour l'image de sortie et, également, chaque
+opération nécessite que l'image soit entièrement parcourue. Ce design est simple, flexible, composable, mais n'est pas
+efficace ni terme en mémoire ni performance de calcul. Avec l'évaluation paresseuse, l'image n'est parcourue qu'une
+seule fois (lorsque la dilatation est appliquée), ce qui a deux avantages. Premièrement, il n'y a pas d'images
+intermédiaires, ce qui est très efficient en termes de mémoire. Deuxièmement, la traversée de l'image est plus rapide
+grâce à une meilleure utilisation du cache mémoire, et effectue une traversée selective optimale. En effet, dans notre
+exemple (\cref{summary:fig:view.pipeline}), le traitement d'un pixel RGB16 de l'algorithme de dilatation le convertit
+directement en niveaux de gris, puis le sous-quantifie en 8 bits, et enfin le rend disponible pour l'algorithme de
+dilatation. Il agit \emph{comme si} nous écrivions un opérateur optimal qui combinerait tous ces opérations. Cette
+approche est quelque peu liée aux opérations de fusion du noyau disponibles dans certains HPC
+spécifications~\parencite{openvx.2019} mais la fusion de vues est optimisée par le compilateur C++
+seulement~\parencite{brown.2018.ranges}. L'aspect sélectif intervient lorsqu'une région d'intérêt intervient dans la
+pipeline de traitement. En effet, l'intégralité de la pipeline n'est alors exécuté que sur la région d'intérêt et ce
+même si cette sélection n'est faite qu'à la toute fin de la pipeline de traitement.
+
+Enfin, les \emph{vues améliorent la productivité}. Tous les algorithmes de traitement d'image fonctionnant pixel par
+pixel peuvent (et doivent) être réécrits intuitivement en utilisant une vue en une seule ligne. Les vues
+\emph{transform} sont la clé permettant ce point. Cela implique qu'il existe un nouveau niveau d'abstraction disponible
+pour le traiteur d'image lors du prototypage de son algorithme. Le temps passé à la mise en oeuvre des fonctionnalités
+est réduite, donc le temps de la boucle de rétroaction est également réduit. Cela amène naturellement un gain de
+productivité au traiteur d'image.
+
+

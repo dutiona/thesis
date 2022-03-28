@@ -24,7 +24,7 @@ limitations of such a design.
 
 In image processing an algorithm is naively written by taking one or several inputs' data (among which is the input
 image(s)),  by performing work on this input data and then by returning the resulting data (or an error). Let us take
-for example the alpha blending example which can be implemented in naive C++ code as followed:
+for example the alpha-blending example which can be implemented in naive C++ code as followed:
 \begin{minted}{C++}
   void blend_inplace(const uint8_t* ima1, uint8_t* ima2, float alpha,
   int width, int height, int stride1, int stride2) {
@@ -39,18 +39,18 @@ for example the alpha blending example which can be implemented in naive C++ cod
 
 This code has several flaws. It makes strong hypothesis about the input images: its data buffer contiguity and its shape
 (2D). Let us suppose that our user now wants to restrict the algorithm to a specific region inside the image. The
-maintainer would have then to provide a version of the algorithm with one additional input argument corresponding to the
+maintainer would have then to provide an overload of the algorithm with one additional input argument corresponding to the
 region of interest. Let us suppose that the user now wants to support manipulate 3D images. The maintainer would now
-have to provide two additional with an additional stride argument (one for the base algorithm, one for the region of
-interest-restricted algorithm). Let us now suppose that the user only wants to manipulate the red color channel. Now the
-maintainer must support and additional versions of the algorithm for each channel and/or color type. The complexity
-increases manyfold for each kind of customization points the maintainer wants to offer to the user. Of course, it is
-possible to prevent code duplication through clever usage of computer engineering techniques (code factorization etc.)
-but the complexity would still leak through the API anyway. That is way the other solution is to make the user able to
-perform those restriction upstream from the algorithm transparently so that the downstream algorithm is easy to write,
-understand and maintain. In order to achieve this, we need to raise the abstraction level around images by one layer so
-that we can work at the image level. The alpha blending algorithm would then be written as shown
-in~\cref{fig:view.alphablend}.
+have to provide two additional overloads with an additional stride argument (one for the base algorithm, one for the
+region of interest-restricted algorithm). Let us now suppose that the user only wants to manipulate the red color
+channel. Now the maintainer must support and additional overloads of the algorithm for each channel and/or color type.
+The complexity increases manyfold for each kind of customization points the maintainer wants to offer to the user. Of
+course, it is possible to prevent code duplication through clever usage of computer engineering techniques (code
+factorization etc.) but the complexity would still leak through the API anyway. That is way the other solution is to
+make the user able to perform those restriction upstream from the algorithm transparently so that the downstream
+algorithm is easy to write, understand and maintain. In order to achieve this, we need to raise the abstraction level
+around images by one layer so that we can work at the image level. The alpha-blending algorithm would then be written as
+shown in~\cref{fig:view.alphablend}.
 
 \begin{figure}[htbp]
   \centering
@@ -85,8 +85,8 @@ blending algorithm can be rewritten in terms of views entirely, as shown in~\cre
 \end{figure}
 
 Being able to perform powerful manipulation on images before feeding them to algorithms completely nullify the initial
-problem of having several versions of the same algorithm while maintaining and documenting all the associated optional
-arguments. Indeed, in order to perform the alpha blending transformation on the base input image, all that the user must
+problem of having several overloads of the same algorithm while maintaining and documenting all the associated optional
+arguments. Indeed, in order to perform the alpha-blending transformation on the base input image, all that the user must
 do is:
 \begin{minted}{C++}
   auto ima1, ima2 = /* ... */;
@@ -1039,7 +1039,7 @@ a real advantage for software maintenance.
 \paragraph{Views are composable.} One of the most important feature in a pipeline design (generally, in software
 engineering) is \emph{object composition}. It enables composing simple blocks into complex ones. Those complex blocks
 can then be managed as if they were still simple blocks. In~\cref{fig:view.pipeline}, we have 3 simple image operators
-\emph{Image}~\(\rightarrow\)~\emph{Image} (the grayscale conversion, the sub-quantization, the dilation). As shown
+\emph{Image}~\(\rightarrow\)~\emph{Image} (the grayscale conversion, the sub-quantization and the dilation). As shown
 in~\cref{fig:view.comp}, algorithm composition would consider these 3 simple operators as a single complex operator
 \emph{Image}~\(\rightarrow\)~\emph{Image} that could then be used in another even more complex processing pipeline. Just
 like algorithms, image views are composable, \eg a view of the view of an image is still an image.
@@ -1099,16 +1099,19 @@ generate the image as a template parameter. A view actually represents an expres
 \paragraph{Views for performance.} With a classical design, each operation of the pipeline is implemented on ``its
 own''. Each operation requires memory to be allocated for the output image and also, each operation requires that the
 image is fully traversed. This design is simple, flexible, composable, but is not memory efficient nor computation
-efficient. With the lazy evaluation approach, the image is traversed only once (when the dilation is applied) that has
-two benefits. First, there are no intermediate images which is very memory effective. Second, traversing the image is
-faster thanks to a better memory cache usage. Indeed, in our example (\cref{fig:view.pipeline}), processing a RGB16
-pixel from the dilation algorithm directly converts it in grayscale, then sub-quantize it to 8-bits, and finally makes
-it available for the dilation algorithm. It acts \emph{as if} we were writing an optimal operator that would combine all
-these operations. This approach is somewhat related to the kernel-fusing operations available in some HPC
-specifications~\parencite{openvx.2019} but views-fusion is optimized by the C++ compiler
-only~\parencite{brown.2018.ranges}.
+efficient. With the lazy evaluation approach, the image is traversed only once (when the dilation is applied) which has
+two benefits. First, there are no intermediate images which is very memory efficient. Second, traversing the image is
+faster thanks to a better memory cache usage, and performs an optimal selective traversal. Indeed, in our example
+(\cref{summary:fig:view.pipeline}), processing a RGB16 pixel from the dilation algorithm directly converts it in
+grayscale, then sub-quantize it to 8-bits, and finally makes it available for the dilation algorithm. It acts \emph{as
+  if} we were writing an optimal operator that would combine all these operations. This approach is somewhat related to
+the kernel-fusing operations available in some HPC specifications~\parencite{openvx.2019} but views-fusion is optimized
+by the C++ compiler only~\parencite{brown.2018.ranges}. The selective aspect intervenes when a region of interest is
+selected at one point in the processing pipeline. Indeed, the entirety of the pipeline is then executed only on the
+region of interest, even if this selection happens only at the very end of the processing pipeline.
 
-\paragraph{Views for productivity.} All point-wise image processing algorithms can (and should) be rewritten intuitively by
-using a one-liner view. The \emph{transform} views is the key enabling that point. This implies that there exist a new
-abstraction level available to the practitioner when prototyping their algorithm. The time spent implementing features
-is reduced, thus the feedback-loop time is reduced too. This brings the practitioner to a productivity gain.
+\paragraph{Views for productivity.} All point-wise image processing algorithms can (and should) be rewritten intuitively
+by using a one-liner view. The \emph{transform} views is the key enabling that point. This implies that there exist a
+new abstraction level available to the practitioner when prototyping their algorithm. The time spent implementing
+features is reduced, thus the feedback-loop time is reduced too. This naturally brings productivity gain to the
+practitioner.
