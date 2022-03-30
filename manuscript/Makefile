@@ -9,7 +9,7 @@ all : $(PDF) compressed
 	$(TEX) $< -jobname="$(basename $<)"
 
 %.compressed.pdf : %.tex ${DEP}
-	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $<).pdf
+	\gs -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $<).pdf
 
 compressed : $(PDF:.pdf=.compressed.pdf)
 
