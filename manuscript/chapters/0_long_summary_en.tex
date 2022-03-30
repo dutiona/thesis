@@ -212,14 +212,14 @@ computational shape and can be factorized together.
   \label{summary:fig:type.vs.algo}
 \end{figure}
 
-Genericity can have two different meanings depending on the people you ask. For instance, some will argue that
-genericity is high level and qualifies a tool which is ``generic enough'' to handle all of his use-cases. Others will
-argue that genericity is about how a machine (code) is able to make tools, ``generic enough'' to make a lot different
-tools. Neither is wrong. However, for the sake of comprehension we will use different words for each of these cases. A
-tool generic enough to handle a lot of use-case will be called \emph{versatile}. Finally, for a tool whose aim is to
-provide a programming framework to handle code of any use-case we will use \emph{generic}. In this thesis, genericity
-will be about code. The~\cref{summary:fig:type.vs.algo} illustrates the result of the same generic watershed
-implementation applied on an image 2D, a graph as well as a mesh.
+\FIXME{Genericity can have two different meanings depending on the people you ask. For instance, some will argue that
+  genericity is high level and qualifies a tool which is ``generic enough'' to handle all of his use-cases. Others will
+  argue that genericity is about how a machine (code) is able to make tools, ``generic enough'' to make a lot different
+  tools. Neither is wrong. However, for the sake of comprehension we will use different words for each of these cases. A
+  tool generic enough to handle a lot of use-case will be called \emph{versatile}. Finally, for a tool whose aim is to
+  provide a programming framework to handle code of any use-case we will use \emph{generic}. In this thesis, genericity
+  will be about code. The~\cref{summary:fig:type.vs.algo} illustrates the result of the same generic watershed
+  implementation applied on an image 2D, a graph as well as a mesh.}
 
 In this chapter we present the origin of generic programming, which goes as far as~\citedate[year]{musser.1988.generic}
 and how it has evolved to be integrated in the Ada programming language and then the C++ programming language.
@@ -335,10 +335,10 @@ to possibly solve heterogeneous computing issues.
 
 Finally, this chapter introduces our first main contribution: a complete taxonomy related to the image processing area.
 We first introduce fundamental concepts such as \emph{point}, \emph{pixel}, \emph{domain} and \emph{image} (illustrated
-in~\cref{summary:fig:concept.image}). We then motivate and introduce advanced concepts related to images and the different way
-to access data (forward, backward traversing, indexing, direct access to underlying buffer, \ldots). In the end, we
-introduce the concepts related to orbiting notions such as \emph{structuring element}, \emph{neighborhood} and
-\emph{extension} (border management) which are necessary to be able to work with local algorithms.
+in~\cref{summary:fig:concept.image}). We then motivate and introduce advanced concepts related to images and the
+different way to access data (forward, backward traversing, indexing, direct access to underlying buffer, \ldots). In
+the end, we introduce the concepts related to orbiting notions such as \emph{structuring element}, \emph{neighborhood}
+and \emph{extension} (border management) which are necessary to be able to work with local algorithms.
 
 The next chapter will make use of the presented concepts to introduce the second main contribution of this thesis: the
 \emph{image views}.
@@ -357,7 +357,7 @@ container (vector, map) through a prism. In Pylene, we decided to align the nami
 C++20 in order not to confuse the user. This way, a \texttt{transform} view in image processing will do the same thing
 on an image that the transform view in the standard range library does on a container. \emph{Views} feature the
 following properties: \emph{cheap to copy}, \emph{non-owner} (does not \emph{own} any data buffer), \emph{lazy
-evaluation} (accessing the value of a pixel may require computations) and \emph{composition}. When chained, the compiler
+  evaluation} (accessing the value of a pixel may require computations) and \emph{composition}. When chained, the compiler
 builds a \emph{tree of expressions} (or \emph{expression template} as used in many scientific computing libraries such
 as Eigen~\parencite{guennebaud.2010.eigen}), thus it knows at compile-time the type of the composition and ensures a
 0-overhead at evaluation. We will first motivate the usage of \emph{views} in image processing. We will then present the
@@ -488,10 +488,10 @@ the image pixels.
 Furthermore, \emph{views improve re-usability}. The code snippets above are simple but not very re-usable. However,
 following the functional programming paradigm, it is quite easy to define new views, because some image adaptors can be
 considered as \emph{high-order functions} for which we can bind some parameters, as one would do with the curry
-technique~\parencite{hanus.1995.curry}. In~\cref{summary:fig:view.highorder}, \FIXME{we show how the primitive \emph{transform}
-can be used to create a view summing two images and a view operator performing the grayscale conversion as well as the
-sub-quantization which can be reused afterwards}\footnote{These functions could have been written in a more generic way
-  for more re-usability, but this is not the purpose here.}.
+technique~\parencite{hanus.1995.curry}. In~\cref{summary:fig:view.highorder}, \FIXME{we show how the primitive
+  \emph{transform} can be used to create a view summing two images and a view operator performing the grayscale conversion
+  as well as the sub-quantization which can be reused afterwards}\footnote{These functions could have been written in a
+  more generic way for more re-usability, but this is not the purpose here.}.
 
 \begin{figure}
   \begin{minted}{c++}
@@ -545,11 +545,11 @@ the practitioner.
 \subsection*{A bridge between the static world and the dynamic world}
 
 
-In the programming world, there are three main families of programming
-language~\parencite{prechelt.2000.comparison}. There are (i) \emph{compiled} programming languages, such as C, C++, Rust
-or Go, (ii) \emph{interpreted} programming languages, such as Python, PHP, Lisp or Javascript, and (iii) hybrid
-programming languages, such as Java or C\#. The latter have a fast compilation pass that compiles the source code into
-an intermediate bytecode. Then, this bytecode is interpreted via an interpreter on the host (runner) machine.
+In the programming world, there are three main families of programming language~\parencite{prechelt.2000.comparison}.
+There are (i) \emph{compiled} programming languages, such as C, C++, Rust or Go, (ii) \emph{interpreted} programming
+languages, such as Python, PHP, Lisp or Javascript, and (iii) hybrid programming languages, such as Java or C\#. The
+latter have a fast compilation pass that compiles the source code into an intermediate bytecode. Then, this bytecode is
+interpreted via an interpreter on the host (runner) machine.
 
 \begin{figure}[htbp]
   \centering
@@ -628,8 +628,8 @@ be able to auto-generate Python binding once the C++ code is compiled. There are
 
 The first solution is to basically use system call to the compilers to actually \emph{compile} C++ code once the
 templated types are known and explicitly instantiated in the source code. This solution requires careful code-generation
-design and that the user actually possess a compiler on his computer. Furthermore, the user must resolve all the
-library dependencies, such as \emph{freeimage} for IO etc. This solution was engineered in the VCSN
+design and that the user actually possess a compiler on his computer. Furthermore, the user must resolve all the library
+dependencies, such as \emph{freeimage} for IO etc. This solution was engineered in the VCSN
 library~\parencite{demaille.2013.vcsn}. Indeed, each time the user declared a new automaton in his Jupyter notebook,
 corresponding source code is compiled in the background and then cached. It is a very perilous solution to implement
 when the final execution environment (OS, installed software) is not well-known in advance. Nowadays, the issue may be
@@ -637,10 +637,10 @@ lesser, however, it still requires to maintain both the library and the containe
 
 The second solution is to use Cython~\parencite{behnel.2010.cython}. It is a transpiling infrastructure which transform
 a Python source code directly into C-language source code so that it can be compiled by a standard C compiler just by
-linking against the Python/C API. This remove the burden of writing the careful code-generation routine, system-calls
-to the C++ compiler and removes the need to resolve all the dependencies. This infrastructure takes care of everything
-for the user. Also, by transpiling it into C code, it is faster because a C compiler is faster than a C++ compiler.
-Cython even support C++ template code~\parencite{behnel.2022.cython-template} which is mandatory for our use-case.
+linking against the Python/C API. This remove the burden of writing the careful code-generation routine, system-calls to
+the C++ compiler and removes the need to resolve all the dependencies. This infrastructure takes care of everything for
+the user. Also, by transpiling it into C code, it is faster because a C compiler is faster than a C++ compiler. Cython
+even support C++ template code~\parencite{behnel.2022.cython-template} which is mandatory for our use-case.
 
 The third solution consists in relying on recent projects that are all relying on the LLVM infrastructure. We can
 notably note AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy},
@@ -675,11 +675,8 @@ presenting what is the notion of generic programming (genericity), its story and
 life, especially when applied to image processing. Genericity is a 4-decades years old notion that has evolved and found
 usage in very modern areas of our society. Indeed, image processing is widely used to build modern applications used all
 around the world. However, it was demonstrated how difficult it can be to implement solutions relying on genericity.
-Indeed, there is a rule of three tying genericity, performance and ease of use. The rule states that one can only have
-two of those items by sacrificing the third one. If one wants to be generic and efficient, then the naive solution will
-be very complex to use with lots of parameters. If one wants a solution to be generic and easy to use, then it will be
-not very efficient by default. Finally, if one wants a solution to be easy to use and efficient then it will not be very
-generic. In this thesis, we try to demonstrate how to break this rule in three steps.
+Indeed, there is a rule of three tying genericity, performance and ease of use stated in introduction. In this thesis,
+we try to demonstrate how to break this rule in three steps.
 
 The first step, illustrated in the chapter \emph{Taxonomy for Image Processing}, was to make an inventory of image types
 and families as well as different image processing algorithms. The aim was to produce a comprehensive taxonomy of types

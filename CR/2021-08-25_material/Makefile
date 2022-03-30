@@ -6,7 +6,7 @@ all : $(PDF)
 
 %.pdf : %.md
 	$(PANDOC) -o $(basename $^).pdf $^
-	\gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$(basename $^).compressed.pdf $@
+	ghostscript -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$(basename $^).compressed.pdf $@
 
 clean : subdirclean
 	rm -rf $(PDF)
