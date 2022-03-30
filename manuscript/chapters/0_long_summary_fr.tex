@@ -55,7 +55,7 @@ algorithmes auxquels le traiteur d'image est confronté. Le deuxième relève de
 peut vouloir exécuter son programme. L'objectif est de concevoir intelligemment les briques de base qui peremettent de
 tirer parti des nombreuses opportunités d'optimisation, tant en ce qui concerne les types de données et d'algorithmes en
 entrée, que le matériel cible. Ensuite, le traiteur d'image verrait une importante amélioration des performances, par
-défaut, sans devoir ajuster spécifiquement son application. C'est ainsi que le concept de généricité est introduit. Il
+défaut, sans devoir ajuster spécifiquement son application. C'est que le concept de généricité demandéintroduit. Il
 vise à fournir un terrain d'entente sur la façon dont une image doit se comporter lorsqu'elle est transmise à des
 algorithmes de base nécessaires pour des applications complexes. De cette façon, en théorie, il suffit d'écrire
 l'algorithme une seule fois pour qu'il fonctionne avec n'importe quel type d'image.
@@ -104,7 +104,7 @@ langage compilé) d'exister dans le monde dynamique (avec langages interprétés
 
 \paragraph{Taxonomie pour le traitement d'images : types d'image et algorithmes.} Ce chapitre présente notre première
 contribution dans le domaine du traitement d'images qui consiste à réaliser une taxonomie complète des différentes
-familles d'images ainsi que des différentes familles d'algorithmes. Ce chapitre explique, entre autres, la notion de
+familles d'images que des différentes familles ddemandéalgorithmes. Ce chapitre explique, entre autres, la notion de
 concept et son application au domaine du traitement d'images. Nous expliquons comment extraire un concept d'un code
 existant et comment l'exploiter pour le rendre plus efficace et plus lisible. Nous proposons enfin notre point de vue
 sous la forme d'une collection de concepts liés au domaine du traitement d'images.
@@ -126,7 +126,7 @@ appelons le << monde statique >>), et du code Python dynamique qui s'appuie sur 
 que nous appelons le << monde dynamique >>) : et cela n'est vraiment pas évident. D'autant plus que nous ne pouvons pas
 non plus exiger de l'utilisateur qu'il fournisse et utilise un compilateur à chaque fois qu'il veut utiliser notre
 bibliothèque depuis Python. Dans ce chapitre, nous discutons quelles sont les solutions existantes qui peuvent être
-envisagées ainsi que leurs avantages et inconvénients. Nous discutons ensuite de la manière dont nous avons conçu et
+envisagées que leurs avantages et inconvénientsdemandéNous discutons ensuite de la manière dont nous avons conçu et
 réalisé une solution hybride pour arriver à faire ce pont entre le monde statique et le monde dynamique.
 
 
@@ -138,7 +138,7 @@ minimum efficace. Par exemple, un ordinateur est un outil générique qui permet
 e-mails, de parcourir Internet, de jouer à des jeux vidéo, de regarder des films, de lire des e-books etc. En
 programmation, un outil est dit générique lorsqu'il peut répondre à plusieurs objectifs. Par exemple, le compilateur gcc
 peut compiler plusieurs langages de programmation (C, C++, Objective-C, Objective-C++, Fortran, Ada, D, Go et BRIG
-(HSAIL)) ainsi que cibler plusieurs architectures (IA-32 (x86), x86--64, ARM, SPARC, etc.). Désormais, on peut dire que
+(HSAIL)) que cibler plusieurs architectures (demandé-32 (x86), x86--64, ARM, SPARC, etc.). Désormais, on peut dire que
 gcc est un compilateur générique. À ce stade, il est important de noter que même si un outil est considéré comme
 générique, il y a une limitation quant à ce que cet outil peut faire et ce qu'il ne peut pas faire. Un compilateur
 malgré la prise en charge de nombreuses langues et architectures, ne pourra pas passer un appel téléphonique ou faire un
@@ -153,7 +153,7 @@ niveau de la bibliothèque et au niveau du langage de programmation.
 
 \paragraph{Généricité au sein des bibliothèques} Elle est décrite par la cardinalité du nombre de cas d'utilisation
 qu'elle peut gérer. Les bibliothèques fournissent toujours leurs propres structures de données, pour représenter et
-donner un sens aux données que l'utilisateur veut traiter, ainsi que des algorithmes pour traiter ces données et fournir
+donner un sens aux données que l'utilisateur veut traiter, que des algorithmes pour traiter demandédonnées et fournir
 différents types de résultats. Une bibliothèque sera alors cataloguée comme
 \emph{générique}~\parencite{musser.1994.algorithm} lorsque (i) ses structures de données permettent à l'utilisateur de
 s'exprimer entièrement, sans limitation et lorsque (ii) sa banque d'algorithmes est suffisamment grande pour faire tout
@@ -178,8 +178,8 @@ programmation, il est nécessaire d'introduire un peu de vocabulaire. Le premier
 comment le programmeur a l'intention d'utiliser les données. La grande majorité des langages de programmation prend en
 charge les types de données de base (également appelés types primitifs) tels que les nombres entiers, les nombres à
 virgules flottantes, les types booléens et les chaînes de caractères (ASCII, Unicode, etc.). Cet attribut de type
-définit les opérations qui peuvent être effectuées sur les données, la signification des données ainsi que la taille des
-données en mémoire (les données peuvent alors être stockées sur le tas, la pile, etc.). Un type de données fournit un
+définit les opérations qui peuvent être effectuées sur les données, la signification des données que la taille des
+demandéen mémoire (les données peuvent alors être stockées sur le tas, la pile, etc.). Un type de données fournit un
 ensemble de valeurs à partir desquelles une expression (c'est à dire variable, fonction, etc.) peut prendre ces valeurs.
 Parmi les langages de programmation, nous pouvons distinguer ceux qui sont dynamiquement typés et ceux qui sont
 statiquement typés. Les langages typés statiquement sont ceux dont les variables sont déclarées contenant un type
@@ -199,8 +199,8 @@ pour chaque variable déclarée afin de pouvoir itérer sur le prototype plus ra
 En traitement d'images, une image \(Im\) est définie sur un domaine \(\mathcal{D}\) (qui contient des points) par la
 relation \(\forall x \in \mathcal{D}, y = Im(x)\) où \(y\) est la valeur de l'image \(Im\) pour le point \(x\). Cette
 définition se traduit toujours par une structure de données complexe lorsqu'elle est transposée dans un langage de
-programmation. Cette structure de données doit connaître la mémoire tampon contenant les données de l'image ainsi que
-des informations sur la taille et les dimensions de l'image. De plus, ajoutant à la difficulté, les informations
+programmation. Cette structure de données doit connaître la mémoire tampon contenant les données de l'image que
+des informations sur demandétaille et les dimensions de l'image. De plus, ajoutant à la difficulté, les informations
 nécessaires pour définir précisément la structure des données ne sont pas toujours connues lors de l'écriture du code
 source. En effet, un cas d'utilisation très simple consiste à lire une image dans un fichier pour la charger en mémoire.
 Le fichier peut contenir une image de différents types de données et le programme doit toujours fonctionner
@@ -318,7 +318,7 @@ langage C++ dans le domaine du traitement d'images. Cela nous permet de les test
 prédilection tout en nous souvenant de nos travaux passés, à la fois les succès et les échecs en la matière. Cependant,
 comme nous l'avons vu dans le chapitre précédent (Programmation générique (généricité)), faire naître des concepts à
 partir du code est un procédé qui se fait de manière émergente. En conséquence, les premiers travaux sont de faire un
-inventaire de tous les algorithmes d'images existants ainsi que de tous les algorithmes de traitement d'images (à la
+inventaire de tous les algorithmes d'images existants que de tous les algorithmes demandétraitement d'images (à la
 fois les plus basiques comme les plus complexes) auxquels nous pouvons penser. De cette façon, nous remarquons des
 modèles de comportement émergeant de types d'image similaires ou algorithmes similaires. Nous pouvons alors extraire des
 schémas comportementaux de cet inventaire afin de produire une taxonomie complète sous la forme d'un environnement
@@ -439,7 +439,7 @@ de couleur rouge. Alors le mainteneur doit le prendre en charge et ajouter des s
 pour chaque canal et/ou type de couleurs gérés. La complexité augmente grandement pour chaque point de customisation que
 le mainteneur souhaite offrir à l'utilisateur. Bien sûr, il est possible d'empêcher la duplication de code grâce à une
 utilisation intelligente des techniques d'ingénierie informatique (factorisation de code, etc.) mais la complexité
-fuiterait toujours à travers l'API dans une certaine mesure. C'est ainsi que l'autre solution consiste à permettre à
+fuiterait toujours à travers l'API dans une certaine mesure. C'est que l'autre solution demandéà permettre à
 l'utilisateur d'effectuer ces restrictions en amont de l'algorithme de manière transparente afin que l'algorithme en
 aval soit facile à écrire, comprendre et maintenir. Pour y parvenir, nous devons augmenter le niveau d'abstraction
 autour des images d'un niveau afin que nous puissions travailler directement au niveau de l'image. L'algorithme de
@@ -524,7 +524,7 @@ avec une vue de sous-quantification qui alimente enfin l'algorithme de dilatatio
   \label{resume:fig:view.comp}
 \end{figure}
 
-\FIXME{Aussi}, les \emph{vues améliorent l'utilisabilité}. Le code pour composer des images dans
+Les \emph{vues améliorent également l'utilisabilité}. Le code pour composer des images dans
 la~\cref{resume:fig:view.comp} est presque aussi simple que :
 
 \begin{minted}{c++}
@@ -570,47 +570,50 @@ auto MyComplexImage = subquantize16to8b(togray(A));
   \label{resume:fig:view.highorder}
 \end{figure}
 
-Par ailleurs, \emph{les vues sont calculées paresseusement}. L'opération étant enregistrée dans la vue d'image, ce
+Par ailleurs, \emph{les vues sont évaluées paresseusement}. L'opération étant enregistrée dans la vue d'image, ce
 nouveau type d'image permet de mélanger des types d'image fondamentaux avec des algorithmes. Dans
 la~\cref{resume:fig:view.highorder}, la création de vues n'implique aucun calcul en soi, mais retarde plutôt le calcul
-jusqu'à ce que l'expression \texttt{v(p)} soit invoqué. Parce que les vues peuvent être composées, l'évaluation peut
-être assez retardée. Les adaptateurs d'image sont des \emph{expressions template}~\parencite{veldhuizen.1995.expression,
+jusqu'à ce que l'expression \texttt{v(p)} soit invoquée. Parce que les vues peuvent être composées, l'évaluation peut
+être assez retardée. Les adaptateurs d'image sont des \emph{expression template}~\parencite{veldhuizen.1995.expression,
   veldhuizen.2000.blitz} car ils enregistrent les \emph{expressions} utilisées pour générer l'image en tant que paramètre
 template. Une vue représente en fait un arbre d'expressions (\cref{resume:fig:new.alphablend}).
 
-\emph{Les vues sont efficaces}. Avec un design classique, chaque opération de la pipeline est implémentée << par
-elle-même >>. Chaque opération nécessite que de la mémoire lui soit allouée pour l'image de sortie et, également, chaque
+En outre, \emph{les vues sont efficaces}. Avec un design classique, chaque opération de la pipeline est implémentée <<
+par elle-même >>. Chaque opération nécessite que de la mémoire lui soit allouée pour l'image de sortie. De même, chaque
 opération nécessite que l'image soit entièrement parcourue. Ce design est simple, flexible, composable, mais n'est pas
-efficace ni en terme en mémoire ni performance de calcul. Avec l'évaluation paresseuse, l'image n'est parcourue qu'une
-seule fois (lorsque la dilatation est appliquée), ce qui a deux avantages. Premièrement, il n'y a pas d'images
-intermédiaires, ce qui est très efficient en termes de mémoire. Deuxièmement, la traversée de l'image est plus rapide
-grâce à une meilleure utilisation du cache mémoire et effectue une traversée sélective optimale. En effet, dans notre
-exemple (\cref{resume:fig:view.pipeline}), le traitement d'un pixel RVB16 de l'algorithme de dilatation le convertit
-directement en niveaux de gris, puis le sous-quantifie en 8 bits, et enfin le rend disponible pour l'algorithme de
-dilatation. Il agit \emph{comme si} nous écrivions un opérateur optimal qui combinerait toutes ces opérations. Cette
-approche est quelque peu liée aux opérations de fusion du noyau disponibles dans certains HPC
-spécifications~\parencite{openvx.2019}, mais la fusion de vues est optimisée par le compilateur C++
-seulement~\parencite{brown.2018.ranges}. L'aspect sélectif intervient lorsqu'une région d'intérêt intervient dans la
-pipeline de traitement. En effet, l'intégralité de la pipeline n'est alors exécuté que sur la région d'intérêt et ce
+efficace ni en termes de mémoire ni en performance de calcul. Avec l'évaluation paresseuse, l'image n'est parcourue
+qu'une seule fois (lorsque la dilatation est appliquée), ce qui a deux avantages. Premièrement, il n'y a pas d'images
+intermédiaires, ce qui est très efficient en termes de mémoire. Deuxièmement, le parcours de l'image est plus rapide
+grâce à une meilleure utilisation du cache mémoire et une traversée sélective optimale. En effet, dans notre exemple
+(\cref{resume:fig:view.pipeline}), traiter un pixel RVB16 depuis l'algorithme de dilatation le convertit directement en
+niveaux de gris, puis le sous-quantifie en 8 bits, pour enfin le rendre disponible dans l'algorithme de dilatation. Il
+agit \emph{comme si} nous écrivions un opérateur optimal qui combinerait toutes ces opérations. Cette approche est
+quelque peu liée aux opérations de fusion du noyau disponibles dans certaines spécifications
+HPC~\parencite{openvx.2019}, mais la fusion de vues est uniquement optimisée par le compilateur
+C++~\parencite{brown.2018.ranges}. L'aspect sélectif se manifeste lorsqu'une région d'intérêt intervient dans la
+pipeline de traitement. En effet, l'intégralité de la pipeline n'est alors exécutée que sur la région d'intérêt, et cela
 même si cette sélection n'est faite qu'à la toute fin de la pipeline de traitement.
 
 Enfin, les \emph{vues améliorent la productivité}. Tous les algorithmes de traitement d'images fonctionnant pixel par
 pixel peuvent (et doivent) être réécrits intuitivement en utilisant une vue en une seule ligne. Les vues
 \emph{transform} sont la clé permettant ce point. Cela implique qu'il existe un nouveau niveau d'abstraction disponible
 pour le traiteur d'image lors du prototypage de son algorithme. Le temps passé à la mise en \oe{}uvre des
-fonctionnalités est réduite, donc le temps de la boucle de rétroaction est également réduit. Cela amène naturellement un
-gain de productivité au traiteur d'image.
+fonctionnalités est réduit, donc le temps de la boucle de rétroaction l'est également. Cela amène naturellement un gain
+de productivité au traiteur d'image.
 
 
 \subsection*{Un pont entre le monde statique et le monde dynamique}
 
 
-Dans le monde de la programmation, il existe trois grandes familles de langage de
-programmation~\parencite{prechelt.2000.comparison}. Il existe (i) les langages de programmation \emph{compilés}, tels
-que C, C++, Rust ou Go, (ii) les langages de programmation \emph{interprétés}, tels que Python, PHP, Lisp ou Javascript,
-et (iii) les langages de programmation hybrides, tels que Java ou C\#. Ces derniers ont une passe de compilation rapide
-qui compile le code source dans un bytecode intermédiaire. Ensuite, ce bytecode est interprété via un interpréteur sur
-une machine hôte.
+Dans le monde de la programmation, il existe trois grandes familles de langages de
+programmation~\parencite{prechelt.2000.comparison} qui sont :
+\begin{enumerate}
+  \item les langages de programmation \emph{compilés}, tels que C, C++, Rust ou Go,
+  \item les langages de programmation \emph{interprétés}, tels que Python, PHP, Lisp ou Javascript,
+  \item les langages de programmation hybrides, tels que Java ou C\#.
+\end{enumerate}
+Ces derniers ont une passe de compilation rapide qui compile le code source dans un bytecode intermédiaire. Ensuite, ce
+bytecode est interprété via un interpréteur sur une machine hôte.
 
 \begin{figure}[htbp]
   \centering
@@ -627,9 +630,10 @@ value-set, qui est un moyen standard de manipuler les valeurs sous-jacentes d'un
 \oe{}uvre d'algorithmes de traitement d'images. Cette nouvelle couche d'abstraction permet notamment à l'utilisateur
 d'injecter du code côté Python dans des routines C++ déjà compilées. Cependant, superposer les couches d'abstraction
 l'une après l'autre, ou même appeler du code Python entraîne forcément un surcoût du côté des performances. C'est
-pourquoi nous avons réalisé un benchmark pour exposer clairement le coût de nos différentes solutions. Ce benchmark
-compare les quatre versions de notre algorithme d'étirement (stretch) dont l'implémentation et l'utilisation sont
-détaillées dans le chapitre. Le résultat est affiché dans le~\cref{resume:table:static.dynamic.perfs}.
+pourquoi nous avons réalisé un benchmark pour exposer clairement le coût, en temps d'exécution, de nos différentes
+solutions. Ce benchmark compare les quatre versions de notre algorithme d'étirement (stretch) dont l'implémentation et
+l'utilisation sont détaillées dans le chapitre. Le résultat est affiché dans
+le~\cref{resume:table:static.dynamic.perfs}.
 
 \begin{table}[htbp]
   \footnotesize
@@ -655,11 +659,11 @@ détaillées dans le chapitre. Le résultat est affiché dans le~\cref{resume:ta
     \\
     \bottomrule
   \end{tabular}
-  \caption[]{Benchmarks de toutes nos version de l'algorithme d'étirement (stretch).}
+  \caption[]{Benchmark de toutes nos versions de l'algorithme d'étirement (stretch).}
   \label{resume:table:static.dynamic.perfs}
 \end{table}
 
-Ce benchmark montre que chaque fois qu'une couche d'abstraction est ajoutée au-dessus de baseline, l'utilisateur doit
+Ce benchmark montre que chaque fois qu'une couche d'abstraction est ajoutée au-dessus de la baseline, l'utilisateur doit
 s'attendre à un facteur \(10\times\) impactant les performances de son code. De plus, appeler du code Python est
 immensément plus lent (\(2300\times\) !) que la baseline. Cela renouvelle l'intérêt de recompiler la bibliothèque C++
 générique avec un type paramétrique supplémentaire connu plutôt que de l'injecter depuis Python, surtout pour du code
@@ -671,8 +675,8 @@ fois que le prototype doit être déployé dans un environnement de production.
 
 Notre solution hybride a certainement des avantages, mais son inconvénient majeur est la lenteur pour injecter nos
 propres types depuis Python. Il existe une autre solution que cette thèse n'a pas eu l'occasion d'approfondir. Cette
-solution est basée sur une technologie connue : la compilation Just-In-Time (JIT) qui a été illustrée précédemment
-in~\cref{resume:fig:static.dynamic.dynamic.pipeline} (et qui elle-même repose sur la notion de programmation
+solution est basée sur une technologie connue : la compilation Just-In-Time (JIT) qui a été illustrée précédemment dans
+la~\cref{resume:fig:static.dynamic.dynamic.pipeline} (et qui elle-même repose sur la notion de programmation
 générative~\parencite{czarnecki.2000.generative}). Des bibliothèques telles que AsmJit~\parencite{kobalicek.2011.asmjit}
 sont capables d'émettre du code machine directement en effectuant un appel depuis du code C++. En effet, c'est une
 technologie déjà utilisée par les langages interprétés tels que Java ou PHP pour générer à la volée du code machine
@@ -681,61 +685,64 @@ est << chaud >> lorsqu'il est beaucoup exécuté : l'utilisateur final gagnerait
 une fois pour que ce code soit exécuté plus rapidement plusieurs fois par la suite. Appliquer cette solution à notre
 problématique signifierait que l'utilisateur devrait être capable de compiler du code machine natif à partir du code C++
 générique en injectant le type demandé, en tant que paramètre template, lorsqu'il est utilisé. Une telle opération
-déplace fortement une charge sur l'utilisateur (compilation), et il est bien connu que compiler du code C++ est
-notoirement \emph{compliqué} et \emph{lent}. De plus, la bibliothèque doit être capable de générer automatiquement
-l'interface la liant au Python une fois le code C++ compilé. Il existe plusieurs solutions pour arriver à nos fins.
+déplace une forte charge sur l'utilisateur, la compilation (habituellement gérée par le mainteneur), et il est bien
+connu que compiler du code C++ est notoirement \emph{compliqué} et \emph{lent}. De plus, la bibliothèque doit être
+capable de générer automatiquement l'interface la liant au Python une fois le code C++ compilé. Il existe plusieurs
+solutions pour parvenir à cet objectif.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=.6\linewidth]{../figures/dynamic_pipeline_fr}
-  \caption{Language interpreté: diagramme d'exécution}
+  \caption{Langage interprété : diagramme d'exécution}
   \label{resume:fig:static.dynamic.dynamic.pipeline}
 \end{figure}
 
 La première solution consiste basiquement à faire des appels système aux compilateurs pour réellement \emph{compiler} le
 code C++ une fois que le/les types template sont connus et explicitement instanciés dans le code source. Cette solution
-nécessite une génération de code minutieuse et que l'utilisateur possède un compilateur fonctionnel sur son ordinateur.
+nécessite une génération minutieuse de code, et que l'utilisateur possède un compilateur fonctionnel sur son ordinateur.
 De plus, l'utilisateur doit résoudre toutes les dépendances de la bibliothèque, comme \emph{freeimage} pour les
 entrées/sorties, etc. Cette solution a été conçue dans la bibliothèque VCSN~\parencite{demaille.2013.vcsn}. En effet, à
 chaque fois que l'utilisateur déclare un nouvel automate dans son notebook Jupyter, le code source correspondant est
 compilé en arrière-plan puis est mis en cache. C'est une solution très périlleuse à mettre en place lorsque
 l'environnement d'exécution final (OS, logiciels installés) n'est pas bien connu à l'avance. De nos jours, le problème
-peut être moindre, cependant, il nécessite toujours de maintenir à la fois la bibliothèque et la solution de conteneur
-pour l'utiliser (Docker).
+peut être moindre. Cependant, il nécessite toujours de maintenir à la fois la bibliothèque et la solution de conteneur
+pour l'utiliser (par exemple Docker).
 
 La deuxième solution est d'utiliser Cython~\parencite{behnel.2010.cython}. C'est une infrastructure de transpilation qui
 transforme un code source Python directement dans du code source du langage C afin qu'il puisse être compilé par un
-compilateur C standard simplement en linkant contre l'API Python/C. Cela supprime la charge d'écrire la routine de
-génération de code minutieuse, les appels système au compilateur C++ et supprime le besoin de résoudre toutes les
-dépendances. Cette infrastructure s'occupe de tout pour l'utilisateur. De plus, en le transpilant en code C, la
-compilation sera plus rapide, car un compilateur C est plus rapide qu'un compilateur C++. Cython prend même en charge
-les template C++~\parencite{behnel.2022.cython-template} qui sont obligatoires pour notre cas d'utilisation.
+compilateur C standard simplement en résolvant l'édition des liens contre l'API Python/C. Cela supprime la charge
+d'écrire la routine de génération minutieuse de code, les appels système au compilateur C++, et cela supprime aussi le
+besoin de résoudre toutes les dépendances. Cette infrastructure s'occupe de tout pour l'utilisateur. De plus, en le
+transpilant en code C, la compilation sera plus rapide, car un compilateur C est plus rapide qu'un compilateur C++.
+Cython prend même en charge les template C++~\parencite{behnel.2022.cython-template} qui sont obligatoires pour notre
+cas d'utilisation.
 
 La troisième solution consiste à s'appuyer sur des projets récents qui reposent tous sur l'infrastructure LLVM. Nous
 pouvons notamment citer AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy},
 Xeus-cling~\parencite{quantstack.2021.xeus-cling} et Pythran~\parencite{guelton.2015.pythran}. AutoWIG a du code <<
 maison >> basé sur LLVM/Clang pour analyser le code C++ afin de générer et compiler une interface Python via Swig à
 l'aide du moteur de template Mako. AutoWIG, couplé à Cython permettrait à l'utilisateur, par exemple, de générer du code
-C lié à une structure Python personnalisée. Ensuite, un simple appel à AutoWIG analysera le code C et l'injectera dans
-la bibliothèque C++ pour générer l'interface utilisable par l'utilisateur. En ce qui concerne Cppyy, il est basé sur
-LLVM/Cling, un interpréteur C++, et peut interpréter directement du code C++ à partir d'une chaîne de caractère Python.
-Cela permet d'injecter facilement des types personnalisés, qu'ils soient dans du code Python (transpilé avec Cython) ou
-du code C++ (directement interprété par Cling). Ensuite, l'infrastructure génère l'interface utilisable à partir de la
-bibliothèque C++ générique pour le type injecté demandé. Xeus-cling est un noyau Jupyter prêt à l'emploi permettant
-l'utilisation du code C++ directement à partir d'un notebook. Cela permet de contourner complètement le besoin d'avoir
-une interface avec Python et permet à l'utilisateur d'utiliser la bibliothèque depuis un notebook comme s'il s'agissait
-une bibliothèque Python. Enfin, Pythran est un compilateur << avancé >> pour un sous-ensemble du langage Python, axé sur
-le calcul scientifique. Il prend un code Python annoté avec quelques descriptions dans son interface et le transforme en
-un module Python natif avec la même interface, mais en espérant qu'il soit plus rapide. Pythran tire parti du
-multic\oe{}ur et des instructions SIMD pour transformer son sous-ensemble du langage Python en code C++ fortement
-générique instancié pour des types optimisés bien particuliers. Toutes ces infrastructures, cependant, ont un coût élevé
-en termes de taille de binaire. En effet, un compilateur C++ n'est pas petit et l'embarquer avec la bibliothèque de
-traitement d'images peut facilement avoir un impact considérable sur la taille du binaire final. Sans l'infrastructure
-LLVM, le binaire peut peser environ 3 Mo. Avec l'infrastructure LLVM, le poids du binaire devient au strict minimum 50
-Mo. De plus, ces solutions peuvent ne pas être immédiatement plus rapides. En effet, lors de la phase de prototypage et
-des multiples aller-retour avec une variété de types, l'utilisateur peut ne pas vouloir se montrer patient à attendre
-les longs temps de compilations à chaque fois qu'il teste avec une nouvelle itération de son travaille. Malgré cela, ces
-solutions offrent d'excellentes voies de recherche pour l'avenir et nous sommes impatient de les explorer.
+C lié à une structure Python personnalisée. Ensuite, un simple appel à AutoWIG analyserita le code C et l'injecterait
+dans la bibliothèque C++ pour générer l'interface utilisable par l'utilisateur. En ce qui concerne Cppyy, il est basé
+sur LLVM/Cling, un interpréteur C++, et peut interpréter directement du code C++ à partir d'une chaîne de caractères
+Python. Cela permet d'injecter facilement des types personnalisés, qu'ils soient dans du code Python (possiblement
+transpilé avec Cython) ou du code C++ (directement interprété par Cling). Ensuite, l'infrastructure génère l'interface
+utilisable à partir de la bibliothèque C++ générique pour le type injecté demandé. Xeus-cling est un noyau Jupyter prêt
+à l'emploi permettant l'utilisation du code C++ directement à partir d'un notebook. Cela rend possible de contourner
+complètement le besoin d'avoir une interface avec Python et permet à l'utilisateur d'utiliser la bibliothèque depuis un
+notebook comme s'il s'agissait une bibliothèque Python. Enfin, Pythran est un compilateur << avancé >> pour un
+sous-ensemble du langage Python, axé sur le calcul scientifique. Il prend un code Python annoté avec quelques
+descriptions dans son interface et le transforme en un module Python natif avec la même interface, mais en espérant
+qu'il soit plus rapide. Pythran tire parti du multic\oe{}ur et des instructions SIMD pour transformer son sous-ensemble
+du langage Python en code C++ fortement générique instancié pour des types optimisés bien particuliers. Toutes ces
+infrastructures, cependant, ont un coût élevé en termes de taille de binaire. En effet, un compilateur C++ n'est pas
+petit et l'embarquer avec la bibliothèque de traitement d'images peut facilement avoir un impact considérable sur la
+taille du binaire final. Sans l'infrastructure LLVM, le binaire peut peser environ 3 Mo. Avec l'infrastructure LLVM, le
+poids du binaire devient au strict minimum 50 Mo. De plus, ces solutions peuvent ne pas être immédiatement plus rapides.
+En effet, lors de la phase de prototypage et des multiples allers-retours avec une large variété de types, l'utilisateur
+peut ne pas vouloir se montrer patient à attendre les longs temps de compilation à chaque fois qu'il teste avec une
+nouvelle itération de son travail. Malgré cela, ces solutions offrent d'excellentes voies de recherche pour l'avenir et
+nous sommes impatient de les explorer.
 
 
 \subsection*{Conclusion}
@@ -744,65 +751,67 @@ solutions offrent d'excellentes voies de recherche pour l'avenir et nous sommes 
 Le travail présenté dans cette thèse par l'auteur suit un arc narratif très clair. L'accent a d'abord été mis sur la
 présentation de la notion de programmation générique (généricité), son histoire et comment chacun(e) peut la comprendre,
 notamment dans sa vie de tous les jours, et en particulier lorsqu'elle est appliquée au traitement d'images. La
-généricité est une notion vieille de 4 décennies qui a évolué et trouvé une utilisation dans des domaines modernes de
-notre société. En effet, Le traitement d'images est largement utilisé pour construire des applications utilisées dans le
-monde entier. Cependant, il a été démontré à quel point il peut être difficile de mettre en \oe{}uvre des solutions
+généricité est une notion vieille de quattre décennies qui a évolué et trouvé une utilisation dans des domaines modernes
+de notre société. En effet, Le traitement d'images est largement utilisé pour construire des applications utilisées dans
+le monde entier. Cependant, il a été démontré à quel point il peut être difficile de mettre en \oe{}uvre des solutions
 reposant sur la généricité. En effet, il existe une règle de trois liant généricité, performance et facilité
 d'utilisation énoncée en introduction. Dans cette thèse, nous essayons de démontrer comment briser cette règle, et ce,
 en trois étapes.
 
 La première étape, illustrée dans le chapitre \emph{Taxonomy for Image Processing}, a consisté à faire un inventaire des
-types et familles d'images ainsi que des différents algorithmes de traitement d'images. L'objectif a été de produire une
+types et familles d'images que des différents algorithmes de demandéd'images. L'objectif a été de produire une
 taxonomie complète des types (pixel, image, éléments structurants, \ldots) et algorithmes (locaux, globaux, \ldots) liés
 au traitement d'images afin de pouvoir extraire les Concepts (au sens Concepts C++). Cette première étape délimite le
 périmètre de ce que l'auteur englobe dans la notion de \emph{généricité}. \`{A} partir de ce point de départ, il devient
-plus facile d'écrire des algorithmes de traitement d'images, juste en en s'appuyant sur ces concepts. De plus,
-différents concepts existent pour permettre aux développeurs d'algorithmes d'exploiter des propriétés (décomposabilité
-des éléments structurants, contiguïté du buffer de l'image, \ldots) afin d'atteindre des performances maximales.
+plus facile d'écrire des algorithmes de traitement d'images, juste en s'appuyant sur ces concepts. De plus, différents
+concepts existent pour permettre aux développeurs d'algorithmes d'exploiter des propriétés (décomposabilité des éléments
+structurants, contiguïté du buffer de l'image, \ldots) afin d'atteindre des performances maximales. \`{A} ce stade, nous
+raisonnons encore à un niveau bas (pixel) ce qui génère le besoin de designer une couche d'abstraction afin de permettre
+un prototypage rapide pour des opérations simples tout en garantissant une empreinte mémoire très faible et proche de
+zéro impact sur les performances.
 
-\`{A} ce stade, nous raisonnons encore à un niveau bas (pixel) ce qui génère le besoin de designer une couche
-d'abstraction afin de permettre un prototypage rapide pour des opérations simples tout en garantissant une empreinte
-mémoire très faible et proche de zéro impact sur les performances. Pour cette raison, nous étendons le concept de
-\emph{vues} du standard C++ (2020) aux images et nous clarifions la notion de \emph{vue d'image}. Nous faisons également
-le choix de conception d'avoir une image légère, peu coûteuses à copier (données partagées buffer) par défaut afin de
-fusionner l'image concrète et les vues du point de vue de l'utilisateur. L'évaluation paresseuse, qui se produit
-systématiquement lors de l'utilisation des vues permet un gain de performances lors du découpage d'images volumineuses.
-Dans le cas où l'image est traitée dans son entièreté, nous sommes tout de même capable d'obtenir des performances très
-satisfaisantes qui restent stables. Aussi, nous montrons, à travers des cas d'utilisation concrets tels que les
-algorithmes fonctionnant pixel par pixel et la gestion des frontières, comment l'utilisation des vues simplifie
-grandement la façon d'écrire des algorithmes de traitement d'images plus complexes et efficaces par défaut. Nous
-montrons enfin les limites de cette approche, avec un accent particulier sur la vitesse de parcours d'une image, qui est
-un cas d'utilisation obligatoire que nous devons maîtriser.
+Pour cette raison, dans cette seconde étape, nous étendons le concept de \emph{vues} du standard C++ (2020) aux images
+et nous clarifions la notion de \emph{vues d'image}. Nous faisons également le choix de conception d'avoir une image
+légère, peu coûteuse à copier (données partagées dans le buffer) par défaut afin de fusionner les vues et l'image
+concrète selon le point de vue l'utilisateur. L'évaluation paresseuse, qui se produit systématiquement lors de
+l'utilisation des vues permet un gain de performances lors du découpage d'images volumineuses. Dans le cas où l'image
+est traitée dans son entièreté, nous sommes tout de même capables d'obtenir des performances très satisfaisantes qui
+restent stables. Nous montrons aussi, à travers des cas d'utilisation concrets tels que les algorithmes fonctionnant
+pixel par pixel et la gestion des bordures, comment l'utilisation des vues simplifie grandement la façon d'écrire des
+algorithmes de traitement d'images plus complexes, et efficaces par défaut. Nous discutons enfin des limites de cette
+approche, avec un accent particulier sur la vitesse de parcours d'une image, qui est un cas d'utilisation obligatoire
+que nous devons maîtriser.
 
-Enfin, dans cette thèse, nous avons porté notre attention sur la manière dont il est possible de distribuer ce logiciel
-à la communauté des traiteurs d'image qui travaille principalement avec Python. Cette dernière contribution concentre
-ses efforts sur la recherche de la meilleure façon de concevoir un pont statique (C++ template, temps de la compilation)
---- dynamique (notebook Jupyter Python, moment de l'exécution) pour apporter efficacement ces notions (concepts et vues)
-au traiteur d'image. Cette dernière contribution explore ce dilemme et propose de l'aborder avec une solution hybride
-dont le design et les motivations sont expliqués en profondeur. Cette solution hybride s'appuie sur la technique de
-l'effacement de type qui offre une compatibilité les \emph{NumPy.array}~\parencite{harris.2020.numpy}. Ce type (effacé)
-est alors capable de se convertir au sein d'un dispatcher de cardinalité \(n \times n\) (dimension et type sous-jacent)
-dans un type C++ template concret et optimisé. Cette solution explique aussi comment écrire très simplement le code <<
-glue >> permettant d'exposer en Python des algorithmes déjà existants (en C++) grâce à une mécanique de dispatch
-fortement inspirée du standard C++ (\texttt{std::visit}, \texttt{std::variant}). Le but de cette solution est de
-regrouper en un seul endroit dans le code tous les types supportés dans les dispatcher pour faciliter la maintenance
-ainsi qu'un travail minimal exigé de la part de la personne qui implémente d'algorithmes pour les exposer au Python,
-tout cela en gardant des performances natives. En effet, aucune copie superflue n'est effectuée grâce à \emph{pybind11}
-et son \emph{type-caster}: uniquement une conversion est effectuée du type effacé vers le type natif. Tout le travail
-qui est fait dans l'algorithme est effectué sur le type natif optimisé. Enfin, cette solution offre un moyen d'injecter
-des types Python personnalis\'{e}s dans la bibliothèque C++ générique à des fins de prototypage, grâce à une nouvelle
-couche d'abstraction, mais au prix de lourdes pertes de performance. L'inconvénient de cette solution est évidemment le
-<< gonflement >> du binaire dont la taille s'accroît avec la cardinalité des types paramétriques (nombre de types pris
-en charge multiplié par le nombre d'algorithmes multiplié par le nombre d'autres données supportées (éléments
-structurants, label map, etc.)).
+Dans la troisième de cette thèse, nous avons porté notre attention sur la manière dont il est possible de distribuer ce
+logiciel à la communauté des traiteurs d'image qui travaille principalement avec Python. Cette dernière contribution
+concentre ses efforts sur la recherche de la meilleure façon de concevoir un pont statique (C++ template, temps de la
+compilation) --- dynamique (notebook Jupyter Python, moment de l'exécution) pour apporter efficacement ces notions
+(concepts et vues) au traiteur d'image. Cette dernière contribution explore également ce dilemme et propose de l'aborder
+avec une solution hybride dont le design et les motivations sont expliqués en profondeur. Cette solution hybride
+s'appuie sur la technique de l'effacement de type qui offre une compatibilité avec
+\emph{NumPy.array}~\parencite{harris.2020.numpy}. Ce type (effacé) est alors capable de se convertir au sein d'un
+dispatcher de cardinalité \(n \times n\) (dimension et type sous-jacent) dans un type C++ template concret et optimisé.
+Cette solution explique aussi comment écrire très simplement le code << glue >> permettant d'exposer en Python des
+algorithmes déjà existants (en C++) grâce à une mécanique de dispatch fortement inspirée du standard C++
+(\texttt{std::visit}, \texttt{std::variant}). Le but de cette solution est de regrouper en un seul endroit dans le code
+tous les types supportés dans les dispatchers pour faciliter la maintenance et n'avoir qu'un travail minimal demandé à
+la personne qui implémente les algorithmes pour les exposer au Python, tout cela en gardant des performances natives. En
+effet, aucune copie superflue n'est effectuée grâce à \emph{pybind11} et son \emph{type-caster} : une seule conversion
+est effectuée depuis le type effacé vers le type natif. Tout le travail qui est fait dans l'algorithme est effectué sur
+le type natif optimisé. Enfin, cette solution offre un moyen d'injecter des types Python personnalis\'{e}s dans la
+bibliothèque C++ générique à des fins de prototypage, grâce à une nouvelle couche d'abstraction, mais au prix de lourdes
+pertes de performance. L'inconvénient de cette solution est évidemment le << gonflement >> du binaire dont la taille
+s'accroît avec la cardinalité des types paramétriques (nombre de types pris en charge multiplié par le nombre
+d'algorithmes multiplié par le nombre d'autres données supportées (éléments structurants, label map, etc.)).
 
 Nous concluons cette thèse en proposant de nouvelles pistes de recherche autour du domaine de la compilation
-Just-In-Time (JIT) pour améliorer encore le pont entre le monde statique et le monde dynamique. L'auteur pense que cette
-piste mérite d'être explorée, surtout avec les outils existants déjà prometteurs (Xeus-cling, Cppyy, Cython, AutoWIG,
-Pythran) afin de résoudre le problème d'accroissement de la taille du binaire. En effet, nous ne devrions compiler que
-ce dont l'utilisateur a besoin, mais le prix d'entrée peut être d'embarquer statiquement un interpréteur C++ (LLVM/cling
-?) dans son binaire, ce qui en soi entraînerait une augmentation forfaitaire non négligeable de la taille du binaire. Il
-peut être possible, cependant, de s'appuyer sur l'infrastructure système de l'utilisateur pour que le mainteneur ne soit
-pas obligé de distribuer un interpréteur/compilateur C++ en même temps que le binaire de sa bibliothèque de traitement
-d'images. Il s'agit encore d'un domaine de recherche nouveau et l'auteur souhaiterait vivement l'approfondir pour
-étudier ce qu'il est possible de réaliser dès aujourd'hui avec ces outils pour la communauté du traitement d'images.
+Just-In-Time (JIT) pour améliorer encore le pont entre le monde statique et le monde dynamique. Nous pensons que cette
+piste mérite d'être explorée, surtout avec les outils déjà existants très prometteurs (Xeus-cling, Cppyy, Cython,
+AutoWIG, Pythran) afin de résoudre le problème d'accroissement de la taille du binaire. En effet, nous ne devrions
+compiler que ce dont l'utilisateur a besoin, mais le prix d'entrée peut être d'embarquer statiquement un interpréteur
+C++ (LLVM/cling ?) dans son binaire, ce qui en soi entraînerait une augmentation forfaitaire non négligeable de la
+taille du binaire. Il peut être possible, cependant, de s'appuyer sur l'infrastructure système de l'utilisateur pour que
+le mainteneur ne soit pas obligé de distribuer un interpréteur/compilateur C++ en même temps que le binaire de sa
+bibliothèque de traitement d'images. Il s'agit encore d'un domaine de recherche nouveau et nous souhaiterions vivement
+l'approfondir pour étudier ce qu'il est possible de réaliser dès aujourd'hui avec ces outils pour la communauté du
+traitement d'images.
