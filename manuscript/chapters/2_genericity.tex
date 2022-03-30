@@ -459,9 +459,9 @@ greatly improve performance for large structuring element.
 
 Also, Scikit-image relies on SciPy internals which does not abstract the underlying data type for the algorithm
 implementer. As such, each algorithm must provide a switch/case dispatch for every supported type (floating points,
-8-bit channel, 16-bit channel, RGB, etc.), and it must provide it in the middle of the algorithm implementation. If one
-type is not natively supported; an error occurs and the program halts. Henceforth, handling a new supported data type
-will requires to review every single written algorithm.
+8-bits channel, 16-bits channel, RGB, etc.), and it must provide it in the middle of the algorithm implementation. If
+one type is not natively supported; an error occurs and the program halts. Henceforth, handling a new supported data
+type will requires to review every single written algorithm.
 
 On the other hand, SciPy provides an abstraction layer over the dimensional aspect of the image by providing a tool
 named point iterator. This tool allows one to iterate over every point of the image, without being aware of the number

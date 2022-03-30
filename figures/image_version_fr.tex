@@ -1,0 +1,29 @@
+\documentclass[svgnames,tikz]{standalone}
+\usepackage{pgfmath}
+\usetikzlibrary{positioning,arrows,calc,3d}
+
+\input{common.tikz}
+
+\begin{document}
+\begin{tikzpicture}
+  \tikzset{every node/.style={node distance=5pt, font=\small}}
+
+  \begin{scope}
+    \fill[gray!30!white]  (0, 0)      circle  (3.2);
+    \fill[blue!30!white]  (-1.4, 0.9) circle  (1.5);
+    \fill[red!30!white]   (1.1, -1.1)   circle  (1.6);
+
+    \draw[black, fill=blue!60!white]  (-2.6, 1.3)   rectangle (-0.2, 0.4);
+    \draw[black, fill=red!60!white]   (-0.1, -0.7)  rectangle (2.3,-1.6);
+  \end{scope}
+
+  \node at (0, 2.6)       {Types d'image};
+
+  \node at (-1.4, 1.78)   {Images LUT};
+  \node at (-1.4, 0.8)    {\emph{fill} version 1};
+
+  \node at (1.13, -0.48)    {Images inscriptibles};
+  \node at (1.1, -1.2)    {\emph{fill} version 2};
+
+\end{tikzpicture}
+\end{document}

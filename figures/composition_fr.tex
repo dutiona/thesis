@@ -10,11 +10,11 @@
   };
 
 
-  \node[ImageBox] (A0) []            {Input\\ \small (RGB-16)};
-  \node[AlgoBox]  (A1) [right=of A0] {Grayscale\\Conversion};
-  \node[AlgoBox]  (A2) [right=of A1] {Sub-quantization\\ \small (8-bits conversion)};
-  \node[AlgoBox]  (A3) [right=of A2] {Dilation};
-  \node[ImageBox] (A4) [right=of A3] {Output\\ \small (Gray 8-bits)};
+  \node[ImageBox] (A0) []            {Entrée\\ \small (RVB-16)};
+  \node[AlgoBox]  (A1) [right=of A0] {Conversion\\Niveau de gris};
+  \node[AlgoBox]  (A2) [right=of A1] {Sous-quantification\\ \small (conversion 8-bits)};
+  \node[AlgoBox]  (A3) [right=of A2] {Dilatation};
+  \node[ImageBox] (A4) [right=of A3] {Sortie\\ \small (Gris 8-bits)};
 
   \draw[-latex] (A0) -- (A1);
   \draw[-latex] (A1) -- (A2);
@@ -22,11 +22,11 @@
   \draw[-latex] (A3) -- (A4);
 
   %%\node [Olive, above=of A2] {Algorithm Composition};
-  \draw[DarkGreen, very thick] ($ (A3.north east) + (.5,.75) $) node [DarkGreen, above left] {Algorithm Composition = MyComplexOperator}
+  \draw[DarkGreen, very thick] ($ (A3.north east) + (.5,.75) $) node [DarkGreen, above left] {Composition d'Algorithmes = MyComplexOperator}
   rectangle ($ (A1.south west) + (-.5,-.25) $);
 
 
-  \draw[Magenta, very thick] ($ (A0.south west) + (-.5,-.75) $) node [Magenta, below right] {Image Views Composition = MyComplexImage}
+  \draw[Magenta, very thick] ($ (A0.south west) + (-.5,-.75) $) node [Magenta, below right] {Composition de Vues d'Image = MyComplexImage}
   rectangle ($ (A2.north east) + (.5,.25) $);
 
   \begin{scope}[on background layer]

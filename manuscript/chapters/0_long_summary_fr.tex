@@ -216,7 +216,7 @@ factorisés ensemble.
   \centering
   \begin{tabular}{cccc}
                                                                            & image 2D
-                                                                           & graph    & mesh \\[5pt]
+                                                                           & graphe   & maillage \\[5pt]
     entrée:                                                                &
     \fbox{\includegraphics[width=.2\linewidth]{../figures/geninput-000b}}  &
     \fbox{\includegraphics[width=.2\linewidth]{../figures/geninput-001b}}  &
@@ -337,11 +337,11 @@ gamma).
 \begin{figure}[htbp]
   \centering
   \subfloat[Differentes versions de l'algorithm \emph{fill} ]{
-    \includegraphics[width=1.9in]{../figures/image_version}
+    \includegraphics[width=1.9in]{../figures/image_version_fr}
   }%
   \hfil
   \subfloat[Specialisation existant au sein d'une version]{
-    \includegraphics[width=2.9in]{../figures/image_version_specialization}
+    \includegraphics[width=2.9in]{../figures/image_version_specialization_fr}
   }%
   \caption[]{Ensemble des versions d'algorithme (a) et de ses spécialisations existant au sein d'une version (b).}
   \label{resume:fig:image.version.vs.specialization}
@@ -364,7 +364,7 @@ canevas pour possiblement résoudre des problèmes informatiques hétérogènes.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{../figures/concepts/image}
+  \includegraphics[width=.8\linewidth]{../figures/concepts/image_fr}
   \caption[]{Concept Image.}
   \label{resume:fig:concept.image}
 \end{figure}
@@ -493,7 +493,7 @@ façon, la vue augmente considérablement ce que l'utilisateur peut faire tout e
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.7]{../figures/pipeline}
+  \includegraphics[scale=0.7]{../figures/pipeline_fr}
   \caption[]{Exemple d'une pipeline de traitement d'images simple.}
   \label{resume:fig:view.pipeline}
 \end{figure}
@@ -512,7 +512,7 @@ dilatation.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.7]{../figures/composition}
+  \includegraphics[scale=0.7]{../figures/composition_fr}
   \caption[]{Exemple d'une pipeline de traitement d'images simple illustrant la différence entre la composition
     d'algorithmes et la composition de vues d'image.}
   \label{resume:fig:view.comp}
@@ -578,7 +578,7 @@ efficace ni terme en mémoire ni performance de calcul. Avec l'évaluation pares
 seule fois (lorsque la dilatation est appliquée), ce qui a deux avantages. Premièrement, il n'y a pas d'images
 intermédiaires, ce qui est très efficient en termes de mémoire. Deuxièmement, la traversée de l'image est plus rapide
 grâce à une meilleure utilisation du cache mémoire et effectue une traversée sélective optimale. En effet, dans notre
-exemple (\cref{resume:fig:view.pipeline}), le traitement d'un pixel RGB16 de l'algorithme de dilatation le convertit
+exemple (\cref{resume:fig:view.pipeline}), le traitement d'un pixel RVB16 de l'algorithme de dilatation le convertit
 directement en niveaux de gris, puis le sous-quantifie en 8 bits, et enfin le rend disponible pour l'algorithme de
 dilatation. Il agit \emph{comme si} nous écrivions un opérateur optimal qui combinerait toutes ces opérations. Cette
 approche est quelque peu liée aux opérations de fusion du noyau disponibles dans certains HPC
@@ -607,7 +607,7 @@ une machine hôte.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.6\linewidth]{../figures/type-erased_buffer}
+  \includegraphics[width=.6\linewidth]{../figures/type-erased_buffer_fr}
   \caption[]{Pont entre Python et C++ grâce à Pybind11 et un effacement de type en C++.}
   \label{resume:fig:type-erased.buffer}
 \end{figure}
@@ -680,7 +680,7 @@ l'interface la liant au Python une fois le code C++ compilé. Il existe plusieur
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.6\linewidth]{../figures/dynamic_pipeline}
+  \includegraphics[width=.6\linewidth]{../figures/dynamic_pipeline_fr}
   \caption{Language interpreté: diagramme d'exécution}
   \label{resume:fig:static.dynamic.dynamic.pipeline}
 \end{figure}
@@ -786,8 +786,8 @@ minimal exigé de la part de la personne qui implémente d'algorithmes pour les 
 des performances natives. En effet, aucune copie superflue n'est effectuée grâce à \emph{pybind11} et son
 \emph{type-caster}: uniquement une conversion est effectuée du type effacé vers le type natif. Tout le travail qui est
 fait dans l'algorithme est effectué sur le type natif optimisé. Enfin, cette solution offre un moyen d'injecter des
-types Python personnalisés types dans la bibliothèque C++ générique à des fins de prototypage, grâce à une nouvelle
-couche d'abstraction, mais au prix de lourdes pertes de performance. L'inconvénient de cette solution est évidemment le
+types Python personnalis\'{e}s dans la bibliothèque C++ générique à des fins de prototypage, grâce à une nouvelle couche
+d'abstraction, mais au prix de lourdes pertes de performance. L'inconvénient de cette solution est évidemment le
 gonflement de la taille du binaire résultante qui explose de façon exponentielle avec le nombre de types pris en charge
 multiplié par le nombre d'algorithmes multiplié par le nombre d'autres données supportées (éléments structurants, label
 map, etc.)
