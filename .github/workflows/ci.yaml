@@ -21,3 +21,10 @@ jobs:
       -
         name: Build latex
         run: make
+      -
+        uses: actions/upload-artifact@v3
+        with:
+          name: thesis-artifacts
+          path: |
+            roynard.thesis.2022/*.pdf
+            roynard.thesis.2022.tar.gz
