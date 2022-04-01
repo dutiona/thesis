@@ -16,6 +16,8 @@ jobs:
       image: mroynard/latex-maker:latest
     steps:
       -
-        name: Build latex
+        name: Checkout code
         uses: actions/checkout@v2
+      -
+        name: Build latex
         run: make
