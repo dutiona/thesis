@@ -4,10 +4,10 @@
 De nos jours, la \emph{Vision par ordinateur} et le \emph{traitement d'images (PI)} sont omniprésents dans la vie
 quotidienne des gens. Ils sont présents à chaque fois que nous passons devant une caméra de vidéosurveillance, à chaque
 fois que nous allons à l'hôpital faire une IRM, à chaque fois que nous conduisons notre voiture et passons devant un
-radar et à chaque fois que nous utilisons notre ordinateur, smartphone ou tablette. Ils sont devenu incontournables. Les
-systèmes utilisant cette technologie sont souvent simples et parfois plus complexes. Cette technologie s'utilise dans
-des domaines très variés, tel que l'observation spatiale, l'imagerie médicale, l'amélioration de la qualité de vie, la
-surveillance, le contrôle, les systèmes autonomes, etc. Désormais, le \emph{traitement d'images} dispose d'un large
+radar et à chaque fois que nous utilisons notre ordinateur, smartphone ou tablette. Ils sont devenus incontournables.
+Les systèmes utilisant cette technologie sont souvent simples et parfois plus complexes. Cette technologie s'utilise
+dans des domaines très variés, tel que l'observation spatiale, l'imagerie médicale, l'amélioration de la qualité de vie,
+la surveillance, le contrôle, les systèmes autonomes, etc. Désormais, le \emph{traitement d'images} dispose d'un large
 éventail de sujets de recherche et malgré une masse de travaux antérieurs déjà contribués très importante, il reste
 encore beaucoup à explorer.
 
@@ -18,14 +18,15 @@ exhaustivement) la météo, l'exposition lumineuse, la résolution, l'orientatio
 de la personne, la distinction entre les humains et les objets/animaux, etc. Tous ces éléments doivent être
 soigneusement gérés afin de reconnaître enfin la ou les personne(s) figurant dans la photo. Ce que l'application ne vous
 dit pas, c'est la complexité de la pipeline de traitement d'images en coulisse qui, la plupart du temps, ne peut même
-pas être exécuté dans son intégralité sur son appareil (smartphone, tablette, \ldots). En effet, le traitement d'images
+pas être exécutée dans son intégralité sur son appareil (smartphone, tablette, \ldots). En effet, le traitement d'images
 est coûteux en ressources informatiques et ne répondrait pas à la contrainte de temps demandée par l'utilisateur si
 l'intégralité de la pipeline était exécutée sur l'appareil. Par ailleurs, pour la dernière partie qui est de <<
 reconnaître la personne sur la photo >>, l'application doit donner la photo pré-traitée à un réseau de neurones formé au
-préalable par des techniques d'apprentissage en profondeur afin de donner une réponse précise. Il existe des
-technologies capables d'intégrer un réseau de neurones dans un téléphone mobile, telles que
+préalable par des techniques d'apprentissage profond afin de donner une réponse précise. Il existe des technologies
+capables d'intégrer un réseau de neurones dans un téléphone mobile, telles que
 MobileNets~\parencite{howard.2017.mobilenets}, mais il reste limité en termes de capacités opérationnelles. Il peut
-détecter un être humain à l'intérieur d'une photo, mais ne peut pas dire qui est cet être humain par exemple. C'est
+détecter un être humain à l'intérieur d'une photo et même identifier la personne, mais par exemple, ne peut pas avoir la
+même capacité de distinction entre un grand nombre des personnes que les réseaux utilisés par les réseaux sociaux. C'est
 pourquoi les systèmes de réseau de neurones précis sont généralement hébergés dans le cloud, ce qui ne les rend
 disponibles que via Internet. Lors du téléchargement de son image, l'utilisateur n'imagine pas la quantité de
 technologies et de puissance de calcul qui va être utilisée pour reconnaître la personne apparaissant sur la photo.
@@ -52,10 +53,10 @@ des briques de construction de base (bas niveau) qui pourraient être adaptés p
 que possible. De cette façon, le traiteur d'image pourrait facilement s'appuyer sur ces briques lors de la conception de
 son application. Nous distinguons deux types de cas d'utilisation. Le premier concerne la multiplicité des types ou des
 algorithmes auxquels le traiteur d'image est confronté. Le deuxième relève de la diversité du matériel sur lequel il
-peut vouloir exécuter son programme. L'objectif est de concevoir intelligemment les briques de base qui peremettent de
+peut vouloir exécuter son programme. L'objectif est de concevoir intelligemment les briques de base qui permettent de
 tirer parti des nombreuses opportunités d'optimisation, tant en ce qui concerne les types de données et d'algorithmes en
 entrée, que le matériel cible. Ensuite, le traiteur d'image verrait une importante amélioration des performances, par
-défaut, sans devoir ajuster spécifiquement son application. C'est que le concept de généricité demandéintroduit. Il
+défaut, sans devoir ajuster spécifiquement son application. C'est ainsi que le concept de généricité est introduit. Il
 vise à fournir un terrain d'entente sur la façon dont une image doit se comporter lorsqu'elle est transmise à des
 algorithmes de base nécessaires pour des applications complexes. De cette façon, en théorie, il suffit d'écrire
 l'algorithme une seule fois pour qu'il fonctionne avec n'importe quel type d'image.
@@ -76,7 +77,7 @@ Cependant, cela a un coût et ce parser est plus lent qu'un parser Json optimis�
 simdjson~\parencite{lemire.2021.simdjson} dont le but est de << parser des gigaoctets de JSON par seconde >>. Enfin, il
 existe de nombreux exemples de code convivial et efficace qui ne sont pas génériques. Nous pouvons citer
 Scikit-image~\parencite{vanderwalt.2014.skimage} et OpenCV~\parencite{bradski.2000.opencv}, faciles à utiliser et
-efficace (beaucoup de code SIMD/GPU manuscrit) mais pas générique en raison des choix de conception.
+efficace (beaucoup de code SIMD/GPU écrit à la main) mais pas générique en raison des choix de conception.
 
 Dans cette thèse, nous avons choisi de poursuivre les travaux réalisés sur la bibliothèque de traitement
 Pylene~\parencite{carlinet.2018.pylena}. Cependant, travailler uniquement sur la bibliothèque C++ restreindrait
@@ -96,38 +97,38 @@ mondes.
 C'est avec cette philosophie à l'esprit que ce manuscrit présente notre travail de thèse lié au langage C++ appliqué au
 traitement d'images. Il est organisé comme suit :
 
-\paragraph{Programmation générique (généricité)} Ce chapitre présente l'état de l'art sur la notion de généricité. Nous
+\paragraph{Programmation générique (généricité)} Nous présentons l'état de l'art sur la notion de généricité. Nous
 expliquons son origine, comment il a évolué au fil du temps (en particulier dans le langage C++), quels problèmes il
 résout et quels problèmes il crée. Nous expliquons pourquoi le traitement d'images et la généricité fonctionnent bien
 ensemble. Enfin, nous faisons le tour des outils existants qui permettent à la généricité (intrinsèquement restreinte au
 langage compilé) d'exister dans le monde dynamique (avec langages interprétés tels que Python).
 
-\paragraph{Taxonomie pour le traitement d'images : types d'image et algorithmes.} Ce chapitre présente notre première
+\paragraph{Taxonomie pour le traitement d'images : types d'image et algorithmes.} Nous présentons notre première
 contribution dans le domaine du traitement d'images qui consiste à réaliser une taxonomie complète des différentes
-familles d'images que des différentes familles ddemandéalgorithmes. Ce chapitre explique, entre autres, la notion de
-concept et son application au domaine du traitement d'images. Nous expliquons comment extraire un concept d'un code
-existant et comment l'exploiter pour le rendre plus efficace et plus lisible. Nous proposons enfin notre point de vue
-sous la forme d'une collection de concepts liés au domaine du traitement d'images.
+familles d'images ainsi que des différentes familles d'algorithmes. Nous expliquons, entre autres, la notion de concept
+et son application au domaine du traitement d'images. Nous expliquons comment extraire un concept d'un code existant et
+comment l'exploiter pour le rendre plus efficace et plus lisible. Nous proposons enfin notre point de vue sous la forme
+d'une collection de concepts liés au domaine du traitement d'images.
 
-\paragraph{Les Vues d'Image} Ce chapitre présente notre deuxième contribution qui est une généralisation du concept de
-Vues (tiré du langage C++, du travail sur les \emph{ranges}~\parencite{niebler.2018.ranges}) aux images. Cela permet la
+\paragraph{Les Vues d'Image} Nous présentons notre deuxième contribution qui est une généralisation du concept de Vues
+(tiré du langage C++, du travail sur les \emph{ranges}~\parencite{niebler.2018.ranges}) aux images. Cela permet la
 création d'images légères et peu coûteuses à copier. Cela permet également d'avoir une approche beaucoup plus simple
 pour concevoir une pipeline de traitement d'images en enchaînant les opérations directement dans le code de manière
 intuitive. Les \emph{ranges} sont le ciment d'une nouvelle façon de designer des algorithmes pour faciliter
 l'utilisation des images, ce qui améliore donc leur aspect générique. Enfin, nous discutons du concept d'évaluation
 paresseuse et de l'impact des vues sur les performances.
 
-\paragraph{Un pont entre le monde statique et le monde dynamique} Ce chapitre présente notre troisième contribution qui
-est un moyen de donner accès aux fonctionnalités génériques d'un langage compilé (tel que C++) à un langage dynamique
-(tel que Python) pour faciliter le passage entre la phase de prototypage et la phase de production. En effet, pour
-parvenir à une communication efficace entre le code dynamique et le binaire de la bibliothèque statique, il faut être en
-mesure de concilier du code C++ générique dont la généricité est résolue au moment de la compilation (ce que nous
-appelons le << monde statique >>), et du code Python dynamique qui s'appuie sur des packages binaires pré-compilés (ce
-que nous appelons le << monde dynamique >>) : et cela n'est vraiment pas évident. D'autant plus que nous ne pouvons pas
-non plus exiger de l'utilisateur qu'il fournisse et utilise un compilateur à chaque fois qu'il veut utiliser notre
-bibliothèque depuis Python. Dans ce chapitre, nous discutons quelles sont les solutions existantes qui peuvent être
-envisagées que leurs avantages et inconvénientsdemandéNous discutons ensuite de la manière dont nous avons conçu et
-réalisé une solution hybride pour arriver à faire ce pont entre le monde statique et le monde dynamique.
+\paragraph{Un pont entre le monde statique et le monde dynamique} Nous présentons notre troisième contribution qui est
+un moyen de donner accès aux fonctionnalités génériques d'un langage compilé (tel que C++) à un langage dynamique (tel
+que Python) pour faciliter le passage entre la phase de prototypage et la phase de production. En effet, pour parvenir à
+une communication efficace entre le code dynamique et le binaire de la bibliothèque statique, il faut être en mesure de
+concilier du code C++ générique dont la généricité est résolue au moment de la compilation (ce que nous appelons le <<
+monde statique >>), et du code Python dynamique qui s'appuie sur des packages binaires pré-compilés (ce que nous
+appelons le << monde dynamique >>) : et cela n'est vraiment pas évident. D'autant plus que nous ne pouvons pas non plus
+exiger de l'utilisateur qu'il fournisse et utilise un compilateur à chaque fois qu'il veut utiliser notre bibliothèque
+depuis Python. Nous discutons quelles sont les solutions existantes qui peuvent être envisagées ainsi que leurs
+avantages et inconvénients. Enfin, nous discutons de la manière dont nous avons conçu et réalisé une solution hybride
+pour arriver à faire ce pont entre le monde statique et le monde dynamique.
 
 
 \subsection*{Programmation générique (généricité)}
@@ -138,29 +139,32 @@ minimum efficace. Par exemple, un ordinateur est un outil générique qui permet
 e-mails, de parcourir Internet, de jouer à des jeux vidéo, de regarder des films, de lire des e-books etc. En
 programmation, un outil est dit générique lorsqu'il peut répondre à plusieurs objectifs. Par exemple, le compilateur gcc
 peut compiler plusieurs langages de programmation (C, C++, Objective-C, Objective-C++, Fortran, Ada, D, Go et BRIG
-(HSAIL)) que cibler plusieurs architectures (demandé-32 (x86), x86--64, ARM, SPARC, etc.). Désormais, on peut dire que
-gcc est un compilateur générique. À ce stade, il est important de noter que même si un outil est considéré comme
-générique, il y a une limitation quant à ce que cet outil peut faire et ce qu'il ne peut pas faire. Un compilateur
-malgré la prise en charge de nombreuses langues et architectures, ne pourra pas passer un appel téléphonique ou faire un
-café. De ce fait, il est important de noter que la généricité est un aspect qui qualifie quelque chose. Dans ce
-chapitre, nous étudions les aspects génériques liés aux bibliothèques et aux langages de programmation.
+(HSAIL)) que cibler plusieurs architectures (IA-32 (x86), x86--64, ARM, SPARC, etc.). Désormais, on peut dire que gcc
+est un compilateur générique. À ce stade, il est important de noter que même si un outil est considéré comme générique,
+il y a une limitation quant à ce que cet outil peut faire et ce qu'il ne peut pas faire. Un compilateur malgré la prise
+en charge de nombreuses langues et architectures, ne pourra pas passer un appel téléphonique ou faire un café. De ce
+fait, il est important de noter que la généricité est un aspect qui qualifie quelque chose. Nous étudions les aspects
+génériques liés aux bibliothèques et aux langages de programmation.
 
 Cette thèse laisse volontairement de côté l'aspect générique lié à l'architecture cible. En effet, savoir écrire et/ou
 générer du code capable de s'exécuter sur un large éventail d'architectures matérielles différentes est un domaine de
-recherche à lui tout seul et n'est pas l'objet principal de cette thèse. Il est également connu sous le nom de
+recherche à lui tout seul et n'est pas l'objet principal de cette thèse. Il est également connu sous le nom d'
 \emph{informatique hétérogène}. Au lieu de cela, nous allons nous concentrer sur les aspects liés à la généricité au
 niveau de la bibliothèque et au niveau du langage de programmation.
 
 \paragraph{Généricité au sein des bibliothèques} Elle est décrite par la cardinalité du nombre de cas d'utilisation
 qu'elle peut gérer. Les bibliothèques fournissent toujours leurs propres structures de données, pour représenter et
-donner un sens aux données que l'utilisateur veut traiter, que des algorithmes pour traiter demandédonnées et fournir
+donner un sens aux données que l'utilisateur veut traiter, ainsi que des algorithmes pour traiter ces données et fournir
 différents types de résultats. Une bibliothèque sera alors cataloguée comme
-\emph{générique}~\parencite{musser.1994.algorithm} lorsque (i) ses structures de données permettent à l'utilisateur de
-s'exprimer entièrement, sans limitation et lorsque (ii) sa banque d'algorithmes est suffisamment grande pour faire tout
-ce que l'utilisateur voudrait faire avec ses données. En réalité, une telle bibliothèque n'existe pas et il y a toujours
-des limitations. Étudier ces limites et quelles raisons les motivent est la clé pour comprendre comment les dépasser à
-l'avenir, en développant le support de nouveaux matériels et/ou logiciels pour de nouvelles fonctionnalités permettant
-plus de généricité.
+\emph{générique}~\parencite{musser.1994.algorithm} lorsque :
+\begin{enumerate}
+  \item ses structures de données permettent à l'utilisateur de s'exprimer entièrement et sans limitation,
+  \item sa banque d'algorithmes est suffisamment grande pour faire tout ce que l'utilisateur voudrait faire avec ses
+        données.
+\end{enumerate}
+En réalité, une telle bibliothèque n'existe pas et il y a toujours des limitations. Étudier ces limites et quelles
+raisons les motivent est la clé pour comprendre comment les dépasser à l'avenir, en développant le support de nouveaux
+matériels et/ou logiciels pour de nouvelles fonctionnalités permettant plus de généricité.
 
 \paragraph{Généricité dans les langages de programmation} Elle est décrite par la capacité du langage à exécuter le même
 code sur une grande quantité de structures de données~\parencite{dehnert.1998.fundamentals}, qu'elles soient natives
@@ -178,9 +182,9 @@ programmation, il est nécessaire d'introduire un peu de vocabulaire. Le premier
 comment le programmeur a l'intention d'utiliser les données. La grande majorité des langages de programmation prend en
 charge les types de données de base (également appelés types primitifs) tels que les nombres entiers, les nombres à
 virgules flottantes, les types booléens et les chaînes de caractères (ASCII, Unicode, etc.). Cet attribut de type
-définit les opérations qui peuvent être effectuées sur les données, la signification des données que la taille des
-demandéen mémoire (les données peuvent alors être stockées sur le tas, la pile, etc.). Un type de données fournit un
-ensemble de valeurs à partir desquelles une expression (c'est à dire variable, fonction, etc.) peut prendre ces valeurs.
+définit les opérations qui peuvent être effectuées sur les données, la signification des données ainsi que la taille des
+données en mémoire (les données peuvent alors être stockées sur le tas, la pile, etc.). Un type de données fournit un
+ensemble de valeurs à partir desquelles une expression (c'est-à-dire variable, fonction, etc.) peut prendre ces valeurs.
 Parmi les langages de programmation, nous pouvons distinguer ceux qui sont dynamiquement typés et ceux qui sont
 statiquement typés. Les langages typés statiquement sont ceux dont les variables sont déclarées contenant un type
 spécifique. Cette variable ne peut contenir des données d'un autre type dans le champ où elle est déclarée. Des langages
@@ -200,16 +204,16 @@ En traitement d'images, une image \(Im\) est définie sur un domaine \(\mathcal{
 relation \(\forall x \in \mathcal{D}, y = Im(x)\) où \(y\) est la valeur de l'image \(Im\) pour le point \(x\). Cette
 définition se traduit toujours par une structure de données complexe lorsqu'elle est transposée dans un langage de
 programmation. Cette structure de données doit connaître la mémoire tampon contenant les données de l'image que
-des informations sur demandétaille et les dimensions de l'image. De plus, ajoutant à la difficulté, les informations
+des informations sur la taille et les dimensions de l'image. De plus, ajoutant à la difficulté, les informations
 nécessaires pour définir précisément la structure des données ne sont pas toujours connues lors de l'écriture du code
 source. En effet, un cas d'utilisation très simple consiste à lire une image dans un fichier pour la charger en mémoire.
 Le fichier peut contenir une image de différents types de données et le programme doit toujours fonctionner
-correctement. Il y a de multiples approches pour résoudre ce problème, et nous les abordons dans ce chapitre.
+correctement. Il y a de multiples approches pour résoudre ce problème, que nous allons aborder.
 
 En projetant la notion de généricité au traitement d'images, nous pouvons déduire que nous avons besoin de deux aspects
 importants pour être générique. Tout d'abord, nous devons décorréler les structures de données de leur topologie et des
 données sous-jacentes des algorithmes. En effet, nous voulons que nos algorithmes supportent autant de structures de
-données que possible. Ensuite, nous pouvons factorisés ensemble de nombreux algorithmes partageant le même schéma
+données que possible. Ensuite, nous pouvons factoriser ensemble de nombreux algorithmes partageant le même schéma
 calculatoire.
 
 \begin{figure}[htbp]
@@ -240,73 +244,33 @@ calculatoire.
 La généricité peut avoir deux significations différentes selon les personnes que vous interrogez. Par exemple, certaines
 diront que la généricité est un aspect haut niveau et vont qualifier un outil comme étant << suffisamment générique >>
 lorsque celui-ci peut gérer tous ses cas d'utilisation. D'autres soutiendront que la généricité est un aspect bas niveau
-et va donc concerner la machine fabriquant l'outils (code), << suffisamment générique >> pour fabriquer toutes sorte
+et va donc concerner la machine (code) fabriquant les outils, << suffisamment générique >> pour fabriquer toutes sortes
 d'outils. Ni l'un ni l'autre n'a tort. Cependant, pour des raisons de compréhension, nous utiliserons des mots
 différents pour chacun de ces cas. Un outil assez générique pour gérer un grand nombre de cas d'utilisation sera appelé
 \emph{versatile}. Enfin, pour un outil dont le but est d'être capable de fabriquer un grand nombre d'outils différents
-(c'est à dire fournir un environnement de programmation capable de gérer n'importe quel cas d'utilisation), nous
+(c'est-à-dire fournir un environnement de programmation capable de gérer n'importe quel cas d'utilisation), nous
 utiliserons le terme \emph{générique}. Dans cette thèse, la généricité concernera le code, donc l'environnement de
-programmation capable de gérer n'importe quel cas d'utilisation. La~\cref{resume:fig:type.vs.algo} illustre le résultat
-d'une même implémentation générique de l'algorithme de ligne de partage des eaux, qu'il soit appliqué sur une image 2D,
-un graphe ou un maillage.
+programmation capable de gérer n'importe quel cas d'utilisation.
+La~\cref{resume:fig:type.vs.algo}~\parencite{levillain.2011.phd} illustre le résultat d'une même implémentation
+générique de l'algorithme de ligne de partage des eaux, qu'il soit appliqué sur une image 2D, un graphe ou un maillage.
 
-Dans ce chapitre nous présentons l'origine de la programmation générique, qui remonte à
-l'année~\citedate[year]{musser.1988.generic} et comment elle a évolué pour être intégrée dans le langage de
-programmation Ada puis dans le langage de programmation C++. Son évolution s'est poursuivie avec l'arrivée de la notion
-de \emph{concept} qui complétera la boîte à outils nécessaire pour pouvoir pleinement utiliser la programmation
-générique sans recourir à des techniques et outils obscurs.
+Nous présentons l'origine de la programmation générique, qui remonte à l'année~\citedate[year]{musser.1988.generic} et
+comment elle a évolué pour être intégrée dans le langage de programmation Ada puis dans le langage de programmation C++.
+Son évolution s'est poursuivie avec l'arrivée de la notion de \emph{concept} qui complétera la boîte à outils nécessaire
+pour pouvoir pleinement utiliser la programmation générique sans recourir à des techniques et outils obscurs.
 
-\begin{table}[htbp]
-  \centering
-  \begin{threeparttable}
-    \caption[]{Approches de la généricité : avantages ~\& inconvénients}
-    \begin{tabular}[width=0.8\linewidth]{l|ccccc}
-      Paradigme                     & VT\tnote{1} & SC\tnote{2} & E\tnote{3} & Une IA\tnote{4} & AE\tnote{5} \\
-      \hline
-      Duplication de Code           & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
-      Généralisation de Code        & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
-      Programmation Orientée Object & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
-      Programmation Générique:      &             &             &            &                 &             \\
-      \quad avec C++11              & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
-      \quad avec C++17              & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
-      \quad avec C++20              & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
-    \end{tabular}
-    \begin{tablenotes}
-      \item[1] VT: vérification de type.
-      \item[2] SC: simplicité du code.
-      \item[3] E: efficacité.
-      \item[4] Une IA: une seule implémentation par algorithme.
-      \item[4] AE: abstraction explicite / généricité contrainte.
-    \end{tablenotes}
-    \label{resume:table:gen.approaches}
-  \end{threeparttable}
-\end{table}
+Nous explorons les possibilités de réaliser de la programmation générique au sein d'une bibliothèque. En effet, il y a
+trois techniques permettant à l'utilisateur d'écrire en une seule fois un algorithme de haut niveau pouvant s'exécuter
+sur tous les types. Il s'agit des approches de \emph{duplication de code}, de \emph{généralisation} et de
+\emph{polymorphisme d'inclusion et paramétrique}~\parencite{gibbons.2007.datatype}.
 
-Ce chapitre explore les possibilités de réaliser de la programmation générique au sein d'une bibliothèque. En effet, il
-y a trois techniques permettant à l'utilisateur d'écrire en une seule fois un algorithme de haut niveau pouvant
-s'exécuter sur tous les types. Il s'agit des approches de \emph{duplication de code}, de \emph{généralisation} et de
-\emph{polymorphisme d'inclusion et paramétrique}~\parencite{gibbons.2007.datatype}. Nous présentons dans
-la~\cref{resume:table:gen.approaches} le résultat de la comparaison de ces approches par rapport aux aspects qui nous
-intéressent. Nous abordons également les limitations liées à l'utilisation de ces approches en comparant OpenCV,
-Scikit-image et Pylene qui utilisent ces quatre techniques, toutes à différents niveaux pour atteindre différents
-objectifs de généricité, de performance et de facilité d'utilisation. De plus, nous avons identifié des limites liées au
-type de données sous-jacent, à la structure du domaine et aux optimisations sur lesquelles nous discuterons des
-performances via un benchmark concret.
-
-Ce chapitre explore également comment la programmation générique est gérée dans les langages de programmation. Nous
-retraçons comment Ada l'a implémentée, et ensuite comment C++ a permis l'expression de clauses contraintes
-\emph{require} (concept) dès C++98, même si ces dernières étaient relativements limitées à cette époque. Nous explorons
-comment les techniques de métaprogrammation se sont développées et ont évolué, en même temps que langage de
-programmation C++ lui-même, pour enfin atteindre son niveau actuel en 2020 (C++20), avec lequel il est possible d'écrire
-des concepts en C++.
-
-Enfin, ce chapitre présente la limitation inhérente aux templates C++, à savoir qu'ils appartienent au monde statique
+Enfin, nous présentons la limitation inhérente aux templates C++, à savoir qu'ils appartiennent au monde statique
 (moment de la compilation). La généricité (au sens concept C++) n'existe pas dans le binaire final livré à
 l'utilisateur. L'utilisateur final, dans son monde dynamique (moment de l'exécution) ne peut pas utiliser un outil
 générique (code C++). Nous discutons des différentes approches possibles pour combler cet écart entre le monde statique
 (à la compilation) et dynamique (à l'exécution).
 
-Le chapitre suivant fera un large usage de la généricité pour présenter la première contribution de cette thèse : une
+Par la suite nous ferons un large usage de la généricité pour présenter la première contribution de cette thèse : une
 taxonomie des concepts liée au traitement d'images.
 
 
@@ -316,27 +280,17 @@ taxonomie des concepts liée au traitement d'images.
 Dans cette thèse, nous avons recherché la meilleure façon d'appliquer les nouvelles fonctionnalités génériques du
 langage C++ dans le domaine du traitement d'images. Cela nous permet de les tester de manière pratique sur notre zone de
 prédilection tout en nous souvenant de nos travaux passés, à la fois les succès et les échecs en la matière. Cependant,
-comme nous l'avons vu dans le chapitre précédent (Programmation générique (généricité)), faire naître des concepts à
-partir du code est un procédé qui se fait de manière émergente. En conséquence, les premiers travaux sont de faire un
-inventaire de tous les algorithmes d'images existants que de tous les algorithmes demandétraitement d'images (à la
-fois les plus basiques comme les plus complexes) auxquels nous pouvons penser. De cette façon, nous remarquons des
-modèles de comportement émergeant de types d'image similaires ou algorithmes similaires. Nous pouvons alors extraire des
-schémas comportementaux de cet inventaire afin de produire une taxonomie complète sous la forme d'un environnement
-constitué de concepts liés au traitement d'images.
+faire naître des concepts à partir du code est un procédé qui se fait de manière émergente. En conséquence, les premiers
+travaux sont de faire un inventaire de tous les algorithmes d'images existants ainsi que de tous les algorithmes de
+traitement d'images (à la fois les plus basiques comme les plus complexes) auxquels nous pouvons penser. De cette façon,
+nous remarquons des modèles de comportement émergeant de types d'image similaires ou algorithmes similaires. Nous
+pouvons alors extraire des schémas comportementaux de cet inventaire afin de produire une taxonomie complète sous la
+forme d'un environnement constitué de concepts liés au traitement d'images.
 
-Ce chapitre est structuré comme suit. Dans un premier temps, nous étudions comment extraire un schéma comportemental
-d'un algorithme simple afin de l'affiner en un ou plusieurs concepts. Dans un second temps, nous étudions la théorie des
-ensembles de types d'image, leurs conjonctions et disjonctions. Nous produisons également un inventaire des algorithmes
-de traitement d'images limité à la morphologie mathématiques que nous pouvons exploiter pour l'étape finale.
-Troisièmement, nous étudions la généricité intrinsèque des algorithmes pour produire des canevas tirant parti des
-propriétés (liées aux types). Enfin, nous étudions les schémas comportementaux, relatifs à l'inventaire préétabli des
-algorithmes, sous la forme d'une taxonomie inscrite dans un environnement de concepts relatifs au traitement d'images.
-
-Dans ce chapitre, nous présentons que les concepts ne sont pas conçus d'après des structures de données, mais d'après
-des algorithmes. En effet, un concept consiste à extraire un schéma comportemental cohérent d'un bout de code
-(algorithme) et à le nommer pour lui donner une signification. \`{A} travers un exemple simple, mais concret, nous
-présentons de manière didactique comment extraire des concepts d'un algorithme de traitement d'images (correction
-gamma).
+Nous présentons que les concepts ne sont pas conçus d'après des structures de données, mais d'après des algorithmes. En
+effet, un concept consiste à extraire un schéma comportemental cohérent d'un bout de code (algorithme) et à le nommer
+pour lui donner une signification. \`{A} travers un exemple simple, mais concret, nous présentons de manière didactique
+comment extraire des concepts d'un algorithme de traitement d'images (correction gamma).
 
 \begin{figure}[htbp]
   \centering
@@ -351,14 +305,14 @@ gamma).
   \label{resume:fig:image.version.vs.specialization}
 \end{figure}
 
-Ce chapitre explique ensuite comment, en théorie, les types d'image sont reliés les uns aux autres. Nous présentons
+Nous expliquons ensuite comment, en théorie, les types d'image sont reliés les uns aux autres. Nous présentons
 l'ensemble de différents types d'image et comment les algorithmes existent dans ces ensembles, ce qui introduit la
 notion de \emph{version} d'un algorithme. Un algorithme aura différentes \emph{versions} pour chaque ensemble de types
 d'images qu'il prend en charge. Nous le distinguons (dans la~\cref{resume:fig:image.version.vs.specialization}) des
 \emph{spécialisations} d'un algorithme, ces dernières étant la possibilité de profiter d'une opportunité (liée à une
 propriété) pour faire une optimisation et augmenter les performances.
 
-Ce chapitre décrit ensuite la notion de canevas d'algorithme qui est le résultat découlant de la taxonomie des
+Nous décrivons ensuite la notion de canevas d'algorithme qui est le résultat découlant de la taxonomie des
 algorithmes de traitement d'images. En effet, il existe trois grandes familles d'algorithmes : les algorithmes
 fonctionnant pixel par pixel (par exemple, binarisation), les algorithmes locaux (par exemple, dilatation) et les
 algorithmes globaux (par exemple, transformée de distance de Chamfer). Nous nous concentrons principalement sur les
@@ -374,7 +328,7 @@ hétérogènes.
   \label{resume:fig:concept.image}
 \end{figure}
 
-Enfin, ce chapitre introduit notre première contribution principale : une taxonomie complète relative au domaine du
+Enfin, nous introduisons notre première contribution principale : une taxonomie complète relative au domaine du
 traitement d'images. Nous introduisons d'abord des concepts fondamentaux tels que \emph{point}, \emph{pixel},
 \emph{domaine} et \emph{image} (illustrés dans la~\cref{resume:fig:concept.image}). Nous motivons et introduisons
 ensuite des concepts avancés liés aux images et aux différentes manières d'accéder aux données (parcours en avant,
@@ -383,7 +337,7 @@ liés aux notions gravitant autour du traitement d'images, telles que les \emph{
 \emph{voisinages} et les \emph{extensions} (gestion des bordures) qui sont nécessaires pour pouvoir travailler avec des
 algorithmes locaux.
 
-Le chapitre suivant utilise les concepts présentés pour introduire la deuxième contribution principale de cette thèse :
+Par la suite, nous utilisons les concepts présentés pour introduire la deuxième contribution principale de cette thèse :
 les \emph{vues d'image}.
 
 
@@ -397,7 +351,7 @@ travers un prisme qui pourrait extraire des informations spécifiques à son suj
 tampon des données sous-jacentes. Aujourd'hui (2020), le langage C++ (norme 20) introduit aussi ce mécanisme avec les
 ranges~\parencite{niebler.2014.ranges} pour les \emph{collections non-propriétaires} (de leur mémoire). Il est nommé
 \emph{vues} (view) et permet à l'utilisateur d'accéder au contenu d'une collection de données (vector, map) à travers un
-prisme. Dans Pylene, nous avons décidé de nous aligner sur la nomenclature normalisé dans C++20 afin de ne pas dérouter
+prisme. Dans Pylene, nous avons décidé de nous aligner sur la nomenclature normalisée dans C++20 afin de ne pas dérouter
 l'utilisateur. De cette façon, une vue \texttt{transform} dans le traitement d'images fait la même chose sur une image
 que ce que la vue \texttt{transform} fait sur un conteneur (collection) dans la bibliothèque de ranges standard. Les
 \emph{vues} présentent les propriétés suivantes : \emph{copie quasi gratuite}, \emph{non-propriétaire} (ne
@@ -405,12 +359,7 @@ que ce que la vue \texttt{transform} fait sur un conteneur (collection) dans la 
 pixel peut nécessiter des calculs) et \emph{composable}. Lorsque les vues sont chaînées, le compilateur construit un
 \emph{arbre d'expressions} (ou \emph{expression template} tel qu'utilisé dans de nombreuses bibliothèques de calcul
 scientifique telles qu'Eigen~\parencite{guennebaud.2010.eigen}). Le compilateur connaît donc le type de la composition
-finale et s'assure qu'il n'y ait pas de surcoût en performance à l'exécution (0-overhead). Tout d'abord nous motivons
-l'utilisation des \emph{vues} dans le traitement d'images, ensuite nous présentons les principales vues utilisées en
-traitement d'images. Puis, nous discutons de la façon dont les vues d'image diffèrent de celles utilisées dans les
-ranges de C++ et leurs principales propriétés (en particulier comment elles conservent/suppriment les propriétés de
-l'image parente) à travers un exemple concret : la gestion des bordures et des extensions. Enfin, nous étudions les
-limites liées à ce design.
+finale et s'assure qu'il n'y ait pas de surcoût en performance à l'exécution (0-overhead).
 
 En traitement d'images, un algorithme s'écrit naïvement en prenant une ou plusieurs données d'entrée (parmi lesquelles
 figurent la/les image(s) d'entrée), en effectuant un traitement sur ces données d'entrée puis en retournant les données
@@ -439,7 +388,7 @@ de couleur rouge. Alors le mainteneur doit le prendre en charge et ajouter des s
 pour chaque canal et/ou type de couleurs gérés. La complexité augmente grandement pour chaque point de customisation que
 le mainteneur souhaite offrir à l'utilisateur. Bien sûr, il est possible d'empêcher la duplication de code grâce à une
 utilisation intelligente des techniques d'ingénierie informatique (factorisation de code, etc.) mais la complexité
-fuiterait toujours à travers l'API dans une certaine mesure. C'est que l'autre solution demandéà permettre à
+fuiterait toujours à travers l'API dans une certaine mesure. C'est ainsi que l'autre solution consiste à permettre à
 l'utilisateur d'effectuer ces restrictions en amont de l'algorithme de manière transparente afin que l'algorithme en
 aval soit facile à écrire, comprendre et maintenir. Pour y parvenir, nous devons augmenter le niveau d'abstraction
 autour des images d'un niveau afin que nous puissions travailler directement au niveau de l'image. L'algorithme de
@@ -504,17 +453,17 @@ façon, les vues augmentent considérablement ce que l'utilisateur peut faire, t
   \label{resume:fig:view.pipeline}
 \end{figure}
 
-Dans ce chapitre, nous voyons que \emph{les vues sont composables}. L'une des caractéristiques les plus importantes dans
-la conception d'une pipeline (généralement, en génie logiciel) est la \emph{composition d'objets}. Elle permet de
-composer des blocs simples entre eux pour former des blocs complexes. Ces blocs complexes peuvent alors être gérés comme
-s'il s'agissait à nouveau de blocs simples. Dans la~\cref{resume:fig:view.pipeline}, nous avons 3 opérateurs de
-traitement d'image simples \emph{Image}~\(\rightarrow\)~\emph{Image} (la conversion en niveaux de gris, la
-sous-quantification et la dilatation). Comme indiqué dans la~\cref{resume:fig:view.comp}, la composition des algorithmes
-considérerait ces 3 opérateurs simples comme un seul opérateur complexe \emph{Image}~\(\rightarrow\)~\emph{Image} qui
-pourrait ensuite être utilisé dans une pipeline de traitement d'image encore plus complexe. Tout comme les algorithmes,
-les vues d'image sont composables. Par exemple, une vue de la vue d'une image reste toujours une image. Dans
-la~\cref{resume:fig:view.comp}, nous composons l'image d'entrée avec une vue de transformation en niveaux de gris puis
-avec une vue de sous-quantification qui alimente enfin l'algorithme de dilatation.
+Nous voyons que \emph{les vues sont composables}. L'une des caractéristiques les plus importantes dans la conception
+d'une pipeline (généralement, en génie logiciel) est la \emph{composition d'objets}. Elle permet de composer des blocs
+simples entre eux pour former des blocs complexes. Ces blocs complexes peuvent alors être gérés comme s'il s'agissait à
+nouveau de blocs simples. Dans la~\cref{resume:fig:view.pipeline}, nous avons 3 opérateurs de traitement d'image simples
+\emph{Image}~\(\rightarrow\)~\emph{Image} (la conversion en niveaux de gris, la sous-quantification et la dilatation).
+Comme indiqué dans la~\cref{resume:fig:view.comp}, la composition des algorithmes considérerait ces 3 opérateurs simples
+comme un seul opérateur complexe \emph{Image}~\(\rightarrow\)~\emph{Image} qui pourrait ensuite être utilisé dans une
+pipeline de traitement d'image encore plus complexe. Tout comme les algorithmes, les vues d'image sont composables. Par
+exemple, une vue de la vue d'une image reste toujours une image. Dans la~\cref{resume:fig:view.comp}, nous composons
+l'image d'entrée avec une vue de transformation en niveaux de gris puis avec une vue de sous-quantification qui alimente
+enfin l'algorithme de dilatation.
 
 \begin{figure}[htbp]
   \centering
@@ -548,7 +497,7 @@ currying~\parencite{hanus.1995.curry}. Dans la~\cref{resume:fig:view.highorder},
 \emph{transform} peut être utilisée pour créer une vue additionnant deux images, une vue effectuant la conversion en
 niveaux de gris et une vue effectuant une sous-quantification. Ces vues de base, réutilisable par la suite\footnote{Ces
   fonctions auraient pu être écrites de manière plus générique pour plus de ré-utilisabilité, mais ce n'est pas le but
-  ici.}, sont ensuite chaînées ensembles pour créere image complexe.
+  ici.}, sont ensuite chaînées ensemble pour créer une image complexe.
 
 \begin{figure}
   \begin{minted}{c++}
@@ -622,18 +571,17 @@ bytecode est interprété via un interpréteur sur une machine hôte.
   \label{resume:fig:type-erased.buffer}
 \end{figure}
 
-Dans ce chapitre, nous concevons de nombreuses solutions pour résoudre plusieurs types de problèmes liés au pont entre
-le monde statique et le monde dynamique. Nous présentons notre solution hybride capable de rendre disponible notre
-bibliothèque générique C++ (statique) à partir de Python (dynamique). Nous discutons à propos des différentes façons de
-réaliser ce pont, leurs avantages et leurs inconvénients. Aussi, nous introduisons une nouvelle couche d'abstraction, le
-value-set, qui est un moyen standard de manipuler les valeurs sous-jacentes d'une image, utilisable lors de la mise en
-\oe{}uvre d'algorithmes de traitement d'images. Cette nouvelle couche d'abstraction permet notamment à l'utilisateur
-d'injecter du code côté Python dans des routines C++ déjà compilées. Cependant, superposer les couches d'abstraction
-l'une après l'autre, ou même appeler du code Python entraîne forcément un surcoût du côté des performances. C'est
-pourquoi nous avons réalisé un benchmark pour exposer clairement le coût, en temps d'exécution, de nos différentes
-solutions. Ce benchmark compare les quatre versions de notre algorithme d'étirement (stretch) dont l'implémentation et
-l'utilisation sont détaillées dans le chapitre. Le résultat est affiché dans
-le~\cref{resume:table:static.dynamic.perfs}.
+Nous concevons de nombreuses solutions pour résoudre plusieurs types de problèmes liés au pont entre le monde statique
+et le monde dynamique. Nous présentons notre solution hybride capable de rendre disponible notre bibliothèque générique
+C++ (statique) à partir de Python (dynamique). Nous discutons à propos des différentes façons de réaliser ce pont, leurs
+avantages et leurs inconvénients. Aussi, nous introduisons une nouvelle couche d'abstraction, le value-set, qui est un
+moyen standard de manipuler les valeurs sous-jacentes d'une image, utilisable lors de la mise en \oe{}uvre d'algorithmes
+de traitement d'images. Cette nouvelle couche d'abstraction permet notamment à l'utilisateur d'injecter du code côté
+Python dans des routines C++ déjà compilées. Cependant, superposer les couches d'abstraction l'une après l'autre, ou
+même appeler du code Python entraîne forcément un surcoût du côté des performances. C'est pourquoi nous avons réalisé un
+benchmark pour exposer clairement le coût, en temps d'exécution, de nos différentes solutions. Ce benchmark compare les
+quatre versions de notre algorithme d'étirement (stretch) dont l'implémentation et l'utilisation sont détaillées dans le
+manuscrit. Le résultat est affiché dans le~\cref{resume:table:static.dynamic.perfs}.
 
 \begin{table}[htbp]
   \footnotesize
@@ -667,7 +615,7 @@ Ce benchmark montre que chaque fois qu'une couche d'abstraction est ajoutée au-
 s'attendre à un facteur \(10\times\) impactant les performances de son code. De plus, appeler du code Python est
 immensément plus lent (\(2300\times\) !) que la baseline. Cela renouvelle l'intérêt de recompiler la bibliothèque C++
 générique avec un type paramétrique supplémentaire connu plutôt que de l'injecter depuis Python, surtout pour du code
-qui met longtemps à s'exécuter. Pouvoir injecter du code Python facilite le prototypage et augmenter la vitesse à
+qui met longtemps à s'exécuter. Pouvoir injecter du code Python facilite le prototypage et augmente la vitesse à
 laquelle l'utilisateur peut écrire son code. Cependant, le benchmark montre que ce n'est pas une solution viable une
 fois que le prototype doit être déployé dans un environnement de production.
 
@@ -687,8 +635,8 @@ problématique signifierait que l'utilisateur devrait être capable de compiler 
 générique en injectant le type demandé, en tant que paramètre template, lorsqu'il est utilisé. Une telle opération
 déplace une forte charge sur l'utilisateur, la compilation (habituellement gérée par le mainteneur), et il est bien
 connu que compiler du code C++ est notoirement \emph{compliqué} et \emph{lent}. De plus, la bibliothèque doit être
-capable de générer automatiquement l'interface la liant au Python une fois le code C++ compilé. Il existe plusieurs
-solutions pour parvenir à cet objectif.
+capable de générer automatiquement l'interface la liant au Python une fois le code C++ compilé et de gérer nativement
+les types \emph{NumPy.array} dans l'interface. Il existe plusieurs solutions pour parvenir à cet objectif.
 
 \begin{figure}[htbp]
   \centering
@@ -710,19 +658,17 @@ pour l'utiliser (par exemple Docker).
 
 La deuxième solution est d'utiliser Cython~\parencite{behnel.2010.cython}. C'est une infrastructure de transpilation qui
 transforme un code source Python directement dans du code source du langage C afin qu'il puisse être compilé par un
-compilateur C standard simplement en résolvant l'édition des liens contre l'API Python/C. Cela supprime la charge
+compilateur C/C++ standard simplement en résolvant l'édition des liens contre l'API Python/C. Cela supprime la charge
 d'écrire la routine de génération minutieuse de code, les appels système au compilateur C++, et cela supprime aussi le
-besoin de résoudre toutes les dépendances. Cette infrastructure s'occupe de tout pour l'utilisateur. De plus, en le
-transpilant en code C, la compilation sera plus rapide, car un compilateur C est plus rapide qu'un compilateur C++.
-Cython prend même en charge les template C++~\parencite{behnel.2022.cython-template} qui sont obligatoires pour notre
-cas d'utilisation.
+besoin de résoudre toutes les dépendances. Cette infrastructure s'occupe de tout pour l'utilisateur. Cython prend même
+en charge les template C++~\parencite{behnel.2022.cython-template} qui sont obligatoires pour notre cas d'utilisation.
 
 La troisième solution consiste à s'appuyer sur des projets récents qui reposent tous sur l'infrastructure LLVM. Nous
 pouvons notamment citer AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy},
 Xeus-cling~\parencite{quantstack.2021.xeus-cling} et Pythran~\parencite{guelton.2015.pythran}. AutoWIG a du code <<
 maison >> basé sur LLVM/Clang pour analyser le code C++ afin de générer et compiler une interface Python via Swig à
 l'aide du moteur de template Mako. AutoWIG, couplé à Cython permettrait à l'utilisateur, par exemple, de générer du code
-C lié à une structure Python personnalisée. Ensuite, un simple appel à AutoWIG analyserita le code C et l'injecterait
+C lié à une structure Python personnalisée. Ensuite, un simple appel à AutoWIG analysera le code C et l'injecterait
 dans la bibliothèque C++ pour générer l'interface utilisable par l'utilisateur. En ce qui concerne Cppyy, il est basé
 sur LLVM/Cling, un interpréteur C++, et peut interpréter directement du code C++ à partir d'une chaîne de caractères
 Python. Cela permet d'injecter facilement des types personnalisés, qu'ils soient dans du code Python (possiblement
@@ -751,20 +697,20 @@ nous sommes impatient de les explorer.
 Le travail que nous présentons dans cette thèse suit un arc narratif très clair. L'accent a d'abord été mis sur la
 présentation de la notion de programmation générique (généricité), son histoire et comment chacun(e) peut la comprendre,
 notamment dans sa vie de tous les jours, et en particulier lorsqu'elle est appliquée au traitement d'images. La
-généricité est une notion vieille de quattre décennies qui a évolué et trouvé une utilisation dans des domaines modernes
-de notre société. En effet, Le traitement d'images est largement utilisé pour construire des applications utilisées dans
+généricité est une notion vieille de quatre décennies qui a évolué et trouvé une utilisation dans des domaines modernes
+de notre société. En effet, le traitement d'images est largement utilisé pour construire des applications utilisées dans
 le monde entier. Cependant, il a été démontré à quel point il peut être difficile de mettre en \oe{}uvre des solutions
 reposant sur la généricité. En effet, il existe une règle de trois liant généricité, performance et facilité
 d'utilisation énoncée en introduction. Dans cette thèse, nous essayons de démontrer comment briser cette règle, et ce,
 en trois étapes.
 
-La première étape, illustrée dans le chapitre \emph{Taxonomy for Image Processing}, a consisté à faire un inventaire des
-types et familles d'images que des différents algorithmes de demandéd'images. L'objectif a été de produire une taxonomie
-complète des types (pixel, image, éléments structurants, \ldots) et algorithmes (locaux, globaux, \ldots) liés au
-traitement d'images afin de pouvoir extraire les Concepts (au sens Concepts C++). Cette première étape délimite le
-périmètre de ce que nous englobons dans la notion de \emph{généricité}. \`{A} partir de ce point de départ, il devient
-plus facile d'écrire des algorithmes de traitement d'images, juste en s'appuyant sur ces concepts. De plus, différents
-concepts existent pour permettre aux développeurs d'algorithmes d'exploiter des propriétés (décomposabilité des éléments
+La première étape, illustrée dans \emph{Taxonomy for Image Processing}, a consisté à faire un inventaire des types et
+familles d'images ainsi que des différents algorithmes de d'images. L'objectif a été de produire une taxonomie complète
+des types (pixel, image, éléments structurants, \ldots) et algorithmes (locaux, globaux, \ldots) liés au traitement
+d'images afin de pouvoir extraire les Concepts (au sens Concepts C++). Cette première étape délimite le périmètre de ce
+que nous englobons dans la notion de \emph{généricité}. \`{A} partir de ce point de départ, il devient plus facile
+d'écrire des algorithmes de traitement d'images, juste en s'appuyant sur ces concepts. De plus, différents concepts
+existent pour permettre aux développeurs d'algorithmes d'exploiter des propriétés (décomposabilité des éléments
 structurants, contiguïté du buffer de l'image, \ldots) afin d'atteindre des performances maximales. \`{A} ce stade, nous
 raisonnons encore à un niveau bas (pixel) ce qui génère le besoin de designer une couche d'abstraction afin de permettre
 un prototypage rapide pour des opérations simples tout en garantissant une empreinte mémoire très faible et proche de

@@ -212,14 +212,16 @@ computational shape and can be factorized together.
   \label{summary:fig:type.vs.algo}
 \end{figure}
 
-\FIXME{Genericity can have two different meanings depending on the people you ask. For instance, some will argue that
-  genericity is high level and qualifies a tool which is ``generic enough'' to handle all of his use-cases. Others will
-  argue that genericity is about how a machine (code) is able to make tools, ``generic enough'' to make a lot different
-  tools. Neither is wrong. However, for the sake of comprehension we will use different words for each of these cases. A
-  tool generic enough to handle a lot of use-case will be called \emph{versatile}. Finally, for a tool whose aim is to
-  provide a programming framework to handle code of any use-case we will use \emph{generic}. In this thesis, genericity
-  will be about code. The~\cref{summary:fig:type.vs.algo} illustrates the result of the same generic watershed
-  implementation applied on an image 2D, a graph as well as a mesh.}
+Genericity can have two different meanings depending on the people you ask. For instance, some will argue that
+genericity is a high level aspect and will qualify a tool by ``generic enough'' when it handles all of his use-cases.
+Others will argue that genericity is a low level aspect that relates to the machine (code) building the tools, ``generic
+enough'' to make a lot different tools. Neither is wrong. However, for the sake of comprehension we will use different
+words for each of these cases. A tool generic enough to handle a lot of use-case will be called \emph{versatile}.
+Finally, for a tool whose aim is to be able to build a lot of different tools (\ie providing a programming framework
+able to handle code of any use-case) we will use \emph{generic}. In this thesis, genericity will be about code, meaning
+the programming framework able to handle any use-case.
+The~\cref{summary:fig:type.vs.algo}~\parencite{~\parencite{levillain.2011.phd}} illustrates the result of the same
+generic watershed implementation applied on an image 2D, a graph as well as a mesh.
 
 In this chapter we present the origin of generic programming, which goes as far as~\citedate[year]{musser.1988.generic}
 and how it has evolved to be integrated in the Ada programming language and then the C++ programming language.
