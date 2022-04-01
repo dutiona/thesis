@@ -27,4 +27,3 @@ jobs:
           name: thesis-artifacts
           path: |
             roynard.thesis.2022/*.pdf
-            roynard.thesis.2022.tar.gz
