@@ -1,6 +1,6 @@
 TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
 SRC = $(filter-out flyleaf.tex trash.tex main.old.tex, $(wildcard *.tex))
-DEP = flyleaf.tex bibliography.bib $(wildcard chapters/*.tex)
+DEP = flyleaf.tex ../bibliography.bib $(wildcard chapters/*.tex)
 PDF = $(SRC:.tex=.pdf)
 
 all : $(PDF) compressed
