@@ -492,8 +492,8 @@ following the functional programming paradigm, it is quite easy to define new vi
 considered as \emph{high-order functions} for which we can bind some parameters, as one would do with the curry
 technique~\parencite{hanus.1995.curry}. In~\cref{summary:fig:view.highorder}, we show how the primitive \emph{transform}
 can be used to create view operators summing two images, performing the grayscale conversion and performing a
-sub-quantization. They can all be re reused afterwards. These functions could have been written in a more generic way
-for more re-usability, but this is not the purpose here.
+sub-quantization. This basic views, which can be reused afterwards, are then chained together to create a complex image.
+(These functions could have been written in a more generic way for more re-usability, but this is not the purpose here.)
 
 \begin{figure}
   \begin{minted}{c++}

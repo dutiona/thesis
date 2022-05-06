@@ -492,9 +492,9 @@ nouvelles vues, car certains adaptateurs d'image peuvent être considérés comm
 pour lesquelles nous pouvons lier certains paramètres, comme nous le ferions avec la technique de
 currying~\parencite{hanus.1995.curry}. Dans la~\cref{resume:fig:view.highorder}, nous montrons comment la primitive
 \emph{transform} peut être utilisée pour créer une vue additionnant deux images, une vue effectuant la conversion en
-niveaux de gris et une vue effectuant une sous-quantification. Ces vues de base, réutilisable par la suite\footnote{Ces
-  fonctions auraient pu être écrites de manière plus générique pour plus de ré-utilisabilité, mais ce n'est pas le but
-  ici.}, sont ensuite chaînées ensemble pour créer une image complexe.
+niveaux de gris et une vue effectuant une sous-quantification. Ces vues de base, réutilisable par la suite sont ensuite
+chaînées ensemble pour créer une image complexe. (Ces fonctions auraient pu être écrites de manière plus générique pour
+plus de ré-utilisabilité, mais ce n'est pas le but ici.)
 
 \begin{figure}
   \begin{minted}{c++}
