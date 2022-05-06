@@ -582,7 +582,7 @@ Later on came the Ada programming language whose conception work started in 1977
 It was first standardized in 1983~\parencite{ansi.1983.ada} in the United States by the American National Standards
 Institute (ANSI) before being Internationally standardized by the International Organization for Standardization (ISO)
 in 1987~\parencite{iso.1987.ada}. From this point on, the Ada language released a new version in
-1995~\parencite{iso.1995.ada, iso.1995.ada.corr}, then the standard committee published an Amendment in
+1995~\parencite{iso.1995.ada,iso.1995.ada.corr}, then the standard committee published an Amendment in
 2007~\parencite{iso.1995.ada.amend} which is often referred as Ada 2005. Finally, a new version of the language was
 published in 2012~\parencite{iso.2012.ada,iso.2012.ada.corr}. What interest us in the Ada language is the fact that the
 language features \emph{generics} since it was first designed in 1977--1980 which \emph{ten years} before Musser and
@@ -875,17 +875,16 @@ Another features that precede C++11 and was available in C++98~\parencite{iso.19
 C++03~\parencite{iso.2003.cpp} is the curiously recurring template pattern (CRTP) introduced in 1996 by
 Coplien~\parencite{coplien.1996.crtp}. This programming technique allows a base class (in its specific code) to be aware
 of its derived class at compile type. We made extensive use of this pattern in the past to design a new paradigm,
-SCOOP~\parencite{burrus.2003.mpool, geraud.2006.scoop-pres, geraud.2008.mpool, levillain.2011.phd} which combined
-multiple inheritance (via CRTP) and concept checking (via
-Boost.Concept~\parencite{siek.2000.concept,boost.2006.concepts}) to implement a solution to provide a library with
-constrained genericity in C++ for the image processing area. The Scoop paradigm relied on the fact that multiple
-(especially diamond) inheritance did not pose much of an issue as long as there was no member variable involved. This
-way, one could consider a class hierarchy as a hierarchy of constraint indeed. Using CRTP, it was possible to find back,
-inside constraining classes, what was the concrete leaf class of the hierarchy in order to check whether its
-implementation satisfied the constraints or not. For instance, let us assume that we have a concrete class
-\texttt{image2d} inheriting from a constraining class \texttt{Image}. Let us now see how one would use the SCOOP
-paradigm to implement it. First we need to implement the satellite constraints around the image type which are related
-to the underlying point and domain of the image.
+SCOOP~\parencite{burrus.2003.mpool,geraud.2006.scoop-pres,geraud.2008.mpool,levillain.2011.phd} which combined multiple
+inheritance (via CRTP) and concept checking (via Boost.Concept~\parencite{siek.2000.concept,boost.2006.concepts}) to
+implement a solution to provide a library with constrained genericity in C++ for the image processing area. The Scoop
+paradigm relied on the fact that multiple (especially diamond) inheritance did not pose much of an issue as long as
+there was no member variable involved. This way, one could consider a class hierarchy as a hierarchy of constraint
+indeed. Using CRTP, it was possible to find back, inside constraining classes, what was the concrete leaf class of the
+hierarchy in order to check whether its implementation satisfied the constraints or not. For instance, let us assume
+that we have a concrete class \texttt{image2d} inheriting from a constraining class \texttt{Image}. Let us now see how
+one would use the SCOOP paradigm to implement it. First we need to implement the satellite constraints around the image
+type which are related to the underlying point and domain of the image.
 
 \begin{minted}{C++}
   template <class P>

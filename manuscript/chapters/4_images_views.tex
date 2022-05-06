@@ -2,7 +2,7 @@
 \label{chap:image_views}
 
 \lettrine[lines=2]{T}{his} concept of views is not new~\parencite{novak.1997.reuse} and naturally appeared in Image
-processing with Milena under the name of \emph{morpher}~\parencite{levillain.2009.ismm, geraud.2012.hdr}. It was always
+processing with Milena under the name of \emph{morpher}~\parencite{levillain.2009.ismm,geraud.2012.hdr}. It was always
 useful to be able to project an image through a prism that could extract specific information about it without the need
 to copy the underlying data buffer. In modern days, the language C++ (20) also introduces this mechanism with the
 ranges~\parencite{niebler.2014.ranges} facilities for \emph{non-owning collections}. It is named \emph{views} and allows
@@ -1093,7 +1093,7 @@ auto MyComplexImage = subquantize16to8b(togray(A));
 allows fundamental image types to be mixed with algorithms. In~\cref{fig:view.highorder}, the creation of views does not
 involve any computation in itself but rather delays the computation until the expression \texttt{v(p)} is invoked.
 Because views can be composed, the evaluation can be delayed quite far. Image adaptors are \emph{template
-  expressions}~\parencite{veldhuizen.1995.expression, veldhuizen.2000.blitz} as they record the \emph{expression} used to
+expressions}~\parencite{veldhuizen.1995.expression,veldhuizen.2000.blitz} as they record the \emph{expression} used to
 generate the image as a template parameter. A view actually represents an expression tree (\cref{fig:new.alphablend}).
 
 \paragraph{Views for performance.} With a classical design, each operation of the pipeline is implemented on ``its
