@@ -74,45 +74,45 @@ thus its impact. That is why we aim to reach prototyping users through providing
 language such as Python without sacrificing efficiency. In particular, we aim to be useable in a Jupyter notebook. It is
 a very important goal for us to reach a usability able to permeate into the educational side which is a strength of
 Python. In this library, we demonstrate how to achieve genericity and efficiency while remaining easy to use all at the
-same time. In doing so, we are endeavoring to breakthrough the rule previously cited. The scope of this library is
+same time. In doing so, we are endeavoring to break through the rule previously cited. The scope of this library is
 limited to mathematical morphology~\parencite{najman.2013.mathematical,geraud.2010.book} and to the provision of very
 versatile image types. We leverage the modern C++ language and its many new features related to genericity and
-performance to breakthrough this rule in the image processing area. Finally, we attempt, to bring low level tools and
+performance to break through this rule in the image processing area. Finally, we attempt, to bring low level tools and
 concepts from the static world to the high level and dynamic prototyping world for a better diffusion and ease of use,
 thanks to a bridge between those two worlds.
 
 With this philosophy in mind, this manuscript aims at presenting our thesis work related to the C++ language applied to
 the Image Processing domain. It is organized as followed:
 
-\paragraph{Generic Programming (genericity)} This chapter presents a state-of-the-art overview about the notion of
+\paragraph{Generic Programming (genericity)} We present a state-of-the-art overview about the notion of
 genericity. We explain its origin, how it has evolved (especially within the C++ language), what issues it is solving,
 what issues it is creating. We explain why image processing and genericity work well together. Finally, we tour around
 existing facilities that allows genericity (intrinsically restricted to compiled language) to exists in the dynamic
 world (with interpreted languages such as Python).
 
-\paragraph{Taxonomy for Image Processing: Image types and Algorithms} This chapter presents our first contribution in
-the image processing area which is a comprehensive work consisting in the the taxonomy of different images families as
-well of different algorithms families. This chapter explains, among others, the notion of concept and how it applies to
-the image processing domain. We explain how to extract a concept from existing code, how to leverage it to make code
-more efficient and readable. We finally offer our take in the form of a collection of concepts related to image
-processing area.
+\paragraph{Taxonomy for Image Processing: Image types and Algorithms} We present our first contribution in the image
+processing area which is a comprehensive work consisting in the taxonomy of different images families as well of
+different algorithms families. We explain, among others, the notion of concept and how it applies to the image
+processing domain. Also, we explain how to extract a concept from existing code, how to leverage it to make code more
+efficient and readable. Finally, we offer our take in the form of a collection of concepts related to image processing
+area.
 
-\paragraph{Images Views} This chapter presents our second contribution which is a generalization of the concept of View
+\paragraph{Images Views} We present our second contribution which is a generalization of the concept of View
 (from the C++ language, the work on ranges~\parencite{niebler.2018.ranges}) to images. This allows the creation of
 lightweight, cheap-to-copy images. It also enables a much simpler way to design image processing pipeline by chaining
 operations directly in the code in an intuitive way. Ranges are the cement of new designs to ease the use of image into
 algorithms which can further extend their generic behavior. Finally, we discuss the concept of lazy evaluation and the
 impacts of views on performance.
 
-\paragraph{A bridge between the static world and the dynamic world} This chapter presents our third contribution which
-is a way to grant access to the generic facilities of a compiled language (such as C++) to a dynamic language (such as
-Python) to ease the gap crossing between the prototyping phase and the production phase. Indeed, it is really not
-obvious to be able to conciliate generic code from C++ whose genericity is resolved at compilation-time (we call this
-the ``static world''), and dynamic code from Python which rely on pre-compiled package binaries (we call this the
-``dynamic world''), to achieve an efficient communication between the dynamic code and the library. We also cannot ask
-of the user to provide and use a compiler each time he wants to use our library from Python. In this chapter, we discuss
-what are the existing solutions that can be considered as well as their \pros and \cons. We then discuss how we designed
-a hybrid solution to make the bridge between the static world and the dynamic world.
+\paragraph{A bridge between the static world and the dynamic world} We present our third contribution which is a way to
+grant access to the generic facilities of a compiled language (such as C++) to a dynamic language (such as Python) to
+ease the gap crossing between the prototyping phase and the production phase. Indeed, it is really not obvious to be
+able to conciliate generic code from C++ whose genericity is resolved at compilation-time (we call this the ``static
+world''), and dynamic code from Python which rely on pre-compiled package binaries (we call this the ``dynamic world''),
+to achieve an efficient communication between the dynamic code and the library. We also cannot ask of the user to
+provide and use a compiler each time he wants to use our library from Python. We discuss what are the existing solutions
+that can be considered as well as their \pros and \cons. Finally, we discuss how we designed a hybrid solution to make
+the bridge between the static world and the dynamic world.
 
 
 \subsection*{Generic programming (genericity)}
@@ -126,8 +126,8 @@ Objective-C++, Fortran, Ada, D, Go, and BRIG (HSAIL)) as well as target several 
 ARM, SPARC, etc.). Henceforth, we can say that gcc is a generic compiler. At this point it is important to note that
 even though a tool is deemed generic, there is a scope on what the tool can do and what the tool cannot do. A compiler
 despite supporting many languages and architectures, will not be able to make a phone call or a coffee. As such it is
-important to note that genericity is an aspect that qualifies something. This chapter studies the generic aspects
-related to libraries and programming languages.
+important to note that genericity is an aspect that qualifies something. We study the generic aspects related to
+libraries and programming languages.
 
 This thesis voluntary leaves out the generic aspect related to the target architecture. Indeed, being able to write
 and/or generate code that is able to run on a large array of different hardware architecture is a field of research on
@@ -180,7 +180,7 @@ structure must be aware of the data buffer containing the image data as well as 
 dimensions of the image. Furthermore, to add to the difficulty, the information needed to define precisely the data
 structure is not always known when writing the source code. Indeed, a very simple use-case consists in reading an image
 from a file to load it in memory. The file can contain an image of varying data type and the program should still work
-properly. There are multiple approach to solve this issue, and we are addressing them in this chapter.
+properly. There are multiple approach to solve this issue, and we are addressing them.
 
 Projecting the notion of genericity to Image Processing, we can deduce that we need two important aspects in order to be
 generic. First, we need to decorrelate the data structures and its topology and underlying data from the algorithms.
@@ -223,60 +223,23 @@ the programming framework able to handle any use-case.
 The~\cref{summary:fig:type.vs.algo}~\parencite{~\parencite{levillain.2011.phd}} illustrates the result of the same
 generic watershed implementation applied on an image 2D, a graph as well as a mesh.
 
-In this chapter we present the origin of generic programming, which goes as far as~\citedate[year]{musser.1988.generic}
-and how it has evolved to be integrated in the Ada programming language and then the C++ programming language.
-Afterwards, it has evolved even further with the notion of \emph{concept} which completes the toolbox required to be
-able to fully make use of generic programming without resorting to obscure tweaks and tools.
+We present the origin of generic programming, which goes as far as~\citedate[year]{musser.1988.generic} and how it has
+evolved to be integrated in the Ada programming language and then the C++ programming language. Afterwards, it has
+evolved even further with the notion of \emph{concept} which completes the toolbox required to be able to fully make use
+of generic programming without resorting to obscure tweaks and tools.
 
-\begin{table}[htbp]
-  \centering
-  \begin{threeparttable}
-    \caption[]{Genericity approaches: \pros~\& \cons}
-    \begin{tabular}[width=0.8\linewidth]{l|ccccc}
-      Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
-      \hline
-      Code Duplication     & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
-      Code Generalization  & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
-      Object-Orientation   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
-      Generic Programming: &             &             &            &                 &             \\
-      \quad with C++11     & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
-      \quad with C++17     & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
-      \quad with C++20     & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
-    \end{tabular}
-    \begin{tablenotes}
-      \item[1] TC: type checking.
-      \item[2] CS: code simplicity.
-      \item[3] E: efficiency.
-      \item[4] One IA: one implementation per algorithm.
-      \item[4] EA: explicit abstractions / constrained genericity.
-    \end{tablenotes}
-    \label{summary:table:gen.approaches}
-  \end{threeparttable}
-\end{table}
+We explore the possibilities of achieving the notion of genericity from within a library. Indeed, there are three
+techniques enabling the user to write a high level algorithm once that can run on every type. They are the \emph{code
+  duplication} approach, the \emph{generalization} approach and the \emph{inclusion and parametric polymorphism}
+approach~\parencite{gibbons.2007.datatype}.
 
-This chapter explores the possibilities of achieving the notion of genericity from within a library. Indeed, there are
-three techniques enabling the user to write a high level algorithm once that can run on every type. They are the
-\emph{code duplication} approach, the \emph{generalization} approach and the \emph{inclusion and parametric
-  polymorphism} approach~\parencite{gibbons.2007.datatype}. We present in~\cref{summary:table:gen.approaches} the result
-of the comparison of these approaches with regard to the features that we are interested in. We also discuss the
-limitations linked to the usage of those approaches by comparing OpenCV, Scikit-Image and Pylene which make use of the
-four techniques at different level to achieve different goals. Furthermore, we have identified limitations related to
-the underlying data type, the structure of the domain, the optimizations and discuss the performances through a concrete
-benchmark.
+Finally, we present the inherent limitation of C++ templates, which is that they remain in the static world (compile
+time). Genericity (in the sense C++ template) does not exist in the final shipped binary to the user. The final user, in
+its dynamic world (runtime) cannot use a generic (C++ code) tool. We discuss the different approaches possible to bridge
+this gap between the static (compile-time) and dynamic (runtime) world.
 
-This chapter also explores how the notion of genericity is achieved with the programming languages. We retrace how Ada
-implemented it and then how C++ permitted the expression of require-clauses (concept) as soon as C++98, even though it
-was limited at that time. We explore how template metaprogramming techniques have been developed and have evolved,
-alongside the C++ programming language itself, to finally reach a point in 2020 (C++20) where it is possible to write
-concepts in C++.
-
-Finally, this chapter presents the inherent limitation of C++ templates, which is that they remain in the static world
-(compile time). Genericity (in the sense C++ template) does not exist in the final shipped binary to the user. The final
-user, in its dynamic world (runtime) cannot use a generic (C++ code) tool. We discuss the different approaches possible
-to bridge this gap between the static (compile-time) and dynamic (runtime) world.
-
-The next chapter will make extensive use of Genericity to present the first contribution of this thesis: a taxonomy of
-concepts related to Image processing.
+We will then make extensive use of Genericity to present the first contribution of this thesis: a taxonomy of concepts
+related to Image processing.
 
 
 \subsection*{Taxonomy for Image Processing: Image types and Algorithms}
@@ -284,20 +247,14 @@ concepts related to Image processing.
 
 In this thesis, we have pursued research into how to apply all those new generic facilities from the C++ language into
 the Image processing area. This allows us to test them in a practical way on our predilection area while remembering our
-past work, both success and failures in this matter. However, as we saw in the previous Chapter (Generic programming
-(genericity)), birthing concepts from code is something that is done in an emerging way. Henceforth, the first work will
-be to do an inventory of all existing image algorithms as well as an inventory of all image processing algorithms (both
-basic and more complex) we can think of. This way, we will notice behavior patterns emerging from similar image types or
-similar algorithms. We will then be able to extract behavioral patterns from this inventory in order to produce a full
-taxonomy in the form of a framework of concepts related to image processing. This chapter is structured as followed.
-First we will study how to extract behavioral pattern from a simple algorithm in order to refine it into one or multiple
-concepts. Second we will study the theory set behind image types, their conjunctions, disjunctions. We will also produce
-an inventory of image processing algorithms limited to mathematical morphologies that we will leverage for the final
-step. Third, we will study the intrinsic genericity of algorithms to produce canvas taking advantage of properties
-(linked to the types). Finally, we will study behavioral patterns, related to the pre-established inventory of
-algorithms, in the form of a taxonomy engrave into a framework of concepts related to image processing.
+past work, both success and failures in this matter. However, birthing concepts from code is something that is done in an
+emerging way. Henceforth, the first work will be to do an inventory of all existing image algorithms as well as an
+inventory of all image processing algorithms (both basic and more complex) we can think of. This way, we will notice
+behavior patterns emerging from similar image types or similar algorithms. We will then be able to extract behavioral
+patterns from this inventory in order to produce a full taxonomy in the form of a framework of concepts related to image
+processing.
 
-In this chapter, we present that concepts are not designed after data structures but after algorithms. Indeed, a concept
+We present that concepts are not designed after data structures but after algorithms. Indeed, a concept
 consists in extracting a consistent behavioral pattern from a piece of code (algorithm) and name it to give him a
 meaning. Through a simple but concrete example, we present in a didactic way how to extract concepts from an image
 processing algorithm (gamma correction).
@@ -315,18 +272,18 @@ processing algorithm (gamma correction).
   \label{summary:fig:image.version.vs.specialization}
 \end{figure}
 
-This chapter then proceeds to explain how, in theory, image types are related to each other. We present the set of
-different image types and how algorithms exist in those sets, which introduce the notion of \emph{version} of an
-algorithm. An algorithm will have different \emph{versions} for each image types set it supports. We distinguish it
+We then explain how, in theory, image types are related to each other. We present the set of different image types and
+how algorithms exist in those sets, which introduce the notion of \emph{version} of an algorithm. An algorithm will have
+different \emph{versions} for each image types set it supports. We distinguish it
 (in~\cref{summary:fig:image.version.vs.specialization}) from an algorithm \emph{specialization}, the latter being the
 ability to use an opportunity (related to a property) to make an optimization and increase performances.
 
-This chapter then proceed to describe the notion how algorithm canvas which is the result flowing from the taxonomy of
-image processing algorithms. Indeed, there are three main algorithm families: the pixel-wise algorithms (binary
-threshold), the local algorithms (dilation) and the global algorithms (Chamfer distance transform). We focus primarily
-on local algorithms and how they can all be written through the same canvas of code. Indeed, for instance, the only
-difference between a dilation and an erosion is the operator (max \vs min). We then discuss ways to exploit these canvas
-to possibly solve heterogeneous computing issues.
+We then describe the notion how algorithm canvas which is the result flowing from the taxonomy of image processing
+algorithms. Indeed, there are three main algorithm families: the pixel-wise algorithms (binary threshold), the local
+algorithms (dilation) and the global algorithms (Chamfer distance transform). We focus primarily on local algorithms and
+how they can all be written through the same canvas of code. Indeed, for instance, the only difference between a
+dilation and an erosion is the operator (max \vs min). We then discuss ways to exploit these canvas to possibly solve
+heterogeneous computing issues.
 
 \begin{figure}[htbp]
   \centering
@@ -335,14 +292,14 @@ to possibly solve heterogeneous computing issues.
   \label{summary:fig:concept.image}
 \end{figure}
 
-Finally, this chapter introduces our first main contribution: a complete taxonomy related to the image processing area.
-We first introduce fundamental concepts such as \emph{point}, \emph{pixel}, \emph{domain} and \emph{image} (illustrated
+Finally, we introduce our first main contribution: a complete taxonomy related to the image processing area. We first
+introduce fundamental concepts such as \emph{point}, \emph{pixel}, \emph{domain} and \emph{image} (illustrated
 in~\cref{summary:fig:concept.image}). We then motivate and introduce advanced concepts related to images and the
 different way to access data (forward, backward traversing, indexing, direct access to underlying buffer, \ldots). In
 the end, we introduce the concepts related to orbiting notions such as \emph{structuring element}, \emph{neighborhood}
 and \emph{extension} (border management) which are necessary to be able to work with local algorithms.
 
-The next chapter will make use of the presented concepts to introduce the second main contribution of this thesis: the
+We will then make use of the presented concepts to introduce the second main contribution of this thesis: the
 \emph{image views}.
 
 
@@ -362,10 +319,7 @@ following properties: \emph{cheap to copy}, \emph{non-owner} (does not \emph{own
   evaluation} (accessing the value of a pixel may require computations) and \emph{composition}. When chained, the compiler
 builds a \emph{tree of expressions} (or \emph{expression template} as used in many scientific computing libraries such
 as Eigen~\parencite{guennebaud.2010.eigen}), thus it knows at compile-time the type of the composition and ensures a
-0-overhead at evaluation. We will first motivate the usage of \emph{views} in image processing. We will then present the
-main views used in image processing. Then will be discussed how image views differ from the one used in C++'s ranges and
-their main properties (especially how they keep/discard the properties from the parent image) through a concrete
-example: the management of border and extension policies. Finally, we will discuss the limitations of such a design.
+0-overhead at evaluation.
 
 In image processing an algorithm is naively written by taking one or several inputs' data (among which is the input
 image(s)),  by performing work on this input data and then by returning the resulting data (or an error). Let us take
@@ -454,15 +408,15 @@ This way, view greatly increase what the user can do by writing less code.
   \label{summary:fig:view.pipeline}
 \end{figure}
 
-In this chapter, we see that \emph{views are composable}. One of the most important feature in a pipeline design
-(generally, in software engineering) is \emph{object composition}. It enables composing simple blocks into complex ones.
-Those complex blocks can then be managed as if they were still simple blocks. In~\cref{summary:fig:view.pipeline}, we
-have 3 simple image processing operators \emph{Image}~\(\rightarrow\)~\emph{Image} (the grayscale conversion, the
-sub-quantization and the dilation). As shown in~\cref{summary:fig:view.comp}, algorithm composition would consider these
-3 simple operators as a single complex operator \emph{Image}~\(\rightarrow\)~\emph{Image} that could then be used in
-another even more complex processing pipeline. Just like algorithms, image views are composable, \eg a view of the view
-of an image is still an image. In~\cref{summary:fig:view.comp}, we compose the input image with a grayscale transform
-view and a sub-quantization view that then feeds the dilation algorithm.
+We see that \emph{views are composable}. One of the most important feature in a pipeline design (generally, in software
+engineering) is \emph{object composition}. It enables composing simple blocks into complex ones. Those complex blocks
+can then be managed as if they were still simple blocks. In~\cref{summary:fig:view.pipeline}, we have 3 simple image
+processing operators \emph{Image}~\(\rightarrow\)~\emph{Image} (the grayscale conversion, the sub-quantization and the
+dilation). As shown in~\cref{summary:fig:view.comp}, algorithm composition would consider these 3 simple operators as a
+single complex operator \emph{Image}~\(\rightarrow\)~\emph{Image} that could then be used in another even more complex
+processing pipeline. Just like algorithms, image views are composable, \eg a view of the view of an image is still an
+image. In~\cref{summary:fig:view.comp}, we compose the input image with a grayscale transform view and a
+sub-quantization view that then feeds the dilation algorithm.
 
 \begin{figure}[htbp]
   \centering
@@ -560,15 +514,15 @@ interpreted via an interpreter on the host (runner) machine.
   \label{summary:fig:type-erased.buffer}
 \end{figure}
 
-In this chapter, we design many solutions to solve several kinds of issues related to the bridge between the static and
-the dynamic world. We present our hybrid solution that is able to make our C++ templated library (static) available from
-Python (dynamic). We discuss several ways of achieving this feat, their \pros and their \cons. Also, we introduce a new
+We design many solutions to solve several kinds of issues related to the bridge between the static and the dynamic
+world. We present our hybrid solution that is able to make our C++ templated library (static) available from Python
+(dynamic). We discuss several ways of achieving this feat, their \pros and their \cons. Also, we introduce a new
 abstraction layer, the value-set, which is a standard way to manipulate an underlying image value usable when
 implementing image processing algorithms. This new abstraction layer enables the user to inject code from Python-side
 into already-complied C++ routines. However, layering one abstraction layer after another, or even calling Python code
 does come with performance cost. This is why we have run a benchmark to outline the cost of our solutions. This
-benchmark compares the four version of our stretch algorithm whose implementation and usage are detailed in the chapter.
-The result is shown in~\cref{summary:table:static.dynamic.perfs}.
+benchmark compares the four version of our stretch algorithm whose implementation and usage are detailed in the
+manuscript. The result is shown in~\cref{summary:table:static.dynamic.perfs}.
 
 \begin{table}[htbp]
   \footnotesize
@@ -619,7 +573,8 @@ paying the compilation time once to have this code executed faster several times
 to our problematic, it would mean that the user must be able to compile native machine code from the templated generic
 C++ code by injected the requested type when it is used. Such an operation shift heavily the burden on the user, and it
 is well-known that compiling C++ code is notably \emph{complicated} and \emph{slow}. In addition, the library needs to
-be able to auto-generate Python binding once the C++ code is compiled. There are several solutions to reach this point.
+be able to auto-generate Python binding once the C++ code is compiled, and to handle \emph{NumPy.array} types in the
+interface. There are several solutions to reach this point.
 
 \begin{figure}[htbp]
   \centering
@@ -641,8 +596,8 @@ The second solution is to use Cython~\parencite{behnel.2010.cython}. It is a tra
 a Python source code directly into C-language source code so that it can be compiled by a standard C compiler just by
 linking against the Python/C API. This remove the burden of writing the careful code-generation routine, system-calls to
 the C++ compiler and removes the need to resolve all the dependencies. This infrastructure takes care of everything for
-the user. Also, by transpiling it into C code, it is faster because a C compiler is faster than a C++ compiler. Cython
-even support C++ template code~\parencite{behnel.2022.cython-template} which is mandatory for our use-case.
+the user. Cython even support C++ template code~\parencite{behnel.2022.cython-template} which is mandatory for our
+use-case.
 
 The third solution consists in relying on recent projects that are all relying on the LLVM infrastructure. We can
 notably note AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy},
@@ -680,8 +635,8 @@ around the world. However, it was demonstrated how difficult it can be to implem
 Indeed, there is a rule of three tying genericity, performance and ease of use stated in introduction. In this thesis,
 we try to demonstrate how to break this rule in three steps.
 
-The first step, illustrated in the chapter \emph{Taxonomy for Image Processing}, was to make an inventory of image types
-and families as well as different image processing algorithms. The aim was to produce a comprehensive taxonomy of types
+The first step, illustrated in \emph{Taxonomy for Image Processing}, was to make an inventory of image types and
+families as well as different image processing algorithms. The aim was to produce a comprehensive taxonomy of types
 (pixel, image, structuring elements, \ldots) and algorithms related to image processing in order to be able to write
 concepts (in the sense of C++ concepts). This first step delimits the perimeter of what the author means by
 \emph{genericity}. From this starting point, it becomes easier to write image processing algorithms, just by relying on

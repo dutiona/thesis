@@ -1020,8 +1020,8 @@ paying the compilation time once to have this code executed faster several times
 to our problematic, it would mean that the user must be able to compile native machine code from the templated generic
 C++ code by injected the requested type when it is used. Such an operation shift heavily the burden on the user, and it
 is well-known that compiling C++ code is notably \emph{complicated} and \emph{slow}. In addition, the library needs to
-be able to auto-generate Python binding once the C++ code is compiled. There are several solutions to achieve this
-process.
+be able to auto-generate Python binding once the C++ code is compiled, and to handle \emph{NumPy.array} types in the
+interface. There are several solutions to achieve this process.
 
 The first solution is to basically use system call to the compilers to actually \emph{compile} C++ code once the
 templated types are known and explicitly instantiated in the source code. This solution requires careful code-generation
@@ -1034,10 +1034,10 @@ lesser, however, it still requires to maintain both the library and the containe
 
 The second solution is to use Cython~\parencite{behnel.2010.cython}. It is a transpiling infrastructure which transform
 a Python source code directly into C-language source code so that it can be compiled by a standard C compiler just by
-linking against the Python/C API. This remove the burden of writing the careful code-generation routine, system-calls
-to the C++ compiler and removes the need to resolve all the dependencies. This infrastructure takes care of everything
-for the user. Also, by transpiling it into C code, it is faster because a C compiler is faster than a C++ compiler.
-Cython even support C++ template code~\parencite{behnel.2022.cython-template} which is mandatory for our use-case.
+linking against the Python/C API. This remove the burden of writing the careful code-generation routine, system-calls to
+the C++ compiler and removes the need to resolve all the dependencies. This infrastructure takes care of everything for
+the user. Cython even support C++ template code~\parencite{behnel.2022.cython-template} which is mandatory for our
+use-case.
 
 The third solution consists in relying on recent projects that are all relying on the LLVM infrastructure. We can
 notably note AutoWIG~\parencite{fernique.2018.autowig}, Cppyy~\parencite{wimtlplavrijsen.2016.cppyy},
