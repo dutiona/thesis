@@ -71,7 +71,7 @@ efficient (lot of handwritten SIMD/GPU code) but not generic due to the design c
 In this thesis, we chose to work on an image processing library through continuing the work on
 Pylene~\parencite{carlinet.2018.pylena}. But only working at library level would restrict the usability of our work and
 thus its impact. That is why we aim to reach prototyping users through providing a package that can be used in dynamic
-language such as Python without sacrificing efficiency. In particular, we aim to be useable in a Jupyter notebook. It is
+language such as Python without sacrificing efficiency. In particular, we aim to be usable in a Jupyter notebook. It is
 a very important goal for us to reach a usability able to permeate into the educational side which is a strength of
 Python. In this library, we demonstrate how to achieve genericity and efficiency while remaining easy to use all at the
 same time. In doing so, we are endeavoring to break through the rule previously cited. The scope of this library is
@@ -111,7 +111,7 @@ able to conciliate generic code from C++ whose genericity is resolved at compila
 world''), and dynamic code from Python which rely on pre-compiled package binaries (we call this the ``dynamic world''),
 to achieve an efficient communication between the dynamic code and the library. We also cannot ask of the user to
 provide and use a compiler each time he wants to use our library from Python. We discuss what are the existing solutions
-that can be considered as well as their \pros and \cons. Finally, we discuss how we designed a hybrid solution to make
+that can be considered as well as their pros. and cons. Finally, we discuss how we designed a hybrid solution to make
 the bridge between the static world and the dynamic world.
 
 
@@ -158,7 +158,7 @@ is an attribute of data which tells the compiler or interpreter how the programm
 programming language support basic data types (also called primitive types) such as integer numbers, floating point
 numbers, boolean and characters (ASCII, Unicode, etc.). This data attribute defines the operations that can be performed
 on the data, the meaning of the data and the size of the data in memory (the data can then be stored on the heap, stack,
-etc.). A data type provides a set of values from which an expression (\ie variable, function, etc.) may take those
+etc.). A data type provides a set of values from which an expression (i.e. variable, function, etc.) may take those
 values. Among programming language, we can distinguish those who are dynamically types and those that are statically
 typed. Statically typed languages are those whose variables are declared holding a specific type. This variable cannot
 hold data from another type in the scope it is declared. Statically typed programming languages are Ada, C, C++, Java,
@@ -217,7 +217,7 @@ genericity is a high level aspect and will qualify a tool by ``generic enough'' 
 Others will argue that genericity is a low level aspect that relates to the machine (code) building the tools, ``generic
 enough'' to make a lot different tools. Neither is wrong. However, for the sake of comprehension we will use different
 words for each of these cases. A tool generic enough to handle a lot of use-case will be called \emph{versatile}.
-Finally, for a tool whose aim is to be able to build a lot of different tools (\ie providing a programming framework
+Finally, for a tool whose aim is to be able to build a lot of different tools (i.e. providing a programming framework
 able to handle code of any use-case) we will use \emph{generic}. In this thesis, genericity will be about code, meaning
 the programming framework able to handle any use-case.
 The~\cref{summary:fig:type.vs.algo}~\parencite{~\parencite{levillain.2011.phd}} illustrates the result of the same
@@ -282,7 +282,7 @@ We then describe the notion how algorithm canvas which is the result flowing fro
 algorithms. Indeed, there are three main algorithm families: the pixel-wise algorithms (binary threshold), the local
 algorithms (dilation) and the global algorithms (Chamfer distance transform). We focus primarily on local algorithms and
 how they can all be written through the same canvas of code. Indeed, for instance, the only difference between a
-dilation and an erosion is the operator (max \vs min). We then discuss ways to exploit these canvas to possibly solve
+dilation and an erosion is the operator (max vs. min). We then discuss ways to exploit these canvas to possibly solve
 heterogeneous computing issues.
 
 \begin{figure}[htbp]
@@ -414,7 +414,7 @@ can then be managed as if they were still simple blocks. In~\cref{summary:fig:vi
 processing operators \emph{Image}~\(\rightarrow\)~\emph{Image} (the grayscale conversion, the sub-quantization and the
 dilation). As shown in~\cref{summary:fig:view.comp}, algorithm composition would consider these 3 simple operators as a
 single complex operator \emph{Image}~\(\rightarrow\)~\emph{Image} that could then be used in another even more complex
-processing pipeline. Just like algorithms, image views are composable, \eg a view of the view of an image is still an
+processing pipeline. Just like algorithms, image views are composable, e.g. a view of the view of an image is still an
 image. In~\cref{summary:fig:view.comp}, we compose the input image with a grayscale transform view and a
 sub-quantization view that then feeds the dilation algorithm.
 
@@ -516,7 +516,7 @@ interpreted via an interpreter on the host (runner) machine.
 
 We design many solutions to solve several kinds of issues related to the bridge between the static and the dynamic
 world. We present our hybrid solution that is able to make our C++ templated library (static) available from Python
-(dynamic). We discuss several ways of achieving this feat, their \pros and their \cons. Also, we introduce a new
+(dynamic). We discuss several ways of achieving this feat, their pros. and their cons. Also, we introduce a new
 abstraction layer, the value-set, which is a standard way to manipulate an underlying image value usable when
 implementing image processing algorithms. This new abstraction layer enables the user to inject code from Python-side
 into already-complied C++ routines. However, layering one abstraction layer after another, or even calling Python code
@@ -559,7 +559,7 @@ type than injecting it from Python for code taking long time to execute. Being a
 prototyping and increase the speed at which the user can write his code. However, the benchmark shows that this is not a
 viable solution once the prototype needs to scale to a production environment.
 
-\paragraph{Continuation: JIT-based solutions, \pros and \cons}
+\paragraph{Continuation: JIT-based solutions, pros. and cons.}
 
 Our hybrid solution certainly has advantages, but the huge disadvantage is the slowness of injecting our own types from
 the Python side. There exists another solution that this thesis did not have the opportunity to study in-depth. This
@@ -573,7 +573,7 @@ paying the compilation time once to have this code executed faster several times
 to our problematic, it would mean that the user must be able to compile native machine code from the templated generic
 C++ code by injected the requested type when it is used. Such an operation shift heavily the burden on the user, and it
 is well-known that compiling C++ code is notably \emph{complicated} and \emph{slow}. In addition, the library needs to
-be able to auto-generate Python binding once the C++ code is compiled, and to handle \emph{NumPy.array} types in the
+be able to auto-generate Python binding once the C++ code is compiled, and to handle \emph{NumPy.ndarray} types in the
 interface. There are several solutions to reach this point.
 
 \begin{figure}[htbp]
@@ -659,7 +659,7 @@ community which is mainly working with Python. The last work concentrates its ef
 a static (compile-time, templated C++) --- dynamic (runtime, Python notebook) bridge to bring those notions (concepts
 and views) to the practitioner, efficiently. This last work explores this dilemma and offers to address it with one
 hybrid solution whose design is explained in-depth. This hybrid solution rely on a type-erased type which offers
-compatibility with a \emph{NumPy.array}~\parencite{harris.2020.numpy}. It is then able to cast itself inside an \(n
+compatibility with a \emph{NumPy.ndarray}~\parencite{harris.2020.numpy}. It is then able to cast itself inside an \(n
 \times n\) dispatcher (dimension and underlying type) into an optimized concrete templated C++ type. This solution also
 explain how to write very simply the glue code enabling already-existing algorithms (in C++) to be exposed in Python
 thanks to a dispatch mechanic heavily inspired from the C++ standard (\texttt{std::visit}, \texttt{std::variant}). The

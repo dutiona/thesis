@@ -156,7 +156,7 @@ void dilate(const InputImage& input_ima, OutputImage& output_ima)
 
 \noindent Here we are falling into the same pitfall as for the \emph{gamma correction} example: there are a lot of
 unjustified hypotheses. We suppose that we have a 2D image (l.7--8), that we can write in the \texttt{output\_image}
-(l.10, 13). We also require that the input image does not handle borders, (\cf loop index arithmetic l.7--8, 11--12).
+(l.10, 13). We also require that the input image does not handle borders, (c.f. loop index arithmetic l.7--8, 11--12).
 Additionally, the \emph{structuring element} is restricted to a \(5 \times 5\) window (l.11--12) whereas we may need to
 dilate via, for instance, a \(11 \times 15\) window, or a sphere. Finally, the algorithm does not exploit any potential
 properties such as the \emph{decomposability} (l.11--12) to improve its efficiency. Those hypotheses are, once again,
@@ -554,7 +554,7 @@ Python code of such algorithm is naively be given in~\cref{code:erode.dilate}.
   \subfloat[Erosion]{
     \includegraphics[width=1.7in]{../figures/erosion_code}
   }%
-  \caption{Dilate \vs Erode algorithms.}
+  \caption{Dilate vs. Erode algorithms.}
   \label{code:erode.dilate}
 \end{figure}
 
@@ -581,7 +581,7 @@ possible implementation details.
   \subfloat[Erosion (delegated)]{
     \includegraphics[width=1.64in]{../figures/local_op_erosion_code}
   }%
-  \caption{New Dilate \vs Erode algorithms.}
+  \caption{New Dilate vs. Erode algorithms.}
   \label{code:erode.dilate.factorized}
 \end{figure}
 
@@ -993,7 +993,7 @@ While being able to iterate over ranges of pixels or values is good, we are stil
 access an element directly from the image. In order to solve this predicament, first we need to define the concept of
 \emph{Index} in~\cref{table:concept.index.expressions} which we will use afterwards. This is a very simple concept that
 encapsulate an integral value. This value can be negative as we want to be able to do negative indexing in case our
-image has an extension, \cf~\cref{subsec:advanced}. The first advanced tool is represented as an \emph{IndexableImage}.
+image has an extension, c.f.~\cref{subsec:advanced}. The first advanced tool is represented as an \emph{IndexableImage}.
 An element can be accessed simply by providing its index number. This concept is defined
 in~\cref{table:concept.image.definitions.2}. This introduces a simple behavioral pattern described
 in~\cref{table:concept.image.expressions.2}. With this concept, we are able to write code as followed:
@@ -1004,7 +1004,7 @@ in~\cref{table:concept.image.expressions.2}. With this concept, we are able to w
   ima[k] = 255; // Mutate the element at the index
 \end{minted}
 Being able to traverse an image through indexes is especially useful for algorithms that are aware of the number of
-elements in the image. We chose to be flexible with our indexing method (\ie allowing signed indexes) not to fall into
+elements in the image. We chose to be flexible with our indexing method (i.e. allowing signed indexes) not to fall into
 the same pitfall as the C++ core language~\parencite{stroustrup.2019.signed-unsigned-mess}. Indeed, requiring that the
 type \texttt{std::size\_t} is unsigned lead to loads of issues, the first one being a conversion issue when writing a
 simple for-loop. Solving these issues lead to the appearance of new member function \texttt{.ssize()} (for signed size)
@@ -1109,7 +1109,7 @@ properties are:
         element. There is an equivalence in behavior when the convolution is recursively run for each smaller
         structuring element one after another, in a precise order, in a multi-pass way.
   \item incremental: ability to tell the points that are added to or removed from the range when the structuring element
-        is shifted by a basic displacement (\eg for a \emph{2D point}, the basic displacement is \((0,1)\)). Usually
+        is shifted by a basic displacement (e.g. for a \emph{2D point}, the basic displacement is \((0,1)\)). Usually
         used to compute attributes over a sliding structuring element in linear time.
 \end{itemize}
 
@@ -1204,7 +1204,7 @@ This chapter then proceed to describe the notion how algorithm canvas which is t
 image processing algorithms. Indeed, there are three main algorithm families: the pixel-wise algorithms (binary
 threshold), the local algorithms (dilation) and the global algorithms (Chamfer distance transform). We focus primarily
 on local algorithms and how they can all be written through the same canvas of code. Indeed, for instance, the only
-difference between a dilation and an erosion is the operator (max \vs min). We then discuss ways to exploit these canvas
+difference between a dilation and an erosion is the operator (max vs. min). We then discuss ways to exploit these canvas
 to possibly solve heterogeneous computing issues.
 
 Finally, this chapter introduces our first main contribution: a complete taxonomy related to the image processing area.

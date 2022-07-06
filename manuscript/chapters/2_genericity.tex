@@ -139,7 +139,7 @@ is an attribute of data which tells the compiler or interpreter how the programm
 programming language support basic data types (also called primitive types) such as integer numbers, floating point
 numbers, boolean and characters (ASCII, Unicode, etc.). This data attribute defines the operations that can be performed
 on the data, the meaning of the data and the size of the data in memory (the data can then be stored on the heap, stack,
-etc.). A data type provides a set of values from which an expression (\ie variable, function, etc.) may take those
+etc.). A data type provides a set of values from which an expression (i.e. variable, function, etc.) may take those
 values. Among programming language, we can distinguish those who are dynamically types and those that are statically
 typed. Statically typed languages are those whose variables are declared holding a specific type. This variable cannot
 hold data from another type in the scope it is declared. Statically typed programming languages are Ada, C, C++, Java,
@@ -364,7 +364,7 @@ image processing, will be seen more in-depth in~\cref{chap:image.algorithms.taxo
   \subfloat[]{
     \includegraphics[width=1.64in]{../figures/parapoly_code}
   }
-  \caption{Dynamic, object-oriented polymorphism (a) \vs static, parametric polymorphism (b).}
+  \caption{Dynamic, object-oriented polymorphism (a) vs. static, parametric polymorphism (b).}
   \label{code:gen.inclupoly}
 \end{figure}
 
@@ -378,14 +378,14 @@ Pylena~\parencite{carlinet.2018.pylena}. Most of them have been written in compl
 the user standpoint and thus are often difficult and complex to handle. It is also harder to debug because errors in
 highly templated code shows up very deep in compiler error trace.
 
-The table comparing all the \pros and \cons from the aforementioned approaches is presented
+The table comparing all the pros. and cons. from the aforementioned approaches is presented
 in~\cref{table:gen.approaches}. We can see in this table that Generic Programming in C++20 check all the boxes that we
 are interested in.
 
 \begin{table}[htbp]
   \centering
   \begin{threeparttable}
-    \caption{Genericity approaches: \pros~\& \cons}
+    \caption{Genericity approaches: .pros~\&~cons.}
     \begin{tabular}[width=0.8\linewidth]{l|ccccc}
       Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
       \hline
@@ -574,7 +574,7 @@ actual instantiation of the parameter (here \texttt{T}) is done at runtime. Inde
 descriptor, even a parametrized type parameter. At runtime, a concrete type is used to instantiate the cluster. To
 achieve this, the placeholder type descriptor is replaced by the one of the actual concrete type at this moment. The
 instantiation can then be considered dynamic which differs from the C++ compilation model where the template
-instantiation is considered static (\ie done at compile-time). The \pros and \cons of this approach are discussed
+instantiation is considered static (i.e. done at compile-time). The pros. and cons. of this approach are discussed
 in~\parencite{atkinson.1978.cluimpl} which essentially are the resulting binary code size due to combinatorial explosion
 combined with optimized code generation versus small, flexible and slower binary.
 
@@ -1340,7 +1340,7 @@ The main point to understand here is that our main interest is set on C++, a com
 time and very fast execution time. In C++ there are template metaprogramming to achieve genericity, but \emph{templates
   do not generate any binary code}. Why? Because when the compiler meet a templated type or a templated routine, it does
 not know which type it will be instantiated with when it is used. Therefore, it can not calculate stuff like type size,
-alignment, can not select which assembly instruction to select to do an addition or a division (fixed \vs floating
+alignment, can not select which assembly instruction to select to do an addition or a division (fixed vs. floating
 point arithmetic). This is why the compiler does not generate any binary code when it first meets templates. The code is
 generated only it is used with a concrete and known type. This is a huge problem. Now, if a library implementer wants to
 distribute his generic library, he must distribute source code and have  the user compile it. For a language like C++,

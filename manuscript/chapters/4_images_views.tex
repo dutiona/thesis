@@ -525,8 +525,8 @@ There are six properties one want to keep track when working with views: \emph{f
 \emph{accessible}, \emph{indexable}, \emph{bidirectional} and \emph{raw}. Those properties echo to the concepts seen
 in~\cref{sec:library.concepts}. An image is \emph{forward} when it can be traversed in a forward way. It is
 \emph{writable} when the values are mutable. It is \emph{accessible} whenever it allows to access the value associated
-to a point (\ie it allows to write the expression \(v = ima(p)\)). It is \emph{indexable} whenever its values can be
-accessed through an index localizer (\ie it allows to write the expression \(v = ima[idx]\)). Usually, accessing
+to a point (i.e. it allows to write the expression \(v = ima(p)\)). It is \emph{indexable} whenever its values can be
+accessed through an index localizer (i.e. it allows to write the expression \(v = ima[idx]\)). Usually, accessing
 through an index is faster than accessing by a point. It is \emph{bidirectional} when it can be traversed in both a
 forward and a backward way. Finally, an image is \emph{raw} when its data buffer can is contiguous and can directly be
 accessed with information about strides. The~\cref{table:views.properties} presents all the views and how they preserve
@@ -887,7 +887,7 @@ in~\cref{fig:inner.outer.range}.
   \centering
   \subcaptionbox{}{\includegraphics[width=.48\linewidth]{../figures/linear_rng}}
   \subcaptionbox{}{\includegraphics[width=.48\linewidth]{../figures/segmented_rng}}
-  \caption{Range-v3's ranges (a) \vs multidimensional ranges (b).}
+  \caption{Range-v3's ranges (a) vs. multidimensional ranges (b).}
   \label{fig:inner.outer.range}
 \end{figure}
 
@@ -1042,7 +1042,7 @@ can then be managed as if they were still simple blocks. In~\cref{fig:view.pipel
 operators \emph{Image}~\(\rightarrow\)~\emph{Image} (the grayscale conversion, the sub-quantization and the dilation).
 As shown in~\cref{fig:view.comp}, algorithm composition would consider these 3 simple operators as a single complex
 operator \emph{Image}~\(\rightarrow\)~\emph{Image} that could then be used in another even more complex processing
-pipeline. Just like algorithms, image views are composable, \eg a view of the view of an image is still an image.
+pipeline. Just like algorithms, image views are composable, e.g. a view of the view of an image is still an image.
 In~\cref{fig:view.comp}, we compose the input image with a grayscale transform view and a sub-quantization view that
 then feeds the dilation algorithm.
 
@@ -1093,7 +1093,7 @@ auto MyComplexImage = subquantize16to8b(togray(A));
 allows fundamental image types to be mixed with algorithms. In~\cref{fig:view.highorder}, the creation of views does not
 involve any computation in itself but rather delays the computation until the expression \texttt{v(p)} is invoked.
 Because views can be composed, the evaluation can be delayed quite far. Image adaptors are \emph{template
-expressions}~\parencite{veldhuizen.1995.expression,veldhuizen.2000.blitz} as they record the \emph{expression} used to
+  expressions}~\parencite{veldhuizen.1995.expression,veldhuizen.2000.blitz} as they record the \emph{expression} used to
 generate the image as a template parameter. A view actually represents an expression tree (\cref{fig:new.alphablend}).
 
 \paragraph{Views for performance.} With a classical design, each operation of the pipeline is implemented on ``its

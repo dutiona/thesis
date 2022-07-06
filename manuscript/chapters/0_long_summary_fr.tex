@@ -314,7 +314,7 @@ algorithmes de traitement d'images. En effet, il existe trois grandes familles d
 fonctionnant pixel par pixel (par exemple, binarisation), les algorithmes locaux (par exemple, dilatation) et les
 algorithmes globaux (par exemple, transformée de distance de Chamfer). Nous nous concentrons principalement sur les
 algorithmes locaux et comment ils peuvent tous être écrits à travers le même canevas de code. En effet, par exemple, la
-seule différence entre une dilatation et une érosion est l'opérateur (max \vs min). Nous discutons ensuite des
+seule différence entre une dilatation et une érosion est l'opérateur (max vs. min). Nous discutons ensuite des
 possibilités offertes par l'exploitation de ces canevas pour possiblement résoudre des problèmes informatiques
 hétérogènes.
 
@@ -633,7 +633,7 @@ générique en injectant le type demandé, en tant que paramètre template, lors
 déplace une forte charge sur l'utilisateur, la compilation (habituellement gérée par le mainteneur), et il est bien
 connu que compiler du code C++ est notoirement \emph{compliqué} et \emph{lent}. De plus, la bibliothèque doit être
 capable de générer automatiquement l'interface la liant au Python une fois le code C++ compilé et de gérer nativement
-les types \emph{NumPy.array} dans l'interface. Il existe plusieurs solutions pour parvenir à cet objectif.
+les types \emph{NumPy.ndarray} dans l'interface. Il existe plusieurs solutions pour parvenir à cet objectif.
 
 \begin{figure}[htbp]
   \centering
@@ -732,7 +732,7 @@ compilation) --- dynamique (notebook Jupyter Python, moment de l'exécution) pou
 (concepts et vues) au traiteur d'image. Cette dernière contribution explore également ce dilemme et propose de l'aborder
 avec une solution hybride dont le design et les motivations sont expliqués en profondeur. Cette solution hybride
 s'appuie sur la technique de l'effacement de type qui offre une compatibilité avec
-\emph{NumPy.array}~\parencite{harris.2020.numpy}. Ce type (effacé) est alors capable de se convertir au sein d'un
+\emph{NumPy.ndarray}~\parencite{harris.2020.numpy}. Ce type (effacé) est alors capable de se convertir au sein d'un
 dispatcher de cardinalité \(n \times n\) (dimension et type sous-jacent) dans un type C++ template concret et optimisé.
 Cette solution explique aussi comment écrire très simplement le code << glue >> permettant d'exposer en Python des
 algorithmes déjà existants (en C++) grâce à une mécanique de dispatch fortement inspirée du standard C++
