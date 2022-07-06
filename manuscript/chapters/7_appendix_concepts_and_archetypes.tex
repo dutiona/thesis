@@ -7,7 +7,9 @@
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Value} are presented in~\cref{table:concept.value.expressions}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -108,7 +110,9 @@ static_assert(mln::concepts::OrderedValue<OrderedValue>,
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Point} are presented in~\cref{table:concept.point.expressions}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -177,7 +181,10 @@ static_assert(mln::concepts::Point<Point>, "Point archetype does not model the P
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Pixel} are presented in~\cref{table:concept.pixel.definitions}
+and~\cref{table:concept.pixel.expressions}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -211,7 +218,7 @@ static_assert(mln::concepts::Point<Point>, "Point archetype does not model the P
   \label{table:concept.pixel.definitions}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{ll}
       \cline{1-2}
@@ -340,7 +347,10 @@ static_assert(mln::concepts::OutputPixel<OutputPixel>,
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Ranges} are presented in~\cref{table:concept.ranges.definitions}
+and~\cref{table:concept.ranges.expressions}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -373,7 +383,7 @@ static_assert(mln::concepts::OutputPixel<OutputPixel>,
   \label{table:concept.ranges.definitions}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{ll}
       \cline{1-2}
@@ -471,11 +481,11 @@ template <class R>
 concept reversible_mdrange = MDBidirectionalRange<R> || std::ranges::bidirectional_range<R>;
 \end{minted}
 
-\paragraph{Archetype code}
+%\paragraph{Archetype code}
 
-\begin{minted}{c++}
-  // TODO
-\end{minted}
+%\begin{minted}{c++}
+%  // TODO
+%\end{minted}
 
 
 \clearpage
@@ -484,7 +494,10 @@ concept reversible_mdrange = MDBidirectionalRange<R> || std::ranges::bidirection
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Domain} are presented in~\cref{table:concept.domain.definitions}
+and~\cref{table:concept.domain.expressions}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -503,7 +516,7 @@ concept reversible_mdrange = MDBidirectionalRange<R> || std::ranges::bidirection
 \end{table}
 
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{ll}
       \cline{1-2}
@@ -620,7 +633,10 @@ static_assert(mln::concepts::ShapedDomain<ShapedDomain>,
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Image} are presented in~\cref{table:concept.image.definitions.1}
+and~\cref{table:concept.image.expressions.1}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -652,7 +668,7 @@ static_assert(mln::concepts::ShapedDomain<ShapedDomain>,
   \end{scriptsize}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -863,7 +879,9 @@ using WritableImage = details::AsImage<details::OutputImage>;
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Index} are presented in~\cref{table:concept.index.expressions}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -915,7 +933,10 @@ static_assert(mln::concepts::Index<Index>, "Index archetype does not model the I
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Indexable image} are presented in~\cref{table:concept.image.definitions.2}
+and~\cref{table:concept.image.expressions.2}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -940,7 +961,7 @@ static_assert(mln::concepts::Index<Index>, "Index archetype does not model the I
   \end{scriptsize}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{lll}
       \cline{1-2}
@@ -1045,7 +1066,10 @@ using WritableIndexableImage      = details::AsImage<details::OutputIndexableIma
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Accessible image} are presented in~\cref{table:concept.image.definitions.3}
+and~\cref{table:concept.image.expressions.3}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -1062,7 +1086,7 @@ using WritableIndexableImage      = details::AsImage<details::OutputIndexableIma
   \end{scriptsize}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{lll}
       \cline{1-2}
@@ -1178,7 +1202,10 @@ using WritableAccessibleImage     =
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Indexable and accessible image} are presented
+in~\cref{table:concept.image.definitions.4} and~\cref{table:concept.image.expressions.4}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -1194,7 +1221,7 @@ using WritableAccessibleImage     =
   \end{scriptsize}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -1288,7 +1315,10 @@ using WritableIndexableAndAccessibleImage = details::AsImage<details::OutputInde
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Bidirectional image} are presented in~\cref{table:concept.image.definitions.5}
+and~\cref{table:concept.image.definitions.5}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -1305,7 +1335,7 @@ using WritableIndexableAndAccessibleImage = details::AsImage<details::OutputInde
   \end{scriptsize}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{lll}
       \cline{1-2}
@@ -1423,7 +1453,10 @@ using OutputBidirectionalImage = details::AsImage<details::OutputBidirectionalIm
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Raw image} are presented in~\cref{table:concept.image.definitions.6}
+and~\cref{table:concept.image.definitions.6}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -1440,7 +1473,7 @@ using OutputBidirectionalImage = details::AsImage<details::OutputBidirectionalIm
   \end{scriptsize}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -1541,7 +1574,10 @@ using OutputRawImage     = details::AsImage<details::OutputRawImage>;
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Structuring element} are presented in~\cref{table:concept.se.definitions}
+and~\cref{table:concept.se.expressions}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -1572,7 +1608,7 @@ using OutputRawImage     = details::AsImage<details::OutputRawImage>;
   \end{scriptsize}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{lll}
       \cline{1-3}
@@ -1801,7 +1837,10 @@ using IncrementalStructuringElement = details::AsSE<details::IncrementalStructur
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Neighborhood} are presented in~\cref{table:concept.nbh.definitions}
+and~\cref{table:concept.nbh.expressions}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -1817,7 +1856,7 @@ using IncrementalStructuringElement = details::AsSE<details::IncrementalStructur
   \end{scriptsize}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{lll}
       \cline{1-3}
@@ -1903,8 +1942,11 @@ concept Neighborhood =
 
 \paragraph{Concept table}
 
+The details of the concept \emph{Extensions} are presented in~\cref{table:concept.extensions.definitions}
+and~\cref{table:concept.extensions.expressions}.
 
-\begin{table}[H]
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -1945,7 +1987,7 @@ concept Neighborhood =
   \label{table:concept.extensions.definitions}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{ll}
       \cline{1-2}
@@ -2083,11 +2125,11 @@ concept ExtendWithExtension =
   };
 \end{minted}
 
-\paragraph{Archetype code}
+%\paragraph{Archetype code}
 
-\begin{minted}{c++}
-  // TODO
-\end{minted}
+%\begin{minted}{c++}
+%  // TODO
+%\end{minted}
 
 
 \clearpage
@@ -2096,7 +2138,10 @@ concept ExtendWithExtension =
 
 \paragraph{Concept table}
 
-\begin{table}[H]
+The details of the concept \emph{Extended image} are presented in~\cref{table:concept.image.definitions.7}
+and~\cref{table:concept.image.expressions.7}.
+
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -2123,7 +2168,7 @@ concept ExtendWithExtension =
   \end{scriptsize}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
   \begin{scriptsize}
     \begin{tabular}{llll}
       \cline{1-4}
@@ -2192,7 +2237,10 @@ using WithExtensionImage = details::AsImage<details::WithExtensionImage>;
 
 \paragraph{Concept table}
 
-\begin{figure}[!htbp]
+
+The details of the concept \emph{Output image} are presented in~\cref{table:concept.image.expressions.8}.
+
+\begin{figure}[htbp]
   \begin{scriptsize}
     \begin{equation}
       \begin{aligned}
