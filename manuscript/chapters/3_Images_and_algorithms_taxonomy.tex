@@ -44,7 +44,7 @@ void gamma_correction(Image& ima, double gamma)
 \noindent This algorithm here performs the transformation correctly, but it also makes a lot of hypotheses. Firstly, we
 suppose that we can write in the image via the \texttt{=} operator (l.9--11): it may not be true if the image is sourced
 from a generator function. Secondly, we suppose that we have a 2D image via the double loop (l.6--7). Finally, we
-suppose we are operating on 8bits range (0--255) RGB via \texttt{'.r'}, \texttt{'.g'}, \texttt{'.b'} (l.9--11). Those
+suppose we are operating on 8-bits range (0--255) RGB via \texttt{'.r'}, \texttt{'.g'}, \texttt{'.b'} (l.9--11). Those
 hypotheses are unjustified. Intrinsically, all we want to say is \blockquote{\emph{For each value of \texttt{ima}, apply
     a gamma correction on it}}. Let us proceed to make this algorithm the most generic possible by lifting those unjustified
 constraints one by one.
@@ -52,7 +52,7 @@ constraints one by one.
 
 
 \paragraph{Lifting RGB constraint:}
-First, we get rid of the 8bits color range (0--255) RGB format requirement. The loops become:
+First, we get rid of the 8-bits color range (0--255) RGB format requirement. The loops become:
 
 \begin{minted}{C++}
   using value_t = typename Image::value_type;
@@ -421,12 +421,21 @@ called algorithm \emph{specialization}~\parencite{jarvi.2006.specialization-arti
 dilation algorithm, if the structuring element (typically the disc) is decomposable then we can branch on an algorithm
 taking advantage of this opportunity: decompose the dilation disc into small vectors and apply each one of them on the
 image through multiple passes. The speed-up comparing to a single pass with a large dilation disc is really significant
-(illustrated in~\cref{fig:gen.bench.square.disc}). The code in~\cref{fig:dilation.specialization.alg.diagram} illustrate
-how an algorithm can be written to take advantage of the structuring element's decomposability property. The algorithm
-will first decompose the structuring element into smaller 1D periodic lines. It will then recursively call itself with
-those lines to do the multi-pass and thanks to known optimizations on periodic
-lines~\parencite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram outlining the different
-specialization of the dilation algorithm used is show alongside in~\cref{fig:dilation.specialization.alg.diagram}.
+(illustrated in~\cref{fig:gen.bench.disc.decomp.vs.nodecomp}). The code
+in~\cref{fig:dilation.specialization.alg.diagram} illustrate how an algorithm can be written to take advantage of the
+structuring element's decomposability property. The algorithm will first decompose the structuring element into smaller
+1D periodic lines. It will then recursively call itself with those lines to do the multi-pass and thanks to known
+optimizations on periodic lines~\parencite{vanherk.1992.localminmax}, it will be much faster. The dispatch diagram
+outlining the different specialization of the dilation algorithm used is show alongside
+in~\cref{fig:dilation.specialization.alg.diagram}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=3.8in]{../figures/DilationPln_SEDisc_Benchmarks__Time_vs_SE_size}
+  \caption{Benchmark: dilation of a 2D image (\(1000 \times 1000\)) with a 2D disc (decomposable vs. non decomposable).}
+  \label{fig:gen.bench.disc.decomp.vs.nodecomp}
+\end{figure}
+
 
 \begin{figure}[htbp]
   \begin{minipage}[l]{0.48\linewidth}
@@ -853,7 +862,7 @@ into three distinct one in~\cref{table:concept.value.expressions}. There are the
 \emph{ComparableValue} and the \emph{OrderedValue} which are useful when it comes to comparison or ordering algorithms.
 The need behind those three concepts derives from the algorithms who need an ordering relation in order to function
 properly. Most of mathematical morphology requires it. For instance, the ordering relation for a gray-scale image is
-trivial whereas it is a field of research for colored (rgb-8bits) images.
+trivial whereas it is a field of research for colored (rgb 8-bits) images.
 
 The second fundamental brick is the concept of \emph{Point}, detailed in~\cref{table:concept.point.expressions} which is
 a bit less open than the concept \emph{Value} as it must be totally ordered. Indeed, when accessing a value stored in an
