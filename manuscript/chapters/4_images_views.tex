@@ -810,13 +810,13 @@ execute. However, we are not exactly in that case as our library is generic. Tha
 user and our user compiles it when prototyping their program. This is an issue every library developer faces:
 distributing heavily templated source code as a library can be a deal-breaker. In the industry, it was even to the point
 that people refused to use boost in their code line. The boost maintainers had to modularize their library, so that user
-is able to cherry-pick the parts he needs without pulling half of the library which was a disaster for the compile time
+is able to cherry-pick the parts he needs without pulling half of the library which was a disaster for the compile-time
 of a project.
 
 The ranges for C++20's standard library and its views face the same issue. It was not rare for someone to need 90sec to
 compile the calendar toy example of the library which just contains code that displays a given month in the classic
 printed format (day number-of-month correctly displayed in column corresponding to the day of week label). This massive
-compile time is due to early compiler implementation needing massive RAM usage for template type and having to swap when
+compile-time is due to early compiler implementation needing massive RAM usage for template type and having to swap when
 the computer running the compilation was out of RAM. Now compilers have optimized the whole process, but the combination
 behind the types can still be an issue. Introducing complex view code in a program that is compiled often may not be a
 good idea. However, a program that is rarely compiled but is run a great number of time may take advantages of all the

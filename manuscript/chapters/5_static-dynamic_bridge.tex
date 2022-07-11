@@ -59,8 +59,9 @@ SDK natively, e.g. pip for Python). However, the most notable disadvantage is th
 fact that the source code is not compiled into optimized assembly code ready to be executed by the computer. Instead,
 the interpreter must do all the work in one go and very often this is slow (at least the first pass). Nowadays,
 interpreters differentiate two use cases. One is opening the console interpreter from the command line and typing
-commands to get the immediate interpreted results. This use-case usually does not provide heavy optimization because the
-user is likely prototyping his script and thus does not need it in the first place. The second use case is when the
+commands to get the immediate interpreted results. This is called the read-eval-print-loop
+(REPL)~\parencite{vanbinsbergen.2020.repl}. This use-case usually does not provide heavy optimization because the user
+is likely prototyping his script and thus does not need it in the first place. The second use case is when the
 interpreter parses files and/or libraries as a whole. In this use-case, it is likely that the file will not change, but
 they will be used a lot. It is then relevant to pay a pass to generate intermediate bytecode that can be interpreted
 faster for the future passes onward. As an example, the Python programming language has several implementations:
@@ -250,7 +251,7 @@ From the point of view of a practitioner, the code on the call-site (python side
   from skimage import data
   import numpy as np
   import Pylena as pln # our Python binding
-  img = data.astronaut() # 2D-rgb8 image -> Numpy.array(ndim=3, dtype='uint8')
+  img = data.astronaut() # 2D-rgb8 image -> NumPy.ndarray(ndim=3, dtype='uint8')
   # pln.<any_algorithm>(img)
 \end{minted}
 
@@ -258,24 +259,24 @@ The C++ code contains lots of glue code necessary to expose the module to Python
 with Pybin11~\parencite{jakob.2017.pybind11} which provides a modern API and is actively being maintained and improved.
 The glue code exposing the Python module from C++ is given in~\cref{appendix:static-dynamic-bridge.pylena}. In order to
 have a seamless interaction between Python's \texttt{NumPy.ndarray} and C++, we need to define a proper strategy to
-convert the Python type into the C++ type without copying all data around. Pybind offers us two possibilities to achieve
-this. The first one is to use the buffer protocol to pass around numpy's buffer information to C++ in way so that C++
+convert the Python type into the C++ type without copying all data around. Pybind11 offers us two possibilities to achieve
+this. The first one is to use the buffer protocol to pass around NumPy's buffer information to C++ in way so that C++
 can properly bind the data into a proper C++ class. The second one is to use a custom type-caster to implicitly convert
 the Python type into a C++ type each time it is needed.
 
 With the first method, one would need to write the following code on Python's side:
 \begin{minted}{python}
-  np_img = data.astronaut() # 2D-rgb8 image -> Numpy.array(ndim=3, dtype='uint8')
+  np_img = data.astronaut() # 2D-rgb8 image -> NumPy.ndarray(ndim=3, dtype='uint8')
   pln_img = pln.ndimage(np_img) # conversion into the C++ image type
-  pln_img_ret = pln.<any_algorithm>(pln_img) # call to algorithm
-  np_img_ret = pln_img.to_numpy(); # convert back into numpy.ndarray
-  # use np.<...>(np_img_ret) # use resulting image with numpy
+  pln_img_ret = pln.<any_algorithm>(pln_img) # call to any C++ algorithm
+  np_img_ret = pln_img.to_numpy(); # convert back into NumPy.ndarray
+  # use np.<...>(np_img_ret) # use resulting image with NumPy
 \end{minted}
 Whereas the second method would require the user to write the following code on Python's side:
 \begin{minted}{python}
-  np_img = data.astronaut() # 2D-rgb8 image -> Numpy.ndarray(ndim=3, dtype='uint8')
+  np_img = data.astronaut() # 2D-rgb8 image -> NumPy.ndarray(ndim=3, dtype='uint8')
   np_img_ret = pln.<any_algorithm>(np_img) # implicit conversion with custom type-caster on C++ side
-  # use np.<...>(np_img_ret) # use resulting image with numpy
+  # use np.<...>(np_img_ret) # use resulting image with NumPy
 \end{minted}
 Removing this conversion step is the major reason we have chosen the second method: the custom type-caster. The C++ code
 for this part is given in~\cref{appendix:static-dynamic-bridge.ndimage}.

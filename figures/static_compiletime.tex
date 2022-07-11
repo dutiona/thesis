@@ -9,28 +9,28 @@
 \begin{document}
 \tikzstyle{node} = [shape=circle, minimum size=0.5cm, circular drop shadow, text=black, very thick, draw=orange!55, top color=white,bottom color=orange!20, text width=0.3cm, align=center]
 \begin{tikzpicture}[ every label/.style={ font={\LARGE}}]
-  %\clip (-1,0) circle (1);
-  %\fill[green] (-5,-2.5) rectangle (3.5,2);
+	%\clip (-1,0) circle (1);
+	%\fill[green] (-5,-2.5) rectangle (3.5,2);
 
 	\filldraw[fill=blue!10, draw=black!30!blue, thick, rounded corners] (0,-2) rectangle (11,2.5);
-	\node[black!80!blue] (1) at (1.5,-1.5) {At compile time};
-	
+	\node[black!80!blue] (1) at (1.5,-1.5) {At compile-time};
+
 	\filldraw[fill=green!20, draw=black!60!green, thick] (0.5,1) rectangle (3.5,2);
 	\node[align=left] (2) at (2,1.5) {.cpp, .hpp\\ C++ source code};
 	\draw[-triangle 60] (3.5,1.5) -- (4.5,1.5);
-	
+
 	\filldraw[fill=purple!20, draw=black!60!purple, thick] (4.5,1) rectangle (6.5,2);
 	\node[] (3) at (5.5,1.5) {Compiler};
 	\draw[-triangle 60] (6.5,1.5) -- (7.5,1.5);
-	
+
 	\filldraw[fill=gray!60, draw=black!60!gray, thick] (7.5,1) rectangle (10.5,2);
 	\node[align=left] (4) at (9,1.5) {.obj, .o\\ Machine code};
 	\draw[-triangle 60] (9,1) -- (9,0);
-	
+
 	\filldraw[fill=purple!20, draw=black!60!purple, thick] (7.5,0) rectangle (10.5,-1);
 	\node[] (5) at (9,-0.5) {Linker};
 	\draw[-triangle 60] (7.5,-0.5) -- (6.5,-0.5);
-	
+
 	\filldraw[fill=gray!60, draw=black!60!gray, thick] (6.5,0) rectangle (1.5,-1);
 	\node[align=left] (6) at (4,-0.5) {.a, .so, .lib, .dll, .exe \\Library or executable binary};
 	\draw[-triangle 60] (9,1) -- (9,0);

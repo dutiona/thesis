@@ -609,7 +609,7 @@ end exchange;
 \end{minted}
 
 In Ada, generic packages and routines (procedures, functions) must be instantiated explicitly: the compiler cannot infer
-the parametrized type at compile time from the context of use (whereas a C++ compiler can). Thus, the following three
+the parametrized type at compile-time from the context of use (whereas a C++ compiler can). Thus, the following three
 lines must be written explicitly for the compiler to generate the binary code of the above function:
 \begin{minted}{ada}
   function int_exchange is new exchange (Integer);
@@ -780,7 +780,7 @@ overloads it tried, to list all the template substitution it tried and finally t
 the very reason of the unpopularity of this technique because it leads to situation where the compiler can output
 \emph{several Mos} of error message for one single file. Error messages become incomprehensible very fast and programs
 are hard to debug because everything happens at compile-time. But still, it was the only technique we had to perform any
-kind of detections on types at compile time to require some any given constraints on them.
+kind of detections on types at compile-time to require some any given constraints on them.
 
 For instance, here is some real-world example extracted from generic image processing code that allows implementing the
 \emph{fill} algorithm in two very different ways depending on how behaves the input image type. First we need to write
@@ -1164,15 +1164,15 @@ behave properly into an algorithm, without needing to rewrite that algorithm.
 
 The main advantage brought by using modern C++ as the implementation language for an image processing library is to be
 able to leverage what is called metaprogramming. Metaprogramming is a way to tell the compiler to make decision about
-which type, which code to generate. These decisions, made at compile time, and then absent from the resulting binary:
+which type, which code to generate. These decisions, made at compile-time, and then absent from the resulting binary:
 only the fast and optimized code remains. This brings a new distinction between the static world (what is decided at
-compile time) and the dynamic world (what is decided at runtime). The more is decided at compile time the smaller,
+compile-time) and the dynamic world (what is decided at runtime). The more is decided at compile-time the smaller,
 faster the binary will because there is work less to do at runtime. By following this principle, one can think of some
 properties that are known ahead of time (at compilation) when writing one's image processing algorithm. For instance,
 when considering the example of the dilation whose code is shown in~\cref{code:gen.dilate}, we can see that the property
 about the decomposability of the structuring element is linked to the type. This means that when the structuring
-element's type is of a disc, or a square, the compiler will know at compile time that it is decomposable. To tell the
-compiler to take advantage of a property at compile time, C++ has a language construct named \emph{if-constexpr}. The
+element's type is of a disc, or a square, the compiler will know at compile-time that it is decomposable. To tell the
+compiler to take advantage of a property at compile-time, C++ has a language construct named \emph{if-constexpr}. The
 resulting code then becomes:
 
 \begin{minted}[highlightlines=3]{c++}
@@ -1403,7 +1403,7 @@ alongside the C++ programming language itself, to finally reach a point in 2020 
 concepts in C++.
 
 Finally, this chapter presents the inherent limitation of C++ templates, which is that they remain in the static world
-(compile time). Genericity (in the sense C++ template) does not exist in the final shipped binary to the user. The final
+(compile-time). Genericity (in the sense C++ template) does not exist in the final shipped binary to the user. The final
 user, in its dynamic world (runtime) cannot use a generic (C++ code) tool. We discuss the different approaches possible
 to bridge this gap between the static (compile-time) and dynamic (runtime) world.
 
