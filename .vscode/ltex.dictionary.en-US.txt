@@ -31,3 +31,4 @@ copyability
 composability
 transpile
 binarize
+decorrelates
