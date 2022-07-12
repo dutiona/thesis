@@ -1,30 +1,31 @@
 \chapter{Image views}
 \label{chap:image_views}
 
-\lettrine[lines=2]{T}{his} concept of views is not new~\parencite{novak.1997.reuse} and naturally appeared in Image
-processing with Milena under the name of \emph{morpher}~\parencite{levillain.2009.ismm,geraud.2012.hdr}. It was always
-useful to be able to project an image through a prism that could extract specific information about it without the need
-to copy the underlying data buffer. In modern days, the language C++ (20) also introduces this mechanism with the
-ranges~\parencite{niebler.2014.ranges} facilities for \emph{non-owning collections}. It is named \emph{views} and allows
-the user to access the content of a container (vector, map) through a prism. In Pylene, we decided to align the naming
-system after what was decided in C++20 in order not to confuse the user. This way, a \texttt{transform} view in image
-processing will do the same thing on an image that the transform view in the standard range library does on a container.
-\emph{Views} feature the following properties: \emph{cheap to copy}, \emph{non-owner} (does not \emph{own} any data
-buffer), \emph{lazy evaluation} (accessing the value of a pixel may require computations) and \emph{composition}. When
-chained, the compiler builds a \emph{tree of expressions} (or \emph{expression template} as used in many scientific
-computing libraries such as Eigen~\parencite{guennebaud.2010.eigen}), thus it knows at compile-time the type of the
-composition and ensures a 0-overhead at evaluation. We will first motivate the usage of \emph{views} in image
-processing. We will then present the main views used in image processing. Then will be discussed how image views differ
-from the one used in C++'s ranges and their main properties (especially how they keep/discard the properties from the
-parent image) through a concrete example: the management of border and extension policies. Finally, we will discuss the
-limitations of such a design.
+\lettrine[lines=2]{T}{he} notion of views is not new~\parencite{novak.1997.reuse} and naturally appeared in Image
+Processing with Milena under the name of \emph{morpher}~\parencite{levillain.2009.ismm,geraud.2012.hdr}. It was always
+useful to be able to project an image through a prism so that we could extract specific information without needing to
+copy the underlying data buffer. In modern days, the language C++ (20) also introduces this mechanism with the
+ranges~\parencite{niebler.2014.ranges} facilities for \emph{non-owning collections}. It is named \emph{views} and
+enables the user to access the content of a container (vector, map) through a prism. In Pylene, we decided to align the
+naming system after what was decided in C++20 in order not to confuse the user. This way, a \texttt{transform} view in
+image processing will do the same thing on an image as what the transform view in the standard range library does on a
+container. \emph{Views} feature the following properties: \emph{cheap to copy}, \emph{non-owner} (does not \emph{own}
+any data buffer), \emph{lazy evaluation} (accessing the value of a pixel may require computations) and
+\emph{composition}. When several views are chained together, the compiler builds a \emph{tree of expressions} (or
+\emph{expression template} as used in many scientific computing libraries such as
+Eigen~\parencite{guennebaud.2010.eigen}). Therefor, it knows at compile-time the type of the composition and ensures, in
+theory, a 0-overhead at evaluation (at runtime). We will first motivate the usage of \emph{views} in image processing.
+We will then present the main views used in image processing. Then will be discussed how image views differ from the one
+used in C++'s ranges and their main properties (especially how they keep/discard the properties from the parent image)
+through a concrete example: the management of border and extension policies. Finally, we will discuss the limitations of
+such a design.
 
 \section{The Genesis of a new abstraction layers: Views}
 \label{sec:genesis_of_views}
 
 In image processing an algorithm is naively written by taking one or several inputs' data (among which is the input
 image(s)),  by performing work on this input data and then by returning the resulting data (or an error). Let us take
-for example the alpha-blending example which can be implemented in naive C++ code as followed:
+for example the alpha-blending example which can be naively implemented in C++ code as followed:
 \begin{minted}{C++}
   void blend_inplace(const uint8_t* ima1, uint8_t* ima2, float alpha,
   int width, int height, int stride1, int stride2) {
@@ -39,18 +40,18 @@ for example the alpha-blending example which can be implemented in naive C++ cod
 
 This code has several flaws. It makes strong hypothesis about the input images: its data buffer contiguity and its shape
 (2D). Let us suppose that our user now wants to restrict the algorithm to a specific region inside the image. The
-maintainer would have then to provide an overload of the algorithm with one additional input argument corresponding to the
-region of interest. Let us suppose that the user now wants to support manipulate 3D images. The maintainer would now
-have to provide two additional overloads with an additional stride argument (one for the base algorithm, one for the
-region of interest-restricted algorithm). Let us now suppose that the user only wants to manipulate the red color
-channel. Now the maintainer must support and additional overloads of the algorithm for each channel and/or color type.
-The complexity increases manyfold for each kind of customization points the maintainer wants to offer to the user. Of
-course, it is possible to prevent code duplication through clever usage of computer engineering techniques (code
-factorization etc.) but the complexity would still leak through the API anyway. That is way the other solution is to
-make the user able to perform those restriction upstream from the algorithm transparently so that the downstream
-algorithm is easy to write, understand and maintain. In order to achieve this, we need to raise the abstraction level
-around images by one layer so that we can work at the image level. The alpha-blending algorithm would then be written as
-shown in~\cref{fig:view.alphablend}.
+maintainer would then have to provide an overload of the algorithm with one additional input argument corresponding to
+the region of interest. Let us suppose that the user now wants to support manipulating 3D images. The maintainer would
+now have to provide two additional overloads with an additional stride argument (one for the base algorithm, one for the
+region-of-interest restricted algorithm). Let us now suppose that the user only wants to manipulate the red color
+channel. Now the maintainer would have to support additional overloads of the algorithm for each channel and/or color
+type. The complexity increases manyfold for each kind of customization points the maintainer wants to offer to the user.
+Of course, it is possible to prevent code duplication through clever usage of computer engineering techniques (code
+factorization etc.) but the complexity would still leak through the API anyway. That is why the other solution is to
+make the user able to perform those restriction upstream from the algorithm transparently, so that the downstream
+algorithm remains easy to write, understand and maintain. In order to achieve this, we need to raise the reasoning
+abstraction level by one layer to the level of images, so that we can work at the image level directly instead of
+working at pixel level. The alpha-blending algorithm would then be written as shown in~\cref{fig:view.alphablend}.
 
 \begin{figure}[htbp]
   \centering
@@ -60,8 +61,8 @@ shown in~\cref{fig:view.alphablend}.
   \label{fig:view.alphablend}
 \end{figure}
 
-This way to express an algorithm is achieved by introducing \emph{views} to image processing. An image now is a view and
-can be restricted/projected/manipulated however the user need before feeding it to an algorithm. Even the whole alpha
+This way to express an algorithm is achieved by introducing \emph{views} to image processing. An image is now a view and
+can be restricted/projected/manipulated however the user needs before feeding it to an algorithm. Even the whole alpha
 blending algorithm can be rewritten in terms of views entirely, as shown in~\cref{fig:new.alphablend}.
 
 \begin{figure}[htbp]
@@ -80,14 +81,14 @@ blending algorithm can be rewritten in terms of views entirely, as shown in~\cre
     \bigskip
     \bigskip
   \end{minipage}
-  \caption{Alpha-blending, generic implementation with \emph{views}, expression tree.}
+  \caption{Alpha-blending, generic implementation with \emph{views} and its expression tree.}
   \label{fig:new.alphablend}
 \end{figure}
 
-Being able to perform powerful manipulation on images before feeding them to algorithms completely nullify the initial
-problem of having several overloads of the same algorithm while maintaining and documenting all the associated optional
-arguments. Indeed, in order to perform the alpha-blending transformation on the base input image, all that the user must
-do is:
+Being able to perform powerful manipulations on images before feeding them to an algorithm completely nullifies the
+initial problem of having several overloads of the same algorithm while maintaining and documenting all the associated
+optional arguments. Indeed, in order to perform the alpha-blending transformation on the base input image, all that the
+user must do is:
 \begin{minted}{C++}
   auto ima1, ima2 = /* ... */;
   auto ima_blended = alphablend(ima1, ima2, 0.2);
@@ -96,11 +97,11 @@ If the user wants to restrict the region to be blended, or the color channel to 
 following modification:
 \begin{minted}{C++}
   auto roi = /* ... */;
-  auto blended_roi = alphablend(view::clip(ima1, roi), view::clip(ima2, roi), 0.2);
-  auto blended_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
+  auto blended_roi = alphablend(view::clip(ima1, roi), view::clip(ima2, roi), 0.2); // ROI
+  auto blended_red = alphablend(view::red(ima1), view::red(ima2), 0.2);             // Red channel
 \end{minted}
 The restriction is done upstream from the algorithm and propagated downstream without increasing the code complexity.
-This way, view greatly increase what the user can do by writing less code.
+This way, \emph{views} greatly increase what the user can do by writing less code.
 
 \section{Views for image processing}
 \label{sec:viws_for_ip}
