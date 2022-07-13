@@ -3,7 +3,7 @@
 
 \lettrine[lines=2]{I}{n} the programming world, there are three main families of programming
 language~\parencite{prechelt.2000.comparison}. There are (i) \emph{compiled} programming languages, such as C, C++, Rust
-or Go, (ii) \emph{interpreted} programming languages, such as Python, PHP, Lisp or Javascript, and (iii) hybrid
+or Go, (ii) \emph{interpreted} programming languages, such as Python, PHP or Javascript, and (iii) hybrid
 programming languages, such as Java or C\#. The latter have a fast compilation pass that compiles the source code into
 an intermediate bytecode. Then, this bytecode is interpreted via an interpreter on the host (runner) machine.
 
@@ -12,30 +12,35 @@ an intermediate bytecode. Then, this bytecode is interpreted via an interpreter 
 
 Many studies have been carried out to compare the advantages and disadvantages of each family of programming
 languages~\parencite{boehm.1984.economics}. In this thesis we focus mainly on comparing the burden that are shouldered
-by the maintainers and the end-user.
+by the maintainer and the end-user.
 
 
 \subsection{Languages types}
 \label{subsec:languages.types}
 
-\FIXME{Rework arguments for compiled and interpreted languages.}
+\paragraph{Compiled languages} From the maintainer point of view, there is a lot of burden to shoulder. First he must
+decide whether he wants to distribute a package of source code or a package of binaries to the end-user. In the case of
+source code, he requires the end-user to have a compiler infrastructure, supported and validated by the library, on the
+end-user's machine, as well as all the source dependencies resolved via specific package managers such as cargo, conan
+or vcpkg, or via the system-wide package manager.
 
-\paragraph{Compiled languages} From the maintainer point of view, there is a lot of burden to shoulder. First is the
-binary generation which can be problematic in itself. Indeed, to generate a binary, there are many steps, as illustrated
+If the maintainer distribute binaries, he must generate one version for each couple of Operating System, Processor
+architecture he supports. Indeed, to generate a binary, there are many steps, as illustrated
 in~\cref{fig:static.dynamic.compiled}. First the compiler does a pass to generate machine code for each translation
 unit. There can be as many machine code as there are architecture and/or operating system supported. The maintainer may
 want to support different operating systems (last two Windows and OSX version, a handful Linux or Unix distributions,
-maybe mobile phone portages). Each of these OSes requires its own bundle. Additionally, the hardware may change, or the
+maybe mobile phone portages). Each of these OSes requires their own bundle. Additionally, the hardware may change, or the
 maintainer may want to take advantage of some specific hardware when available (like vectorized SIMD instructions such
 as SSE4, XOP, FMA4, AVX-512, etc.): this also requires the maintainer to multiply the number of binaries he compiles and
 distributes. Finally, the linker resolves the dependencies of the program and assembles the final binary. At that time
 the maintainer has to sort out how he wants to bundle the dependencies of his program. Should he statically link them
 alongside the binary and distribute them, at the risk of having the size of his binary exploding? Or should he state
-that the user has to install the dependencies on his system (via a package manager for instance) so that the binary can
-run? The burden of handling the dependencies is then shifted to the end-user when installing the program. Usually the
-package manager, such as \emph{apt}, \emph{yum} or \emph{pacman}, solves this transparently for the end-user and the
-programs works ``out-of-the-box'' once installed, as illustrated in~\cref{fig:static.dynamic.compiled}. The downside is
-that the maintainer has to publish many bundles of his package where he wants it to be available.
+that the user has to install the dependencies on his system (via the system-wide package manager for instance) so that
+the binary can run? The burden of handling the dependencies is then shifted to the end-user when installing the program.
+Usually the package manager, such as \emph{apt}, \emph{yum} or \emph{pacman}, solves this transparently for the end-user
+and the programs works ``out-of-the-box'' once installed, as illustrated in~\cref{fig:static.dynamic.compiled}. The
+downside is that the maintainer has to publish many bundles of his package for each couple of Operating System,
+Processor architecture he supports.
 
 \begin{figure}[htbp]
   \centering
@@ -51,24 +56,24 @@ that the maintainer has to publish many bundles of his package where he wants it
 \end{figure}
 
 \paragraph{Interpreted languages} From the maintainer point of view, this is the ideal standpoint. It is easier to
-distribute software via an interpreted language because only the source code and, a dependency tree and the assets are
-released in the bundle. All the burden about resolving the dependencies and installing the framework to run the script
-is shouldered by the end-user that is using the program. Indeed, as shown in~\cref{fig:static.dynamic.dynamic.pipeline},
-everything happens at runtime. The main advantage of this approach is to build a very rich ecosystem as distributing,
-maintaining and using programs is very easy once integrated in a package manager (often delivered alongside the language
-SDK natively, e.g. pip for Python). However, the most notable disadvantage is the performance which is explained by the
-fact that the source code is not compiled into optimized assembly code ready to be executed by the computer. Instead,
-the interpreter must do all the work in one go and very often this is slow (at least the first pass). Nowadays,
-interpreters differentiate two use cases. One is opening the console interpreter from the command line and typing
-commands to get the immediate interpreted results. This is called the read-eval-print-loop
-(REPL)~\parencite{vanbinsbergen.2020.repl}. This use-case usually does not provide heavy optimization because the user
-is likely prototyping his script and thus does not need it in the first place. The second use case is when the
-interpreter parses files and/or libraries as a whole. In this use-case, it is likely that the file will not change, but
-they will be used a lot. It is then relevant to pay a pass to generate intermediate bytecode that can be interpreted
-faster for the future passes onward. As an example, the Python programming language has several implementations:
-CPython, PyPy, Jython or IronPython. CPython generate intermediate bytecode in \texttt{*.pyc} files while Jython
-IronPython and PyPy embed a Just-In-Time (JIT) compiler to generate resp. JVM bytecode, CLR (.NET) bytecode, a large
-variety of bytecode format.
+distribute software via an interpreted language because only the source code, a dependency tree and the assets are
+released in the distributed package. All the burden about resolving the dependencies and installing the framework to run
+the script is shouldered by the end-user that is using the program. Indeed, as shown
+in~\cref{fig:static.dynamic.dynamic.pipeline}, everything happens at runtime. The main advantage of this approach is to
+build a very rich ecosystem as distributing, maintaining and using programs is very easy once integrated in a package
+manager (often delivered alongside the language SDK natively, e.g. pip for Python). However, the most notable
+disadvantage is the performance which is explained by the fact that the source code is not compiled into optimized
+assembly code ready to be executed by the computer. Instead, the interpreter must do all the work in one go and, very
+often, this is slow (at least the first pass). Nowadays, interpreters differentiate two use cases. One is opening the
+console interpreter from the command line and typing commands to get the immediate interpreted results. This is called
+the read-eval-print-loop (REPL)~\parencite{vanbinsbergen.2020.repl}. This use-case usually does not provide heavy
+optimization because the user is likely prototyping his script and thus does not need it in the first place. The second
+use case is when the interpreter parses files and/or libraries as a whole. In this use-case, it is likely that the files
+do not change, while they are used a lot. It is then relevant for the interpreter to pay a pass to generate intermediate
+bytecode that can be interpreted faster for the future passes onward. As an example, the Python programming language has
+several implementations: CPython, PyPy, Jython or IronPython. CPython generate intermediate bytecode in \texttt{*.pyc}
+files while Jython, IronPython and PyPy embed a Just-In-Time (JIT) compiler to generate resp. JVM bytecode, CLR (.NET)
+bytecode, or a large variety of bytecode format.
 
 \begin{figure}[htbp]
   \centering
@@ -80,15 +85,15 @@ variety of bytecode format.
 \paragraph{Hybrid languages} The burden is shared evenly between the maintainer and the user, while remaining minimal.
 Indeed, languages such as Java or C\# are in this category. Those programming languages need a compiling pass which is
 designed to be fast, so that the feedback loop while prototyping remains fast. The result of the compilation is bytecode
-which is then executed on a hosting Virtual Machine (VM) that the user must install on his computer. The main
-advantages of this solution are the portability and the small distributed binary size. Indeed, in theory, any machine
-supporting the VM may also support the program. Also, as the VM execute the bytecode and resolve system dependencies,
-the distributed binary does not need to embed any system dependency. Finally, the user has the advantage of running a
+which is then executed on a hosting Virtual Machine (VM) that the user must install on his computer. The main advantages
+of this solution are the portability and the small distributed binary size. Indeed, in theory, any machine supporting
+the VM may also support the program. Also, as the VM executes the bytecode and resolves system dependencies, the
+distributed binary does not need to embed any system dependency. Finally, the user has the advantage of running a
 compiled program which provides fast user experience. The goal of hybrid languages is to bring together the advantages
 of both compiled and interpreted languages; no dependency management for the user, one small binary to distribute for
 the maintainer, good execution performance, and fast feedback loop when prototyping (fast incremental compilation),
 while minimizing the downsides; usually a garbage collector is working inside the VM to handle memory allocations and
-de-allocations. In this regard, both Java and C\# manage to achieve this feat quite elegantly. In theory, VM can further
+de-allocations. In this regard, both Java and C\# have achieved this feat quite elegantly. In theory, VM can further
 increase performance by implementing hot code detection which would compile the bytecode into native optimized machine
 code. This area is still a field of research to this day (cf. Java
 HotSpot~\parencite{xie.improving,kotzmann.2008.hotspot,halli.2016.java-hpc}).
@@ -99,7 +104,7 @@ approaches in order to be able to execute a binary from source code.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.9\linewidth]{../figures/comp_inter_hybrid_summary}
+  \includegraphics[width=.99\linewidth]{../figures/comp_inter_hybrid_summary}
   \caption{Languages types: summary diagram}
   \label{fig:static.dynamic.summary.pipeline}
 \end{figure}
@@ -109,16 +114,15 @@ approaches in order to be able to execute a binary from source code.
 Compiled programming languages usually have poor support of introspection facilities. At best, static reflection is
 available at compile-time, but dynamic reflection is not an option. The structure of the program does not change at
 runtime. Some flexibility exists when delving into the area of hot-swapping dynamic libraries at runtime, however these
-techniques drags alongside security-related issues that injecting possible foreign machine code into one's program may
-generate.
-Interpreted programming languages usually have very developed introspection facilities. Dynamic reflection at
-runtime is possible and some language, such as Common Lisp, even go further by allowing the developer to mutate the
-program Abstract Syntax Tree (AST) at runtime (macro). This allows very powerful integrations such as defining one's own
-DSL as if it was part of the core language itself.
-Hybrid programming languages usually offers very good static and dynamic introspection facility at both compile-time and
-runtime, even if it means that runtime facilities will hurt performance. Also, those languages are usually designed to
-be able to hot-swap code at runtime. It is then possible to have the application running, recompile part of the binary
-of the application, replace the old running binary by the new compiled one, all the while the application is running.
+techniques drag alongside security-related issues that injecting possible foreign machine code into one's program may
+generate. The only exception is Common Lisp. Indeed, there exists fully compliant implementation of this standard which
+are compiler-only, and runtime introspection is part of the Common Lisp standard. Interpreted programming languages
+usually have very developed introspection facilities. Dynamic reflection at runtime is possible and some language, such
+as Python (notably via the functions \texttt{dir} and \texttt{getattr}). Hybrid programming languages usually offers
+very good static and dynamic introspection facility at both compile-time and runtime, even if it means that runtime
+facilities will hurt performance. Also, those languages are usually designed to be able to hot-swap code at runtime. It
+is then possible to have the application running, recompile part of the binary of the application, replace the old
+running binary by the new compiled one, all at runtime.
 
 The next important step is to classify what information is known at \emph{compile-time} (machine/bytecode code
 generation): we call it \emph{static} information; and what information is known at \emph{runtime} (program execution):
@@ -130,7 +134,7 @@ static information:
   \item Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.).
 \end{itemize}
 This means that, while the information may not be known at compile-time, we are able to write (or, more accurately,
-generate) code dedicated for those common types that we know constitutes a large portion of the use cases. Furthermore,
+generate) code dedicated for those common types that we know constitute a large portion of the use cases. Furthermore,
 we can write optimized portion of code dedicated to handle some particular known types that the program will use when it
 encounters them at runtime.
 On the other hand, the following information are always dynamic:
@@ -145,8 +149,8 @@ fatality and the library can still recover and work efficiently at runtime.
 On another note, we notice that the architecture hosting the program is an information which is both static and dynamic.
 This translates the complexity of this information. Indeed, the maintainer needs to guess the array of architectures he
 wants to support and generate binaries for them (static). Also, the program needs to detect at runtime (dynamically) on
-which hardware he is running to possibly take advantage of it to increase performance. This is an area of research on
-its own called heterogeneous computing~\parencite{wong.2019.heterogeneous,brown.2019.heterogeneous}.
+which hardware he is running to possibly leverage it to increase performance. This is an area of research on its own
+called heterogeneous computing~\parencite{wong.2019.heterogeneous,brown.2019.heterogeneous}.
 
 
 \subsection{Introducing our hybrid solution}
@@ -166,7 +170,7 @@ in~\cref{fig:static.vs.dynamic.genericity}.
   }
   \hfil
   \subfloat[Python dynamic genericity]{
-    \includegraphics[width=2in]{../figures/python_dynamic_code}
+    \includegraphics[width=1.5in]{../figures/python_dynamic_code}
   }
   \caption{C++ Static (a) vs. Python Dynamic (b) genericity.}
   \label{fig:static.vs.dynamic.genericity}
@@ -174,52 +178,53 @@ in~\cref{fig:static.vs.dynamic.genericity}.
 
 On the one hand, static polymorphism induces no indirection in the generated code as the type is known at compile-time.
 It is then possible to generate optimized code for specific types. It is not possible to add a new supported type at
-runtime as the code has already been compiled. On the other hand, the dynamic polymorphism implies that there will be
-some indirection when executing the code. Indeed, the code first needs to dispatch onto the appropriate function
-handling the input types to perform the operation properly. Nevertheless, it is possible to add new supported type at
-runtime without recompiling the library binary.
+runtime as the code has already been compiled. On the other hand, dynamic polymorphism implies that there will be some
+indirection when executing the code. Indeed, the code first needs to dispatch onto the appropriate function handling the
+input types to perform the operation properly. Nevertheless, it is possible to add new supported type at runtime without
+recompiling the library binary.
 
 From the maintainer point of view, however, only distributing the C++ templated source code is a showstopper to the
 usability of his library by a Python user, because he does not hand over binaries. Indeed, one caveat of using C++
 template programming is that the C++ compiler cannot generate a binary until it knows which type (of image, of value)
 will be used. But the maintainer does not know this information and the user (on Python's end) does not want to
-recompile the generic library code each time he has another set of types to exercise against. From here, there are still
+recompile the generic library code each time he has another set of types to try out. From here, there are still
 multiple ways to achieve our goal.
 
 The first option is to embed and distribute, alongside the library, a JIT compiler whose job would be to generate the
 binaries and bindings just as they are used. This solution brings speed (excluding the first run that includes the
-compilation time) and unrestrained genericity. However, it bounds both user and maintainer to the specificities of a
-compiler vendor and loose platform portability.
+compilation time) and unrestrained genericity. However, it binds both user and maintainer to the specificities of a
+compiler vendor, which means loosing in platform portability.
 
 Another option is to type-erase (dynamic polymorphism) our types to enable the use of various concrete types through a
 single generic interface. This would translate into a class hierarchy whose concrete classes are the leaves (thus, whose
-value-types and dimensions are known). This induces a non-negligible performance overhead but enables us to keep the
+value types and dimensions are known). This induces a non-negligible performance overhead but enables us to keep the
 genericity and portability at the cost of maintaining the class hierarchy.
 
 Type generalization can also be considered. It is possible to cast everything into a super-type that is suitable for the
 vast majority of cases. For instance, we could say that we have a super-type \texttt{image4D<double>} into which we can
 easily promote subtypes such as \texttt{image2D<int>} or \texttt{image3D<float>}. Of course, we would lose the generic
-aspect and induce non-negligible speed cost. Although portability is kept.
+aspect and induce non-negligible speed cost whereas we would keep the platform portability.
 
-And finally there is the dynamic dispatch. It consists in embedding dynamic information at runtime about types, and
-dispatch (think of switch/case) to the correct facility which can handle those types. The obvious caveat is the cost of
-maintenance induced by the genericity as we would have a number of possible dispatches that grow in a multiplicative way
-with the number of handled types. Which is not very generic. On the other hand there is almost no speed loss and the
-portability is guaranteed. Theoretical models exist that could bring solutions to lower the number of dispatcher to
-write, such as multi-method~\parencite{pirkelbauer.2010.multimethods}. Unfortunately they are currently not part of C++.
+And finally there is the dynamic dispatch. It consists in embedding dynamic information about types at runtime, and in
+dispatching (think of switch/case) to the correct facility that can handle those types. The obvious caveat is the cost
+of maintenance induced by the genericity as we would have numerous possible dispatches that would grow in a
+multiplicative way with the number of handled types, which is not very generic. On the other hand there is almost no
+speed loss and the portability is guaranteed. Theoretical models exist that could bring solutions to lower the number of
+dispatcher to write, such as multi-method~\parencite{pirkelbauer.2010.multimethods}. Unfortunately they are currently
+not part of the C++ programming language.
 
 
 \section{Designing the hybrid solution}
 
-In Pylene we have chosen a hybrid solution between type-erasure and dynamic dispatch. The aim is to have a set of known
-types for which we have no speed cost as well as continuing to handle other types to remain generic.
+In Pylene we have chosen a hybrid solution midway between type-erasure and dynamic dispatch. The goal is to have a set
+of known types for which we have no speed cost, as well as supporting other types to ensure we remain generic.
 In~\parencite{gossec.2019.pybind} we provide a facility to expose our generic code to Python. As seen in the previous
 chapter, it is not possible to bind C++ source code to Python. We need to have a compiled binary implementing Python
-binding (we chose Pybind11~\parencite{jakob.2017.pybind11}) in order to be able to call C++ code from Python. In order
-to achieve the binding without sacrificing the genericity and the performance, we have designed a solution in two steps.
-We do not want to provide an abstract interface that will resolve the calls to access data on the call-site via virtual
-call because it would be very slow when the C++ code is executed. This would defeat the purpose of having to rely on C++
-in a first place. However, it is possible to convert an abstract class into an instantiated concrete generic class whose
+binding (we chose Pybind11~\parencite{jakob.2017.pybind11}) to be able to call C++ code from Python. In order to achieve
+the binding without sacrificing the genericity and the performance, we have designed a solution in two steps. We do not
+want to provide an abstract interface that will resolve the calls to access data on the call-site via virtual call
+because it would be very slow when the C++ code is executed. This would defeat the purpose of having to rely on C++ in a
+first place. However, it is possible to convert an abstract class into an instantiated concrete generic class whose
 template parameter are known. This requires, however, to enumerate all the possible cases. With modern C++, it has
 become possible to design \(n \times n\) dispatch without gigantic switch-case clauses.
 
@@ -235,10 +240,10 @@ in~\cref{fig:type-erased.buffer}. The first pitfall here is due to a limitation 
 Python. Indeed, when using, for instance \emph{Scikit-Image}, it is not possible to differentiate a 2D multichannel
 image from a 3D grayscale image because the image is always broken down to its most simple value and a 2D multichannel
 image is turned into a 3-dimensional \texttt{NumpPy.array} containing a single 8-bits channel, the last dimension
-contains only 3 elements at max but can theoretically contain more. As a matter of fact, there is no limitation embedded
-in the used abstraction which does not prevent that. To prevent this confusion, the C++ wrapper code may choose between
-two strategies; first is to consider all 3D/1-channel image as 2D/RGB images by default, second is to let the user give
-the information. For the sake of simplicity, we have chosen the first strategy.
+contains only 3 elements at max but can theoretically contain more as the type system does not prevent that. To prevent
+this confusion, the C++ wrapper code may choose between two strategies; first is to consider all 3D/1-channel image as
+2D/RGB images by default, second is to let the user give the information. For the sake of simplicity, we have chosen the
+first strategy.
 
 \begin{figure}[htbp]
   \centering
@@ -257,13 +262,13 @@ From the point of view of a practitioner, the code on the call-site (python side
 \end{minted}
 
 The C++ code contains lots of glue code necessary to expose the module to Python. In this thesis we have chosen to work
-with Pybin11~\parencite{jakob.2017.pybind11} which provides a modern API and is actively being maintained and improved.
+with Pybin11~\parencite{jakob.2017.pybind11} which provides a modern API and is being actively maintained and improved.
 The glue code exposing the Python module from C++ is given in~\cref{appendix:static-dynamic-bridge.pylena}. In order to
 have a seamless interaction between Python's \texttt{NumPy.ndarray} and C++, we need to define a proper strategy to
-convert the Python type into the C++ type without copying all data around. Pybind11 offers us two possibilities to achieve
-this. The first one is to use the buffer protocol to pass around NumPy's buffer information to C++ in way so that C++
-can properly bind the data into a proper C++ class. The second one is to use a custom type-caster to implicitly convert
-the Python type into a C++ type each time it is needed.
+convert the Python type into the C++ type without copying all data around. Pybind11 offers us two possibilities to
+achieve this. The first one is to use the buffer protocol to pass around NumPy's buffer information to C++ in a way so
+that C++ can properly interpret the data into a proper C++ class. The second one is to use a custom type-caster to
+implicitly convert the Python type into a C++ type each time it is needed.
 
 With the first method, one would need to write the following code on Python's side:
 \begin{minted}{python}
@@ -273,7 +278,7 @@ With the first method, one would need to write the following code on Python's si
   np_img_ret = pln_img.to_numpy(); # convert back into NumPy.ndarray
   # use np.<...>(np_img_ret) # use resulting image with NumPy
 \end{minted}
-Whereas the second method would require the user to write the following code on Python's side:
+Whereas the second method would require the user to only write the following code on Python's side:
 \begin{minted}{python}
   np_img = data.astronaut() # 2D-rgb8 image -> NumPy.ndarray(ndim=3, dtype='uint8')
   np_img_ret = pln.<any_algorithm>(np_img) # implicit conversion with custom type-caster on C++ side
@@ -291,14 +296,14 @@ generic code. The naive way of doing so would be to include a gigantic switch-ca
 implementation and dispatch to the correct instantiated generic algorithm from there. Aside from being a nightmare to
 maintain, the size of those clauses would grow several folds depending on the cardinality of the generic implementation.
 For instance, for a generic dilation, there are 3 axes of cardinality: the underlying type, the dimension and the
-structuring element shape. In the case where the library support 5 different structuring element shape, 10 underlying
+structuring element shape. In the case where the library support 5 different structuring element shapes, 10 underlying
 types and 6 dimension for the image, the switch-case statement would need to dispatch over 300 clauses. Also, each
-supported algorithm would need to have dispatcher. This solution defeats the purpose of genericity which is to write
-less code in the first place. We needed to design a solution to implement those dispatchers while keeping our code short
-and efficient. The idea we took to solve this problem comes from the design of a C++ feature, the variant, and
-especially the visitor, applied to image processing, as in~\parencite{bourdev.2011.runtimedispatch} for instance. We
-need to have a way to write the implementation of the algorithm once while enumerating all the possible cases. Also, if
-possible, the list of supported types should be written once at one place for maintenance purpose.
+supported algorithm would need to have dispatcher in their code. This solution defeats the purpose of genericity which
+is to write less code in the first place. We need to design a solution to implement those dispatchers while keeping
+our code short and efficient. The idea we took to solve this problem comes from the design of a C++ feature, the
+variant, and especially the visitor, applied to image processing, as in~\parencite{bourdev.2011.runtimedispatch} for
+instance. We need to have a way to write the implementation of the algorithm once while enumerating all the possible
+cases. Also, if possible, the list of supported types should be written once at one place for maintenance purpose.
 
 
 \paragraph{Simple dispatcher}
@@ -372,16 +377,17 @@ auto dispatch_v(std::size_t dim, Args&&... args) {
   }
 }
 \end{minted}
-\FIXME{The operator \texttt{Op} is instantiated with the correct dimension number. Then the \texttt{operator()}
-  (parenthesis) is called while being forwarded the correct arguments.} In our case, it will instantiate the type
-\texttt{binary\_threshold\_op\_t<2>} and then call the function
+The operator \texttt{Op} is instantiated with the correct dimension number. Then the \texttt{operator()} (parenthesis)
+is called while taking as parameters the forwarded arguments passed to the dispatcher. In our case, it will instantiate
+the type \texttt{binary\_threshold\_op\_t<2>} and then call the function
 \mintinline{c++}/binary_threshold_op_t<2>.operator()(input)/, forwarding the input image to the underlying algorithm.
 Indeed, using the dispatcher is as simple as writing \mintinline{c++}/dispatch_v<binary_threshold_op_t>(input.dim(),
 input);/
 
 The main advantage of this approach is that we respect all the requirements. First the logical code is bounded in the
-operator, second, the supported types are all listed in one place, once. Also, while our example is limited to one
-cardinality, any number of dispatcher can be piped to one after another to achieve the cardinality wanted.
+operator, second, the supported types are all listed in one place (the dispatcher), only once. Also, while our example
+is limited to one cardinality, any number of dispatcher can be piped to one after another to achieve the cardinality
+wanted.
 
 
 \paragraph{Double dispatcher}
@@ -413,9 +419,9 @@ struct dilate_operator_t {
 \end{minted}
 This operator needs double dispatch over two cardinalities: the dimension \texttt{Dim} and the value type \texttt{T}. We
 can skip the dispatch of the structuring element's shape as we have made a \texttt{std::variant} of all the supported
-structuring element supported for the sake of simplicity. Dispatching over the supported structuring elements can then
-be offloaded upstream from the call to the double dispatch, just by calling \texttt{std::visit}. We can immediately
-notice that there is an issue with our dilation operator. Indeed, there are two template parameters and our dispatcher
+structuring element for the sake of simplicity. Dispatching over the supported structuring elements can then be
+offloaded upstream from the call of the double dispatch, just by calling \texttt{std::visit}. We can immediately notice
+that there is an issue with our dilation operator. Indeed, there are two template parameters and our dispatcher
 \texttt{dispatch\_v} does only handle one. We solve this issue by writing another intermediate operator dispatcher
 \texttt{dilate\_operator\_intermediate\_t} serving as trampoline operator that will partially instantiate the final
 operator \texttt{dilate\_operator\_t} along the dimension template parameter to feed it to the last dispatcher,
@@ -462,29 +468,33 @@ auto double_dispatch_t(type_id tid, Args&&... args) {
 We have now presented all the techniques and design required to build operators that are agnostic from the supported
 data-types, dimensions and/or additional data such as structuring elements. Indeed, the maintainer has gathered all the
 logic about listing the supported data types and dimension in one place: the custom dispatcher. He just needs to
-maintain those to enable full support for all exposed algorithm, by default. This hybrid solution mixes type-erasure and
-modern C++ facilities to allow maximum performance. Indeed, the dispatch is done before entering algorithms and the
-custom type-caster facility allows us to plug directly into the Python image without having any unnecessary copies. The
-only caveat would be the code bloat incurred by all the explicit instantiation leading to compiling a larger and larger
-binary the more algorithms are being exposed. This can lead to performance issues due to pre-fetching memory
-optimization missed and code locality issues~\parencite{badawy.2001.locality}. Another point not covered right now would
-be a way to support arbitrary data types, possibly injected from Python, into C++. Indeed, our hybrid solution only
-support the types provided by the library and listed in the dispatchers. It will instantiate all the code relative to
-them and support all the combinations, but the user may be tempted to plug a user-defined type from Python as an
-underlying image data-type. To allow this use-case, we introduce a new concept: the \emph{value-set}. The value-set is a
-standard way to manipulate the underlying values. Through type-erasure, we can either manipulate known underlying value
-type with native facilities (near-zero overhead), or fallback to a virtual call that may report an error, or callback
-user-provided Python routine to manipulate unknown user values.
+maintain those facilities to enable full support for all exposed algorithm, by default. This hybrid solution mixes
+type-erasure and modern C++ facilities to allow maximum performance. Indeed, the dispatch is performed before entering
+algorithms and the custom type-caster facility allows plugging C++'s image directly to the Python's image without having
+any unnecessary copies. The only caveat would be the code bloat incurred by all the explicit instantiation leading to
+compiling a larger and larger binary the more algorithms are being exposed. This can lead to performance issues due to
+potential pre-fetching memory optimization missed or code locality issues~\parencite{badawy.2001.locality}. Another
+point not covered right now would be a way to support arbitrary data types, possibly injected from Python, into C++.
+Indeed, our hybrid solution only support the types provided by the library and listed in the dispatchers. It will
+instantiate all the code relative to them and support all the combinations, but the user may be tempted to plug a
+user-defined type from Python as an underlying image data-type. To allow this use-case, we introduce a new concept: the
+\emph{value-set}. The value-set is a standard way to manipulate the underlying values. Through type-erasure, we can
+either manipulate known underlying value type with native facilities (near-zero overhead), or fallback to a virtual call
+that may report an error, or callback user-provided Python routine to manipulate unknown user values.
 
 
 \subsection{Third and final step: type-erasure \& the value-set}
 
-\FIXME{rework motivation of this part: what do we want to write and why.}
-
 As common thread in this section, we will work on the \emph{stretch} algorithm which is naively defined
-in~\cref{fig:stretch.naive.code}.
+in~\cref{fig:stretch.naive.code}. We can represent the pipeline calling this algorithm from Python
+in~\cref{fig:static_dyn.nxndispatcher}. The motivation here is to abstract away the logic related to the underlying type
+inside the algorithm. In our example, it means reworking the lines 4 and 5 so that the value operations max and divide
+does not appear in our algorithm anymore. Instead, they will be delegated to a \emph{value-set}. This would allow,
+theoretically, having all algorithm working for every underlying value type possible (be they static, dynamic, custom,
+injected from Python, etc.).
+
 \begin{figure}[htbp]
-  \begin{minted}{C++}
+  \begin{minted}[linenos,highlightlines={4-5}]{C++}
 template <class T>
 mln::image2d<float> naive_stretch(const mln::image2d<T>& src) {
   mln::image2d<float> res  = mln::transform(src, [](auto val) -> float {
@@ -505,7 +515,7 @@ mln::image2d<float> naive_stretch(const mln::image2d<T>& src) {
   \label{fig:static_dyn.nxndispatcher}
 \end{figure}
 
-We can represent the pipeline calling this algorithm from Python in~\cref{fig:static_dyn.nxndispatcher}.
+
 
 \paragraph{Introducing the value-set}
 
@@ -547,7 +557,7 @@ struct value_set<void> {
 };
 \end{minted}
 The full code of the value-set is given in~\cref{appendix:static-dynamic-bridge.mm.vs}. The template parameter is
-shifted from the class to the member functions. It is also important to note that the member function are not static,
+shifted from the class to the member functions. It is also important to note that the member functions are not static,
 which requires to instantiate the \texttt{value-set} before using it. It may sound like a disadvantage at first glance,
 but it can be turned into an advantage later on. Indeed, this design allows a subclass to hold member variables which
 will be crucial for injecting user-types from Python.
@@ -568,7 +578,7 @@ class ndimage {
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/naive_stretch}
+  \includegraphics[width=.55\linewidth]{../figures/static_dynamic_bridge/naive_stretch}
   \caption{Naive stretch algorithm, pipeline to perform operations on values.}
   \label{fig:static_dyn.naive_stretch}
 \end{figure}
@@ -600,17 +610,17 @@ mln::image2d<float> fast_stretch(const mln::image2d<T>& src) {
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/fast_stretch}
+  \includegraphics[width=.55\linewidth]{../figures/static_dynamic_bridge/fast_stretch}
   \caption{Fast stretch algorithm, pipeline to perform operations on values.}
   \label{fig:static_dyn.fast_stretch}
 \end{figure}
 
-We instantiate the value-set we will need (for \texttt{T} values and \texttt{float} values) on lines 3 and 4. Then the
+We instantiate the value-set needed for \texttt{T} values and for \texttt{float} values on lines 3 and 4. Then the
 maximum value is obtained via the value-set of \texttt{T} on line 6. Then a cast is performed via the value-set to get
 floating point value on lines 7 and 8. Finally, a floating point division is performed on line 9 via the formerly
 instantiates floating point value-set defined on line 4. Indeed, using the value-set instantiated for \texttt{T} would
-have performed a Euclidean division and which would have resulted in a bug. Calling this algorithm from Python is as
-simple as \mintinline{python}/ret = pln.fast_stretch(input)/ once exposed. The pipeline representing the actual
+have performed a Euclidean division, which would have resulted in a bug. Calling this algorithm from Python is as simple
+as writing \mintinline{python}/ret = pln.fast_stretch(input)/ once it is exposed. The pipeline representing the actual
 operations in the algorithm to access values is shown in~\cref{fig:static_dyn.fast_stretch}. The glue code to expose
 this algorithm is given in~\cref{appendix:static-dynamic-bridge.mm.algos}.
 
@@ -620,7 +630,8 @@ Moving one step further, we ultimately want to be able to dynamically inject a v
 achieve this feat, we need to design an abstract value-set as an interface so that a user can subclass it and provide
 his own value set. This abstract value-set needs to work with \texttt{std::any} as input value-type in order to provide
 a generic interface. Here, the genericity is achieved via type-erasure (the input value is type-erased into a
-\texttt{std::any}). The interface would look like (full code is given in~\cref{appendix:static-dynamic-bridge.mm.vs}):
+\texttt{std::any}). The interface looks like the following code (full code is given
+in~\cref{appendix:static-dynamic-bridge.mm.vs}):
 \begin{minted}{C++}
 struct abstract_value_set {
   virtual ~abstract_value_set() {}
@@ -635,7 +646,7 @@ struct abstract_value_set {
 \end{minted}
 The important part here is to notice that all values (returned and passed as argument) are now type-erased behind a
 \texttt{std::any}. From this interface, it is trivial to define the canonical subclasses for trivial types. We do this
-by defining the class template \texttt{concrete\_value\_set} which is able to generate a concrete interface for every
+by defining the class template \texttt{concrete\_value\_set} which is able to generate a concrete interface for any
 given template type. The implementation will look like this:
 \begin{minted}{C++}
 template <typename T>
@@ -659,7 +670,8 @@ struct concrete_value_set : abstract_value_set {
 \end{minted}
 This concrete value-set implements simple dispatch via casting the type-erased \texttt{std::any} into the wanted value
 type to properly perform the operation. Thanks to this implementation, we are able to rewrite our stretch algorithm
-using this value-set to perform its operations. The new algorithm is shown in~\cref{fig:stretch.virtual.dispatch.code}.
+using this value-set to perform the value operations. The new algorithm is shown
+in~\cref{fig:stretch.virtual.dispatch.code}.
 
 \begin{figure}[htbp]
   \begin{minted}[linenos,highlightlines={3-4,6,7-8,9}]{C++}
@@ -682,13 +694,13 @@ using this value-set to perform its operations. The new algorithm is shown in~\c
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/virtual_dispatch_stretch}
+  \includegraphics[width=.9\linewidth]{../figures/static_dynamic_bridge/virtual_dispatch_stretch}
   \caption{Virtual dispatch stretch algorithm, pipeline to perform operations on values.}
   \label{fig:static_dyn.virtual_dispatch_stretch}
 \end{figure}
 
-This algorithm uses two value sets (l.3 and l.4), one to get the maximum value with regard of the original underlying
-value type in the image \texttt{T} (l.6) and to properly cast the values into float values (l.7--8). The other one is
+This algorithm uses two value sets (l.3 and l.4). One to get the maximum value corresponding to the original underlying
+value type in the image \texttt{T} (l.6), and to properly cast the values into float values (l.7--8). The other one is
 used to perform the floating point division (l.9). This algorithm is almost identical to the one given for
 \texttt{fast\_stretch} earlier. Only the lines instantiating the value-set changes (l. 3--4) as well as the line handing
 over the result (l. 9) where we added a downcast from \texttt{std::any}. The pipeline presenting the operations needed
@@ -697,11 +709,11 @@ to access values is presented in~\cref{fig:static_dyn.virtual_dispatch_stretch}.
 
 \paragraph{Going forward: type-erasing the value entirely}
 
-The need may arise where the user wants to handle images where the input value is abstracted away behind a type-erased
-type. This happens when handling image with heterogeneous value-type (different channel number from one value to
-another, optional information embed with the value, etc.). In order to work, this value-type needs to be aware of its
-own value-set  to perform operations. To achieve this, the value must embed the value set (as a pointer for instance)
-directly alongside the value. This embedding would allow writing such code possible:
+The need may arise where the user wants to handle images where the input value is abstracted away behind a dynamic
+type-erased type. This happens when handling image with heterogeneous value-type (different channel number from one
+value to another, optional information embed with the value, etc.). To handle this use-case, this value-type needs to be
+aware of its own value-set to perform the required operations. To achieve this, the value must embed the value set (as a
+pointer for instance) directly alongside the value. This embedding would allow writing such code possible:
 \begin{minted}[highlightlines={10}]{C++}
 class type_erased_value {
   type_erased_value add(const type_erased_value& rhs);
@@ -712,15 +724,16 @@ void my_algo(ndimage<type_erased_value, Dim> img1,
               ndimage<type_erased_value, Dim> img2) {
   ndimage<type_erased_value, Dim> img_out = /* ... */;
   for (auto [v1, v2, out] : zip(img1.values(), img2.values(), img_out.values())) {
-    out = v1.add(v2); // the value knows how to perform the addition
+    out = v1.add(v2); // the value v1 knows how to perform the addition with v2
   }
 }
 \end{minted}
 
-This code enables fallback when all the supported values have been exhausted. For instance, when considering the
-previously defined \texttt{abstract\_value\_set}, when attempting to dispatch over all the supporting native C++ type
-unwrapped from the given \texttt{std::any}, if no type is matched, we can attempt one final unwrap to this type-erased
-value which is aware itself of how to perform the operation. In pseudocode, it breaks down to the following logic:
+This code allows supporting a fallback facility when all the supported values have been exhausted. For instance, when
+considering the previously defined \texttt{abstract\_value\_set}, and attempting to dispatch over all the supporting
+native C++ type unwrapped from the given \texttt{std::any}, if no type is matched, we can attempt one final unwrap to
+this type-erased value which is aware itself of how to perform the value operation. In pseudocode, it breaks down to the
+following logic:
 \begin{minted}[linenos,highlightlines={3,4-5,6,9-10}]{C++}
 std::any value_set<type_erased_value>::add(const std::any& lhs, const std::any& rhs){
   abstract_value_set* vs = lhs.get_embedded_vs();
@@ -736,7 +749,7 @@ std::any value_set<type_erased_value>::add(const std::any& lhs, const std::any& 
 }
 \end{minted}
 First step is to conditionally attempt to cast the type-erased value over the supported native values (lines 3 and 6).
-When the type is supported then we unwrap it and perform the operation before rewrapping it in a \texttt{std::any} and
+When the type is supported then we unwrap it and perform the operation before rewrapping it in a \texttt{std::any}, and
 returning it. If we could not unwrap the value into a supported value-type, we make a last attempt on line 9 into our
 type-erased value-type. If this attempt succeeds, we rely on the fact that this value-type is aware of its own value-set
 and embed it to perform the required operation on line 10. The full code of the implementation for this value-set aware
@@ -788,20 +801,20 @@ mln::image2d<float> stretch_virtual_dispatch_type_erased_value(const mln::image2
 \end{figure}
 
 This version is verbose because we do not yet support \texttt{mln::image2d<type\_erased\_value>} as a proper image type.
-Thus, we need to first convert the value of type \texttt{T} into the value-set aware type-erased value type. This work is
-done on lines 7 to 11. Then on lines 12 to 21 we perform the actual work on the values. This is where the dispatch
-mechanic, whose pipeline is shown in detail in~\cref{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}, will
-happen. Finally, on lines 23 and 24, we unwrap the previously wrapped type-erased value into a float to return for the
-algorithm.
+Thus, we need to first convert the value of type \texttt{T} into the value-set aware type-erased value type. This work
+is done from lines 7 to 11. Then on lines 12 to 21 we perform the actual algorithmic work on the values. This is where
+the dispatch mechanic, whose pipeline is shown in detail
+in~\cref{fig:static_dyn.virtual_dispatch_type_erased_value_stretch}, will happen. Finally, on lines 23 and 24, we unwrap
+the previously wrapped type-erased value into a float to return for the algorithm.
 
 
 \paragraph{Everything comes to a full circle: injecting a value-set from Python}
 
 We have seen how to write an algorithm independently from its underlying types on C++ side thanks to relying on an
 abstraction layer: the value-set. This enables one fundamental feature which is code injection from Python. Indeed,
-every Python value is a \texttt{pybind11::object} (which is in itself a wrapper from the C-type \texttt{PyObject}),
+every Python value is a \texttt{pybind11::object} (which is in itself a wrapper around the C-type \texttt{PyObject}),
 which is the generic way to refer to a non-trivially-convertible Python type we can write a value-set handling this
-value type. The value-set handling Python data-type would then provide the following interface:
+value type. The value-set handling Python data-type provides the following interface:
 
 \begin{minted}[linenos,highlightlines={4,8,10,14-16,19-21,25}]{C++}
 template <>
@@ -877,7 +890,7 @@ tagged with the \texttt{@abstractmethod} attribute. The full code of this data s
 in~\cref{appendix:static-dynamic-bridge.python.vs.BaseValueSet.py}.
 
 Let us assume our user wants to build an image whose value type are his own custom Python data structure. For the sake
-of this example, we will name this specific value type will be named~\texttt{MyStruct}. The Python structure will look
+of this example, we will name this specific value type~\texttt{MyStruct}. The Python structure will look
 like this:
 \begin{minted}{python}
 class MyStruct:
@@ -887,7 +900,7 @@ class MyStruct:
   def setV(self, v: Any):     self.v_ = v
 \end{minted}
 It is just a strong wrapper around a value with setters and getters. If we want to use this data structure as an image
-value-type and downstream it to our C++ library, we need to provide a value-set which is aware of how to handle this
+value-type and downstream in our C++ library, we need to provide a value-set which is aware of how to handle this
 value type properly. The user may want to write such a code:
 \begin{minted}{python}
 img = np.array([MyStruct(1), MyStruct(2), MyStruct(6.5), MyStruct(3.14)] * 10, ndmin=2)
@@ -924,7 +937,7 @@ With this information, we can now write the following Python code:
 img = np.array([MyStruct(1), MyStruct(2), MyStruct(6.5), MyStruct(3.14)] * 10, ndmin=2)
 pln_img = pln.stretch(img, value_set=MyValueSet()) # This works !
 \end{minted}
-And this will work finely.
+And this works fine.
 
 On the C++ side, the maintainer just needs to write another version of the stretch algorithm supporting the Python
 value-set which is shown in~\cref{fig:stretch.injected.python.code}.
@@ -949,7 +962,7 @@ value-set which is shown in~\cref{fig:stretch.injected.python.code}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\linewidth]{../figures/static_dynamic_bridge/python_injected_value_set_stretch}
+  \includegraphics[width=.95\linewidth]{../figures/static_dynamic_bridge/python_injected_value_set_stretch}
   \caption{Stretch algorithm with an injected value-set from Python code, pipeline to perform operations on values.}
   \label{fig:static_dyn.python_injected_value_set_stretch}
 \end{figure}
@@ -957,20 +970,20 @@ value-set which is shown in~\cref{fig:stretch.injected.python.code}.
 The \mintinline{c++}/mln::value_set<pybind11::object>/ is constructed from the passed \texttt{value\_set} argument on
 python side as it is a \texttt{pybind11::object}. The dispatcher then forward it to the algorithm as an additional
 parameter. We then have actual Python call on lines 4, 6 and 7. The line 5 just wrap the image value into a Python
-object so that it can then be forwarded to the Python code downstream, as described in the pipeline shown
-in~\cref{fig:static_dyn.python_injected_value_set_stretch}. The line 7 cast the Python type into an actual C++ type
-(wrapped into our \texttt{std::any} wrapper). Finally, the line 8 unwrap the float for returning it to the algorithm.
+object so that it can then be forwarded to the Python code upstream, as described in the pipeline shown
+in~\cref{fig:static_dyn.python_injected_value_set_stretch}. The line 7 casts the Python type into an actual C++ type
+(wrapped into our \texttt{std::any} wrapper). Finally, the line 8 unwrap the float value to return it to the algorithm.
 
 
 \section{Summary and continuation}
 
 \subsection{Performance \& overhead}
 
-In this chapter, we have designed many solutions to solve several kinds of issues. However, layering one abstraction
-layer after another, or even calling Python code does come with performance cost. This is why we have run a benchmark to
-outline the cost of our solutions. The full code of the benchmark is given
-in~\cref{appendix:static-dynamic-bridge.benchmark}. This benchmark compares the four version of our stretch algorithm.
-The result is shown in~\cref{table:static.dynamic.perfs}.
+In this chapter, we have designed many solutions to solve several kinds of issues related to injecting dynamic code in
+our generic code. However, layering one abstraction layer after another, or even calling Python code does come with
+performance cost. This is why we have run a benchmark to outline the cost of the proposed solutions. The full code of
+the benchmark is given in~\cref{appendix:static-dynamic-bridge.benchmark}. This benchmark compares the four version of
+our stretch algorithm. The result is shown in~\cref{table:static.dynamic.perfs}.
 
 \begin{table}[htbp]
   \footnotesize
@@ -1001,40 +1014,41 @@ The result is shown in~\cref{table:static.dynamic.perfs}.
 \end{table}
 
 This benchmark shows that each time an abstraction layer is added on top of the baseline, the user must expect a
-\(10\times\) slowness factor in his code performance. Also, calling Python code is immensely slower (\(2300\times\) !)
+\(10\times\) slowness factor for his code performance. Also, calling Python code is immensely slower (\(2300\times\) !)
 than the baseline. This renews the interest there is to recompile the templated C++ library with an additional known
-type than injecting it from Python code taking long time to execute. Being able to inject Python code ease prototyping
-and increase the speed at which the user can write his code. However, the benchmark shows that this is not a viable
-solution once the prototype needs to scale to a production environment.
+type rather than injecting it from Python code. Being able to inject dynamic Python code eases prototyping and increase
+the speed at which the user can write his code. However, the benchmark shows that this is not a viable solution once the
+prototype needs to upgrade into to a production-ready program.
 
 
 \subsection{Continuation: JIT-based solutions, pros. and cons.}
 
-Our hybrid solution certainly has advantages, but the huge disadvantage is the slowness of injecting our own types from
-the Python side. There exists another solution that this thesis did not have the opportunity to study in-depth. This
-solution is based on a well-known technology: the Just-In-Time (JIT) compilation which has been previously illustrated
-in~\cref{fig:static.dynamic.dynamic.pipeline} (and which itself is based on the notion of generative
+Our hybrid solution certainly has advantages, however the main disadvantage is the slowness of injecting our own types
+from the Python side. There exists another solution that this thesis did not have the opportunity to study in-depth.
+This solution is based on a well-known technology: the Just-In-Time (JIT) compilation which has been previously
+illustrated in~\cref{fig:static.dynamic.dynamic.pipeline} (and which itself is based on the notion of generative
 programming~\parencite{czarnecki.2000.generative}). Library such as AsmJit~\parencite{kobalicek.2011.asmjit} are able to
-emit machine code directly by making call in C++ code. Indeed, it is a technology already used by interpreted languages
-such as Java or PHP to generate on-the-fly native and optimized machine code for the section of the source code that is
+emit machine code directly by making call in C++ code. JIT is a technology already used by interpreted languages such as
+Java or PHP to generate on-the-fly native and optimized machine code for the section of the source code that is
 considered ``hot'' by the interpreter. A source code is ``hot'' when it is executed a lot: the end-user would gain
 paying the compilation time once to have this code executed faster several times later on. When applying this strategy
 to our problematic, it would mean that the user must be able to compile native machine code from the templated generic
-C++ code by injected the requested type when it is used. Such an operation shift heavily the burden on the user, and it
-is well-known that compiling C++ code is notably \emph{complicated} and \emph{slow}. In addition, the library needs to
-be able to auto-generate Python binding once the C++ code is compiled, and to handle \emph{NumPy.ndarray} types in the
+C++ code by injecting the requested type when it is used. Such an operation shifts a heavy burden on the user, and it is
+well-known that compiling C++ code is notably \emph{complicated} and \emph{slow}. In addition, the library needs to be
+able to auto-generate Python binding once the C++ code is compiled, and to handle \emph{NumPy.ndarray} types in the
 interface. There are several solutions to achieve this process.
 
-The first solution is to basically use system call to the compilers to actually \emph{compile} C++ code once the
-templated types are known and explicitly instantiated in the source code. This solution requires careful code-generation
-design and that the user actually possess a compiler on his computer. Furthermore, the user must resolve all the
-library dependencies, such as \emph{freeimage} for IO etc. This solution was engineered in the VCSN
-library~\parencite{demaille.2013.vcsn}. Indeed, each time the user declared a new automaton in his Jupyter notebook,
+The first solution is to use basic system call to the compilers to actually \emph{compile} C++ code once the templated
+types are known and explicitly instantiated in the source code. This solution requires careful code-generation design
+and that the user actually possess a compiling infrastructure on his computer. Furthermore, the user must resolve all
+the library dependencies, such as \emph{freeimage} for IO etc. This solution is engineered in the VCSN
+library~\parencite{demaille.2013.vcsn}. Indeed, each time the user declares a new automaton in his Jupyter notebook,
 corresponding source code is compiled in the background and then cached. It is a very perilous solution to implement
 when the final execution environment (OS, installed software) is not well-known in advance. Nowadays, the issue may be
-lesser, however, it still requires to maintain both the library and the container solution to use it (Docker).
+lesser thanks to containerization, however, it still requires to maintain both the library and the container solution to
+use it (Docker, Rocket, etc.).
 
-The second solution is to use Cython~\parencite{behnel.2010.cython}. It is a transpiling infrastructure which transform
+The second solution is to use Cython~\parencite{behnel.2010.cython}. It is a transpiling infrastructure which transforms
 a Python source code directly into C-language source code so that it can be compiled by a standard C compiler just by
 linking against the Python/C API. This remove the burden of writing the careful code-generation routine, system-calls to
 the C++ compiler and removes the need to resolve all the dependencies. This infrastructure takes care of everything for
@@ -1049,18 +1063,18 @@ templating engine. AutoWIG, coupled with Cython would permit the user to, for in
 custom Python structure. Then a simple call to AutoWIG will parse the C code and inject it into the C++ library to
 generate the appropriate bindings for the user. As for Cppyy, it is based on LLVM/Cling, a C++ interpreter, and can
 directly interpret C++ code from a Python string. This enables injecting custom types easily, be they in Python code
-(transpiled with Cython) or C++ code (directly interpreted by Cling). Afterwards, the infrastructure generates the
+(transpiled by Cython) or C++ code (directly interpreted by Cling). Afterwards, the infrastructure generates the
 appropriate binding from the templated C++ library for the injected type. Xeus-cling is a ready-to-use Jupyter kernel
-and allow the usage of C++ code directly from within a notebook. This completely bypass the need of a Python binding in
+and allow the usage of C++ code directly from within a notebook. This completely bypass the need of Python bindings in
 the first place and allow the user to use the library from within the notebook as if he was using a Python library.
 Finally, Pythran is an ahead of time compiler for a subset of the Python language, with a focus on scientific computing.
-It takes a Python modle annotated with a few interface descriptions and turns it into a native Python module with the
+It takes a Python module annotated with a few interface descriptions and turns it into a native Python module with the
 same interface, but hopefully faster. Pythran takes advantages of multicore and SIMD instructions to turns its subset of
 the Python language into heavily templated C++ code instantiated for particular optimized types. All those
 infrastructures, however, come with a hefty cost in terms of binary size. Indeed, a C++ compiler is not small and
-embarking it alongside the image processing library can easily impact greatly the final binary. Without the LLVM
-infrastructure the binary may weight around 3MB. With the LLVM infrastructure, the binary weight at the bare minimum
-50MB. Also, these solutions may not be immediately faster. Indeed, when prototyping back and forth with a variety of
-types, the user may not be eager to wait for long compilations times each time he is testing with a new iteration of his
-work. Despite those facts, those solutions offers great avenue of research for the future and the author is eager to
-explore them.
+embarking it alongside the image processing library can easily impact greatly the final binary. For instance, without
+the LLVM infrastructure the binary would weight around 3MB. However, with the LLVM infrastructure, the binary would
+weight at the bare minimum 50MB. Also, these solutions may not be immediately faster. Indeed, when prototyping back and
+forth with a variety of types, the user may not be eager to wait for long compilations times each time he is testing a
+new iteration of his work. Despite those facts, those solutions offers great avenue of research for the future and the
+author is eager to explore them.
