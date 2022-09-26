@@ -2,7 +2,7 @@
 title: Generic programming in modern C++ for Image Processing
 author: Michaël Roynard & Edwin Carlinet & Thierry Géraud\newline
  {\tt\scriptsize firstname.lastname@lrde.epita.fr}
-date: 01/11/2022 --- Thesis Defense --- Le Kremlin Bicêtre, France
+date: \displaydate{dateSoutenance} --- Thesis Defense --- Le Kremlin Bicêtre, France
 institute: EPITA Research & Development Laboratory (LRDE)  \newline
  ![](../images/epita.pdf){width=2cm} $~~~~~$ ![](../images/lrde-big.png){width=2.5cm}
 controls: false
