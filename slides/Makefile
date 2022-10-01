@@ -1,8 +1,8 @@
-PANDOC = pandoc --slide-level=2 --citeproc --bibliography=../bibliography.bib --verbose -t beamer -H header.tex -V classoption=svgnames
+PANDOC = pandoc --slide-level=2 --bibliography=../bibliography.bib --verbose -t beamer -H header.tex -V classoption=svgnames
 SRC = $(filter-out trash.md, $(wildcard *.md))
 PDF = $(SRC:.md=.pdf)
 
-all: $(PDF) handout web compressed
+all: $(PDF) handout compressed #web
 
 %.pdf : %.md header.tex Makefile
 	$(PANDOC) $< -o $@

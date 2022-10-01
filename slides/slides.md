@@ -35,13 +35,13 @@ header-includes:
 * Context and history of Generic Programming
   * Problem we are solving
   * A brief history
-* Generic Programming for Image Processing
+* Generic Programming for Image Processing in the static world
   * Taxonomy for Image processing: introducing Concepts
   * Introducing Image Views
 * Bringing Genericity to the dynamic world
   * A bridge between the static and dynamic world
   * Continuation
-* General Conclusion
+* General Conclusion and perspectives
 
 
 <!-- BEGIN INTRODUCTION -->
