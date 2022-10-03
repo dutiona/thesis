@@ -12,20 +12,24 @@ institute: EPITA Research & Development Laboratory (LRDE) \newline
 controls: false
 slideNumber: true
 transition: none
-output: pdf_document
+output:
+  beamer_presentation:
+    slide_level: 2
+    toc: true
+#footer: Michaël Roynard --- Thesis Defense --- \displaydate{dateSoutenance}
 bibliography: ../bibliography.bib
 width: 1080
 height: 810
+#toc: true
+#slide_level: 2
 #theme: white
-
 header-includes:
 - \usepackage[svgnames]{xcolor}
 
+
 ---
 
-# Outline
-
-## Table of content
+## Overview
 
 * General Introduction
 * Context and history of Generic Programming
@@ -38,6 +42,9 @@ header-includes:
   * A bridge between the static and dynamic world
   * Continuation
 * General Conclusion
+
+
+<!-- BEGIN INTRODUCTION -->
 
 # General Introduction
 
@@ -66,6 +73,10 @@ Algorithm must support combination whose cardinality increases with:
 ::::
 
 :::
+
+<!-- END INTRODUCTION -->
+
+<!-- BEGIN PART 1: H&C of CP- ->
 
 # Context and history of Generic Programming
 
@@ -110,9 +121,65 @@ Algorithm must support combination whose cardinality increases with:
 
 * Static templates does not mix well with dynamic code (such as Python).
 
-# Generic Programming for Image Processing
+<!-- END PART 1:  H&C of CP -->
+
+<!-- BEGIN PART 2: GP FOR IP -->
+
+# Generic Programming for Image Processing 
+
+## Taxonomy for Image Processing
+
+### Conceptification
+
+### Taxonomy of Image Processing Algorithms
+
+### Taxonomy of Image Types
+
+## Our Concepts for Image Processing
+
+### Fundamentals
+
+### Advanced
+
+### Support for local algorithms
+
+## Views for Image Processing
+
+### Introducing Image Views
+
+### Properties
+
+### Usage for border management
+
+### Limitations: traversing
+
+### Performance discussion
+
+<!-- END PART 2: GP FOR IP -->
 
 # Bringing (static) Genericity to the dynamic world
+
+## Reminder about Compiled & Interpreted languages
+
+### Compiled languages
+
+### Interpreted languages
+
+### Hybrid languages
+
+### Summary
+
+## Information that is static and/or dynamic
+
+## Designing an Hybrid solution
+
+### Step 1: converting back and forth
+
+### Step 2: multi-dispatcher ($\protect n \times n$ dispatch)
+
+### Step 3 : type-erasure & value-set
+
+### Performance discussion
 
 # General Conclusion
 

@@ -4,7 +4,7 @@ PDF = $(SRC:.md=.pdf)
 
 all: $(PDF) handout web compressed
 
-%.pdf : %.md
+%.pdf : %.md header.tex Makefile
 	$(PANDOC) $< -o $@
 
 %.handout.pdf : %.md
