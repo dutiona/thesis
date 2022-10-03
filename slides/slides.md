@@ -53,11 +53,19 @@ header-includes:
 
 Algorithm must support combination whose cardinality increases with:
 
+::: columns
+
+:::: column
 * supported underlying image type (grayscale, rgb, floating-point)
 * supported data structure (ND-buffers, graphs, meshes)
 * additional data type (structuring element, label maps)
+::::
 
-![Specter of possibilities\label{specter-possibilities}](../figures/possibility_space.pdf){width=55%} 
+:::: column
+![Specter of possibilities\label{specter-possibilities}](../figures/possibility_space.pdf)
+::::
+
+:::
 
 # Context and history of Generic Programming
 
