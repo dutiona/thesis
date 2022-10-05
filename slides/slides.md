@@ -236,14 +236,14 @@ Naive algorithm:
 template <class Image>
 void gamma_correction(Image& ima, double gamma)
 {
-  const auto gamma_corr = 1 / gamma;
+  const auto gamma_corr = 1.f / gamma;
 
   for (int x = 0; x < ima.width(); ++x)
     for (int y = 0; y < ima.height(); ++y)
     {
-      ima(x, y).r = std::pow((255 * ima(x, y).r) / 255, gamma_corr);
-      ima(x, y).g = std::pow((255 * ima(x, y).g) / 255, gamma_corr);
-      ima(x, y).b = std::pow((255 * ima(x, y).b) / 255, gamma_corr);
+      ima(x, y).r = 256.f * std::pow(ima(x, y).r / 256.f, gamma_corr);
+      ima(x, y).g = 256.f * std::pow(ima(x, y).g / 256.f, gamma_corr);
+      ima(x, y).b = 256.f * std::pow(ima(x, y).b / 256.f, gamma_corr);
     }
 }
 ```
@@ -260,12 +260,12 @@ void gamma_correction(Image& ima, double gamma)
 {
   using value_t = typename Image::value_type;
 
-  const auto gamma_corr = 1 / gamma;
+  const auto gamma_corr = 1.f / gamma;
   const auto max_val = std::numeric_limits<value_t>::max();
 
   for(int x = 0; x < ima.width(); ++x)
     for(int y = 0; y < ima.height(); ++y)
-      ima(x, y) = std::pow((max_val * ima(x, y)) / max_val, gamma_corr);
+      ima(x, y) = max_val * std::pow(ima(x, y) / max_val, gamma_corr);
 }
 ```
 
@@ -281,11 +281,11 @@ void gamma_correction(Image& ima, double gamma)
 {
   using value_t = typename Image::value_type;
 
-  const auto gamma_corr = 1 / gamma;
+  const auto gamma_corr = 1.f / gamma;
   const auto max_val = std::numeric_limits<value_t>::max();
 
   for (auto&& pix : ima.pixels())
-    pix.value() = std::pow((max_val * pix.value()) / max_val, gamma_corr);
+    val = max_val * std::pow(pix.value() / max_val, gamma_corr);
 }
 ```
 
@@ -301,13 +301,14 @@ void gamma_correction(Image& ima, double gamma)
 {
   using value_t = typename Image::value_type;
 
-  const auto gamma_corr = 1 / gamma;
+  const auto gamma_corr = 1.f / gamma;
   const auto max_val = std::numeric_limits<value_t>::max();
 
   for (auto&& pix : ima.pixels())
-    pix.value() = std::pow((max_val * pix.value()) / max_val, gamma_corr);
+    val = max_val * std::pow(pix.value() / max_val, gamma_corr);
 }
 ```
+\normalsize
 
 * This is the final version of the algorithm.
 
@@ -789,7 +790,216 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
 
 ## Concrete view use-case: border-management
 
-## Views Limitations & performance discussion
+* Inherent issue to Image processing when dealing with algorithms operating with neighboring windows.
+* Border can be memory allocated around the image buffer (allowing negative indexes)
+* Border can be lazy computed by recomputing coordinate to pick a value in the original image (e.g. a mosaic)
+* The image can be decorated to allow those out-of-bound accesses
+* The Structuring element can also be decorated to yield dynamic windows depending on the pixel (and its coordinates).
+
+While being a marginal issue as it only impacts pixels at the border of the image, it is still mandatory as all local
+algorithms will need this issue to be solved.
+
+
+## Border-management: Policies & Strategies
+
+\small
+
+### Policies
+
+* Native: if the border is large enough: forward the image as-is to the algorithm to allow the fastest access possible.
+  Otherwise, the border manager fails and halt the program.
+* Auto: if the border is large enough: forward the image as-is to the algorithm to allow the fastest access possible.
+  Otherwise, decorate the image with a view whose extension will emulate that is required by the algorithm with the
+  given structuring element.
+
+### Strategies
+
+* None: there is no border. Decorate the structuring element.
+* Fill: the border is filled with a single value.
+* Mirror: the border is filled with a mirrored value from an axial symmetry expanded from the edges.
+* Periodize: the border replicates the image as in a mosaic.
+* Clamp: expand the value at the image's edge onto the border.
+* Image: pick the value in another image (bordering value of a tile from a larger image is picked into the original
+  larger image).
+
+## Border-management: strategies illustrations
+
+\bigskip
+
+:::: columns
+
+::: {.column width="33%"}
+![Border None](../figures/extensions/none.pdf){height=3.3cm}
+$~~~~~$ 
+*Border None* \newline
+$~~~~~$
+![Border periodize](../figures/extensions/periodize.pdf){height=3.3cm}
+$~~~~~$ 
+*Border Periodize*
+$~~~~~$
+:::
+ 
+::: {.column width="33%"}
+![Border fill](../figures/extensions/fill.pdf){height=3.3cm}
+$~~~~~$ 
+*Border Fill* \newline
+$~~~~~$
+![Border clamp](../figures/extensions/clamp.pdf){height=3.3cm}
+$~~~~~$ 
+*Border Clamp*
+$~~~~~$
+:::
+
+::: {.column width="33%"}
+![Border mirror](../figures/extensions/mirror.pdf){height=3.3cm}
+$~~~~~$ 
+*Border Mirror* \newline
+$~~~~~$
+![Border image](../figures/extensions/image.pdf){height=3.3cm}
+$~~~~~$ 
+*Border Image*
+$~~~~~$
+:::
+
+::::
+
+## Border-management: Usage
+
+When using the border manager, the user-code becomes:
+
+\scriptsize
+```cpp
+// default border width is 3
+image2d<int> ima = {{0, 1, 0}, {0, 1, 1}, {0, 1, 0}};
+auto disc_se = se::disc{1}; // radius is 1
+auto bm = extension::bm::fill(0); // fill border with 0 with policy auto
+local_algorithm(ima, disc_se, bm); // will handle the border for you
+```
+\normalsize
+
+While on the algorithmic side, the code becomes:
+
+\scriptsize
+```cpp
+template <class Ima, class SE, class BM>
+local_algorithm(Ima ima, SE se, BM bm)
+{
+  auto [managed_ima, managed_se] = bm.manage(ima, se);
+  std::visit([&](auto&& ima_, auto&& se_) {
+    // use ima_ and se_ in loop
+  }, managed_ima, managed_se);
+}
+```
+
+## Views limitations: traversing
+
+* View traversing: segmented ranges (cf. issues std::mdspan)
+
+:::: columns
+
+::: column
+![Range-v3's ranges](../figures/linear_rng.pdf)
+$~~~~~$
+*Range-v3's ranges*
+:::
+
+::: column
+![Range-v3's ranges](../figures/segmented_rng.pdf)
+*Segmented ranges*
+:::
+
+::::
+
+## Views limitations: traversing (code)
+
+* Compiler needs explicit contiguous dimension in code to generate vectorized instructions.
+
+:::: columns
+
+::: column
+*Unvectorized algorithm:*
+\tiny
+
+$~~~$
+
+```cpp
+template<class I, , class SE>
+auto dilate(I input, const SE& se) {
+  auto output = input.concretize(); // clone image
+  for(auto [in_px, out_px] :
+        view::zip(f.pixels(), g.pixels()))
+  {
+    out_px.val() = out_px.val();
+    for(auto nhx : se(in_px))
+      out_pix.val() =
+        std::max(nhx.val(), out_px.val());
+  }
+  return output;
+}
+```
+
+
+:::
+
+::: column
+*Vectorized algorithm:*
+\tiny
+
+$~~~$
+
+```cpp
+template<class I, class SE>
+auto dilate(I input, const SE& se) {
+  auto output = input.concretize(); // clone image
+  // this line is needed to avoid dangling reference
+  auto zipped_pixels =
+        view::zip(input.pixels(), output.pixels());
+  // unroll the contiguous segments
+  for(auto&& row : ranges::rows(zipped_pixels))
+    // optimized traversing of the segment
+    for(auto [in_px, out_px] : row) {
+      out_px.val() = out_px.val();
+      for(auto nhx : se(in_px))
+        out_pix.val() =
+          std::max(in_px.val(), out_px.val());
+    }
+  return output;
+}
+```
+
+:::
+
+::::
+
+## Views performance discussion
+
+### Background subtraction algorithm
+
+* Pipeline:
+
+![](../figures/pipeline_bg_sub_comp.pdf)
+
+* Corresponding code with views:
+
+\scriptsize
+
+```cpp
+float kThreshold = 150; float kVSigma = 10;
+float kHSigma = 10;  int kOpeningRadius = 32;
+auto img_gray = view::transform(img_color, to_gray);
+auto bg_gray  = view::transform(bg_color, to_gray);
+auto bg_blurred = gaussian2d(bg_gray,  kHSigma, kVSigma);
+auto tmp_gray = img_gray - bg_blurred;
+auto thresholdf = [](auto x) { return x < kThreshold; };
+auto tmp_bin = view::transform(tmp_gray, thresholdf);
+auto ero = erosion(tmp_bin, disc(kOpeningRadius));
+dilation(ero, disc(kOpeningRadius), output);
+```
+
+\small
+
+*Pipeline implementation with _\colorbox{thistle}{views}_. Highlighted code uses _views_ by prefixing
+operators with the namespace _view_.*
 
 <!-- END PART 2: GP FOR IP -->
 
