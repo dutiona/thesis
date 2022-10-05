@@ -1,0 +1,40 @@
+\documentclass[border={0.1cm 0.1cm 0.1cm 0.1cm}]{standalone}
+
+\usepackage{makecell}
+\usepackage{diagbox}
+\usepackage{threeparttable}
+
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\eqmark}{{\bf \(\approx\)}}
+
+\begin{document}
+
+\begin{threeparttable}
+  \begin{tabular}{|l|l|cccccc|}
+    \hline
+    \thead{View type}    & \diagbox{\thead{Expression}}{\thead{Property}} & Forward & Bidirectional & Raw    & Writable     & Accessible & Indexable \\
+    %\thead{View type}    & \thead{Expression | Properties:} & Forward & Bidirectional & Raw    & Writable   & Accessible & Indexable \\
+    \hline
+    \thead{Image}        & \texttt{ima1, ima2}                            & \cmark  & \cmark        & \cmark & \cmark       & \cmark     & \cmark    \\
+    \thead{Cast}         & \texttt{cast<T>(ima)}                          & \cmark  & \cmark        & \xmark & \xmark       & \cmark     & \cmark    \\
+    \thead{Transform}    & \texttt{transform(ima, func)}                  & \cmark  & \cmark        & \xmark & \cmark\(^1\) & \cmark     & \cmark    \\
+    \thead{Filter}       & \texttt{filter(ima, pred)}                     & \cmark  & \cmark        & \xmark & \xmark       & \cmark     & \cmark    \\
+    \thead{Clip}         & \texttt{clip(ima, dom)}                        & \cmark  & \cmark        & \xmark & \cmark       & \cmark     & \cmark    \\
+    \thead{mask}         & \texttt{mask(ima, mask)}                       & \cmark  & \cmark        & \xmark & \cmark       & \cmark     & \cmark    \\
+    \thead{Zip}          & \texttt{zip(ima1, ima2)}                       & \cmark  & \cmark        & \xmark & \cmark       & \cmark     & \cmark    \\
+    \thead{Channel}      & \texttt{red(ima)}                              & \cmark  & \cmark        & \xmark & \cmark       & \cmark     & \cmark    \\
+    \thead{Arithmetic}   & \texttt{ima1 + ima2}                           & \cmark  & \cmark        & \xmark & \xmark       & \cmark     & \cmark    \\
+    \thead{Logical}      & \texttt{ima > 125}                             & \cmark  & \cmark        & \xmark & \xmark\(^2\) & \cmark     & \cmark    \\
+    \thead{Mathematical} & \texttt{abs(ima)}                              & \cmark  & \cmark        & \xmark & \xmark       & \cmark     & \cmark    \\
+    \hline
+  \end{tabular}
+  \begin{tablenotes}
+    \item \(^1\): writability is preserved only if \texttt{func} is a projection.
+    \item \(^2\): writability not preserved except for the expression \texttt{ifelse(ima, ima1, ima2)}.
+  \end{tablenotes}
+  \label{table:views.properties}
+\end{threeparttable}
+
+\end{document}

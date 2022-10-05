@@ -94,7 +94,8 @@ Algorithm must support combination whose cardinality increases with:
 * Writing and optimizing an algorithm for a particular data type in mind.
 * Often results in multiple switch/cases to enumerate all the supported combination of supported data types.
 
-\small
+\scriptsize
+
 ```cpp
 void fill(any_image img, any_value v)
 {
@@ -110,7 +111,6 @@ void fill(any_image img, any_value v)
   }
 }
 ```
-\normalsize
 
 ## Genericity within Libraries: Generalization
 
@@ -119,6 +119,7 @@ void fill(any_image img, any_value v)
 * Good for maintenance but conversion can be costly and performances can be impacted.
 
 \scriptsize
+
 ```cpp
 struct image4D { // generalized super-type
   // generalized underlying value-type
@@ -135,7 +136,6 @@ void fill(image4D img, const std::array<double, 4>& v) {
     p.val() = v;
 }
 ```
-\normalsize
 
 ## Genericity within Libraries: Inclusion Polymorphism
 
@@ -231,6 +231,7 @@ template<class T> struct remove_const<const T>       { using type = T; };
 
 Naive algorithm:
 \scriptsize
+
 ```cpp
 template <class Image>
 void gamma_correction(Image& ima, double gamma)
@@ -252,6 +253,7 @@ void gamma_correction(Image& ima, double gamma)
 * Step 1: Lifting RGB constraint
 
 \scriptsize
+
 ```cpp
 template <class Image>
 void gamma_correction(Image& ima, double gamma)
@@ -272,6 +274,7 @@ void gamma_correction(Image& ima, double gamma)
 * Step 2: Lifting bi-dimensional constraint
 
 \scriptsize
+
 ```cpp
 template <class Image>
 void gamma_correction(Image& ima, double gamma)
@@ -291,6 +294,7 @@ void gamma_correction(Image& ima, double gamma)
 * Step 3: Lifting writability constraint
 
 \scriptsize
+
 ```cpp
 template <WritableImage Image>
 void gamma_correction(Image& ima, double gamma)
@@ -447,6 +451,7 @@ $fill(I, v)\colon \forall{i}\in I.LUT, i = v$
 
 :::: {.column width="60%"}
 \scriptsize
+
 ```cpp
 template <Image Img, StructuringElement SE>
 auto dilate(Img img, SE se) {
@@ -464,6 +469,7 @@ auto dilate(Img img, SE se) {
     return dilate_normal(img, se)
 }
 ```
+
 \normalsize
 ::::
 
@@ -524,6 +530,7 @@ auto dilate(Img img, SE se) {
 ::: columns
 
 :::: {.column width="45%"}
+
 ```python
 def local_canvas(img, out, se):
   # do something before outer loop
@@ -534,9 +541,11 @@ def local_canvas(img, out, se):
     # do something after inner loop
   # do something after outer loop
 ```
+
 ::::
 
 :::: {.column width="55%"}
+
 ```python
 def dilate(img, out, se):
   do_nothing = lambda *args, **kwargs: None
@@ -555,6 +564,7 @@ def dilate(img, out, se):
     after_outer_loop  = do_nothing
   )
 ```
+
 ::::
 
 :::
@@ -584,6 +594,7 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 ![](../figures/concepts/pixel.pdf)
 
 \scriptsize
+
 ```cpp
   auto pix = Pixel();     // Get a pixel
   auto val = pix.val();   // yield the pixel value
@@ -596,6 +607,7 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 ![](../figures/concepts/domain.pdf){width=85%}
 
 \scriptsize
+
 ```cpp
   auto dom = Domain(); // Get a domain
   auto pnt = Point(..., ...); // Get a random point
@@ -613,6 +625,7 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 ## Fundamentals : Image concept (code usage)
 
 \footnotesize
+
 ```cpp
   auto ima = AccessibleImage(); // Get an accessible image
   auto p = Point(); // Get a point
@@ -645,6 +658,7 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 Typical usage in local algorithms:
 
 \small
+
 ```cpp
   auto se = se::disc(.radius=3); // get a structuring element
   for(auto pix : ima.pixels())   // traverse image
@@ -666,19 +680,18 @@ Typical usage in local algorithms:
 
 ## Genesis of a new abstraction layer: Views
 
-## Views for Image Processing
-
 * Inspired from Milena morphers [@levillain.2009.ismm] and STL ranges [@niebler.2014.ranges]
 * Cheap-to-copy
 * Non-owning (of the data buffer)
 * Lazy evaluation
-* Compossability
+* Composability
 
-## Views for Image Processing
+## Views for Image Processing: Alpha-blending
 
 * Views enable the Image Processing practitioner to rewrite the following alpha-blending algorithm at image level.
 
 \scriptsize
+
 ```cpp
   void blend_inplace(const uint8_t* ima1, uint8_t* ima2, float alpha,
   int width, int height, int stride1, int stride2) {
@@ -695,8 +708,84 @@ Typical usage in local algorithms:
 
 ![](../figures/alphablend.pdf)
 
+## Views for Image Processing: Expression tree & Composability
+
+* Views can be represented as an expression tree:
+
+::: columns
+
+:::: {.column width="45%"}
+![](../figures/view_ast2.pdf)
+::::
+
+:::: {.column width="55%"}
+\scriptsize
+
+```cpp
+auto alphablend =
+  [](auto ima1, auto ima2, float alpha) {
+    return alpha * ima1 +
+                  (1 - alpha) * ima2;
+  };
+```
+
+::::
+
+:::
+
+* Usage:
+
+\scriptsize
+
+```cpp
+auto ima1, ima2 = /* ... */;
+auto ima_blended = alphablend(ima1, ima2, 0.2);
+```
+
+\normalsize
+
+* Composability:
+
+\scriptsize
+
+```cpp
+auto roi = /* ... */;
+auto blend_roi = alphablend(view::clip(ima1, roi), view::clip(ima2, roi), 0.2);
+auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
+```
+
+## Views for image processing: Overview
+
+* Domain-restrictive views: filter, clip and mask
+
+\scriptsize
+
+```cpp
+mln::image2d<mln::rgb8> ima = /* ... */ ;
+auto mask1 = ima > 125;
+auto mask2 = ima <= 125;
+mln::fill(mln::view::mask(ima, mask1), 255); // Thresholding
+mln::fill(mln::view::mask(ima, mask2), 0);
+```
+
+\normalsize
+
+* Value-transforming view: transform, zip, channel projectors, conversion (cast), operators (arithmetical, logical,
+  mathematical)
+
+\scriptsize
+
+```cpp
+mln::image2d<uint8_t> ima = /* ... */ ;
+auto ero = erode(ima);
+auto dil = dilate(ima);
+uint8_t zero = 0;
+auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
+```
 
 ## View properties
+
+![Views: property conservation](../figures/view_property.pdf)
 
 ## Concrete view use-case: border-management
 
