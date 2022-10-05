@@ -25,6 +25,7 @@ height: 810
 #theme: white
 header-includes:
 - \usepackage[svgnames]{xcolor}
+- \usepackage{threeparttable}
 
 
 ---
@@ -63,9 +64,9 @@ Algorithm must support combination whose cardinality increases with:
 ::: columns
 
 :::: column
-* supported underlying image type (grayscale, rgb, floating-point)
-* supported data structure (ND-buffers, graphs, meshes)
-* additional data type (structuring element, label maps)
+* supported underlying image type (grayscale, rgb, floating-point, ...)
+* supported data structure (ND-buffers, graphs, meshes, ...)
+* additional data type (structuring element, label maps, ...)
 ::::
 
 :::: column
@@ -90,36 +91,227 @@ Algorithm must support combination whose cardinality increases with:
 * Generalization
 * Polymorphism (inclusion & parametric)
 
-### Code duplication
+## Genericity within Libraries: Code duplication
 
-### Generalization
+* Writing and optimizing an algorithm for a particular data type in mind.
+* Often results in multiple switch/cases to enumerate all the supported combination of supported data types.
 
-### Inclusion Polymorphism
+\small
+```cpp
+void fill(any_image img, any_value v)
+{
+  switch((img.structure_kind, img.value_kind)) 
+  {
+  case (BUFFER2D, UINT8):
+    fill_img2d_uint8( (image2d<uint8>) img,
+                      (uint8) any_value );
+  // ...
+  case (LUT, RGB8):
+    fill_lut_rgb8( (image_lut<rgb8>) img,
+                    (rgb8) any_value );
+  }
+}
+```
+\normalsize
 
-### Parametric Polymorphism
+## Genericity within Libraries: Generalization
+
+* Need to find common denominator to all the supported types: the super-type.
+* All supported data types must be convertible to and from this super-type.
+* Good for maintenance but conversion can be costly and performances can be impacted.
+
+\scriptsize
+```cpp
+struct image4D { // generalized super-type
+  // generalized underlying value-type
+  // every value is converted to this one
+  using value_type = std::array<double, 4>;
+  /* ... */
+};
+// specific types w/ conversion routines
+struct image2D { image4D to(); void from(image4D); };
+struct image3D { image4D to(); void from(image4D); };
+// ...
+void fill(image4D img, const std::array<double, 4>& v) {
+  for(auto p : img.pixels())
+    p.val() = v;
+}
+```
+\normalsize
+
+## Genericity within Libraries: Inclusion Polymorphism
+
+* Extracting behavior pattern from algorithms
+* Grouping them into logical bricks called interfaces.
+* Each algorithm can require a set of behavioral pattern to be satisfied.
+
+::: columns
+
+:::: column
+![](../figures/inclupoly.pdf)
+::::
+
+:::: column
+![](../figures/inclupoly_code.pdf)
+::::
+
+:::
+
+## Genericity within Libraries: Parametric Polymorphism
+
+* Extracting behavior pattern from algorithms
+* Grouping them into logical bricks called concepts.
+* Each algorithm can require a set of behavioral pattern to be satisfied.
+
+::: columns
+
+:::: column
+![](../figures/parapoly.pdf)
+::::
+
+:::: column
+![](../figures/parapoly_code.pdf)
+::::
+
+:::
+
+## Genericity within Libraries: Summary
+
+\begin{table}[htbp]
+  \centering
+  \begin{threeparttable}
+    \caption{Genericity approaches: .pros~\&~cons.}
+    \begin{tabular}[width=0.8\linewidth]{l|ccccc}
+      Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
+      \hline
+      Code Duplication     & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
+      Code Generalization  & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
+      Object-Orientation   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
+      Generic Programming: &             &             &            &                 &             \\
+      \quad with C++11     & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
+      \quad with C++17     & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
+      \quad with C++20     & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
+    \end{tabular}
+    \begin{tablenotes}
+      \item[1] TC: type checking.
+      \item[2] CS: code simplicity.
+      \item[3] E: efficiency.
+      \item[4] One IA: one implementation per algorithm.
+      \item[4] EA: explicit abstractions / constrained genericity.
+    \end{tablenotes}
+    \label{table:gen.approaches}
+  \end{threeparttable}
+\end{table}
 
 ## Genericity within Programming languages
 
-### History
+* History
+* C++: pre-2011 (pre C++11)
+* C++: post-2011 (C++20 & Concepts)
 
-* CLU
-* ADA
-* C++
+## Genericity within Programming languages: History
 
-### C++: pre-2011 (pre C++11)
+* 45 year old notion
+* CLU, ADA, C++
+* FIXME: faire uen frise chronologique
 
-* metafunctions, type-traits
-* SFINAE
-* CRTP
+## Genericity within Programming languages: pre C++11
 
-### C++: post-2011 (C++20 & Concepts)
+* Functions on types: metafunctions or type-traits
+<!--
+```cpp
+template<class T> struct remove_const                { using type = T; };
+template<class T> struct remove_const<const T>       { using type = T; };
+``
+-->
+* SFINAE: Substitution Failure Is Not An Error
+* CRTP: Curiously Recurring Template Pattern
 
-* Writing a concept
-* Simplifying code
+## Genericity within Programming languages: post C++11
+
+* Introducing concepts and ``Conceptification''.
+
+Naive algorithm:
+\scriptsize
+```cpp
+template <class Image>
+void gamma_correction(Image& ima, double gamma)
+{
+  const auto gamma_corr = 1 / gamma;
+
+  for (int x = 0; x < ima.width(); ++x)
+    for (int y = 0; y < ima.height(); ++y)
+    {
+      ima(x, y).r = std::pow((255 * ima(x, y).r) / 255, gamma_corr);
+      ima(x, y).g = std::pow((255 * ima(x, y).g) / 255, gamma_corr);
+      ima(x, y).b = std::pow((255 * ima(x, y).b) / 255, gamma_corr);
+    }
+}
+```
+
+## Genericity within Programming languages: Conceptification
+
+* Step 1: Lifting RGB constraint
+\scriptsize
+```cpp
+template <class Image>
+void gamma_correction(Image& ima, double gamma)
+{
+  using value_t = typename Image::value_type;
+
+  const auto gamma_corr = 1 / gamma;
+  const auto max_val = std::numeric_limits<value_t>::max();
+
+  for(int x = 0; x < ima.width(); ++x)
+    for(int y = 0; y < ima.height(); ++y)
+      ima(x, y) = std::pow((max_val * ima(x, y)) / max_val, gamma_corr);
+}
+```
+
+## Genericity within Programming languages: Conceptification
+
+* Step 2: Lifting bi-dimensional constraint
+\scriptsize
+```cpp
+template <class Image>
+void gamma_correction(Image& ima, double gamma)
+{
+  using value_t = typename Image::value_type;
+
+  const auto gamma_corr = 1 / gamma;
+  const auto max_val = std::numeric_limits<value_t>::max();
+
+  for (auto&& pix : ima.pixels())
+    pix.value() = std::pow((max_val * pix.value()) / max_val, gamma_corr);
+}
+```
+
+## Genericity within Programming languages: Conceptification
+
+* Step 3: Lifting writability constraint
+\scriptsize
+```cpp
+template <WritableImage Image>
+void gamma_correction(Image& ima, double gamma)
+{
+  using value_t = typename Image::value_type;
+
+  const auto gamma_corr = 1 / gamma;
+  const auto max_val = std::numeric_limits<value_t>::max();
+
+  for (auto&& pix : ima.pixels())
+    pix.value() = std::pow((max_val * pix.value()) / max_val, gamma_corr);
+}
+```
+
+* This is the final version of the algorithm.
 
 ## Limitations: C++ templates in the dynamic world
 
 * Static templates does not mix well with dynamic code (such as Python).
+* Templates belong to the static world (compiled once)
+* Python belongs to the dynamic world (interpreted multiple time)
+* Addressed more in-depth later (Bringing Genericity to the dynamic world)
 
 <!-- END PART 1:  H&C of CP -->
 
@@ -129,11 +321,171 @@ Algorithm must support combination whose cardinality increases with:
 
 ## Taxonomy for Image Processing
 
-### Conceptification
+* Images types views as set
+* Taxonomy of Image Processing Algorithms
+* Taxonomy of Image Types
 
-### Taxonomy of Image Processing Algorithms
+## Taxonomy for Image Processing: Image types viewed as set
 
-### Taxonomy of Image Types
+* There are families of types.
+* Those families share behavior.
+* Algorithms must provide one version for each supported family.
+
+\bigskip
+
+::: columns
+
+:::: column
+$fill(I, v)\colon \forall{p}\in\mathcal{D}, I(p) = v$
+::::
+
+:::: column
+$fill(I, v)\colon \forall{i}\in I.LUT, i = v$
+::::
+
+:::
+
+## Taxonomy for Image Processing: Version vs. Specialization
+
+* A version is an algorithm that supports a family of data type based on a fundamental behavior.
+* A specialization of an algorithm is a specific implementation taking advantage of a property (detected at compile-type
+  or at runtime) to execute this algorithm faster.
+
+\bigskip
+
+::: columns
+
+:::: {.column width="38.5%"}
+![](../figures/image_version.pdf)
+::::
+
+:::: {.column width="61.5%"}
+![](../figures/image_version_specialization.pdf)
+::::
+
+:::
+
+## Taxonomy for Image Processing: Dilate algorithm
+
+* Version dispatching taking advantages of a property related to structuring element:
+
+::: columns
+
+:::: {.column width="60%"}
+\scriptsize
+```cpp
+template <Image Img, StructuringElement SE>
+auto dilate(Img img, SE se) {
+  if (se.is_decomposable()) {
+    lst_small_se = se.decompose();
+    for (auto small_se : lst_small_se)
+      // Recursive call
+      img = dilate(img, small_se)
+    return img;
+  } else if (is_pediodic_line(se))
+     // Van Herk's algorithm
+    return fast_dilate1d(img, se)
+  else
+     // Classic algorithm
+    return dilate_normal(img, se)
+}
+```
+\normalsize
+::::
+
+:::: {.column width="40%"}
+![](../figures/dilation_specialization_diagram.pdf)
+::::
+
+:::
+
+## Taxonomy for Image Processing: Three families
+
+* Pixel-wise algorithms: thresholding, gamma correction.
+* Local algorithms: dilation, erosion, closing, hit-or-miss, gradient, rank filter, union-find, max-tree, etc.
+* Global algorithms: Chamfer distance transform, labeling, watershed, etc.
+
+## Taxonomy for Image Processing: Algorithms canvas
+
+* Algorithms can have the same shape
+* When this shape is known, a canvas can be written
+* This canvas will only require to be provided callbacks for each customization point to work
+* This canvas can leverage a multitude of implementations techniques to improve performances
+
+## Taxonomy for Image Processing: Dilation & Erosion
+
+* Dilation and Erosion have the same shape:
+
+::: columns
+
+:::: column
+![](../figures/dilation_code.pdf)
+::::
+
+:::: column
+![](../figures/erosion_code.pdf)
+::::
+
+:::
+
+* They can be rewritten in a common canvas:
+
+![](../figures/local_op_code.pdf)
+
+::: columns
+
+:::: column
+![](../figures/local_op_dilation_code.pdf)
+::::
+
+:::: column
+![](../figures/local_op_erosion_code.pdf)
+::::
+
+:::
+
+## Taxonomy for Image Processing: Generic local algorithm canvas
+
+\scriptsize
+::: columns
+
+:::: {.column width="45%"}
+```python
+def local_canvas(img, out, se):
+  # do something before outer loop
+  for pnt in img.points():
+    # do something before inner loop
+    for nx in se(pnt):
+      # do something inner loop
+    # do something after inner loop
+  # do something after outer loop
+```
+::::
+
+:::: {.column width="55%"}
+```python
+def dilate(img, out, se):
+  do_nothing = lambda *args, **kwargs: None
+
+  def before_inner_loop(img, out, pnt):
+    out(pnt) = img(pnt)
+
+  def inner_loop(ipix, opix, nx):
+    out(pnt) = max(out(pnt), img(nx))
+
+  local_canvas(img, out, se,
+    before_outer_loop = do_nothing,
+    before_inner_loop = before_inner_loop,
+    inner_loop        = inner_loop,
+    after_inner_loop  = do_nothing,
+    after_outer_loop  = do_nothing
+  )
+```
+::::
+
+:::
+\normalsize
+
 
 ## Our Concepts for Image Processing
 
@@ -156,6 +508,8 @@ Algorithm must support combination whose cardinality increases with:
 ### Performance discussion
 
 <!-- END PART 2: GP FOR IP -->
+
+<!-- BEGIN PART 3: GP in DYN WORLD-->
 
 # Bringing (static) Genericity to the dynamic world
 
@@ -180,6 +534,8 @@ Algorithm must support combination whose cardinality increases with:
 ### Step 3 : type-erasure & value-set
 
 ### Performance discussion
+
+<!-- END PART 3: GP in DYN WORLD-->
 
 # General Conclusion
 
