@@ -28,6 +28,9 @@
 *.synctex.gz
 *.fdb_latexmk
 *.synctex(busy)
+*.nav
+*.snm
+*.vrb
 /**/_minted-*/
 .DS_Store
 slides/reveal.js
