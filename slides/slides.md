@@ -34,13 +34,15 @@ header-includes:
 
 * General Introduction
 * Context and history of Generic Programming
-  * Problem we are solving
-  * A brief history
+  * Genericity within libraries
+  * Genericity within Programming languages
 * Generic Programming for Image Processing in the static world
-  * Taxonomy for Image processing: introducing Concepts
-  * Introducing Image Views
+  * Taxonomy for Image Processing
+  * Our Concepts for Image Processing
+  * Views for Image Processing
 * Bringing Genericity to the dynamic world
-  * A bridge between the static and dynamic world
+  * Reminder about Compiled & Interpreted languages
+  * Designing a bridge between the static and dynamic world: Hybrid solution
   * Continuation
 * General Conclusion and perspectives
 
@@ -77,15 +79,11 @@ Algorithm must support combination whose cardinality increases with:
 
 <!-- END INTRODUCTION -->
 
-<!-- BEGIN PART 1: H&C of CP- ->
+<!-- BEGIN PART 1: H&C of CP -->
 
 # Context and history of Generic Programming
 
-## History
-
-<!-- FIXME: add illustrating figure -->
-
-## Genericity within Libraries
+## Genericity within Libraries (outline)
 
 * Code duplication
 * Generalization
@@ -203,7 +201,7 @@ void fill(image4D img, const std::array<double, 4>& v) {
   \end{threeparttable}
 \end{table}
 
-## Genericity within Programming languages
+## Genericity within Programming languages (outline)
 
 * History
 * C++: pre-2011 (pre C++11)
@@ -252,6 +250,7 @@ void gamma_correction(Image& ima, double gamma)
 ## Genericity within Programming languages: Conceptification
 
 * Step 1: Lifting RGB constraint
+
 \scriptsize
 ```cpp
 template <class Image>
@@ -271,6 +270,7 @@ void gamma_correction(Image& ima, double gamma)
 ## Genericity within Programming languages: Conceptification
 
 * Step 2: Lifting bi-dimensional constraint
+
 \scriptsize
 ```cpp
 template <class Image>
@@ -289,6 +289,7 @@ void gamma_correction(Image& ima, double gamma)
 ## Genericity within Programming languages: Conceptification
 
 * Step 3: Lifting writability constraint
+
 \scriptsize
 ```cpp
 template <WritableImage Image>
@@ -306,6 +307,79 @@ void gamma_correction(Image& ima, double gamma)
 
 * This is the final version of the algorithm.
 
+## Genericity within Programming languages: Conceptification
+
+* Step 4: Concept formal definition
+\begin{table}[htbp]
+  \begin{tiny}
+    \begin{tabular}{l|l|l|l|}
+      \cline{2-4}
+                                                   & \thead{Definition }               &
+      \thead{Description}                          & \thead{Requirement}                                      \\
+      % Image
+      \cline{1-4}
+      \multicolumn{1}{|c|}{\multirow{3}{*}{Image}} & \texttt{Ima::const\_pixel\_range} & \makecell[l]{type of
+        the range to iterate over
+      \\ all the constant pixels} & \makecell[l]{models the concept \\
+        \emph{ForwardRange}}
+      \\
+      \cline{2-4}
+      \multicolumn{1}{|c|}{}                       & \texttt{Ima::pixel\_type}         & type of a pixel
+                                                   & models the concept \emph{Pixel}                          \\
+      \cline{2-4}
+      \multicolumn{1}{|c|}{}                       & \texttt{Ima::value\_type}         & type of a value
+                                                   & models the concept \emph{Regular}                        \\
+      \cline{1-4}
+      % Writable Image
+      \multicolumn{1}{|c|}{\makecell[l]{Writable
+      \\ Image}} & \texttt{WIma::pixel\_range} & \makecell[l]{type of the range to iterate over
+      \\ all the non-constant pixels} & \makecell[l]{models the concept \\
+        \emph{ForwardRange}}
+      \\
+      \cline{1-4}
+      % StructuringElement \multicolumn{1}{|c|}{StructuringElement} &  &  & \\
+      %  \cline{1-4} Decomposable \multicolumn{1}{|c|}{Decomposable} &  &  & \\
+      %  \cline{1-4}
+    \end{tabular}
+  \end{tiny}
+  \caption{Concepts formalization: definitions}
+  \label{table:concept.definitions}
+\end{table}
+\vspace{-0.5cm}
+\begin{table}[htbp]
+  \begin{tiny}
+    \begin{tabular}{l|l|l|l|}
+      \cline{2-4}
+                                         & \thead{Expression}                              & \thead{Return Type} &
+      \thead{Description}                                                                                          \\
+      \cline{1-4}
+      % Image
+      \multicolumn{1}{|c|}{Image}        & \texttt{cima.pixels()}                          &
+      \texttt{Ima::const\_pixel\_range}  & \makecell[l]{returns a range of constant pixels
+      \\ to iterate over it} \\
+      \cline{1-4}
+      % Writable Image
+      \multicolumn{1}{|c|}{\makecell[l]{Writable
+      \\ Image}} &\texttt{wima.pixels()} & \texttt{WIma::pixel\_range}       & \makecell[l]{returns a range of
+      pixels                                                                                                       \\ to iterate over it} \\
+      \cline{1-4}
+      % StructuringElement
+      \multicolumn{1}{|c|}{\makecell[l]{Structuring
+      \\ Element}} &\texttt{cse(cpix)} & \texttt{WIma::pixel\_range}       & \makecell[l]{returns a range of
+        the neighboring
+      \\ pixels to iterate over it} \\
+      \cline{1-4}
+      % Decomposable
+      \multicolumn{1}{|c|}{Decomposable} & \texttt{cdse.decompose()}                       &
+      \texttt{implementation defined}    & \makecell[l]{ returns a range of structuring
+      \\ elements to iterate over it} \\
+      \cline{1-4}
+    \end{tabular}
+  \end{tiny}
+  \caption{Concepts formalization: expressions}
+  \label{table:concept.expressions}
+\end{table}
+
 ## Limitations: C++ templates in the dynamic world
 
 * Static templates does not mix well with dynamic code (such as Python).
@@ -317,11 +391,11 @@ void gamma_correction(Image& ima, double gamma)
 
 <!-- BEGIN PART 2: GP FOR IP -->
 
-# Generic Programming for Image Processing 
+# Generic Programming for Image Processing in the static world
 
-## Taxonomy for Image Processing
+## Taxonomy for Image Processing (outline)
 
-* Images types views as set
+* Image types viewed as set
 * Taxonomy of Image Processing Algorithms
 * Taxonomy of Image Types
 
@@ -403,7 +477,7 @@ auto dilate(Img img, SE se) {
 
 * Pixel-wise algorithms: thresholding, gamma correction.
 * Local algorithms: dilation, erosion, closing, hit-or-miss, gradient, rank filter, union-find, max-tree, etc.
-* Global algorithms: Chamfer distance transform, labeling, watershed, etc.
+* Global algorithms: Chamfer distance transform, labeling, etc.
 
 ## Taxonomy for Image Processing: Algorithms canvas
 
@@ -487,7 +561,7 @@ def dilate(img, out, se):
 \normalsize
 
 
-## Our Concepts for Image Processing
+## Our Concepts for Image Processing (outline)
 
 * Fundamental concepts.
 * Advanced concepts to manipulate images.
@@ -501,7 +575,8 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 * Point: represent a site in an image to locate a value.
 * Pixel: represent a pair (Value, Point).
 * Domain: represent the set of points valid for a given image (definition domain).
-* Image: represent the algebraic relation $y = f(x) where $y$ is a value generated by the image $f$ for the input (point) $x$.
+* Image: represent the algebraic relation $y = f(x) where $y$ is a value generated by the image $f$ for the input
+  (point) $x$.
 * Aside from generating a value, an image can also store a value, as in $f(x) = y.
 
 ## Fundamentals : Pixel concept
@@ -537,6 +612,7 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 
 ## Fundamentals : Image concept (code usage)
 
+\footnotesize
 ```cpp
   auto ima = AccessibleImage(); // Get an accessible image
   auto p = Point(); // Get a point
@@ -550,21 +626,81 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
   ima.pixel_at(p).val() = 42; // Same with no bound checking
 ```
 
-### Advanced
+## Advanced concepts to manipulate images
 
-### Support for local algorithms
+* IndexableImage: traversing an image via indexes.
+* AccessibleImage: accessing image's value through points.
+* BidirectionalImage: traversing image forward and backward.
+* RawImage: direct access to the image's data buffer.
+
+## Advanced concepts to manipulate images: Diagram
+
+![](../figures/concepts/images_all.pdf)
+
+## Concept support for local algorithms
+
+* Support for structuring elements (disc, rectangle, sphere, cube, etc.)
+* Support for extension (flat buffer, unique value, mirroring, etc.)
+
+Typical usage in local algorithms:
+
+\small
+```cpp
+  auto se = se::disc(.radius=3); // get a structuring element
+  for(auto pix : ima.pixels())   // traverse image
+    for(auto nb : se(pix))       // traverse neighboring pixels
+      // ...
+```
+
+## Concept support for local algorithms (diagram)
+
+![](../figures/concepts/se_extension.pdf)
+
+## Views for Image Processing (outline)
+
+* Genesis of a new abstraction layer: Views
+* Views for Image Processing
+* View properties
+* Use-case: border-management
+* Limitations & performance discussion
+
+## Genesis of a new abstraction layer: Views
 
 ## Views for Image Processing
 
-### Introducing Image Views
+* Inspired from Milena morphers [@levillain.2009.ismm] and STL ranges [@niebler.2014.ranges]
+* Cheap-to-copy
+* Non-owning (of the data buffer)
+* Lazy evaluation
+* Compossability
 
-### Properties
+## Views for Image Processing
 
-### Usage for border management
+* Views enable the Image Processing practitioner to rewrite the following alpha-blending algorithm at image level.
 
-### Limitations: traversing
+\scriptsize
+```cpp
+  void blend_inplace(const uint8_t* ima1, uint8_t* ima2, float alpha,
+  int width, int height, int stride1, int stride2) {
+    for (int y = 0; y < height; ++y) {
+      const uint8_t* iptr = ima1 + y * stride1;
+      uint8_t* optr = ima2 + y * stride2;
+      for (int x = 0; x < width; ++x)
+        optr[x] = iptr[x] * alpha + optr[x] * (1-alpha);
+    }
+  }
+```
 
-### Performance discussion
+\bigskip
+
+![](../figures/alphablend.pdf)
+
+
+## View properties
+
+## Concrete view use-case: border-management
+
+## Views Limitations & performance discussion
 
 <!-- END PART 2: GP FOR IP -->
 
@@ -584,13 +720,13 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 
 ## Information that is static and/or dynamic
 
-## Designing an Hybrid solution
+## Designing a bridge between the static and dynamic world: Hybrid solution
 
 ### Step 1: converting back and forth
 
 ### Step 2: multi-dispatcher ($\protect n \times n$ dispatch)
 
-### Step 3 : type-erasure & value-set
+### Step 3: type-erasure & value-set
 
 ### Performance discussion
 
