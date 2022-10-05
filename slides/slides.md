@@ -1009,17 +1009,50 @@ operators with the namespace _view_.*
 
 ## Reminder about Compiled & Interpreted languages
 
-### Compiled languages
+* There are 3 main families of programming languages:
+  * Compiled languages (C++, C, Rust, Go).
+  * Interpreted languages (Python, PHP, Javascript).
+  * Hybrid languages (Java, C#).
 
-### Interpreted languages
+## Compiled languages
 
-### Hybrid languages
+* Compile-time:
 
-### Summary
+![](../figures/static_compiletime.pdf)
+
+* Runtime:
+
+![](../figures/static_runtime.pdf)
+
+## Interpreted languages
+
+* Runtime:
+
+![](../figures/dynamic_pipeline.pdf)
+
+## Summary
+
+![](../figures/comp_inter_hybrid_summary.pdf)
 
 ## Information that is static and/or dynamic
 
+### Static information
+
+* Image's value type (uint8, rgb8, complex, etc.)
+* Image's dimension size (1D, 2D, 3D, etc.)
+* Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.)
+
+### Dynamic information
+
+* Image's actual value ($ima(.x=12, .y=42)$)
+* Image's actual size ($1024x512$, etc.)
+* Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.)
+
+*We are rarely in control about where (which host machine) our software will be run.*
+
 ## Designing a bridge between the static and dynamic world: Hybrid solution
+
+FIXME: todo
 
 ### Step 1: converting back and forth
 
