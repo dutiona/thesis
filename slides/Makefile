@@ -10,19 +10,19 @@ all: $(PDF) $(PDF2) handout compressed #web
 %.pdf : %.md header.tex Makefile
 	$(PANDOC) $< -o $@
 
-%.pdf : %.tex
+%.pdf : %.tex Makefile
 	$(TEX) $< -jobname="$(basename $<)"
 
 %.handout.pdf : %.md
 	$(PANDOC) -V handout $< -o $@
-	pdfjam $@ --nup 2x2 --keepinfo \
+	pdfjam $@ --nup 2x3 --keepinfo \
 		--paper letterpaper --frame true --scale 0.9 \
 		--suffix "nup"
 	mv $(basename $@)-nup.pdf $@
 
 %.handout.pdf : %.tex
 	cp $(basename $<).pdf $@
-	pdfjam $@ --nup 2x2 --keepinfo \
+	pdfjam $@ --nup 2x3 --keepinfo \
 		--paper letterpaper --frame true --scale 0.9 \
 		--suffix "nup"
 	mv $(basename $@)-nup.pdf $@
@@ -53,6 +53,6 @@ install :
 
 clean :
 	latexmk -C *.tex
-	rm -rf $(PDF2) $(PDF2:.pdf=.compressed.pdf) $(PDF2:.pdf=.handout.pdf) $(PDF2:.pdf=.handout.compressed.pdf) *.nav *.snm *.vrb build _minted-*
+	rm -rf $(PDF2) $(PDF2:.pdf=.compressed.pdf) $(PDF2:.pdf=.handout.pdf) $(PDF2:.pdf=.handout.compressed.pdf) *.bbl *.run.xml *.nav *.snm *.vrb build _minted-*
 	rm -rf $(PDF) $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.handout.pdf) $(PDF:.pdf=.handout.compressed.pdf) $(PDF:.pdf=.html) reveal.js build _minted-*
 

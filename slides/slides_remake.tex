@@ -1,4 +1,4 @@
-\documentclass[10pt]{beamer}
+\documentclass[12pt,aspectratio=169]{beamer}
 
 \usetheme[progressbar=frametitle]{metropolis}
 \usepackage{appendixnumberbeamer}
@@ -11,6 +11,16 @@
 
 \usepackage{xspace}
 \newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\usepackage[backend=biber,
+            defernumbers=true,
+            sorting=ynt,
+            %style=numeric,
+            style=authortitle,
+            %style=draft,
+            backref=true]{biblatex}
+\addbibresource{../bibliography.bib}
+
 
 \title{Metropolis}
 \subtitle{A modern beamer theme}
@@ -294,7 +304,7 @@ or show \textbf{bold} results.\end{verbatim}
 }
 
 \begin{frame}{References}
-  Some references to showcase [allowframebreaks] \cite{knuth92,ConcreteMath,Simpson,Er01,greenwade93}
+  Some references to showcase [allowframebreaks] \footcite{levillain.2009.ismm}
 \end{frame}
 
 \section{Conclusion}
@@ -334,8 +344,9 @@ or show \textbf{bold} results.\end{verbatim}
 
 \begin{frame}[allowframebreaks]{References}
 
-  \bibliography{demo}
-  \bibliographystyle{abbrv}
+  \printbibliography
+  %\bibliography{../bibliography.bib}
+  %\bibliographystyle{abbrv}
 
 \end{frame}
 
