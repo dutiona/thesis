@@ -1,4 +1,5 @@
-PANDOC = pandoc --slide-level=2 --citeproc --pdf-engine-opt=-shell-escape --bibliography=../bibliography.bib --verbose -t beamer -H header.tex -V classoption=svgnames
+#PANDOC = pandoc --slide-level=2 --citeproc --pdf-engine-opt=-shell-escape --bibliography=../bibliography.bib --verbose -t beamer -H header.tex -V classoption=svgnames
+PANDOC = pandoc --slide-level=2 --pdf-engine-opt=-shell-escape --bibliography=../bibliography.bib --verbose -t beamer -H header.tex -V classoption=svgnames
 TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
 SRC = $(filter-out trash.md, $(wildcard *.md))
 SRC2 = $(filter-out header.tex, $(wildcard *.tex))
