@@ -7,7 +7,7 @@ author: Michaël Roynard \newline
 date: Thesis Defense --- \displaydate{dateSoutenance}
   \newline Le Kremlin Bicêtre, France
 institute: EPITA Research & Development Laboratory (LRDE) \newline
- ![](../images/EDITE.png){width=1.8cm} $~~~~~$ ![](../images/epita.pdf){width=2cm} $~~~~~$
+ ![](../images/logo-edite.pdf){width=1.8cm} $~~~~~$ ![](../images/epita.pdf){width=2cm} $~~~~~$
  ![](../images/lrde-big.png){width=2cm} $~~~~~$ ![](../images/Logo_of_Sorbonne_University.pdf){width=2.5cm}
 controls: false
 slideNumber: true
