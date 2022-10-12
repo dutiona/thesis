@@ -8,7 +8,7 @@
 
 \begin{minted}{python}
 def local_op(img, se, op, out):
-  for pnt in zip(img.points()):
+  for pnt in img.points():
     out(pnt) = img(pnt)
     for nx in se(pnt):
       out(pnt) = op(out(pnt), img(nx))

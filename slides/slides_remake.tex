@@ -52,8 +52,8 @@
 \title{Generic programming in modern C++ for\\ Image Processing}
 %\subtitle{}
 \date{Thesis Defense --- \displaydate{dateSoutenance}}
-\author{\textbf{Michaël Roynard}\\
-Supervision: \emph{Edwin Carlinet} \hspace{1cm} Direction: \emph{Thierry Géraud}}
+\author{\textbf{Michaël Roynard} \hspace{1cm} Supervision: \emph{Edwin Carlinet} \hspace{1cm} Direction: \emph{Thierry
+Géraud}}
 \institute{EPITA Research Laboratory (LRE) --- Le Kremlin Bicêtre, France}
 \titlegraphic{
 \includegraphics[width=.2\textwidth]{../images/logo-edite.pdf}\hfill
@@ -87,6 +87,10 @@ Supervision: \emph{Edwin Carlinet} \hspace{1cm} Direction: \emph{Thierry Géraud
   \setbeamertemplate{section in toc}[sections numbered]
   \tableofcontents%[hideallsubsections]
 \end{frame}
+
+%
+%
+%
 
 \section[General Introduction]{General Introduction}
 
@@ -128,8 +132,10 @@ Supervision: \emph{Edwin Carlinet} \hspace{1cm} Direction: \emph{Thierry Géraud
       \item Package for dynamic language (SciPy, NumPy, Scikit-image, Pillow or OpenCV bindings, via PyPi or Conda).
       \item Programming libraries (IPP, ITK, Boost.GIL, Vigra, GrAL, DGTal, OpenCV, CImg, Video++, Generic Graphic
             Library, Milena and Olena.
-      \item Domain Specific Languages (DSL)~\footcite{deursen.2000.DSL} (Eigen, Blaze, Blitz++ or Armadillo via C++
-            Expression template~\footcite{veldhuizen.1995.expression}, or Halide and SYCL with their own toolchain).
+      %\item Domain Specific Languages (DSL)~\footcite{deursen.2000.DSL} (Eigen, Blaze, Blitz++ or Armadillo via C++
+      %      Expression template~\footcite{veldhuizen.1995.expression}, or Halide and SYCL with their own toolchain).
+      \item Domain Specific Languages (DSL) (Eigen, Blaze, Blitz++ or Armadillo via C++ Expression template, or Halide
+            and SYCL with their own toolchain).
     \end{itemize}
   \end{alertblock}
 \end{frame}
@@ -167,9 +173,9 @@ Supervision: \emph{Edwin Carlinet} \hspace{1cm} Direction: \emph{Thierry Géraud
   \begin{columns}[T,onlytextwidth]
     \column{0.48\textwidth}
     \begin{itemize}
-      \item supported underlying image type (grayscale, rgb, floating-point, ...)
-      \item supported data structure (ND-buffers, graphs, meshes, ...)
-      \item additional data type (structuring element, label maps, ...)
+      \item supported underlying image type (grayscale, rgb, floating-point, \ldots)
+      \item supported data structure (ND-buffers, graphs, meshes, \ldots)
+      \item additional data type (structuring element, label maps, \ldots)
     \end{itemize}
 
     \column{0.48\textwidth}
@@ -179,35 +185,622 @@ Supervision: \emph{Edwin Carlinet} \hspace{1cm} Direction: \emph{Thierry Géraud
       \caption{Specter of possibilities.}
       \label{fig:int.possibility_space}
     \end{figure}
-
   \end{columns}
 \end{frame}
 
+%
+%
+%
+
 \section[Context and History of Generic Programming]{Context and History of Generic Programming}
 
-\begin{frame}[fragile]{Sections}
-  Sections group slides of the same topic
+\subsection[Context and History of Generic Programming]{Genericity within libraries}
 
-  \begin{verbatim}    \section{Elements}\end{verbatim}
-
-  for which \themename provides a nice progress indicator \ldots
-
-\end{frame}
-
-\section{Titleformats}
-
-\begin{frame}{Metropolis titleformats}
-  \themename supports 4 different titleformats:
+\begin{frame}[fragile]{Genericity within libraries: Outline}
   \begin{itemize}
-    \item Regular
-    \item \textsc{Smallcaps}
-    \item \textsc{allsmallcaps}
-    \item ALLCAPS
+    \item Code duplication
+    \item Generalization
+    \item Polymorphism (inclusion \& parametric)
   \end{itemize}
-  They can either be set at once for every title type or individually.
 \end{frame}
 
-\subsection{Tricks}
+\begin{frame}[fragile]{Genericity within libraries: Code duplication}
+  \begin{itemize}
+    \item Writing and optimizing an algorithm for a particular data type in mind.
+    \item Often results in multiple switch/cases to enumerate all the supported combination of supported data types.
+  \end{itemize}
+  \begin{minted}{C++}
+    void fill(any_image img, any_value v)
+    {
+      switch((img.structure_kind, img.value_kind)) 
+      {
+      case (BUFFER2D, UINT8):
+        fill_img2d_uint8( (image2d<uint8>) img,
+                          (uint8) any_value );
+      // ...
+      case (LUT, RGB8):
+        fill_lut_rgb8( (image_lut<rgb8>) img,
+                        (rgb8) any_value );
+      }
+    }
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within libraries: Generalization}
+  \begin{itemize}
+    \item Need to find common denominator to all the supported types: the super-type.
+    \item All supported data types must be convertible to and from this super-type.
+    \item Good for maintenance but conversion can be costly and performances can be impacted.
+  \end{itemize}
+  \begin{minted}{C++}
+    struct image4D { // generalized super-type
+      // generalized underlying value-type
+      // every value is converted to this one
+      using value_type = std::array<double, 4>;
+      /* ... */
+    };
+    // specific types w/ conversion routines
+    struct image2D { image4D to(); void from(image4D); };
+    struct image3D { image4D to(); void from(image4D); };
+    // ...
+    void fill(image4D img, const std::array<double, 4>& v) {
+      for(auto p : img.pixels())
+        p.val() = v;
+    }
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within Libraries: Inclusion Polymorphism}
+  \begin{itemize}
+    \item Extracting behavior pattern from algorithms
+    \item Grouping them into logical bricks called \textbf{interfaces}.
+    \item Each algorithm can require a set of behavioral pattern to be satisfied.
+  \end{itemize}
+
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../figures/inclupoly}
+
+    \column{0.48\textwidth}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../figures/inclupoly_code}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within Libraries: Inclusion Polymorphism}
+  \begin{itemize}
+    \item Extracting behavior pattern from algorithms
+    \item Grouping them into logical bricks called \textbf{concepts}.
+    \item Each algorithm can require a set of behavioral pattern to be satisfied.
+  \end{itemize}
+
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+    \centering
+    \includegraphics[width=0.7\textwidth]{../figures/parapoly}
+
+    \column{0.48\textwidth}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../figures/parapoly_code}
+  \end{columns}
+\end{frame}
+
+\subsection[Genericity within Programming languages]{Genericity within Programming languages}
+
+\begin{frame}[fragile]{Genericity within Programming languages: Outline}
+  \begin{itemize}
+    \item History
+    \item C++: pre-2011 (pre C++11)
+    \item C++: post-2011 (C++20 \& Concepts)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within Programming languages: History}
+  \begin{itemize}
+    \item 45 year old notion
+    \item CLU, ADA, C++
+    \item FIXME: faire uen frise chronologique propre avec ref biblio (comme Florian).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within Programming languages: pre-C++11}
+  \begin{itemize}
+    \item Functions on types: metafunctions or type-traits
+    \begin{minted}{C++}
+      template<class T> struct remove_const                { using type = T; };
+      template<class T> struct remove_const<const T>       { using type = T; };
+    \end{minted}
+    \item SFINAE: Substitution Failure Is Not An Error
+    \begin{minted}{C++}
+      std::enable_if_t<MetaCondition, Type>
+    \end{minted}
+    \item CRTP: Curiously Recurring Template Pattern
+    \begin{minted}{C++}
+      template <class Daughter>
+      class Parent : Daughter { /* ... */ };
+    \end{minted}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within Programming languages: post-C++11}
+  Introducing the process of \textbf{Conceptification}
+  \vfill
+  Naive algorithm:
+  \begin{minted}[linenos]{C++}
+    template <class Image>
+    void gamma_correction(Image& ima, double gamma)
+    {
+      const auto gamma_corr = 1.f / gamma;
+    
+      for (int x = 0; x < ima.width(); ++x)
+        for (int y = 0; y < ima.height(); ++y)
+        {
+          ima(x, y).r = 256.f * std::pow(ima(x, y).r / 256.f, gamma_corr);
+          ima(x, y).g = 256.f * std::pow(ima(x, y).g / 256.f, gamma_corr);
+          ima(x, y).b = 256.f * std::pow(ima(x, y).b / 256.f, gamma_corr);
+        }
+    }
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within Programming languages: Conceptification}
+  Step 1: lifting RGB constraint.
+  \vfill
+  \begin{minted}[linenos,highlightlines={4,7,11}]{C++}
+    template <class Image>
+    void gamma_correction(Image& ima, double gamma)
+    {
+      using value_t = typename Image::value_type;
+
+      const auto gamma_corr = 1.f / gamma;
+      const auto max_val = std::numeric_limits<value_t>::max();
+    
+      for(int x = 0; x < ima.width(); ++x)
+        for(int y = 0; y < ima.height(); ++y)
+          ima(x, y) = max_val * std::pow(ima(x, y) / max_val, gamma_corr);
+    }
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within Programming languages: Conceptification}
+  Step 2: Lifting bi-dimensional constraint.
+  \vfill
+  \begin{minted}[linenos,highlightlines={9-10}]{C++}
+    template <class Image>
+    void gamma_correction(Image& ima, double gamma)
+    {
+      using value_t = typename Image::value_type;
+
+      const auto gamma_corr = 1.f / gamma;
+      const auto max_val = std::numeric_limits<value_t>::max();
+    
+      for (auto&& pix : ima.pixels())
+        val = max_val * std::pow(pix.value() / max_val, gamma_corr);
+    }
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within Programming languages: Conceptification}
+  Step 3: Lifting writability constraint.
+  \vfill
+  \begin{minted}[linenos,highlightlines={1}]{C++}
+    template <WritableImage Image>
+    void gamma_correction(Image& ima, double gamma)
+    {
+      using value_t = typename Image::value_type;
+    
+      const auto gamma_corr = 1.f / gamma;
+      const auto max_val = std::numeric_limits<value_t>::max();
+    
+      for (auto&& pix : ima.pixels())
+        val = max_val * std::pow(pix.value() / max_val, gamma_corr);
+    }
+  \end{minted}
+  \vfill
+  \centering\emph{This is the final version of the algorithm.}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity within Programming languages: Conceptification}
+  Step 4: Concept formal definition
+  \begin{table}[htbp]
+    \begin{scriptsize}
+      \begin{tabular}{l|l|l|l|}
+        \cline{2-4}
+                                                     & \thead{Definition }               &
+        \thead{Description}                          & \thead{Requirement}                                      \\
+        % Image
+        \cline{1-4}
+        \multicolumn{1}{|c|}{\multirow{3}{*}{Image}} & \texttt{Ima::const\_pixel\_range} & \makecell[l]{type of
+          the range to iterate over
+        \\ all the constant pixels} & \makecell[l]{models the concept \\
+          \emph{ForwardRange}}
+        \\
+        \cline{2-4}
+        \multicolumn{1}{|c|}{}                       & \texttt{Ima::pixel\_type}         & type of a pixel
+                                                     & models the concept \emph{Pixel}                          \\
+        \cline{2-4}
+        \multicolumn{1}{|c|}{}                       & \texttt{Ima::value\_type}         & type of a value
+                                                     & models the concept \emph{Regular}                        \\
+        \cline{1-4}
+        % Writable Image
+        \multicolumn{1}{|c|}{\makecell[l]{Writable
+        \\ Image}} & \texttt{WIma::pixel\_range} & \makecell[l]{type of the range to iterate over
+        \\ all the non-constant pixels} & \makecell[l]{models the concept \\
+          \emph{ForwardRange}}
+        \\
+        \cline{1-4}
+        % StructuringElement \multicolumn{1}{|c|}{StructuringElement} &  &  & \\
+        %  \cline{1-4} Decomposable \multicolumn{1}{|c|}{Decomposable} &  &  & \\
+        %  \cline{1-4}
+      \end{tabular}
+    \end{scriptsize}
+    \caption{Concepts formalization: definitions}
+    \label{table:concept.definitions}
+  \end{table}
+\end{frame}
+\begin{frame}[fragile]{Genericity within Programming languages: Conceptification}
+  Step 4: Concept formal definition
+  \begin{table}[htbp]
+    \begin{scriptsize}
+      \begin{tabular}{l|l|l|l|}
+        \cline{2-4}
+                                           & \thead{Expression}                              & \thead{Return Type} &
+        \thead{Description}                                                                                          \\
+        \cline{1-4}
+        % Image
+        \multicolumn{1}{|c|}{Image}        & \texttt{cima.pixels()}                          &
+        \texttt{Ima::const\_pixel\_range}  & \makecell[l]{returns a range of constant pixels
+        \\ to iterate over it} \\
+        \cline{1-4}
+        % Writable Image
+        \multicolumn{1}{|c|}{\makecell[l]{Writable
+        \\ Image}} &\texttt{wima.pixels()} & \texttt{WIma::pixel\_range}       & \makecell[l]{returns a range of
+        pixels                                                                                                       \\ to iterate over it} \\
+        \cline{1-4}
+        % StructuringElement
+        \multicolumn{1}{|c|}{\makecell[l]{Structuring
+        \\ Element}} &\texttt{cse(cpix)} & \texttt{WIma::pixel\_range}       & \makecell[l]{returns a range of
+          the neighboring
+        \\ pixels to iterate over it} \\
+        \cline{1-4}
+        % Decomposable
+        \multicolumn{1}{|c|}{Decomposable} & \texttt{cdse.decompose()}                       &
+        \texttt{implementation defined}    & \makecell[l]{ returns a range of structuring
+        \\ elements to iterate over it} \\
+        \cline{1-4}
+      \end{tabular}
+    \end{scriptsize}
+    \caption{Concepts formalization: expressions}
+    \label{table:concept.expressions}
+  \end{table}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity: Summary}
+  \begin{table}[htbp]
+    \centering
+    \small
+    \begin{threeparttable}
+      %\caption{Genericity approaches: pros.~\&~cons.}
+      \begin{tabular}[width=0.8\linewidth]{l|ccccc}
+        Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
+        \hline
+        Code Duplication     & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
+        Code Generalization  & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
+        Object-Orientation   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
+        Generic Programming: &             &             &            &                 &             \\
+        \quad with C++11     & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
+        \quad with C++17     & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
+        \quad with C++20     & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
+      \end{tabular}
+      \begin{tablenotes}
+        \item[1] TC: type checking.
+        \item[2] CS: code simplicity.
+        \item[3] E: efficiency.
+        \item[4] One IA: one implementation per algorithm.
+        \item[4] EA: explicit abstractions / constrained genericity.
+      \end{tablenotes}
+      \label{table:gen.approaches}
+    \end{threeparttable}
+  \end{table}
+\end{frame}
+
+\begin{frame}[fragile]{Genericity limitations: C++ templates in the dynamic world}
+  \begin{itemize}
+    \item Static templates does not mix well with dynamic code (such as Python).
+    \item Templates belong to the static world (compiled once)
+    \item Python belongs to the dynamic world (interpreted multiple time)
+    \item Addressed more in-depth later (Bringing Genericity to the dynamic world)
+  \end{itemize}
+\end{frame}
+
+%
+%
+%
+\section[Generic programming for Image Processing in the static world (contribution)]{Generic programming for Image Processing in the static world}
+
+\subsection{Taxonomy for Image Processing}
+
+\begin{frame}{Taxonomy for Image Processing: outline}
+  \begin{itemize}
+    \item Image types viewed as set
+    \item Taxonomy of Image Processing Algorithms
+    \item Taxonomy of Image Types
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Taxonomy for Image Processing: Image types viewed as set}
+  \begin{itemize}
+    \item There are families of types.
+    \item Those families share behavior.
+    \item Algorithms must provide one version for each supported family.
+  \end{itemize}
+  \bigskip
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+    \(fill(I, v)\colon \forall{p}\in\mathcal{D}, I(p) = v\)
+
+    \column{0.48\textwidth}
+    \(fill(I, v)\colon \forall{i}\in I.LUT, i = v\)
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Taxonomy for Image Processing: Version vs. Specialization}
+  \begin{itemize}
+    \item A version is an algorithm that supports a family of data type based on a fundamental behavior.
+    \item A specialization of an algorithm is a specific implementation taking advantage of a property (detected at
+          compile-type or at runtime) to execute this algorithm faster.
+  \end{itemize}
+  \bigskip
+  \centering
+  \begin{columns}[T,onlytextwidth]
+    \column{0.358\textwidth}
+    \includegraphics[width=0.7\textwidth]{../figures/image_version}
+    
+    \column{0.615\textwidth}
+    \includegraphics[width=0.7\textwidth]{../figures/image_version_specialization}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Taxonomy for Image Processing: Dilate algorithm}
+  Version dispatching taking advantages of a property related to structuring element:
+  \begin{columns}[T,onlytextwidth]
+    \column{0.60\textwidth}
+\begin{minted}{C++}
+template <Image Img, StructuringElement SE>
+auto dilate(Img img, SE se) {
+  if (se.is_decomposable()) {
+    lst_small_se = se.decompose();
+    for (auto small_se : lst_small_se)
+      // Recursive call
+      img = dilate(img, small_se);
+    return img;
+  } else if (is_pediodic_line(se))
+     // Van Herk's algorithm
+    return fast_dilate1d(img, se);
+  else
+     // Classic algorithm
+    return dilate_normal(img, se);
+}
+\end{minted}
+    
+    \column{0.40\textwidth}
+    \includegraphics[width=0.99\textwidth]{../figures/dilation_specialization_diagram}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Taxonomy for Image Processing: Three families}
+  \begin{itemize}
+    \item Pixel-wise algorithms: thresholding, gamma correction.
+    \item Local algorithms: dilation, erosion, closing, hit-or-miss, gradient, rank filter, union-find, max-tree, etc.
+    \item Global algorithms: Chamfer distance transform, labeling, etc.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Taxonomy for Image Processing: Algorithms canvas}
+  \begin{itemize}
+    \item Algorithms can have the same shape
+    \item When this shape is known, a canvas can be written
+    \item This canvas will only require to be provided callbacks for each customization point to work
+    \item This canvas can leverage a multitude of implementations techniques to improve performances
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Taxonomy for Image Processing: Dilation \& Erosion}
+  Dilation and Erosion have the same shape:
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    \includegraphics[width=0.7\textwidth]{../figures/dilation_code}
+    
+    \column{0.50\textwidth}
+    \includegraphics[width=0.7\textwidth]{../figures/erosion_code}
+  \end{columns}
+  \bigskip
+  They can be rewritten in a common canvas:
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    \includegraphics[width=1.1\textwidth]{../figures/local_op_code}
+    
+    \column{0.50\textwidth}
+    \includegraphics[width=0.6\textwidth]{../figures/local_op_dilation_code}
+    \includegraphics[width=0.6\textwidth]{../figures/local_op_erosion_code}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Taxonomy for Image Processing: Generic canvas}
+  Here is how we can write a generic canvas for local algorithms:
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+\begin{minted}{python}
+def local_canvas(img, out, se):
+  # do something before outer loop
+  for pnt in img.points():
+    # do something before inner loop
+    for nx in se(pnt):
+      # do something inner loop
+    # do something after inner loop
+  # do something after outer loop
+\end{minted}
+
+  \column{0.50\textwidth}
+\begin{minted}{python}
+def dilate(img, out, se):
+  do_nothing = lambda *args, **kwargs: None
+
+  def before_inner_loop(img, out, pnt):
+    out(pnt) = img(pnt)
+
+  def inner_loop(ipix, opix, nx):
+    out(pnt) = max(out(pnt), img(nx))
+
+  local_canvas(img, out, se,
+    before_outer_loop = do_nothing,
+    before_inner_loop = before_inner_loop,
+    inner_loop        = inner_loop,
+    after_inner_loop  = do_nothing,
+    after_outer_loop  = do_nothing
+  )
+\end{minted}
+  \end{columns}
+\end{frame}
+
+\subsection[Our Concepts for Image Processing]{Our Concepts for Image Processing}
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: outline}
+  \begin{itemize}
+    \item Fundamental concepts.
+    \item Advanced concepts to manipulate images.
+    \item Concept support for local algorithms.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: fundamentals}
+  Fundamental concepts are necessary to be able to do basic manipulations over an image.
+  \begin{itemize}
+    \item Value: represent an underlying value type and must support a set of operations.
+    \item Point: represent a site in an image to locate a value.
+    \item Pixel: represent a pair (Value, Point).
+    \item Domain: represent the set of points valid for a given image (definition domain).
+    \item Image: represent the algebraic relation \(y = f(x)\) where \(y\) is a value generated by the image \(f\) for
+          the input (point) \(x\).
+    \item Aside from generating a value, an image can also store a value, as in \(f(x) = y\).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: fundamentals}
+  The basic use case of an image is illustrated by the following code:
+  \begin{minted}{C++}
+    auto ima = Image();           // Get an image
+    for(auto pix : ima.pixels()) {  // Traverse the image
+      auto pnt = pix.point();       // Get the pixel's point
+      auto& val = pix.value();      // Get the pixel's value
+      val = 42;                     // Set the pixel's value
+    }
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: Image concept}
+  \includegraphics[width=0.9\textwidth]{../figures/concepts/image}
+\end{frame}
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: Pixel concept}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../figures/concepts/pixel}
+  \begin{minted}{C++}
+  auto pix = Pixel();     // Get a pixel
+  auto val = pix.val();   // yield the pixel value
+  auto pnt = pix.point(); // yield the pixel point
+  pix.val() = 42;         // Assign a value
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: Domain concept}
+  \centering
+  \includegraphics[width=0.45\textwidth]{../figures/concepts/domain}
+  \begin{minted}{C++}
+    auto dom = Domain();          // Get a domain
+    auto pnt = Point(..., ...);   // Get a random point
+    bool ret = dom.has(pnt);      // Check wether the domain contains the point
+    bool is_empty = dom.empty();  // Check wether the domain is empty
+    auto dim = dom.dim();         // Yield the domain's dimension information
+    for(auto pnt : dom)           // browse the definition domain
+      // use pnt as a point of the domain
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Efficient way to traverse an image}
+  Introducing segmented ranges (cf. issues std::mdspan)
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    \begin{figure}
+      \includegraphics[width=0.8\textwidth]{../figures/linear_rng}
+      \caption{Range-v3's ranges}
+    \end{figure}
+    
+    \column{0.50\textwidth}
+    \begin{figure}
+      \includegraphics[width=0.8\textwidth]{../figures/segmented_rng}
+      \caption{Segmented ranges}
+    \end{figure}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Efficient way to traverse an image}
+  Compiler needs explicit contiguous dimension in code to generate vectorized instructions.
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    Unvectorized algorithm:
+    \begin{minted}{C++}
+template<class I, , class SE>
+auto dilate(I input, const SE& se) {
+  auto output = input.concretize(); // clone image
+  for(auto [in_px, out_px] :
+        view::zip(f.pixels(), g.pixels()))
+  {
+    out_px.val() = out_px.val();
+    for(auto nhx : se(in_px))
+      out_pix.val() =
+        std::max(nhx.val(), out_px.val());
+  }
+  return output;
+}
+    \end{minted}
+    \column{0.50\textwidth}
+    Vectorized algorithm:
+    \begin{minted}[highlightlines={7-10}]{C++}
+template<class I, class SE>
+auto dilate(I input, const SE& se) {
+  auto output = input.concretize(); // clone image
+  // this line is needed to avoid dangling reference
+  auto zipped_pixels =
+        view::zip(input.pixels(), output.pixels());
+  // unroll the contiguous segments
+  for(auto&& row : ranges::rows(zipped_pixels))
+    // optimized traversing of the segment
+    for(auto [in_px, out_px] : row) {
+      out_px.val() = out_px.val();
+      for(auto nhx : se(in_px))
+        out_pix.val() =
+          std::max(in_px.val(), out_px.val());
+    }
+  return output;
+}
+    \end{minted}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
+  \begin{itemize}
+    \item IndexableImage: traversing an image via indexes.
+    \item AccessibleImage: accessing image's value through points.
+    \item BidirectionalImage: traversing image forward and backward.
+    \item RawImage: direct access to the image's data buffer.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
+  \includegraphics[width=0.9\textwidth]{../figures/concepts/images_all}
+\end{frame}
 
 {
   \metroset{titleformat frame=smallcaps}
