@@ -951,23 +951,28 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
 \begin{frame}[fragile]{Views for Image Processing: Concrete Use-case --- background subtraction}
   \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.65\linewidth]{../figures/pipeline_bg_sub_comp}
+    \includegraphics[width=0.9\linewidth]{../figures/pipeline_bg_sub_comp}
     \caption{Background subtraction pipeline using \colorbox{lightgreen}{algorithms} and
       \colorbox{thistle}{views}.}
-    \vspace{-0.3cm}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Views for Image Processing: Concrete Use-case --- background subtraction}
+  \begin{figure}[htbp]
+    \centering
     \begin{tabular}{cccc}
       Background
-                                                                                         & Candidate & Result                    \\[5pt]
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/castle_bg.png}}    &
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/castle_fg_1.png}}  &
+                                                                                        & Candidate & Result                     \\[5pt]
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/castle_bg.png}}   &
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/castle_fg_1.png}} &
       \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}} \\[5pt]
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/garden_bg.png}}    &
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/garden_fg_1.png}}  &
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}} \\[5pt]
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/pathway_fg_1.png}} &
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}}
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/garden_bg.png}}   &
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/garden_fg_1.png}} &
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}}
     \end{tabular}
+
+    \caption{Background detection: data set samples.}
+    \label{fig:bg_sub.dataset_samples}
   \end{figure}
 \end{frame}
 
@@ -1017,7 +1022,7 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
 %
 \section{General Conclusion \& Continuation}
 
-\begin{frame}{Static-dynamic bridge \& }
+\begin{frame}{Static-dynamic bridge}
   TODO
 \end{frame}
 
@@ -1027,7 +1032,7 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
 
 
 
-{\setbeamercolor{palette primary}{fg=black, bg=yellow}
+{\setbeamercolor{palette primary}{fg=black, bg=lightgray}
 \begin{frame}[standout]
   Questions?
 \end{frame}
