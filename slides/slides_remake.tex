@@ -12,6 +12,33 @@
 \usepackage{xspace}
 \newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
 
+\usepackage{datetime}
+
+\usepackage{threeparttable}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage[]{siunitx}
+\usepackage{makecell}
+\usepackage{diagbox}
+
+
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\eqmark}{{\bf \(\approx\)}}
+
+\definecolor{lightgray}{rgb}{0.83, 0.83, 0.83}
+\definecolor{lightblue}{rgb}{0.68, 0.85, 0.9}
+\definecolor{lightgreen}{rgb}{0.56, 0.93, 0.56}
+\definecolor{thistle}{rgb}{0.85, 0.75, 0.85}
+
+
+\usepackage{minted}
+\setminted{fontsize=\scriptsize}
+
+\newdate{dateSoutenance}{04}{11}{2022}
+
+
 \usepackage[backend=biber,
             defernumbers=true,
             sorting=ynt,
@@ -22,39 +49,142 @@
 \addbibresource{../bibliography.bib}
 
 
-\title{Metropolis}
-\subtitle{A modern beamer theme}
-% \date{\today}
-\date{}
-\author{Matthias Vogelgesang}
-\institute{Center for modern beamer themes}
-% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+\title{Generic programming in modern C++ for\\ Image Processing}
+%\subtitle{}
+\date{Thesis Defense --- \displaydate{dateSoutenance}}
+\author{\textbf{Michaël Roynard}\\
+Supervision: \emph{Edwin Carlinet} \hspace{1cm} Direction: \emph{Thierry Géraud}}
+\institute{EPITA Research Laboratory (LRE) --- Le Kremlin Bicêtre, France}
+\titlegraphic{
+\includegraphics[width=.2\textwidth]{../images/logo-edite.pdf}\hfill
+\includegraphics[width=.2\textwidth]{../images/epita.pdf}\hfill
+\includegraphics[width=.2\textwidth]{../images/lre-logo.png}\hfill
+\includegraphics[width=.2\textwidth]{../images/Logo_of_Sorbonne_University.pdf}
+}
+
+\makeatletter
+\setbeamertemplate{title page}{
+  \begin{minipage}[b][\paperheight]{\textwidth}
+    \vfill%
+    \ifx\inserttitle\@empty\else\usebeamertemplate*{title}\fi
+    \ifx\insertsubtitle\@empty\else\usebeamertemplate*{subtitle}\fi
+    \usebeamertemplate*{title separator}
+    \ifx\beamer@shortauthor\@empty\else\usebeamertemplate*{author}\fi
+    \ifx\insertdate\@empty\else\usebeamertemplate*{date}\fi
+    \ifx\insertinstitute\@empty\else\usebeamertemplate*{institute}\fi
+    \vfill
+    \ifx\inserttitlegraphic\@empty\else\inserttitlegraphic\fi
+    \vspace*{1cm}
+  \end{minipage}
+}
+\makeatother
 
 \begin{document}
 
 \maketitle
 
-\begin{frame}{Table of contents}
+\begin{frame}{Overview}
   \setbeamertemplate{section in toc}[sections numbered]
   \tableofcontents%[hideallsubsections]
 \end{frame}
 
-\section[Intro]{Introduction}
+\section[General Introduction]{General Introduction}
 
-\begin{frame}[fragile]{Metropolis}
-
-  The \themename theme is a Beamer theme with minimal visual noise
-  inspired by the \href{https://github.com/hsrmbeamertheme/hsrmbeamertheme}{\textsc{hsrm} Beamer
-    Theme} by Benjamin Weiss.
-
-  Enable the theme by loading
-
-  \begin{verbatim}    \documentclass{beamer}
-    \usetheme{metropolis}\end{verbatim}
-
-  Note, that you have to have Mozilla's \emph{Fira Sans} font and XeTeX
-  installed to enjoy this wonderful typography.
+\begin{frame}[fragile]{Image processing nowadays}
+  \begin{itemize}
+    \item Image processing is everywhere, in every device.
+    \item Applications are multiples.
+    \item Every industry and research domain is using it.
+  \end{itemize}
 \end{frame}
+
+\begin{frame}[fragile]{Image processing nowadays}
+  \begin{alertblock}{Different data types and algorithms}
+    \begin{itemize}
+      \item image-ND, hexagonal grid, cubical complexes value, etc.
+      \item pixel-wise algorithms, local algorithms (convolution), global algorithms (propagation)
+    \end{itemize}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Image processing nowadays}
+  \begin{alertblock}{Different user profiles and their use cases}
+    \begin{itemize}
+      \item The end-user (non-programmer, wants UI interface).
+      \item The practitioner (end-user of an image processing library).
+      \item The contributor (advanced user of a library familiar with its inner working).
+      \item The maintainer (founder/creator of the library or took it over to make it grow).
+    \end{itemize}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Image processing nowadays}
+  \begin{alertblock}{Different tools}
+    \begin{itemize}
+      \item Graphic editors (GIMP, Photoshop).
+      \item Command line utilities (ImageMagick, GraphicsMagick or MegaWave).
+      \item Visual programming environment (Mathcad).
+      \item Integrated environment (Matlab, Scilab, Octave, Mathematica and Jupyter).
+      \item Package for dynamic language (SciPy, NumPy, Scikit-image, Pillow or OpenCV bindings, via PyPi or Conda).
+      \item Programming libraries (IPP, ITK, Boost.GIL, Vigra, GrAL, DGTal, OpenCV, CImg, Video++, Generic Graphic
+            Library, Milena and Olena.
+      \item Domain Specific Languages (DSL)~\footcite{deursen.2000.DSL} (Eigen, Blaze, Blitz++ or Armadillo via C++
+            Expression template~\footcite{veldhuizen.1995.expression}, or Halide and SYCL with their own toolchain).
+    \end{itemize}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Need of Genericity for image processing}
+  \begin{figure}[htbp]
+    \centering
+    \begin{tabular}{cccc}
+                                                                             & image 2D
+                                                                             & graph    & mesh \\[5pt]
+      input:                                                                 &
+      \fbox{\includegraphics[width=.15\linewidth]{../figures/geninput-000b}}  &
+      \fbox{\includegraphics[width=.15\linewidth]{../figures/geninput-001b}}  &
+      \fbox{\includegraphics[width=.15\linewidth]{../figures/geninput-002b}}
+      \\[5pt]
+      %
+      output:                                                                &
+      \fbox{\includegraphics[width=.15\linewidth]{../figures/genoutput-000}}  &
+      \fbox{\includegraphics[width=.15\linewidth]{../figures/genoutput-001b}} &
+      \fbox{\includegraphics[width=.15\linewidth]{../figures/genoutput-002b}}
+      \\
+    \end{tabular}
+    \bigskip
+  
+    \text{The same code run on all these inputs.}
+  
+    \caption{Watershed algorithm applied to three different image types.}
+    \label{fig:type.vs.algo}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Need of Genericity for image processing}
+  Algorithm must support combination whose cardinality increases with:
+
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+    \begin{itemize}
+      \item supported underlying image type (grayscale, rgb, floating-point, ...)
+      \item supported data structure (ND-buffers, graphs, meshes, ...)
+      \item additional data type (structuring element, label maps, ...)
+    \end{itemize}
+
+    \column{0.48\textwidth}
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[width=0.8\textwidth]{../figures/possibility_space}
+      \caption{Specter of possibilities.}
+      \label{fig:int.possibility_space}
+    \end{figure}
+
+  \end{columns}
+\end{frame}
+
+\section[Context and History of Generic Programming]{Context and History of Generic Programming}
+
 \begin{frame}[fragile]{Sections}
   Sections group slides of the same topic
 
