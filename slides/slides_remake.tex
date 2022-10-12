@@ -132,8 +132,8 @@ Géraud}}
       \item Package for dynamic language (SciPy, NumPy, Scikit-image, Pillow or OpenCV bindings, via PyPi or Conda).
       \item Programming libraries (IPP, ITK, Boost.GIL, Vigra, GrAL, DGTal, OpenCV, CImg, Video++, Generic Graphic
             Library, Milena and Olena.
-      %\item Domain Specific Languages (DSL)~\footcite{deursen.2000.DSL} (Eigen, Blaze, Blitz++ or Armadillo via C++
-      %      Expression template~\footcite{veldhuizen.1995.expression}, or Halide and SYCL with their own toolchain).
+            %\item Domain Specific Languages (DSL)~\footcite{deursen.2000.DSL} (Eigen, Blaze, Blitz++ or Armadillo via C++
+            %      Expression template~\footcite{veldhuizen.1995.expression}, or Halide and SYCL with their own toolchain).
       \item Domain Specific Languages (DSL) (Eigen, Blaze, Blitz++ or Armadillo via C++ Expression template, or Halide
             and SYCL with their own toolchain).
     \end{itemize}
@@ -144,24 +144,24 @@ Géraud}}
   \begin{figure}[htbp]
     \centering
     \begin{tabular}{cccc}
-                                                                             & image 2D
-                                                                             & graph    & mesh \\[5pt]
-      input:                                                                 &
+                                                                              & image 2D
+                                                                              & graph    & mesh \\[5pt]
+      input:                                                                  &
       \fbox{\includegraphics[width=.15\linewidth]{../figures/geninput-000b}}  &
       \fbox{\includegraphics[width=.15\linewidth]{../figures/geninput-001b}}  &
       \fbox{\includegraphics[width=.15\linewidth]{../figures/geninput-002b}}
       \\[5pt]
       %
-      output:                                                                &
+      output:                                                                 &
       \fbox{\includegraphics[width=.15\linewidth]{../figures/genoutput-000}}  &
       \fbox{\includegraphics[width=.15\linewidth]{../figures/genoutput-001b}} &
       \fbox{\includegraphics[width=.15\linewidth]{../figures/genoutput-002b}}
       \\
     \end{tabular}
     \bigskip
-  
+
     \text{The same code run on all these inputs.}
-  
+
     \caption{Watershed algorithm applied to three different image types.}
     \label{fig:type.vs.algo}
   \end{figure}
@@ -307,16 +307,16 @@ Géraud}}
 \begin{frame}[fragile]{Genericity within Programming languages: pre-C++11}
   \begin{itemize}
     \item Functions on types: metafunctions or type-traits
-    \begin{minted}{C++}
+          \begin{minted}{C++}
       template<class T> struct remove_const                { using type = T; };
       template<class T> struct remove_const<const T>       { using type = T; };
     \end{minted}
     \item SFINAE: Substitution Failure Is Not An Error
-    \begin{minted}{C++}
+          \begin{minted}{C++}
       std::enable_if_t<MetaCondition, Type>
     \end{minted}
     \item CRTP: Curiously Recurring Template Pattern
-    \begin{minted}{C++}
+          \begin{minted}{C++}
       template <class Daughter>
       class Parent : Daughter { /* ... */ };
     \end{minted}
@@ -324,7 +324,7 @@ Géraud}}
 \end{frame}
 
 \begin{frame}[fragile]{Genericity within Programming languages: post-C++11}
-  Introducing the process of \textbf{Conceptification}
+  Introducing the process of \textbf{Conceptification} (published in~\footcite{roynard.2019.rrpr}).
   \vfill
   Naive algorithm:
   \begin{minted}[linenos]{C++}
@@ -556,7 +556,7 @@ Géraud}}
   \begin{columns}[T,onlytextwidth]
     \column{0.358\textwidth}
     \includegraphics[width=0.7\textwidth]{../figures/image_version}
-    
+
     \column{0.615\textwidth}
     \includegraphics[width=0.7\textwidth]{../figures/image_version_specialization}
   \end{columns}
@@ -566,7 +566,7 @@ Géraud}}
   Version dispatching taking advantages of a property related to structuring element:
   \begin{columns}[T,onlytextwidth]
     \column{0.60\textwidth}
-\begin{minted}{C++}
+    \begin{minted}{C++}
 template <Image Img, StructuringElement SE>
 auto dilate(Img img, SE se) {
   if (se.is_decomposable()) {
@@ -583,7 +583,7 @@ auto dilate(Img img, SE se) {
     return dilate_normal(img, se);
 }
 \end{minted}
-    
+
     \column{0.40\textwidth}
     \includegraphics[width=0.99\textwidth]{../figures/dilation_specialization_diagram}
   \end{columns}
@@ -611,7 +611,7 @@ auto dilate(Img img, SE se) {
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
     \includegraphics[width=0.7\textwidth]{../figures/dilation_code}
-    
+
     \column{0.50\textwidth}
     \includegraphics[width=0.7\textwidth]{../figures/erosion_code}
   \end{columns}
@@ -620,7 +620,7 @@ auto dilate(Img img, SE se) {
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
     \includegraphics[width=1.1\textwidth]{../figures/local_op_code}
-    
+
     \column{0.50\textwidth}
     \includegraphics[width=0.6\textwidth]{../figures/local_op_dilation_code}
     \includegraphics[width=0.6\textwidth]{../figures/local_op_erosion_code}
@@ -631,7 +631,7 @@ auto dilate(Img img, SE se) {
   Here is how we can write a generic canvas for local algorithms:
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
-\begin{minted}{python}
+    \begin{minted}{python}
 def local_canvas(img, out, se):
   # do something before outer loop
   for pnt in img.points():
@@ -642,8 +642,8 @@ def local_canvas(img, out, se):
   # do something after outer loop
 \end{minted}
 
-  \column{0.50\textwidth}
-\begin{minted}{python}
+    \column{0.50\textwidth}
+    \begin{minted}{python}
 def dilate(img, out, se):
   do_nothing = lambda *args, **kwargs: None
 
@@ -700,7 +700,10 @@ def dilate(img, out, se):
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Image concept}
-  \includegraphics[width=0.9\textwidth]{../figures/concepts/image}
+  \centering
+  \begin{figure}
+    \includegraphics[width=0.9\textwidth]{../figures/concepts/image}
+  \end{figure}
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Pixel concept}
@@ -736,7 +739,7 @@ def dilate(img, out, se):
       \includegraphics[width=0.8\textwidth]{../figures/linear_rng}
       \caption{Range-v3's ranges}
     \end{figure}
-    
+
     \column{0.50\textwidth}
     \begin{figure}
       \includegraphics[width=0.8\textwidth]{../figures/segmented_rng}
@@ -799,252 +802,234 @@ auto dilate(I input, const SE& se) {
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
-  \includegraphics[width=0.9\textwidth]{../figures/concepts/images_all}
-\end{frame}
-
-{
-  \metroset{titleformat frame=smallcaps}
-  \begin{frame}{Small caps}
-    This frame uses the \texttt{smallcaps} titleformat.
-
-    \begin{alertblock}{Potential Problems}
-      Be aware, that not every font supports small caps. If for example you typeset your presentation with pdfTeX and the Computer Modern Sans Serif font, every text in smallcaps will be typeset with the Computer Modern Serif font instead.
-    \end{alertblock}
-  \end{frame}
-}
-
-{
-  \metroset{titleformat frame=allsmallcaps}
-  \begin{frame}{All small caps}
-    This frame uses the \texttt{allsmallcaps} titleformat.
-
-    \begin{alertblock}{Potential problems}
-      As this titleformat also uses smallcaps you face the same problems as with the \texttt{smallcaps} titleformat. Additionally this format can cause some other problems. Please refer to the documentation if you consider using it.
-
-      As a rule of thumb: Just use it for plaintext-only titles.
-    \end{alertblock}
-  \end{frame}
-}
-
-{
-  \metroset{titleformat frame=allcaps}
-  \begin{frame}{All caps}
-    This frame uses the \texttt{allcaps} titleformat.
-
-    \begin{alertblock}{Potential Problems}
-      This titleformat is not as problematic as the \texttt{allsmallcaps} format, but basically suffers from the same deficiencies. So please have a look at the documentation if you want to use it.
-    \end{alertblock}
-  \end{frame}
-}
-
-\section{Elements}
-
-\begin{frame}[fragile]{Typography}
-  \begin{verbatim}The theme provides sensible defaults to
-\emph{emphasize} text, \alert{accent} parts
-or show \textbf{bold} results.\end{verbatim}
-
-  \begin{center}becomes\end{center}
-
-  The theme provides sensible defaults to \emph{emphasize} text,
-  \alert{accent} parts or show \textbf{bold} results.
-\end{frame}
-
-\begin{frame}{Font feature test}
-  \begin{itemize}
-    \item Regular
-    \item \textit{Italic}
-    \item \textsc{SmallCaps}
-    \item \textbf{Bold}
-    \item \textbf{\textit{Bold Italic}}
-    \item \textbf{\textsc{Bold SmallCaps}}
-    \item \texttt{Monospace}
-    \item \texttt{\textit{Monospace Italic}}
-    \item \texttt{\textbf{Monospace Bold}}
-    \item \texttt{\textbf{\textit{Monospace Bold Italic}}}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Lists}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.33\textwidth}
-    Items
-    \begin{itemize}
-      \item Milk \item Eggs \item Potatos
-    \end{itemize}
-
-    \column{0.33\textwidth}
-    Enumerations
-    \begin{enumerate}
-      \item First, \item Second and \item Last.
-    \end{enumerate}
-
-    \column{0.33\textwidth}
-    Descriptions
-    \begin{description}
-      \item[PowerPoint] Meeh. \item[Beamer] Yeeeha.
-    \end{description}
-  \end{columns}
-\end{frame}
-\begin{frame}{Animation}
-  \begin{itemize}[<+- | alert@+>]
-    \item \alert<4>{This is\only<4>{ really} important}
-    \item Now this
-    \item And now this
-  \end{itemize}
-\end{frame}
-\begin{frame}{Figures}
+  \centering
   \begin{figure}
-    \newcounter{density}
-    \setcounter{density}{20}
-    \begin{tikzpicture}
-      \def\couleur{alerted text.fg}
-      \path[coordinate] (0,0)  coordinate(A)
-      ++( 90:5cm) coordinate(B)
-      ++(0:5cm) coordinate(C)
-      ++(-90:5cm) coordinate(D);
-      \draw[fill=\couleur!\thedensity] (A) -- (B) -- (C) --(D) -- cycle;
-      \foreach \x in {1,...,40}{%
-          \pgfmathsetcounter{density}{\thedensity+20}
-          \setcounter{density}{\thedensity}
-          \path[coordinate] coordinate(X) at (A){};
-          \path[coordinate] (A) -- (B) coordinate[pos=.10](A)
-          -- (C) coordinate[pos=.10](B)
-          -- (D) coordinate[pos=.10](C)
-          -- (X) coordinate[pos=.10](D);
-          \draw[fill=\couleur!\thedensity] (A)--(B)--(C)-- (D) -- cycle;
-        }
-    \end{tikzpicture}
-    \caption{Rotated square from
-      \href{http://www.texample.net/tikz/examples/rotated-polygons/}{texample.net}.}
+    \includegraphics[width=0.7\textwidth]{../figures/concepts/images_all}
   \end{figure}
 \end{frame}
-\begin{frame}{Tables}
+
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: Local algorithms}
+  \begin{itemize}
+    \item Support for structuring elements (disc, rectangle, sphere, cube, etc.)
+    \item Support for extension (flat buffer, unique value, mirroring, etc.)
+  \end{itemize}
+  Typical usage in local algorithms:
+
+  \begin{minted}{C++}
+      auto se = se::disc(.radius=3); // get a structuring element
+      for(auto pix : ima.pixels())   // traverse image
+        for(auto nb : se(pix))       // traverse neighboring pixels
+          // ...
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Our Concepts for Image Processing: Local algorithms}
+  \centering
+  \begin{figure}
+    \includegraphics[width=0.7\textwidth]{../figures/concepts/se_extension}
+  \end{figure}
+\end{frame}
+
+%
+%
+%
+\section[Views for Image Processing]{Views for Image Processing}
+
+\subsection{Genesis of a new abstraction layer: Views}
+
+\begin{frame}[fragile]{Views for Image Processing: outline}
+  \begin{itemize}
+    \item Genesis of a new abstraction layer: Views
+    \item Views for Image Processing
+    \item View properties
+    \item Use-case: border-management
+    \item Limitations \& performance discussion
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Views for Image Processing: Genesis}
+  Inspired from Milena morphers~\footcite{levillain.2009.ismm} and STL ranges~\footcite{niebler.2014.ranges}.
+  We published our take in~\footcite[]{roynard.2022.gpce}.
+  \begin{alertblock}{View properties}
+    \begin{itemize}
+      \item Cheap-to-copy
+      \item Non-owning (of the data buffer)
+      \item Lazy evaluation
+      \item Composability
+    \end{itemize}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Views for Image Processing: Raising abstraction level}
+  Views enable the Image Processing practitioner to rewrite the following alpha-blending algorithm at image level.
+  \begin{minted}{C++}
+  void blend_inplace(const uint8_t* ima1, uint8_t* ima2, float alpha,
+  int width, int height, int stride1, int stride2) {
+    for (int y = 0; y < height; ++y) {
+      const uint8_t* iptr = ima1 + y * stride1;
+      uint8_t* optr = ima2 + y * stride2;
+      for (int x = 0; x < width; ++x)
+        optr[x] = iptr[x] * alpha + optr[x] * (1-alpha);
+    }
+  }
+  \end{minted}
+  \centering
+  \begin{figure}
+    \includegraphics[width=0.7\textwidth]{../figures/alphablend}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Views for Image Processing: Raising abstraction level}
+  Views can be represented as an expression tree:
+
+  \begin{columns}[T,onlytextwidth]
+    \column{0.45\textwidth}
+    \centering
+    \begin{figure}
+      \includegraphics[width=0.7\textwidth]{../figures/view_ast2}
+    \end{figure}
+
+    \column{0.55\textwidth}
+    \begin{minted}{C++}
+auto alphablend =
+[](auto ima1, auto ima2, float alpha) {
+  return alpha * ima1 +
+                (1 - alpha) * ima2;
+};
+  \end{minted}
+  \end{columns}
+
+  \begin{alertblock}{Usage:}
+    \begin{minted}{C++}
+auto ima1, ima2 = /* ... */;
+auto ima_blended = alphablend(ima1, ima2, 0.2);
+    \end{minted}
+  \end{alertblock}
+
+  \begin{alertblock}{Composability:}
+    \begin{minted}{C++}
+auto roi = /* ... */;
+auto blend_roi = alphablend(view::clip(ima1, roi), view::clip(ima2, roi), 0.2);
+auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
+    \end{minted}
+  \end{alertblock}
+
+\end{frame}
+
+\begin{frame}[fragile]{Views for Image Processing: Overview}
+  \begin{alertblock}{Domain-restrictive views:}
+    Filter, clip and mask
+    \begin{minted}{C++}
+mln::image2d<mln::rgb8> ima = /* ... */ ;
+auto mask1 = ima > 125;
+auto mask2 = ima <= 125;
+mln::fill(mln::view::mask(ima, mask1), 255); // Thresholding
+mln::fill(mln::view::mask(ima, mask2), 0);
+    \end{minted}
+  \end{alertblock}
+
+  \begin{alertblock}{Value-transforming view:}
+    Transform, zip, channel projectors, conversion (cast), operators (arithmetical, logical, mathematical)
+    \begin{minted}{C++}
+mln::image2d<uint8_t> ima = /* ... */ ;
+auto ero = erode(ima);
+auto dil = dilate(ima);
+uint8_t zero = 0;
+auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
+    \end{minted}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Views for Image Processing: Properties}
+  \centering
+  \begin{figure}
+    \includegraphics[width=0.8\textwidth]{../figures/view_property}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Views for Image Processing: Concrete Use-case --- background subtraction}
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{../figures/pipeline_bg_sub_comp}
+    \caption{Background subtraction pipeline using \colorbox{lightgreen}{algorithms} and
+      \colorbox{thistle}{views}.}
+    \label{fig:view.comp.sub_bg}
+  \end{figure}
+  \begin{figure}[htbp]
+    \centering
+    \begin{tabular}{cccc}
+      Background
+                                                                                         & Candidate & Result                    \\[5pt]
+      \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/castle_bg.png}}    &
+      \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/castle_fg_1.png}}  &
+      \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}} \\[5pt]
+      \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/garden_bg.png}}    &
+      \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/garden_fg_1.png}}  &
+      \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}} \\[5pt]
+      \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/pathway_bg.png}}   &
+      \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/pathway_fg_1.png}} &
+      \fbox{\includegraphics[width=.29\linewidth]{../assets/1512x1006/results_sig1_win5/pathway/result_detected_pathway_fg_1.png}}
+    \end{tabular}
+
+    \caption{Background detection: data set samples.}
+    \label{fig:bg_sub.dataset_samples}
+  \end{figure}
+\end{frame}
+
+\newcommand{\mystd}[1]{{\itshape(\(\pm\) #1)}}
+\newcommand{\mydelta}[1]{{\itshape\bfseries #1\%}}
+
+\begin{frame}[fragile]{Views for Image Processing: Concrete Use-case --- background subtraction}
+  \begin{figure}
+    \begin{minted}[highlightlines={3-4,6,8},highlightcolor=thistle]{c++}
+    float kThreshold = 150; float kVSigma = 10;
+    float kHSigma = 10;  int kOpeningRadius = 32;
+    auto img_gray = view::transform(img_color, to_gray);
+    auto bg_gray  = view::transform(bg_color, to_gray);
+    auto bg_blurred = gaussian2d(bg_gray,  kHSigma, kVSigma);
+    auto tmp_gray = img_gray - bg_blurred;
+    auto thresholdf = [](auto x) { return x < kThreshold; };
+    auto tmp_bin = view::transform(tmp_gray, thresholdf);
+    auto ero = erosion(tmp_bin, disc(kOpeningRadius));
+    dilation(ero, disc(kOpeningRadius), output);
+    \end{minted}
+    \caption{Pipeline implementation with \colorbox{thistle}{\emph{views}}. Highlighted code uses \emph{views} by
+      prefixing operators with the namespace \texttt{view}.}
+    \label{fig:view.comp.sub_bg.view_code}
+  \end{figure}
+
   \begin{table}
-    \caption{Largest cities in the world (source: Wikipedia)}
-    \begin{tabular}{lr}
+    \centering
+    \begin{tabular}{l|ccc}
       \toprule
-      City        & Population \\
-      \midrule
-      Mexico City & 20,116,842 \\
-      Shanghai    & 19,210,000 \\
-      Peking      & 15,796,450 \\
-      Istanbul    & 14,160,467 \\
+      Framework          & Compute Time            & Memory usage & \(\Delta{}\)Memory usage \\ \midrule
+      Pylene (w/o views) & \(2.11s\) \mystd{144ms} & 106 MB       & \mydelta{+0}             \\
+      OpenCV             & \(2.41s\) \mystd{134ms} & 59 MB        & \mydelta{-44}            \\
+      Pylene (views)     & \(2.13s\) \mystd{164ms} & 51 MB        & \mydelta{-52}            \\
       \bottomrule
     \end{tabular}
+    \caption{Benchmarks of the previous pipeline on a dataset (12 images) of 10MPix images. Average
+      computation time and memory usage of implementations with/without \emph{views} and with OpenCV as a baseline.}
+    \label{table:views.perf}
+    %\vspace{-1em}
   \end{table}
 \end{frame}
-\begin{frame}{Blocks}
-  Three different block environments are pre-defined and may be styled with an
-  optional background color.
 
-  \begin{columns}[T,onlytextwidth]
-    \column{0.5\textwidth}
-    \begin{block}{Default}
-      Block content.
-    \end{block}
 
-    \begin{alertblock}{Alert}
-      Block content.
-    \end{alertblock}
 
-    \begin{exampleblock}{Example}
-      Block content.
-    \end{exampleblock}
 
-    \column{0.5\textwidth}
+\section{General Conclusion \& Continuation}
 
-    \metroset{block=fill}
-
-    \begin{block}{Default}
-      Block content.
-    \end{block}
-
-    \begin{alertblock}{Alert}
-      Block content.
-    \end{alertblock}
-
-    \begin{exampleblock}{Example}
-      Block content.
-    \end{exampleblock}
-
-  \end{columns}
-\end{frame}
-\begin{frame}{Math}
-  \begin{equation*}
-    e = \lim_{n\to \infty} \left(1 + \frac{1}{n}\right)^n
-  \end{equation*}
-\end{frame}
-\begin{frame}{Line plots}
-  \begin{figure}
-    \begin{tikzpicture}
-      \begin{axis}[
-          mlineplot,
-          width=0.9\textwidth,
-          height=6cm,
-        ]
-
-        \addplot {sin(deg(x))};
-        \addplot+[samples=100] {sin(deg(2*x))};
-
-      \end{axis}
-    \end{tikzpicture}
-  \end{figure}
-\end{frame}
-\begin{frame}{Bar charts}
-  \begin{figure}
-    \begin{tikzpicture}
-      \begin{axis}[
-          mbarplot,
-          xlabel={Foo},
-          ylabel={Bar},
-          width=0.9\textwidth,
-          height=6cm,
-        ]
-
-        \addplot plot coordinates {(1, 20) (2, 25) (3, 22.4) (4, 12.4)};
-        \addplot plot coordinates {(1, 18) (2, 24) (3, 23.5) (4, 13.2)};
-        \addplot plot coordinates {(1, 10) (2, 19) (3, 25) (4, 15.2)};
-
-        \legend{lorem, ipsum, dolor}
-
-      \end{axis}
-    \end{tikzpicture}
-  \end{figure}
-\end{frame}
-\begin{frame}{Quotes}
-  \begin{quote}
-    Veni, Vidi, Vici
-  \end{quote}
+\begin{frame}{Static-dynamic bridge \& }
+  TODO
 \end{frame}
 
-{%
-\setbeamertemplate{frame footer}{My custom footer}
-\begin{frame}[fragile]{Frame footer}
-  \themename defines a custom beamer template to add a text to the footer. It can be set via
-  \begin{verbatim}\setbeamertemplate{frame footer}{My custom footer}\end{verbatim}
-\end{frame}
-}
-
-\begin{frame}{References}
-  Some references to showcase [allowframebreaks] \footcite{levillain.2009.ismm}
+\begin{frame}{Conclusion}
+  TODO
 \end{frame}
 
-\section{Conclusion}
 
-\begin{frame}{Summary}
-
-  Get the source of this theme and the demo presentation from
-
-  \begin{center}\url{github.com/matze/mtheme}\end{center}
-
-  The theme \emph{itself} is licensed under a
-  \href{http://creativecommons.org/licenses/by-sa/4.0/}{Creative Commons
-    Attribution-ShareAlike 4.0 International License}.
-
-  \begin{center}\ccbysa\end{center}
-
-\end{frame}
 
 {\setbeamercolor{palette primary}{fg=black, bg=yellow}
 \begin{frame}[standout]
@@ -1053,6 +1038,10 @@ or show \textbf{bold} results.\end{verbatim}
 }
 
 \appendix
+
+\begin{frame}[allowframebreaks]{References}
+  \printbibliography[heading=none]
+\end{frame}
 
 \begin{frame}[fragile]{Backup slides}
   Sometimes, it is useful to add slides at the end of your presentation to
@@ -1063,14 +1052,6 @@ or show \textbf{bold} results.\end{verbatim}
 
   \themename will automatically turn off slide numbering and progress bars for
   slides in the appendix.
-\end{frame}
-
-\begin{frame}[allowframebreaks]{References}
-
-  \printbibliography
-  %\bibliography{../bibliography.bib}
-  %\bibliographystyle{abbrv}
-
 \end{frame}
 
 \end{document}
