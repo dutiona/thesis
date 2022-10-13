@@ -1,0 +1,1 @@
+Generic programming in modern C++ for Image Processing

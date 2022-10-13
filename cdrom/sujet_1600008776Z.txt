@@ -1,0 +1,1 @@
+Programmation Générique en C++ moderne pour le Traitement d'Images.
