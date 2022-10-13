@@ -100,7 +100,9 @@ following modification:
   auto blended_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 \end{minted}
 The restriction is done upstream from the algorithm and propagated downstream without increasing the code complexity.
-This way, view greatly increase what the user can do by writing less code.
+This way, view greatly increase what the user can do by writing less code. The authors explain in detail
+in~\parencite{roynard.2022.gpce} how to turn a pixel-wise image processing algorithm into a new image type which is an
+image view.
 
 \section{Views for image processing}
 \label{sec:viws_for_ip}
