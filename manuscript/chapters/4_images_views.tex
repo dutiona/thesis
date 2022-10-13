@@ -832,7 +832,7 @@ image traversing. \texttt{mln\_concrete}, \texttt{mln\_piter}, \texttt{mln\_qite
 \texttt{mln\_value} are all macros aiming at hiding the underlying complexity. Our goal were to replace those macros
 with existing C++ core language code to improve the user experience as well as ease the maintenance, contribution and
 further improvement of the library. To do so, we based our image traversing on \texttt{std::ranges}. Let us take the old
-implementation we had of our dilation algorithm as an example:
+implementation (from Milena~\parencite{levillain.2010.icip} we had of our dilation algorithm as an example:
 \begin{minted}{c++}
   template<class I, class SE>
   mln_concrete(I) dilate(const I& f, const SE& se)
@@ -854,8 +854,9 @@ implementation we had of our dilation algorithm as an example:
 \end{minted}
 
 This code features the macro mentioned above and, while being explicit, may be quite obscure with regard to its
-internals for a non-initiated user. However, it uses a double loop to traverse the image under the hood. Rewriting the
-algorithm using ranges results in the following code:
+internals for a non-initiated user. However, it uses an  in-house iterator on points to traverse the image under the
+hood. This in-house iterator prevents the compiler to make crucial optimizations, such as vectorization, which hinders
+greatly the performances. Rewriting the algorithm using ranges in modern code results in the following code:
 \begin{minted}{c++}
   template<class I, , class SE>
   auto dilate(I input, const SE& se)
