@@ -20,6 +20,10 @@
 \usepackage[]{siunitx}
 \usepackage{makecell}
 \usepackage{diagbox}
+\usepackage[absolute,overlay]{textpos}
+
+% Grid
+%\usepackage[texcoord,grid,gridunit=mm,gridcolor=red!10,subgridcolor=green!10]{eso-pic}
 
 
 \usepackage{pifont}
@@ -96,10 +100,18 @@ Géraud}}
 
 \begin{frame}[fragile]{Image processing nowadays}
   \begin{itemize}
-    \item Image processing is everywhere, in every device.
-    \item Applications are multiples.
-    \item Every industry and research domain is using it.
+    \item Image processing is everywhere, in most of the devices (computer, phone, embedded, etc.)
+    \item Applications are multiples (medical imaging, social network filters, facial recognition, etc.).
+    \item Every industry and research domain is using it (production line automation, automatic document reading, social network apps, etc.)
+    \item Image Processing is costly in resources. Performances are crucial.
   \end{itemize}
+  \begin{figure}[bl]
+    \hfill
+    \includegraphics[height=3cm]{../illustrations/rgb_infrared.pdf}
+    \hfill
+    \includegraphics[height=3cm]{../illustrations/camera.pdf}
+    \hspace{1cm}
+  \end{figure}
 \end{frame}
 
 \begin{frame}[fragile]{Image processing nowadays}
@@ -109,17 +121,26 @@ Géraud}}
       \item pixel-wise algorithms, local algorithms (convolution), global algorithms (propagation)
     \end{itemize}
   \end{alertblock}
+  \begin{figure}[bl]
+    \hfill
+    \includegraphics[height=3cm]{../illustrations/cubical_complex.pdf}
+    \hfill
+    \includegraphics[height=3cm]{../illustrations/hexagonal_grid2.pdf}
+    \hspace{1cm}
+  \end{figure}
 \end{frame}
 
 \begin{frame}[fragile]{Image processing nowadays}
   \begin{alertblock}{Different user profiles and their use cases}
     \begin{itemize}
-      \item The end-user (non-programmer, wants UI interface).
-      \item The practitioner (end-user of an image processing library).
-      \item The contributor (advanced user of a library familiar with its inner working).
+      \item The end user (non-programmer, wants UI interface).
+      \item The practitioner (end user of an image processing library).
+      \item The contributor (advanced user of a library familiar with its internals).
       \item The maintainer (founder/creator of the library or took it over to make it grow).
     \end{itemize}
   \end{alertblock}
+
+  Our work is aimed toward the \emph{practitioner}, the \emph{contributor} and the \emph{maintainer}.
 \end{frame}
 
 \begin{frame}[fragile]{Image processing nowadays}
@@ -129,8 +150,8 @@ Géraud}}
       \item Command line utilities (ImageMagick, GraphicsMagick or MegaWave).
       \item Visual programming environment (Mathcad).
       \item Integrated environment (Matlab, Scilab, Octave, Mathematica and Jupyter).
-      \item Package for dynamic language (SciPy, NumPy, Scikit-image, Pillow or OpenCV bindings, via PyPi or Conda).
-      \item Programming libraries (IPP, ITK, Boost.GIL, Vigra, GrAL, DGTal, OpenCV, CImg, Video++, Generic Graphic
+      \item Package for Python (SciPy, NumPy, Scikit-image, Pillow or OpenCV bindings, via PyPi or Conda).
+      \item Programming libraries (IPP, ITK, Boost.GIL, Vigra, Higra, GrAL, DGTal, OpenCV, CImg, Video++, Generic Graphic
             Library, Milena and Olena.
             %\item Domain Specific Languages (DSL)~\footcite{deursen.2000.DSL} (Eigen, Blaze, Blitz++ or Armadillo via C++
             %      Expression template~\footcite{veldhuizen.1995.expression}, or Halide and SYCL with their own toolchain).
@@ -142,29 +163,30 @@ Géraud}}
 
 \begin{frame}[fragile]{Need of Genericity for image processing}
   \begin{figure}[htbp]
-    \centering
+    \raggedright\small
     \begin{tabular}{cccc}
                                                                               & image 2D
                                                                               & graph    & mesh \\[5pt]
       input:                                                                  &
-      \fbox{\includegraphics[width=.15\linewidth]{../figures/geninput-000b}}  &
-      \fbox{\includegraphics[width=.15\linewidth]{../figures/geninput-001b}}  &
-      \fbox{\includegraphics[width=.15\linewidth]{../figures/geninput-002b}}
+      \fbox{\includegraphics[width=.14\linewidth]{../figures/geninput-000b}}  &
+      \fbox{\includegraphics[width=.14\linewidth]{../figures/geninput-001b}}  &
+      \fbox{\includegraphics[width=.14\linewidth]{../figures/geninput-002b}}
       \\[5pt]
       %
       output:                                                                 &
-      \fbox{\includegraphics[width=.15\linewidth]{../figures/genoutput-000}}  &
-      \fbox{\includegraphics[width=.15\linewidth]{../figures/genoutput-001b}} &
-      \fbox{\includegraphics[width=.15\linewidth]{../figures/genoutput-002b}}
+      \fbox{\includegraphics[width=.14\linewidth]{../figures/genoutput-000}}  &
+      \fbox{\includegraphics[width=.14\linewidth]{../figures/genoutput-001b}} &
+      \fbox{\includegraphics[width=.14\linewidth]{../figures/genoutput-002b}}
       \\
     \end{tabular}
-    \bigskip
-
-    \text{The same code run on all these inputs.}
-
-    \caption{Watershed algorithm applied to three different image types.}
     \label{fig:type.vs.algo}
+    \caption{Watershed algorithm applied to three different image types.~\footcite{levillain.2014.ciarp}}
+    %\vspace{-0.5cm}
+    %\text{\textbf{Algorithms are intrinsically generics.}}
   \end{figure}
+  \begin{textblock*}{4cm}(11cm,4cm)
+    \textbf{Algorithms are intrinsically generics.}
+  \end{textblock*}
 \end{frame}
 
 \begin{frame}[fragile]{Need of Genericity for image processing}
@@ -175,14 +197,14 @@ Géraud}}
     \begin{itemize}
       \item supported underlying image type (grayscale, rgb, floating-point, \ldots)
       \item supported data structure (ND-buffers, graphs, meshes, \ldots)
-      \item additional data type (structuring element, label maps, \ldots)
+      \item additional data type (structuring element, masks, \ldots)
     \end{itemize}
 
     \column{0.48\textwidth}
     \begin{figure}[htbp]
       \centering
       \includegraphics[width=0.8\textwidth]{../figures/possibility_space}
-      \caption{Specter of possibilities.}
+      \caption{Space of possibilities.}
       \label{fig:int.possibility_space}
     \end{figure}
   \end{columns}
