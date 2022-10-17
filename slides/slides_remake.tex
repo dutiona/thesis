@@ -461,7 +461,10 @@ Géraud}}
     }
   \end{minted}
   \vfill
-  \centering\emph{This is the final version of the algorithm.}
+  \begin{center}\textbf{This is the final (most generalized) version of the algorithm.}\end{center}
+  \begin{textblock*}{4cm}(11.5cm,3cm)
+    \textbf{A \emph{Concept} is a set of behavioral requirement (constraints) applied to a type.}
+  \end{textblock*}
 \end{frame}
 
 \begin{frame}[fragile]{Concept formal definition}
@@ -537,161 +540,30 @@ Géraud}}
 %
 %
 %
-\section[Generic programming for Image Processing in the static world (contribution)]{Generic programming for Image Processing in the static world}
+\section[Generic Programming for Image Processing in the static world (contribution)]{Generic programming for Image Processing in the static world (contribution)}
 
-\subsection{Taxonomy for Image Processing}
+\subsection{Concepts for Image Processing}
 
-\begin{frame}{Taxonomy for Image Processing: outline}
+\begin{frame}{Taxonomy for Image Processing: Goal}
+  \begin{alertblock}{Taxonomy definition}
+    Act of doing a classification of something in a systematic way.
+  \end{alertblock}
   \begin{itemize}
-    \item Image types viewed as set
-    \item Taxonomy of Image Processing Algorithms
-    \item Taxonomy of Image Types
+    \item Provide zero-costs abstractions so that algorithm families can work on image type families.
+    \item Code will be easy and efficient by default.
   \end{itemize}
+  \begin{center}
+    \textbf{Concepts are not designed after data structures but after algorithms.}
+  \end{center}
 \end{frame}
 
-\begin{frame}{Taxonomy for Image Processing: Image types viewed as set}
-  \begin{itemize}
-    \item There are families of types.
-    \item Those families share behavior.
-    \item Algorithms must provide one version for each supported family.
-  \end{itemize}
-  \bigskip
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-    \(fill(I, v)\colon \forall{p}\in\mathcal{D}, I(p) = v\)
-
-    \column{0.48\textwidth}
-    \(fill(I, v)\colon \forall{i}\in I.LUT, i = v\)
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Taxonomy for Image Processing: Version vs. Specialization}
-  \begin{itemize}
-    \item A version is an algorithm that supports a family of data type based on a fundamental behavior.
-    \item A specialization of an algorithm is a specific implementation taking advantage of a property (detected at
-          compile-type or at runtime) to execute this algorithm faster.
-  \end{itemize}
-  \bigskip
-  \centering
-  \begin{columns}[T,onlytextwidth]
-    \column{0.358\textwidth}
-    \includegraphics[width=0.7\textwidth]{../figures/image_version}
-
-    \column{0.615\textwidth}
-    \includegraphics[width=0.7\textwidth]{../figures/image_version_specialization}
-  \end{columns}
-\end{frame}
-
-\begin{frame}[fragile]{Taxonomy for Image Processing: Dilate algorithm}
-  Version dispatching taking advantages of a property related to structuring element:
-  \begin{columns}[T,onlytextwidth]
-    \column{0.60\textwidth}
-    \begin{minted}{C++}
-template <Image Img, StructuringElement SE>
-auto dilate(Img img, SE se) {
-  if (se.is_decomposable()) {
-    lst_small_se = se.decompose();
-    for (auto small_se : lst_small_se)
-      // Recursive call
-      img = dilate(img, small_se);
-    return img;
-  } else if (is_pediodic_line(se))
-     // Van Herk's algorithm
-    return fast_dilate1d(img, se);
-  else
-     // Classic algorithm
-    return dilate_normal(img, se);
-}
-\end{minted}
-
-    \column{0.40\textwidth}
-    \includegraphics[width=0.99\textwidth]{../figures/dilation_specialization_diagram}
-  \end{columns}
-\end{frame}
-
-\begin{frame}[fragile]{Taxonomy for Image Processing: Three families}
+\begin{frame}[fragile]{Taxonomy of Image Processing algorithms: three families}
   \begin{itemize}
     \item Pixel-wise algorithms: thresholding, gamma correction.
     \item Local algorithms: dilation, erosion, closing, hit-or-miss, gradient, rank filter, union-find, max-tree, etc.
     \item Global algorithms: Chamfer distance transform, labeling, etc.
   \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Taxonomy for Image Processing: Algorithms canvas}
-  \begin{itemize}
-    \item Algorithms can have the same shape
-    \item When this shape is known, a canvas can be written
-    \item This canvas will only require to be provided callbacks for each customization point to work
-    \item This canvas can leverage a multitude of implementations techniques to improve performances
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Taxonomy for Image Processing: Dilation \& Erosion}
-  Dilation and Erosion have the same shape:
-  \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
-    \includegraphics[width=0.7\textwidth]{../figures/dilation_code}
-
-    \column{0.50\textwidth}
-    \includegraphics[width=0.7\textwidth]{../figures/erosion_code}
-  \end{columns}
-  \bigskip
-  They can be rewritten in a common canvas:
-  \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
-    \includegraphics[width=1.1\textwidth]{../figures/local_op_code}
-
-    \column{0.50\textwidth}
-    \includegraphics[width=0.6\textwidth]{../figures/local_op_dilation_code}
-    \includegraphics[width=0.6\textwidth]{../figures/local_op_erosion_code}
-  \end{columns}
-\end{frame}
-
-\begin{frame}[fragile]{Taxonomy for Image Processing: Generic canvas}
-  Here is how we can write a generic canvas for local algorithms:
-  \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
-    \begin{minted}{python}
-def local_canvas(img, out, se):
-  # do something before outer loop
-  for pnt in img.points():
-    # do something before inner loop
-    for nx in se(pnt):
-      # do something inner loop
-    # do something after inner loop
-  # do something after outer loop
-\end{minted}
-
-    \column{0.50\textwidth}
-    \begin{minted}{python}
-def dilate(img, out, se):
-  do_nothing = lambda *args, **kwargs: None
-
-  def before_inner_loop(img, out, pnt):
-    out(pnt) = img(pnt)
-
-  def inner_loop(ipix, opix, nx):
-    out(pnt) = max(out(pnt), img(nx))
-
-  local_canvas(img, out, se,
-    before_outer_loop = do_nothing,
-    before_inner_loop = before_inner_loop,
-    inner_loop        = inner_loop,
-    after_inner_loop  = do_nothing,
-    after_outer_loop  = do_nothing
-  )
-\end{minted}
-  \end{columns}
-\end{frame}
-
-\subsection[Our Concepts for Image Processing]{Our Concepts for Image Processing}
-
-\begin{frame}[fragile]{Our Concepts for Image Processing: outline}
-  \begin{itemize}
-    \item Fundamental concepts.
-    \item Advanced concepts to manipulate images.
-    \item Concept support for local algorithms.
-  \end{itemize}
+  From those families emerge several concepts.
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: fundamentals}
@@ -751,80 +623,34 @@ def dilate(img, out, se):
   \end{minted}
 \end{frame}
 
-\begin{frame}[fragile]{Efficient way to traverse an image}
-  Introducing segmented ranges (cf. issues std::mdspan)
-  \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
-    \begin{figure}
-      \includegraphics[width=0.8\textwidth]{../figures/linear_rng}
-      \caption{Range-v3's ranges}
-    \end{figure}
-
-    \column{0.50\textwidth}
-    \begin{figure}
-      \includegraphics[width=0.8\textwidth]{../figures/segmented_rng}
-      \caption{Segmented ranges}
-    \end{figure}
-  \end{columns}
-\end{frame}
-
-\begin{frame}[fragile]{Efficient way to traverse an image}
-  Compiler needs explicit contiguous dimension in code to generate vectorized instructions.
-  \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
-    Unvectorized algorithm:
-    \begin{minted}{C++}
-template<class I, , class SE>
-auto dilate(I input, const SE& se) {
-  auto output = input.concretize(); // clone image
-  for(auto [in_px, out_px] :
-        view::zip(f.pixels(), g.pixels()))
-  {
-    out_px.val() = out_px.val();
-    for(auto nhx : se(in_px))
-      out_pix.val() =
-        std::max(nhx.val(), out_px.val());
-  }
-  return output;
-}
-    \end{minted}
-    \column{0.50\textwidth}
-    Vectorized algorithm:
-    \begin{minted}[highlightlines={7-10}]{C++}
-template<class I, class SE>
-auto dilate(I input, const SE& se) {
-  auto output = input.concretize(); // clone image
-  // this line is needed to avoid dangling reference
-  auto zipped_pixels =
-        view::zip(input.pixels(), output.pixels());
-  // unroll the contiguous segments
-  for(auto&& row : ranges::rows(zipped_pixels))
-    // optimized traversing of the segment
-    for(auto [in_px, out_px] : row) {
-      out_px.val() = out_px.val();
-      for(auto nhx : se(in_px))
-        out_pix.val() =
-          std::max(in_px.val(), out_px.val());
-    }
-  return output;
-}
-    \end{minted}
-  \end{columns}
-\end{frame}
-
 \begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
   \begin{itemize}
     \item IndexableImage: traversing an image via indexes.
+          \begin{minted}{C++}
+      auto v = ima_lut[k]; // Access value of LUT from an index
+    \end{minted}
     \item AccessibleImage: accessing image's value through points.
-    \item BidirectionalImage: traversing image forward and backward.
+          \begin{minted}{C++}
+      auto v = ima(pnt);   // Access value from a point
+    \end{minted}
+    \item BidirectionalImage: traversing image forward and backward for global algorithm such as Chamfer distance
+          transform that needs a forward pass and a backward pass.
     \item RawImage: direct access to the image's data buffer.
+          \begin{minted}{C++}
+      const int* data = ima.data(); // Access the underlying buffer
+      auto dim = ima.domain().dim(); // Get the dimension of the image
+      // Retrieve information about strides
+      auto strides = std::vector<std::ptrdiff_t>(0, dim)
+      for (int i = 0; i < dim; ++i)
+        strides[i] = ima.stride(i)
+      \end{minted}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
   \centering
   \begin{figure}
-    \includegraphics[width=0.7\textwidth]{../figures/concepts/images_all}
+    \includegraphics[width=0.65\textwidth]{../figures/concepts/images_all}
   \end{figure}
 \end{frame}
 
@@ -851,6 +677,70 @@ auto dilate(I input, const SE& se) {
   \end{figure}
 \end{frame}
 
+\begin{frame}[fragile]{0-overhead of designed abstraction}
+  \begin{itemize}
+    \item We designed abstraction around those concepts that enables 0-overhead when they are used properly.
+    \item For the majority of cases the default code will be the most efficient.
+    \item It is possible to dispatch (dynamically of statically) to algorithms specialization for the remaining edge
+          cases for maximum efficiency.
+  \end{itemize}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.60\textwidth}
+    \begin{minted}{C++}
+template <Image Img, StructuringElement SE>
+auto dilate(Img img, SE se) {
+  if (se.is_decomposable()) {
+    lst_small_se = se.decompose();
+    for (auto small_se : lst_small_se)
+      // Recursive call
+      img = dilate(img, small_se);
+    return img;
+  } else if (is_pediodic_line(se))
+      // Van Herk's algorithm
+    return fast_dilate1d(img, se);
+  else
+      // Classic algorithm
+    return dilate_normal(img, se);
+}
+    \end{minted}
+
+    \column{0.40\textwidth}
+    \includegraphics[width=0.99\textwidth]{../figures/dilation_specialization_diagram}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]{Taxonomy for Image Processing: Algorithms over-generalization}
+  \begin{itemize}
+    \item Algorithms can have the same computational shape.
+    \item When this shape is known, an algorithm canvas can be written (meta-algorithm)
+    \item This canvas shifts the algorithm implementation into a descriptive paradigm.
+    \item This canvas allows reusing code easily.
+    \item This canvas allows the maintainer to factorize optimizations (GPU offloading, etc.)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Taxonomy for Image Processing: Canvas for Dilation \& Erosion}
+  Dilation and Erosion have the same shape:
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    \includegraphics[width=0.7\textwidth]{../figures/dilation_code}
+
+    \column{0.50\textwidth}
+    \includegraphics[width=0.7\textwidth]{../figures/erosion_code}
+  \end{columns}
+  \bigskip
+  They can be rewritten in a common canvas:
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    \includegraphics[width=1.1\textwidth]{../figures/local_op_code}
+
+    \column{0.50\textwidth}
+    \includegraphics[width=0.6\textwidth]{../figures/local_op_dilation_code}
+    \includegraphics[width=0.6\textwidth]{../figures/local_op_erosion_code}
+  \end{columns}
+\end{frame}
+
 %
 %
 %
@@ -858,14 +748,15 @@ auto dilate(I input, const SE& se) {
 
 \subsection{Genesis of a new abstraction layer: Views}
 
-\begin{frame}[fragile]{Views for Image Processing: outline}
-  \begin{itemize}
-    \item Genesis of a new abstraction layer: Views
-    \item Views for Image Processing
-    \item View properties
-    \item Use-case: border-management
-    \item Limitations \& performance discussion
-  \end{itemize}
+\begin{frame}[fragile]{Views for Image Processing}
+  \begin{alertblock}{View definition}
+    \begin{itemize}
+      \item Cheap-to-copy
+      \item Non-owning (of the data buffer)
+      \item Lazy evaluation
+      \item Composability
+    \end{itemize}
+  \end{alertblock}
 \end{frame}
 
 \begin{frame}[fragile]{Views for Image Processing: Genesis}
@@ -1081,33 +972,94 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
 %\end{frame}
 
 
-%\begin{frame}[fragile]{Genericity: Summary}
-%  \begin{table}[htbp]
-%    \centering
-%    \small
-%    \begin{threeparttable}
-%      %\caption{Genericity approaches: pros.~\&~cons.}
-%      \begin{tabular}[width=0.8\linewidth]{l|ccccc}
-%        Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
-%        \hline
-%        Code Duplication     & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
-%        Code Generalization  & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
-%        Object-Orientation   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
-%        Generic Programming: &             &             &            &                 &             \\
-%        \quad with C++11     & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
-%        \quad with C++17     & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
-%        \quad with C++20     & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
-%      \end{tabular}
-%      \begin{tablenotes}
-%        \item[1] TC: type checking.
-%        \item[2] CS: code simplicity.
-%        \item[3] E: efficiency.
-%        \item[4] One IA: one implementation per algorithm.
-%        \item[4] EA: explicit abstractions / constrained genericity.
-%      \end{tablenotes}
-%      \label{table:gen.approaches}
-%    \end{threeparttable}
-%  \end{table}
-%\end{frame}
+\begin{frame}[fragile]{Genericity: Summary}
+  \begin{table}[htbp]
+    \centering
+    \small
+    \begin{threeparttable}
+      %\caption{Genericity approaches: pros.~\&~cons.}
+      \begin{tabular}[width=0.8\linewidth]{l|ccccc}
+        Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
+        \hline
+        Code Duplication     & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
+        Code Generalization  & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
+        Object-Orientation   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
+        Generic Programming: &             &             &            &                 &             \\
+        \quad with C++11     & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
+        \quad with C++17     & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
+        \quad with C++20     & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
+      \end{tabular}
+      \begin{tablenotes}
+        \item[1] TC: type checking.
+        \item[2] CS: code simplicity.
+        \item[3] E: efficiency.
+        \item[4] One IA: one implementation per algorithm.
+        \item[4] EA: explicit abstractions / constrained genericity.
+      \end{tablenotes}
+      \label{table:gen.approaches}
+    \end{threeparttable}
+  \end{table}
+\end{frame}
+
+\begin{frame}[fragile]{Efficient way to traverse an image}
+  Introducing segmented ranges (cf. issues std::mdspan)
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    \begin{figure}
+      \includegraphics[width=0.8\textwidth]{../figures/linear_rng}
+      \caption{Range-v3's ranges}
+    \end{figure}
+
+    \column{0.50\textwidth}
+    \begin{figure}
+      \includegraphics[width=0.8\textwidth]{../figures/segmented_rng}
+      \caption{Segmented ranges}
+    \end{figure}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Efficient way to traverse an image}
+  Compiler needs explicit contiguous dimension in code to generate vectorized instructions.
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    Unvectorized algorithm:
+    \begin{minted}{C++}
+template<class I, , class SE>
+auto dilate(I input, const SE& se) {
+  auto output = input.concretize(); // clone image
+  for(auto [in_px, out_px] :
+        view::zip(f.pixels(), g.pixels()))
+  {
+    out_px.val() = out_px.val();
+    for(auto nhx : se(in_px))
+      out_pix.val() =
+        std::max(nhx.val(), out_px.val());
+  }
+  return output;
+}
+    \end{minted}
+    \column{0.50\textwidth}
+    Vectorized algorithm:
+    \begin{minted}[highlightlines={7-10}]{C++}
+template<class I, class SE>
+auto dilate(I input, const SE& se) {
+  auto output = input.concretize(); // clone image
+  // this line is needed to avoid dangling reference
+  auto zipped_pixels =
+        view::zip(input.pixels(), output.pixels());
+  // unroll the contiguous segments
+  for(auto&& row : ranges::rows(zipped_pixels))
+    // optimized traversing of the segment
+    for(auto [in_px, out_px] : row) {
+      out_px.val() = out_px.val();
+      for(auto nhx : se(in_px))
+        out_pix.val() =
+          std::max(in_px.val(), out_px.val());
+    }
+  return output;
+}
+    \end{minted}
+  \end{columns}
+\end{frame}
 
 \end{document}
