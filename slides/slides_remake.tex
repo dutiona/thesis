@@ -385,15 +385,15 @@ Géraud}}
 \begin{frame}[fragile]{Genericity within Libraries: Summary}
   All existing library do not fall into one single category and combine those techniques to achieve diverse degree of
   genericity.
-  \small\begin{itemize}
+  \vspace{-0.2cm}\small\begin{itemize}
     \item CImg mixes \emph{Generalization} and \emph{Parametric polymorphism} by considering only 4D-images parametrized
           by their value type.
     \item OpenCV's algorithms take polymorphic input types (Inclusion polymorphism) but dispatch on the value type on
           specialized algorithm (code duplication) that then re-dispatch on generic routines (parametric polymorphism).
     \item Scikit-image relies on Scipy which uses dynamic abstraction (inclusion polymorphism) for its nd-array and
           sometimes dispatch on specialized routine (code duplication) for performance.
-    \item Many other Image processing libraries have chosen to leverage Parametric polymorphism at diverse degree
-          (Boost.GIL, Higra, Vigra, GrAL, DGTal, Milena and Pylena)
+    \item Many other libraries have chosen to leverage Parametric polymorphism at diverse degree (Boost.GIL, Higra,
+          Vigra, GrAL, DGTal, Milena and Pylene)
   \end{itemize}
 \end{frame}
 
@@ -522,35 +522,6 @@ Géraud}}
     \end{scriptsize}
     \caption{Concepts formalization: expressions}
     \label{table:concept.expressions}
-  \end{table}
-\end{frame}
-
-\begin{frame}[fragile]{Genericity: Summary}
-  \begin{table}[htbp]
-    \centering
-    \small
-    \begin{threeparttable}
-      %\caption{Genericity approaches: pros.~\&~cons.}
-      \begin{tabular}[width=0.8\linewidth]{l|ccccc}
-        Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
-        \hline
-        Code Duplication     & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
-        Code Generalization  & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
-        Object-Orientation   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
-        Generic Programming: &             &             &            &                 &             \\
-        \quad with C++11     & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
-        \quad with C++17     & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
-        \quad with C++20     & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
-      \end{tabular}
-      \begin{tablenotes}
-        \item[1] TC: type checking.
-        \item[2] CS: code simplicity.
-        \item[3] E: efficiency.
-        \item[4] One IA: one implementation per algorithm.
-        \item[4] EA: explicit abstractions / constrained genericity.
-      \end{tablenotes}
-      \label{table:gen.approaches}
-    \end{threeparttable}
   \end{table}
 \end{frame}
 
@@ -1107,6 +1078,36 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
 %
 %  \themename will automatically turn off slide numbering and progress bars for
 %  slides in the appendix.
+%\end{frame}
+
+
+%\begin{frame}[fragile]{Genericity: Summary}
+%  \begin{table}[htbp]
+%    \centering
+%    \small
+%    \begin{threeparttable}
+%      %\caption{Genericity approaches: pros.~\&~cons.}
+%      \begin{tabular}[width=0.8\linewidth]{l|ccccc}
+%        Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
+%        \hline
+%        Code Duplication     & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
+%        Code Generalization  & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
+%        Object-Orientation   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
+%        Generic Programming: &             &             &            &                 &             \\
+%        \quad with C++11     & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
+%        \quad with C++17     & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
+%        \quad with C++20     & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
+%      \end{tabular}
+%      \begin{tablenotes}
+%        \item[1] TC: type checking.
+%        \item[2] CS: code simplicity.
+%        \item[3] E: efficiency.
+%        \item[4] One IA: one implementation per algorithm.
+%        \item[4] EA: explicit abstractions / constrained genericity.
+%      \end{tablenotes}
+%      \label{table:gen.approaches}
+%    \end{threeparttable}
+%  \end{table}
 %\end{frame}
 
 \end{document}
