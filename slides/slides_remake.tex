@@ -677,7 +677,7 @@ Géraud}}
   \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{0-overhead of designed abstraction}
+\begin{frame}[fragile]{0-overhead for designed abstraction}
   \begin{itemize}
     \item We designed abstraction around those concepts that enables 0-overhead when they are used properly.
     \item For the majority of cases the default code will be the most efficient.
@@ -685,7 +685,7 @@ Géraud}}
           cases for maximum efficiency.
   \end{itemize}
   \begin{columns}[T,onlytextwidth]
-    \column{0.60\textwidth}
+    \column{0.50\textwidth}
     \begin{minted}{C++}
 template <Image Img, StructuringElement SE>
 auto dilate(Img img, SE se) {
@@ -695,7 +695,12 @@ auto dilate(Img img, SE se) {
       // Recursive call
       img = dilate(img, small_se);
     return img;
-  } else if (is_pediodic_line(se))
+  }
+    \end{minted}
+
+    \column{0.50\textwidth}
+    \begin{minted}{C++}
+  else if (is_pediodic_line(se))
       // Van Herk's algorithm
     return fast_dilate1d(img, se);
   else
@@ -704,8 +709,8 @@ auto dilate(Img img, SE se) {
 }
     \end{minted}
 
-    \column{0.40\textwidth}
-    \includegraphics[width=0.99\textwidth]{../figures/dilation_specialization_diagram}
+    %\column{0.40\textwidth}
+    %\includegraphics[width=0.99\textwidth]{../figures/dilation_specialization_diagram}
   \end{columns}
 \end{frame}
 
