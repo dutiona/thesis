@@ -755,29 +755,46 @@ auto dilate(Img img, SE se) {
 
 \begin{frame}[fragile]{Views for Image Processing}
   \begin{alertblock}{View definition}
+    A view is an \emph{image} which embarks an algorithm and features properties. They are inspired from Milena's
+    morphers~\footcite{levillain.2009.ismm} and STL ranges~\footcite{niebler.2014.ranges}. We published our take
+    in~\footcite[]{roynard.2022.gpce}.
     \begin{itemize}
-      \item Cheap-to-copy
-      \item Non-owning (of the data buffer)
-      \item Lazy evaluation
-      \item Composability
+      \item They are different from Milena's morphers because: TODO.
+      \item They are different from STL's view because they are proper image type whereas STL's views are distinct from
+            STL's containers.
     \end{itemize}
   \end{alertblock}
+  \begin{center}\textbf{Views can replace pixel-wise algorithms.}\end{center}
 \end{frame}
 
-\begin{frame}[fragile]{Views for Image Processing: Genesis}
-  Inspired from Milena morphers~\footcite{levillain.2009.ismm} and STL ranges~\footcite{niebler.2014.ranges}.
-  We published our take in~\footcite[]{roynard.2022.gpce}.
-  \begin{alertblock}{View properties}
-    \begin{itemize}
-      \item Cheap-to-copy
-      \item Non-owning (of the data buffer)
-      \item Lazy evaluation
-      \item Composability
-    \end{itemize}
-  \end{alertblock}
+\begin{frame}[fragile]{View properties}
+  Views feature interesting properties.
+  \begin{columns}[T,onlytextwidth]
+    \column{0.350\textwidth}
+    They are:
+    \begin{alertblock}{View properties}
+      \begin{itemize}
+        \item Cheap-to-copy,
+        \item Non-owning (of the data buffer),
+        \item Lazy evaluated,
+        \item Composable.
+      \end{itemize}
+    \end{alertblock}
+
+    \column{0.65\textwidth}
+    \begin{figure}
+      \begin{minipage}{\linewidth}
+        \includegraphics[height=4cm]{../figures/transform_thresholding}
+      \end{minipage}
+      \caption{An image view performing a thresholding.}
+      \label{fig.view.threshold}
+    \end{figure}
+  \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Views for Image Processing: Raising abstraction level}
+\subsection{Raising abstraction level}
+
+\begin{frame}[fragile]{Raising abstraction level}
   Views enable the Image Processing practitioner to rewrite the following alpha-blending algorithm at image level.
   \begin{minted}{C++}
   void blend_inplace(const uint8_t* ima1, uint8_t* ima2, float alpha,
@@ -797,33 +814,33 @@ auto dilate(Img img, SE se) {
 \end{frame}
 
 \begin{frame}[fragile]{Views for Image Processing: Raising abstraction level}
-  Views can be represented as an expression tree:
+  \begin{alertblock}{Lazy-evaluated, Non-owning}
+    \begin{columns}[T,onlytextwidth]
+      \column{0.45\textwidth}
+      \centering
+      \begin{figure}
+        \includegraphics[width=0.7\textwidth]{../figures/view_ast2}
+      \end{figure}
 
-  \begin{columns}[T,onlytextwidth]
-    \column{0.45\textwidth}
-    \centering
-    \begin{figure}
-      \includegraphics[width=0.7\textwidth]{../figures/view_ast2}
-    \end{figure}
-
-    \column{0.55\textwidth}
-    \begin{minted}{C++}
+      \column{0.55\textwidth}
+      \begin{minted}{C++}
 auto alphablend =
 [](auto ima1, auto ima2, float alpha) {
   return alpha * ima1 +
                 (1 - alpha) * ima2;
 };
   \end{minted}
-  \end{columns}
+    \end{columns}
+  \end{alertblock}
 
-  \begin{alertblock}{Usage:}
+  \begin{alertblock}{Cheap-to-copy:}
     \begin{minted}{C++}
 auto ima1, ima2 = /* ... */;
 auto ima_blended = alphablend(ima1, ima2, 0.2);
     \end{minted}
   \end{alertblock}
 
-  \begin{alertblock}{Composability:}
+  \begin{alertblock}{Composable:}
     \begin{minted}{C++}
 auto roi = /* ... */;
 auto blend_roi = alphablend(view::clip(ima1, roi), view::clip(ima2, roi), 0.2);
@@ -833,38 +850,52 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 
 \end{frame}
 
-\begin{frame}[fragile]{Views for Image Processing: Overview}
-  \begin{alertblock}{Domain-restrictive views:}
-    Filter, clip and mask
-    \begin{minted}{C++}
-mln::image2d<mln::rgb8> ima = /* ... */ ;
-auto mask1 = ima > 125;
-auto mask2 = ima <= 125;
-mln::fill(mln::view::mask(ima, mask1), 255); // Thresholding
-mln::fill(mln::view::mask(ima, mask2), 0);
-    \end{minted}
+\begin{frame}[fragile]{Overview of basic views}
+  \begin{alertblock}{Domain-restrictive views: filter, clip, mask}
+    \begin{columns}[T,onlytextwidth]
+      \column{0.60\textwidth}
+      \vspace{0.5cm}
+      \includegraphics[width=0.9\textwidth]{../figures/views/filter}
+
+      \column{0.40\textwidth}
+      \vspace{0.5cm}
+      \includegraphics[width=0.9\textwidth]{../figures/views/clip}
+    \end{columns}
   \end{alertblock}
 
-  \begin{alertblock}{Value-transforming view:}
-    Transform, zip, channel projectors, conversion (cast), operators (arithmetical, logical, mathematical)
-    \begin{minted}{C++}
-mln::image2d<uint8_t> ima = /* ... */ ;
-auto ero = erode(ima);
-auto dil = dilate(ima);
-uint8_t zero = 0;
-auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
-    \end{minted}
+  \begin{alertblock}{Value-transforming view: transform, zip, etc.}
+    \begin{columns}[T,onlytextwidth]
+      \column{0.40\textwidth}
+      \vspace{0.5cm}
+      \includegraphics[width=0.9\textwidth]{../figures/views/transform_grey}
+
+      \column{0.60\textwidth}
+      \vspace{0.5cm}
+      \includegraphics[width=0.9\textwidth]{../figures/views/zip}
+    \end{columns}
   \end{alertblock}
 \end{frame}
 
-\begin{frame}[fragile]{Views for Image Processing: Properties}
+\begin{frame}[fragile]{Property preservation (of concepts) through views}
   \centering
   \begin{figure}
     \includegraphics[width=0.9\textwidth]{../figures/view_property}
   \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{Views for Image Processing: Concrete Use-case --- background subtraction}
+\subsection{Background subtraction benchmark}
+
+\begin{frame}[fragile]{Background subtraction pipeline with algorithms}
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth]{../figures/pipeline_bg_sub_comp_algo}
+    \caption{Background subtraction pipeline using \colorbox{lightgreen}{algorithms}. Superfluous copies are shown with
+      \tikz\draw[blue,fill=lightblue] (0,0) circle (1ex);}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{Background subtraction pipeline with views}
   \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\linewidth]{../figures/pipeline_bg_sub_comp}
@@ -873,7 +904,7 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
   \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{Views for Image Processing: Concrete Use-case --- background subtraction}
+\begin{frame}[fragile]{Background subtraction concrete result}
   \begin{figure}[htbp]
     \centering
     \begin{tabular}{cccc}
@@ -894,7 +925,7 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
 \newcommand{\mystd}[1]{{\itshape(\(\pm\) #1)}}
 \newcommand{\mydelta}[1]{{\itshape\bfseries #1\%}}
 
-\begin{frame}[fragile]{Views for Image Processing: Concrete Use-case --- background subtraction}
+\begin{frame}[fragile]{Background subtraction concrete code}
   \begin{figure}
     \begin{minted}[highlightlines={3-4,6,8},highlightcolor=thistle]{c++}
     float kThreshold = 150; float kVSigma = 10;
@@ -914,7 +945,7 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
   \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{Views for Image Processing: Concrete Use-case --- background subtraction}
+\begin{frame}[fragile]{Background subtraction benchmark result}
   \begin{table}
     \centering
     \begin{tabular}{l|ccc}

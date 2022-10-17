@@ -1,14 +1,15 @@
 \documentclass[varwidth=4cm, border={0.1cm 0.1cm 0.1cm 0.1cm}]{standalone}
 
 \usepackage{minted}
+\usepackage{xcolor}
 
 \setminted[python]{fontsize=\scriptsize}
 
 \begin{document}
 
-\begin{minted}{python}
+\begin{minted}[highlightlines=2,escapeinside=||]{python}
 def erode(img, se, out):
-  local_op(img, se, min, out)
+  local_op(img, se, |\colorbox{red}{min}|, out)
 \end{minted}
 
 \end{document}

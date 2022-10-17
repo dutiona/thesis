@@ -1,0 +1,56 @@
+\documentclass[svgnames,tikz]{standalone}
+\usetikzlibrary{positioning,backgrounds,calc}
+
+\begin{document}
+\begin{tikzpicture}
+  \tikzset{
+    Box/.style={draw, align=center, minimum height=30pt},
+    TitleBox/.style={Box, fill=LightGray},
+    ImageBox/.style={Box, fill=LightBlue},
+    ViewBox/.style={Box, fill=Thistle},
+    AlgoBox/.style={Box, fill=LightGreen}
+  };
+
+
+  \node[ImageBox] (A0) []            {Background\\ \small (RGB-8)};
+  \node[AlgoBox]  (A1) [right=of A0] {Grayscale\\Conversion};
+  \node[AlgoBox]  (A2) [right=of A1] {Subtract};
+  \node[AlgoBox]  (A3) [right=of A2] {Thresholding};
+  \node[AlgoBox]  (A4) [right=of A3] {Opening\\ \small(Erosion+Dilation)};
+  \node[ImageBox] (A5) [below=of A4] {Output\\ \small (Gray 8-bits)};
+
+  \node[ImageBox] (A7) [below=of A0] {Input\\ \small (RGB-8)};
+  \node[AlgoBox]  (A8) [below=of A1] {Grayscale\\Conversion};
+  \node[AlgoBox]  (A9) [below=of A2] {Gaussian};
+
+  \draw[-latex] (A0) -- (A1);
+  \draw[blue,fill=LightBlue] (4.5,0) circle (1ex);
+  \draw[-latex] (A1) -- (A2);
+  \draw[blue,fill=LightBlue] (7,0) circle (1ex);
+  \draw[-latex] (A2) -- (A3);
+  \draw[blue,fill=LightBlue] (10.25,0) circle (1ex);
+  \draw[-latex] (A3) -- (A4);
+  \draw[-latex] (A4) -- (A5);
+
+  \draw[-latex] (A7) -- (A8);
+  \draw[blue,fill=LightBlue] (4.5,-2.05) circle (1ex);
+  \draw[-latex] (A8) -- (A9);
+  \draw[-latex] (A9) -- (A2);
+
+
+  % \draw[DarkGreen, very thick] ($ (A1.north east) + (.48,.5) $)
+  %   node [DarkGreen, above left] {Algorithms}
+  %   rectangle ($ (A7.south west) + (-.5,-.25) $);
+
+
+  % \draw[Magenta, very thick] ($ (A2.south west) + (-.48,-.5) $)
+  %   node [Magenta, below right] {Views}
+  %   rectangle ($ (A4.north east) + (.5,.5) $);
+
+  % \begin{scope}[on background layer]
+  %   \fill[LightGray] ($ (A1.north east) + (.48,.5) $) rectangle ($ (A7.south west) + (-.5,-.25) $);
+  %   \fill[DarkRed,opacity=0.25] ($ (A2.south west) + (-.48,-.5) $) rectangle ($ (A4.north east) + (.5,.5) $);
+  % \end{scope}
+
+\end{tikzpicture}
+\end{document}
