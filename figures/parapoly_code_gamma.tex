@@ -6,12 +6,16 @@
 
 \begin{document}
 \begin{minted}{c++}
-void fill(AnyNDImage& in,
-            std::any val)
+template <class InImage>
+void gamma_correction(
+  InImage& in,
+  double gamma)
 {
-  for (any_point p :
-      in.get_iterator())
-    in.set_pixel(p, val);
+  for (auto p :
+    in.get_iterator())
+  auto& v = in.get_pixel(p)
+            .val();
+  // correct v with gamma
 }
 \end{minted}
 \end{document}
