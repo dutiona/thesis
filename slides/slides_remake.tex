@@ -21,6 +21,8 @@
 \usepackage{makecell}
 \usepackage{diagbox}
 \usepackage[absolute,overlay]{textpos}
+\usepackage{etoolbox}
+\usepackage{setspace}
 
 % Grid
 %\usepackage[texcoord,grid,gridunit=mm,gridcolor=red!10,subgridcolor=green!10]{eso-pic}
@@ -36,6 +38,11 @@
 \definecolor{lightgreen}{rgb}{0.56, 0.93, 0.56}
 \definecolor{thistle}{rgb}{0.85, 0.75, 0.85}
 
+\setbeamerfont{subsection in toc}{size=\scriptsize}
+
+%\makeatletter
+%\patchcmd{\beamer@sectionintoc}{\vskip1.5em}{\vskip0.5em}{}{}
+%\makeatother
 
 \usepackage{minted}
 \setminted{fontsize=\scriptsize}
@@ -89,6 +96,7 @@ Géraud}}
 
 \begin{frame}{Overview}
   \setbeamertemplate{section in toc}[sections numbered]
+  \singlespacing
   \tableofcontents[hideallsubsections]
 \end{frame}
 
@@ -218,7 +226,7 @@ Géraud}}
 {
   \begin{frame}{Outline}
     \setbeamertemplate{section in toc}[sections numbered]
-    \small
+    \small\singlespacing
     \tableofcontents[currentsection]
   \end{frame}
 }
@@ -364,7 +372,7 @@ Géraud}}
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Genericity within Libraries: Inclusion Polymorphism}
+\begin{frame}[fragile]{Genericity within Libraries: Parametric Polymorphism}
   \begin{itemize}
     \item Extracting behavior pattern from algorithms
     \item Grouping them into logical bricks called \textbf{concepts}.
@@ -528,21 +536,12 @@ Géraud}}
   \end{table}
 \end{frame}
 
-\begin{frame}[fragile]{Genericity limitations: C++ templates in the dynamic world}
-  \begin{itemize}
-    \item Static templates does not mix well with dynamic code (such as Python).
-    \item Templates belong to the static world (compiled once)
-    \item Python belongs to the dynamic world (interpreted multiple time)
-    \item Addressed more in-depth later (Bringing Genericity to the dynamic world)
-  \end{itemize}
-\end{frame}
-
 %
 %
 %
 \section[Generic Programming for Image Processing in the static world (contribution)]{Generic programming for Image Processing in the static world (contribution)}
 
-\subsection{Concepts for Image Processing}
+\subsection{Taxonomy of Image Processing algorithms}
 
 \begin{frame}{Taxonomy for Image Processing: Goal}
   \begin{alertblock}{Taxonomy definition}
@@ -565,6 +564,8 @@ Géraud}}
   \end{itemize}
   From those families emerge several concepts.
 \end{frame}
+
+\subsection{Concepts for Image Processing algorithms}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: fundamentals}
   Fundamental concepts are necessary to be able to do basic manipulations over an image.
@@ -677,6 +678,8 @@ Géraud}}
   \end{figure}
 \end{frame}
 
+\subsection{Algorithms canvas}
+
 \begin{frame}[fragile]{0-overhead for designed abstraction}
   \begin{itemize}
     \item We designed abstraction around those concepts that enables 0-overhead when they are used properly.
@@ -749,7 +752,7 @@ auto dilate(Img img, SE se) {
 %
 %
 %
-\section[Views for Image Processing]{Views for Image Processing}
+\section[Views for Image Processing (contribution)]{Views for Image Processing (contribution)}
 
 \subsection{Genesis of a new abstraction layer: Views}
 
@@ -963,17 +966,84 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
   \end{table}
 \end{frame}
 
-%
-%
-%
-\section{General Conclusion \& Continuation}
+\begin{frame}[fragile]{Genericity limitations: C++ templates in the dynamic world}
+  \begin{itemize}
+    \item Static templates does not mix well with dynamic code (such as Python).
+    \item Templates belong to the static world (compiled once)
+    \item Python belongs to the dynamic world (interpreted multiple time)
+    \item Addressed more in-depth later (Bringing Genericity to the dynamic world)
+  \end{itemize}
+\end{frame}
 
-\begin{frame}{Static-dynamic bridge}
-  TODO
+%
+%
+%
+\section{General Conclusion \& Perspective}
+
+\begin{frame}{Static-dynamic bridge: languages type}
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=.75\textwidth]{../figures/comp_inter_hybrid_summary}
+    \caption{Languages types: summary diagram}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Static information vs. dynamic information}
+  \begin{alertblock}{Static information (known at compile-time)}
+    \begin{itemize}
+      \item Image's value type (unit8, rgb8, complex, etc.),
+      \item Image's dimension size (1D, 2D, 3D, etc.),
+      \item Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.).
+    \end{itemize}
+  \end{alertblock}
+  \begin{alertblock}{Dynamic information (known at runtim)}
+    \begin{itemize}
+      \item Image's actual values,
+      \item Image's actual size,
+      \item Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.).
+    \end{itemize}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Our Hybrid solution}
+  \begin{alertblock}{Hybrid solution}
+    \begin{itemize}
+      \item Provide type-erased interface to the static-world.
+      \item Dispatch to the most efficient algorithm (precompiled) depending on type information.
+      \item Allow foreign type injection.
+    \end{itemize}
+  \end{alertblock}
+  \begin{alertblock}{Limitations}
+    \begin{itemize}
+      \item Code bloat.
+      \item Foreign type injection is costly in performance.
+      \item Still experimental.
+    \end{itemize}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Perspective: JIT}
+  \begin{alertblock}{JIT infrastructure for C++/Python}
+    \begin{itemize}
+      \item Cython: transpile Python code into C code (for foreign type injection).
+      \item AutoWIG/Cppyy: python binding generators relying on LLVM infrastructure.
+      \item Xeus-cling: ready-to-use Jupyter kernel for C++.
+    \end{itemize}
+  \end{alertblock}
+  All these existing framework can be leveraged to devise a better solution (more versatile, efficient and generic) in
+  order to provide Python bindings for Pylene.
 \end{frame}
 
 \begin{frame}{Conclusion}
-  TODO
+  \begin{itemize}
+    \item We have shown the progress in generic programming in C++20 and how it serves our purpose.
+    \item We have designed a Concept framework for Image Processing leveraging these progresses to write an \emph{easy to
+          use}, \emph{efficient} and \emph{generic} Image processing library: \textbf{Pylene}.
+    \item We have show-case a new abstraction layer: \emph{Image Views}, that are fully-fledged image type embedding Image
+          Processing algorithm.
+    \item We have explored way to provide those tools to the dynamic world via a static-dynamic bridge, which will be
+          researched further in the future.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Publications}
