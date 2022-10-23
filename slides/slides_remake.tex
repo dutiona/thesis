@@ -1038,7 +1038,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
   \begin{itemize}
     \item We have shown the progress in generic programming in C++20 and how it serves our purpose.
     \item We have designed a Concept framework for Image Processing leveraging these progresses to write an \emph{easy to
-          use}, \emph{efficient} and \emph{generic} Image processing library: \textbf{Pylene}.
+            use}, \emph{efficient} and \emph{generic} Image processing library: \textbf{Pylene}.
     \item We have show-case a new abstraction layer: \emph{Image Views}, that are fully-fledged image type embedding Image
           Processing algorithm.
     \item We have explored way to provide those tools to the dynamic world via a static-dynamic bridge, which will be
@@ -1121,6 +1121,35 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
       \includegraphics[width=0.8\textwidth]{../figures/segmented_rng}
       \caption{Segmented ranges}
     \end{figure}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Efficient way to traverse an image}
+  Compiler needs explicit contiguous dimension in code to generate vectorized instructions.
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    Milena's algorithm (unvectorized):
+    \begin{minted}{C++}
+template<class I, class SE>
+mln_concrete(I) dilate(const I& f, const SE& se)
+{
+  mln_concrete(I) g;
+  initialize(g, f);
+  mln_piter(I) p(f.domain());
+  mln_qiter(SE) q(se, p);
+  for_all(p) // for all p in f domain
+  {
+    mln_value(I) v = f(p);
+    for_all(q) // for all q in se(p)
+      if(f.has(q) and f(q) > v)
+        v = f(q);
+    g(p) = v;
+  }
+  return g;
+}
+    \end{minted}
+    \column{0.50\textwidth}
+
   \end{columns}
 \end{frame}
 
