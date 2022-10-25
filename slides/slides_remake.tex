@@ -971,7 +971,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
     \item Static templates does not mix well with dynamic code (such as Python).
     \item Templates belong to the static world (compiled once)
     \item Python belongs to the dynamic world (interpreted multiple time)
-    \item Addressed more in-depth later (Bringing Genericity to the dynamic world)
+    \item Specific work is needed to make our library available for Python.
   \end{itemize}
 \end{frame}
 
@@ -996,7 +996,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
       \item Architecture of the hardware hosting the program (x86, ARM, PowerPC, GPU, etc.).
     \end{itemize}
   \end{alertblock}
-  \begin{alertblock}{Dynamic information (known at runtim)}
+  \begin{alertblock}{Dynamic information (known at runtime)}
     \begin{itemize}
       \item Image's actual values,
       \item Image's actual size,
@@ -1047,7 +1047,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Publications}
-  \small
+  \footnotesize
   \begin{itemize}
     \item \fullcite{roynard.2019.rrpr}
     \item \fullcite{roynard.2022.gpce}
@@ -1056,9 +1056,12 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 
 {\setbeamercolor{palette primary}{fg=black, bg=lightgray}
 \begin{frame}[standout]
-  Questions?
+  Thanks for listening!\\
+  Any question?
 \end{frame}
 }
+
+\maketitle
 
 \appendix
 
