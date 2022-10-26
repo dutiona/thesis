@@ -75,6 +75,7 @@
 \addbibresource{../bibliography.bib}
 
 \usepackage{xpatch}
+% nom conf, shorten author
 \xapptobibmacro{cite}{\setunit{\nametitledelim}\printfield{year}}{}{}
 
 \title{Generic programming in modern C++ for\\ Image Processing}
@@ -321,6 +322,10 @@
     }
   \end{minted}
 \end{frame}
+% FIXME: x, y, z, t même modèle que slide Non-generic
+% s16 et 17 entre 11 et 12
+% unifier code s12 s13 avec get_iterator -> .pixels(), .get_pixel -> ima(p) etc.
+% unifier .value() .val()
 
 \begin{frame}[fragile]{3rd approach: Inclusion Polymorphism}
   \begin{itemize}
@@ -334,6 +339,7 @@
     \column{0.48\textwidth}
     \centering
     \includegraphics[width=0.8\textwidth]{../figures/inclupoly}
+    % FIXME: highlight AnyNDImage
 
     \column{0.48\textwidth}
     \centering
@@ -353,6 +359,7 @@
     \column{0.48\textwidth}
     \centering
     \includegraphics[width=0.65\textwidth]{../figures/parapoly}
+    % FIXME: highlight template <class InImage>
 
     \column{0.48\textwidth}
     \centering
@@ -406,6 +413,8 @@
 
 \subsection[Toward constrained Genericity]{Toward constrained Genericity}
 
+% FIXME: Toward Genericity
+
 \begin{frame}[fragile]{Toward constrained genericity: Step 1}
   Lifting RGB constraint:
   \begin{minted}[linenos,highlightlines={3,6,10},highlightcolor=yellow!60!white]{C++}
@@ -455,7 +464,10 @@
     \end{itemize}
   \end{alertblock}
   \textbf{Issue: Genericity is unconstrained, so the check is done late and error messages are infamously complicated.}
+  % FIXME: add code back on same slide
 \end{frame}
+
+% FIXME : toward constrained genericity
 
 \begin{frame}[fragile]{Old techniques (pre-C++20)}
   Before C++20 (2020) we relied on metaprogramming techniques to achieve constrained Genericity:
@@ -562,6 +574,7 @@ concept WritableImage =
   \end{itemize}
   From those families emerge several concepts.
 \end{frame}
+% FIXME illustrations
 
 \subsection{Concepts for Image Processing algorithms}
 
@@ -588,6 +601,14 @@ concept WritableImage =
     }
   \end{minted}
 \end{frame}
+% Besoin algorithmique
+% FIXME: écrire un vrai algorithme point-wise en pseudo-code pour justifier:
+% for (p in ima.domain())
+%   ima(p) = 42
+% OU 
+% for (pix in ima.pixels()) // 0 cost abstraction
+%   pix.val() = 42
+% 
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Image concept}
   \centering
@@ -621,21 +642,21 @@ concept WritableImage =
   \end{minted}
 \end{frame}
 
+% FIXME : IndexableImage, besoin pour trier les pixels
 \begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
   \begin{itemize}
     \item IndexableImage: traversing an image via indexes.
           \begin{minted}{C++}
       auto v = ima[k]; // Access value from an index
     \end{minted}
-    \item AccessibleImage: accessing image's value through points.
-          \begin{minted}{C++}
-      auto v = ima(pnt);   // Access value from a point
-    \end{minted}
+    \item AccessibleImage: accessing image's value through points (seen above)
     \item BidirectionalImage: traversing image forward and backward for global algorithm such as Chamfer distance
           transform that needs a forward pass and a backward pass.
           \begin{minted}{C++}
       for(auto pix : ima.pixels()) // forward pass
+            pix.val() = /* ... */;
       for(auto pix : reversed(ima.pixels())) // backward pass
+        pix.val() = /* ... */;
     \end{minted}
     \item RawImage: direct access to the image's data buffer.
           \begin{minted}{C++}
@@ -653,11 +674,14 @@ concept WritableImage =
   \centering
   \begin{figure}
     \includegraphics[width=0.65\textwidth]{../figures/concepts/images_all}
+    % FIXME: virer Index/ReversibleMdrange
+    % FIXME ajouter un plan text + Writability à droite du schéma + en parler à l'oral
   \end{figure}
 \end{frame}
 
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Local algorithms}
+  % FIXME: virer ce qui est lié à l'extension
   \begin{itemize}
     \item Support for structuring elements (disc, rectangle, sphere, cube, etc.)
     \item Support for extension (flat buffer, unique value, mirroring, etc.)
@@ -675,13 +699,19 @@ concept WritableImage =
 \begin{frame}[fragile]{Our Concepts for Image Processing: Local algorithms}
   \centering
   \begin{figure}
+    % FIXME: virer ce qui est lié à l'extension
     \includegraphics[width=0.7\textwidth]{../figures/concepts/se_extension}
+    % FIXME: rajouter lien se -> image via se(pix) qui récupère les pixels voisins (image connait les pixels/points
+    % voisins)
+    % se(p) -> range de points (faire les 2 interfaces)
+    % avec la 2nd version (pixel) -> 0-overhead
   \end{figure}
 \end{frame}
 
 \subsection{Algorithms canvas}
 
 \begin{frame}[fragile]{0-overhead for designed abstraction}
+  % FIXME: retravailler transition
   \begin{itemize}
     \item We designed abstraction around those concepts that enables 0-overhead when they are used properly.
     \item For the majority of cases the default code will be the most efficient.
@@ -756,14 +786,15 @@ auto dilate(Img img, SE se) {
 
 \subsection{Genesis of a new abstraction layer: Views}
 
+% FIXME: attention redondance entre 2 slides
 \begin{frame}[fragile]{Views for Image Processing}
   \begin{alertblock}{View definition}
     A view is an \emph{image} which embarks an algorithm and features properties. They are inspired from Milena's
     morphers~\footcite{levillain.2009.ismm} and STL ranges~\footcite{niebler.2014.ranges}. We published our take
     in~\footcite{roynard.2022.gpce}.
 
-    In Pylene, \hl{a View \textbf{IS} an Image} and \hl{all Image are lightweight} objects (cheap-to-copy). Images have
-    \hl{value semantic} and copies perform \emph{shallow-copies} with a shared data buffer by default.
+    %In Pylene, \hl{a View \textbf{IS} an Image} and \hl{all Image are lightweight} objects (cheap-to-copy). Images have
+    %\hl{value semantic} and copies perform \emph{shallow-copies} with a shared data buffer by default.
   \end{alertblock}
   \begin{center}\textbf{Views can replace pixel-wise algorithms.}\end{center}
 \end{frame}
@@ -775,8 +806,8 @@ auto dilate(Img img, SE se) {
     They are:
     \begin{alertblock}{View properties}
       \begin{itemize}
-        \item Cheap-to-copy,
-        \item Non-owning (of the data buffer),
+        \item Cheap-to-copy (lightweight),
+        \item Non-owning (shared semantic of the data buffer),
         \item Lazy evaluated,
         \item Composable.
       \end{itemize}
@@ -795,6 +826,8 @@ auto dilate(Img img, SE se) {
 
 \subsection{Raising abstraction level}
 
+% FIXME: insister sur les overload pour ROI
+% FIXME: ajouter le protoytpe ?
 \begin{frame}[fragile]{Raising abstraction level}
   Views enable the Image Processing practitioner to rewrite the following alpha-blending algorithm at image level.
   \begin{minted}{C++}
@@ -851,6 +884,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 
 \end{frame}
 
+% FIXME: discours vues similaire aux opérateurs de programmation fonctionnelle
 \begin{frame}[fragile]{Overview of basic views}
   \begin{alertblock}{Domain-restrictive views: filter, clip, mask}
     \begin{columns}[T,onlytextwidth]
@@ -886,6 +920,24 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 
 \subsection{Background subtraction benchmark}
 
+\begin{frame}[fragile]{Concrete application of Views: Background subtraction}
+  \begin{figure}[htbp]
+    \centering
+    \begin{tabular}{cccc}
+      Background                                                                        & Candidate & Result                     \\[5pt]
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/castle_bg.png}}   &
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/castle_fg_1.png}} &
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}} \\[5pt]
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/garden_bg.png}}   &
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/garden_fg_1.png}} &
+      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}}
+    \end{tabular}
+
+    \caption{Background detection: data set samples.}
+    \label{fig:bg_sub.dataset_samples}
+  \end{figure}
+\end{frame}
+
 \begin{frame}[fragile]{Background subtraction pipeline with algorithms}
   \begin{figure}[htbp]
     \centering
@@ -905,24 +957,6 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
       \colorbox{thistle}{views}.}
   \end{figure}
   \begin{center}\textbf{1 intermediary image in memory.}\end{center}
-\end{frame}
-
-\begin{frame}[fragile]{Background subtraction concrete result}
-  \begin{figure}[htbp]
-    \centering
-    \begin{tabular}{cccc}
-      Background                                                                        & Candidate & Result                     \\[5pt]
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/castle_bg.png}}   &
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/castle_fg_1.png}} &
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/results_sig1_win5/castle/result_detected_castle_fg_1.png}} \\[5pt]
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/garden_bg.png}}   &
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/garden_fg_1.png}} &
-      \fbox{\includegraphics[width=.25\linewidth]{../assets/1512x1006/results_sig1_win5/garden/result_detected_garden_fg_1.png}}
-    \end{tabular}
-
-    \caption{Background detection: data set samples.}
-    \label{fig:bg_sub.dataset_samples}
-  \end{figure}
 \end{frame}
 
 \newcommand{\mystd}[1]{{\itshape(\(\pm\) #1)}}
@@ -997,6 +1031,8 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
   \end{alertblock}
 \end{frame}
 
+% FIXME: perspective trop ciblée sur pont static/dynamique
+% Perspective plus générale ( à réfléchir)
 \begin{frame}{Perspective: JIT}
   \begin{alertblock}{JIT infrastructure for C++/Python}
     \begin{itemize}
@@ -1008,6 +1044,10 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
   All these existing framework can be leveraged to devise a better solution (more versatile, efficient and generic) in
   order to provide Python bindings for Pylene.
 \end{frame}
+
+% limitations à l'utilisation de la bibliothèque
+% pourquoi c'est compliqué à utiliser
+% language ? tooling ?
 
 \begin{frame}{Conclusion}
   \begin{itemize}
@@ -1124,22 +1164,20 @@ auto dilate(I input, const SE& se) {
     \end{minted}
     \column{0.50\textwidth}
     Vectorized algorithm:
-    \begin{minted}[highlightlines={7-10},highlightcolor=yellow!60!white]{C++}
+    \begin{minted}[highlightlines={8},highlightcolor=yellow!60!white]{C++}
 template<class I, class SE>
 auto dilate(I input, const SE& se) {
   auto output = input.concretize(); // clone image
   // this line is needed to avoid dangling reference
   auto zipped_pixels =
         view::zip(input.pixels(), output.pixels());
-  // unroll the contiguous segments
-  for(auto&& row : ranges::rows(zipped_pixels))
-    // optimized traversing of the segment
-    for(auto [in_px, out_px] : row) {
-      out_px.val() = out_px.val();
-      for(auto nhx : se(in_px))
-        out_pix.val() =
-          std::max(in_px.val(), out_px.val());
-    }
+  // optimized traversing of the segment
+  mln_foreach(auto [in_px, out_px], zipped_pixels) {
+    out_px.val() = out_px.val();
+    for(auto nhx : se(in_px))
+      out_pix.val() =
+        std::max(in_px.val(), out_px.val());
+  }
   return output;
 }
     \end{minted}
