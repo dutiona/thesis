@@ -62,14 +62,20 @@
 
 
 \usepackage[backend=biber,
+          bibencoding=utf8,
             defernumbers=true,
             sorting=ynt,
             %style=numeric,
-            style=authortitle,
+            %style=authortitle,
+            %style=authortitle-ticomp,
+            style=verbose-inote,
+            citestyle=authortitle,
             %style=draft,
             backref=true]{biblatex}
 \addbibresource{../bibliography.bib}
 
+\usepackage{xpatch}
+\xapptobibmacro{cite}{\setunit{\nametitledelim}\printfield{year}}{}{}
 
 \title{Generic programming in modern C++ for\\ Image Processing}
 %\subtitle{}
@@ -201,7 +207,7 @@
       \\
     \end{tabular}
     \label{fig:type.vs.algo}
-    \caption{Watershed algorithm applied to three different image types.~\footfullcite{levillain.2014.ciarp}}
+    \caption{Watershed algorithm applied to three different image types.~\footcite{levillain.2014.ciarp}}
     %\vspace{-0.5cm}
     %\text{\textbf{Algorithms are intrinsically generics.}}
   \end{figure}
@@ -250,7 +256,7 @@
 \subsection[Unconstrained Genericity]{Unconstrained Genericity}
 
 \begin{frame}[fragile]{Non-generic algorithm: gamma correction}
-  Introducing the process of (generic) \textbf{Generalization}~\footfullcite{roynard.2019.rrpr}. \\
+  Introducing the process of (generic) \textbf{Generalization}~\footcite{roynard.2019.rrpr}. \\
   Non-generic gamma-correction algorithm:
   \vspace{-0.3cm}
   \begin{minted}[linenos]{C++}
@@ -456,7 +462,7 @@
   \vspace{-0.2cm}\begin{itemize}
     \item Functions on types: metafunctions or type-traits
     \item SFINAE: Substitution Failure Is Not An Error
-    \item CRTP: Curiously Recurring Template Pattern (used in the SCOOP paradigm~\footfullcite{geraud.2008.mpool} in Milena).
+    \item CRTP: Curiously Recurring Template Pattern (used in the SCOOP paradigm~\footcite{geraud.2008.mpool} in Milena).
   \end{itemize}
   \vspace{-0.3cm}
   \begin{center}\textbf{We do not want this anymore!}\end{center}
@@ -753,8 +759,8 @@ auto dilate(Img img, SE se) {
 \begin{frame}[fragile]{Views for Image Processing}
   \begin{alertblock}{View definition}
     A view is an \emph{image} which embarks an algorithm and features properties. They are inspired from Milena's
-    morphers~\footfullcite{levillain.2009.ismm} and STL ranges~\footfullcite{niebler.2014.ranges}. We published our take
-    in~\footfullcite{roynard.2022.gpce}.
+    morphers~\footcite{levillain.2009.ismm} and STL ranges~\footcite{niebler.2014.ranges}. We published our take
+    in~\footcite{roynard.2022.gpce}.
 
     In Pylene, \hl{a View \textbf{IS} an Image} and \hl{all Image are lightweight} objects (cheap-to-copy). Images have
     \hl{value semantic} and copies perform \emph{shallow-copies} with a shared data buffer by default.
@@ -1035,6 +1041,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 \appendix
 
 \begin{frame}[allowframebreaks]{References}
+  \AtNextBibliography{\footnotesize}
   \printbibliography[heading=none]
 \end{frame}
 
