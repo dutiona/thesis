@@ -60,23 +60,21 @@
 
 \newdate{dateSoutenance}{04}{11}{2022}
 
-
+\usepackage{bibentry}
 \usepackage[backend=biber,
           bibencoding=utf8,
             defernumbers=true,
             sorting=ynt,
             %style=numeric,
             %style=authortitle,
-            %style=authortitle-ticomp,
-            style=verbose-inote,
-            citestyle=authortitle,
+            style=apa,
             %style=draft,
             backref=true]{biblatex}
 \addbibresource{../bibliography.bib}
 
 \usepackage{xpatch}
 % nom conf, shorten author
-\xapptobibmacro{cite}{\setunit{\nametitledelim}\printfield{year}}{}{}
+%\xapptobibmacro{cite}{\setunit{\nametitledelim}\printfield{year}}{}{}
 
 \title{Generic programming in modern C++ for\\ Image Processing}
 %\subtitle{}
@@ -208,7 +206,7 @@
       \\
     \end{tabular}
     \label{fig:type.vs.algo}
-    \caption{Watershed algorithm applied to three different image types.~\footcite{levillain.2014.ciarp}}
+    \caption{Watershed algorithm applied to three different image types.~\footnote{\bibentry{levillain.2014.ciarp}}}
     %\vspace{-0.5cm}
     %\text{\textbf{Algorithms are intrinsically generics.}}
   \end{figure}
