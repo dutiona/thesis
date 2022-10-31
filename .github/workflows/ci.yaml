@@ -28,7 +28,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-latex
     environment:
       name: github-pages
       url: ${{steps.deployment.outputs.page_url}}
