@@ -79,12 +79,12 @@ Amphi 0 (Building Voltaire)
 
 ## Links
 
-![Résumé long (FR)](https://dutiona.github.io/thesis/resume_long.pdf)
+[Résumé long (FR)](https://dutiona.github.io/thesis/resume_long.pdf)
 
-![Long summary(EN)](https://dutiona.github.io/thesis/long_summary.pdf)
+[Long summary(EN)](https://dutiona.github.io/thesis/long_summary.pdf)
 
-![Thesis manuscript](https://dutiona.github.io/thesis/manuscript.pdf)
+[Thesis manuscript](https://dutiona.github.io/thesis/manuscript.pdf)
 
-![Slides](https://dutiona.github.io/thesis/slides.pdf)
+[Slides](https://dutiona.github.io/thesis/slides.pdf)
 
-![Handout](https://dutiona.github.io/thesis/handout.pdf)
+[Handout](https://dutiona.github.io/thesis/handout.pdf)
