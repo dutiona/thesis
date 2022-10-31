@@ -2,7 +2,7 @@ TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
 SRC = $(filter-out header.tex, $(wildcard *.tex))
 PDF = $(SRC:.tex=.pdf)
 
-all: $(PDF) handout compressed
+all: $(PDF) handout compressed embedded
 
 %.pdf : %.tex Makefile
 	$(TEX) $< -jobname="$(basename $<)"
@@ -22,7 +22,25 @@ handout : $(PDF:.pdf=.handout.pdf)
 %.handout.compressed.pdf : %.tex
 	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $^).handout.pdf
 
+%.embedded.pdf : %.tex ${DEP}
+	ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
+	-dPDFX -dPDFSETTINGS=/prepress \
+	-dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode \
+	-dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode \
+	-dAutoFilterMonoImages=false -dMonoImageFilter=/CCITTFaxEncode \
+	-sOutputFile=$@ $(basename $<).pdf
+
+%.handout.embedded.pdf : %.tex ${DEP}
+	ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
+	-dPDFX -dPDFSETTINGS=/prepress \
+	-dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode \
+	-dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode \
+	-dAutoFilterMonoImages=false -dMonoImageFilter=/CCITTFaxEncode \
+	-sOutputFile=$@ $(basename $<).handout.pdf
+
 compressed : $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.handout.compressed.pdf)
+
+embedded : $(PDF:.pdf=.embedded.pdf) $(PDF:.pdf=.handout.embedded.pdf)
 
 clean :
 	latexmk -C *.tex

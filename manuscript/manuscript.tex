@@ -34,6 +34,7 @@
 \usepackage{datetime}
 %\usepackage{svg}
 \usepackage{lettrine}
+\usepackage{siunitx}
 %\usepackage{wrapfig}
 %\usepackage[backend=biber,style=alphabetic,sorting=ynt]{biblatex}
 %\usepackage[backend=biber,sorting=ynt,style=numeric]{biblatex}
@@ -48,6 +49,11 @@
 \DeclareBibliographyCategory{cited}
 \AtEveryCitekey{\addtocategory{cited}{\thefield{entrykey}}}
 \addbibresource{../bibliography.bib}
+
+% remove widows and orphans
+\clubpenalty = 10000
+\widowpenalty = 10000
+\displaywidowpenalty = 10000
 
 % This allows for an additional line-breaking pass with the amount of
 % "tolerable" white space per line increased by 1em.
