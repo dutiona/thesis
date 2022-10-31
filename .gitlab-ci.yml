@@ -6,15 +6,11 @@ build-latex:
   stage: build
   image: mroynard/latex-maker:latest
   script:
-    - make -C figures
-    - cd manuscript && make manuscript.pdf long_summary_en_standalone.pdf long_summary_fr_standalone.pdf && \
-      make compressed && make embedded && cd ..
-    - cd slides && make slides.pdf && make compressed && make embedded && cd ..
     - make
   artifacts:
     name: "build-latex"
     paths:
-      - ./roynard.gpce.2022/
+      - ./roynard.thesis.2022/*.pdf
     expire_in: 2 weeks
 
 pages:
