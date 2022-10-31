@@ -1,4 +1,11 @@
 TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
+GSCOMPRESS = ghostscript -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/printer 
+GSEMBEDDED = ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
+	-dPDFX -dPDFSETTINGS=/prepress -dPrinted=false \
+	-dEmbedAllFonts=true -dSubsetFonts=true \
+	-dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode \
+	-dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode \
+	-dAutoFilterMonoImages=false -dMonoImageFilter=/CCITTFaxEncode
 SRC = $(filter-out flyleaf.tex trash.tex main.old.tex, $(wildcard *.tex))
 DEP = flyleaf.tex ../bibliography.bib $(wildcard chapters/*.tex)
 PDF = $(SRC:.tex=.pdf)
@@ -7,17 +14,16 @@ all : $(PDF) compressed embedded
 
 %.pdf : %.tex ${DEP}
 	$(TEX) $< -jobname="$(basename $<)"
+	rm -rf $(basename $<).metadata
+	pdftk $@ dump_data_utf8 > $(basename $<).metadata
 
 %.compressed.pdf : %.tex ${DEP}
-	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $<).pdf
+	$(GSCOMPRESS) -sOutputFile=$@ $(basename $<).pdf
 
 %.embedded.pdf : %.tex ${DEP}
-	ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
-	-dPDFX -dPDFSETTINGS=/prepress \
-	-dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode \
-	-dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode \
-	-dAutoFilterMonoImages=false -dMonoImageFilter=/CCITTFaxEncode \
-	-sOutputFile=$@ $(basename $<).pdf
+	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).pdf
+	mv $@ $(basename $<).embedded.tmp.pdf
+	pdftk "$(basename $<).embedded.tmp.pdf" update_info_utf8 "$(basename $<).metadata" output "$@"
 
 compressed : $(PDF:.pdf=.compressed.pdf)
 

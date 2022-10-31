@@ -1,3 +1,10 @@
+GSCOMPRESS = ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH
+GSEMBEDDED = ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
+	-dPDFX -dPDFSETTINGS=/prepress -dPrinted=true \
+	-dEmbedAllFonts=true -dSubsetFonts=true \
+	-dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode \
+	-dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode \
+	-dAutoFilterMonoImages=false -dMonoImageFilter=/CCITTFaxEncode
 TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
 SRC = $(filter-out header.tex, $(wildcard *.tex))
 PDF = $(SRC:.tex=.pdf)
@@ -17,26 +24,16 @@ all: $(PDF) handout compressed embedded
 handout : $(PDF:.pdf=.handout.pdf)
 
 %.compressed.pdf : %.tex
-	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $^).pdf
+	$(GSCOMPRESS) -sOutputFile=$@ $(basename $^).pdf
 
 %.handout.compressed.pdf : %.tex
-	ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$@ $(basename $^).handout.pdf
+	$(GSCOMPRESS) -sOutputFile=$@ $(basename $^).handout.pdf
 
 %.embedded.pdf : %.tex ${DEP}
-	ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
-	-dPDFX -dPDFSETTINGS=/prepress \
-	-dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode \
-	-dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode \
-	-dAutoFilterMonoImages=false -dMonoImageFilter=/CCITTFaxEncode \
-	-sOutputFile=$@ $(basename $<).pdf
+	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).pdf
 
 %.handout.embedded.pdf : %.tex ${DEP}
-	ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
-	-dPDFX -dPDFSETTINGS=/prepress \
-	-dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode \
-	-dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode \
-	-dAutoFilterMonoImages=false -dMonoImageFilter=/CCITTFaxEncode \
-	-sOutputFile=$@ $(basename $<).handout.pdf
+	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).handout.pdf
 
 compressed : $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.handout.compressed.pdf)
 
