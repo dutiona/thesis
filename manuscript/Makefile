@@ -24,6 +24,7 @@ all : $(PDF) compressed embedded
 	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).pdf
 	mv $@ $(basename $<).embedded.tmp.pdf
 	pdftk "$(basename $<).embedded.tmp.pdf" update_info_utf8 "$(basename $<).metadata" output "$@"
+	rm -rf $(basename $<).embedded.tmp.pdf
 
 compressed : $(PDF:.pdf=.compressed.pdf)
 
@@ -31,4 +32,4 @@ embedded : $(PDF:.pdf=.embedded.pdf)
 
 clean :
 	latexmk -C *.tex
-	rm -rf $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.bbl) build _minted-*
+	rm -rf $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.embedded.pdf) $(PDF:.pdf=.metadata) $(PDF:.pdf=.bbl) *.run.xml *.log build _minted-*
