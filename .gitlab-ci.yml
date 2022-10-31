@@ -1,0 +1,35 @@
+stages:
+  - build
+  - deploy
+
+build-latex:
+  stage: build
+  image: mroynard/latex-maker:latest
+  script:
+    - make -C figures
+    - cd manuscript && make manuscript.pdf && make compressed && make embedded
+    - cd slides && make slides.pdf && make compressed && make embedded
+    - make
+  artifacts:
+    name: "build-latex"
+    paths:
+      - ./roynard.gpce.2022/
+    expire_in: 2 weeks
+
+pages:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - build-latex
+  script:
+    - mkdir -p ./public
+    - cp -r ./roynard.thesis.2022/manuscript.pdf ./public/manuscript.pdf
+    - cp -r ./roynard.thesis.2022/long_summary.pdf ./public/long_summary.pdf
+    - cp -r ./roynard.thesis.2022/resume_long.pdf ./public/resume_long.pdf
+    - cp -r ./roynard.thesis.2022/slides.pdf ./public/slides.pdf
+    - cp -r ./roynard.thesis.2022/handout.pdf ./public/handout.pdf
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
