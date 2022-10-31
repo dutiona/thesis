@@ -1,4 +1,4 @@
-C++ est un langage de programmation multiparadigme qui permet au développeur initié de mettre au point des
+C++ est un langage de programmation multi-paradigme qui permet au développeur initié de mettre au point des
 algorithmes de traitement d'images. La force de langage se base sur plusieurs aspects. C++ est haut-niveau, cela
 signifie qu'il est possible de développer des abstractions puissantes mélangeant plusieurs styles de programmation pour
 faciliter le développement. En même temps, C++ reste bas-niveau et peut pleinement tirer partie du matériel pour fournir
