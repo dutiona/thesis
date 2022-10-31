@@ -49,7 +49,7 @@ Amphi 0 (Building Voltaire)
 ## Citation
 
 ```latex
-@PhDThesis{	 roynard.22.phd,
+@PhDThesis{	roynard.22.phd,
   author	= {Micha\"{e}l {R}oynard},
   title		= {Generic Programming in modern {C}++ for Image Processing},
   school	= {Sorbonne Universit\'e},
@@ -79,24 +79,12 @@ Amphi 0 (Building Voltaire)
 
 ## Links
 
-![Résumé long (FR)](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/resume_long.pdf)
+![Résumé long (FR)](https://dutiona.github.io/thesis/resume_long.pdf)
 
-![Long summary(EN)](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/long_summary.pdf)
+![Long summary(EN)](https://dutiona.github.io/thesis/long_summary.pdf)
 
-![Thesis manuscript](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/manuscript.pdf)
+![Thesis manuscript](https://dutiona.github.io/thesis/manuscript.pdf)
 
-![Slides](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/slides.pdf)
+![Slides](https://dutiona.github.io/thesis/slides.pdf)
 
-![Handout](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/handout.pdf)
-
-<!--
-![Résumé long (FR)](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/resume_long.pdf)
-
-![Long summary(EN)](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/long_summary.pdf)
-
-![Thesis manuscript](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/manuscript.pdf)
-
-![Slides](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/slides.pdf)
-
-![Handout](http://mroynard.pages.lre.epita.fr/roynard.thesis.manuscript/handout.pdf)
--->
+![Handout](https://dutiona.github.io/thesis/handout.pdf)
