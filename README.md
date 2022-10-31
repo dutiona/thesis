@@ -17,8 +17,11 @@ C++ est un langage de programmation multi-paradigme qui permet au développeur i
 ## Ph.D. Defense
 
 Michaël Roynard <michael.roynard@epita.fr>
+
 Friday 4th Novembre 2022 at 9:30 am
+
 EPITA, 14-16 Rue Voltaire, 94270 Le Kremlin-Bicêtre
+
 Amphi 0 (Building Voltaire)
 
 ## Composition du Jury

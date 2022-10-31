@@ -1,13 +1,17 @@
 name: Continuous Integration
-
+inputs:
+  path:
+    description: "Path of the directory containing the static assets."
+    required: true
+    default: "_site/"
 on:
   push:
     branches:
-    - master
+      - master
 
   pull_request:
     branches:
-    - master
+      - master
 
 jobs:
   latex:
@@ -15,14 +19,11 @@ jobs:
     container:
       image: mroynard/latex-maker:latest
     steps:
-      -
-        name: Checkout code
+      - name: Checkout code
         uses: actions/checkout@v2
-      -
-        name: Build latex
+      - name: Build latex
         run: make
-      -
-        uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3
         with:
           name: thesis-artifacts
           path: |
