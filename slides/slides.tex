@@ -1112,20 +1112,18 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 \end{frame}
 
 \begin{frame}[fragile]{Efficient way to traverse an image}
-  Compiler needs explicit contiguous dimension in code to generate vectorized instructions.
+  Compiler needs explicit contiguous dimension to generate vectorized instructions.
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
     Milena's algorithm (unvectorized):
     \begin{minted}{C++}
 template<class I, class SE>
-mln_concrete(I) dilate(const I& f, const SE& se)
-{
+mln_concrete(I) dilate(const I& f, const SE& se) {
   mln_concrete(I) g;
   initialize(g, f);
   mln_piter(I) p(f.domain());
   mln_qiter(SE) q(se, p);
-  for_all(p) // for all p in f domain
-  {
+  for_all(p) { // for all p in f domain
     mln_value(I) v = f(p);
     for_all(q) // for all q in se(p)
       if(f.has(q) and f(q) > v)
@@ -1141,14 +1139,15 @@ mln_concrete(I) dilate(const I& f, const SE& se)
 \end{frame}
 
 \begin{frame}[fragile]{Efficient way to traverse an image}
-  Compiler needs explicit contiguous dimension in code to generate vectorized instructions.
+  Compiler needs explicit contiguous dimension to generate vectorized instructions.
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
-    Unvectorized algorithm:
+    Pylene's unvectorized algorithm:
     \begin{minted}{C++}
 template<class I, , class SE>
 auto dilate(I input, const SE& se) {
-  auto output = input.concretize(); // clone image
+  // clone image
+  auto output = input.concretize();
   for(auto [in_px, out_px] :
         view::zip(f.pixels(), g.pixels()))
   {
@@ -1161,7 +1160,7 @@ auto dilate(I input, const SE& se) {
 }
     \end{minted}
     \column{0.50\textwidth}
-    Vectorized algorithm:
+    Pylene's vectorized algorithm:
     \begin{minted}[highlightlines={8},highlightcolor=yellow!60!white]{C++}
 template<class I, class SE>
 auto dilate(I input, const SE& se) {

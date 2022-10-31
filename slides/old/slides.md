@@ -7,8 +7,8 @@ author: Michaël Roynard \newline
 date: Thesis Defense --- \displaydate{dateSoutenance}
   \newline Le Kremlin Bicêtre, France
 institute: EPITA Research & Development Laboratory (LRDE) \newline
- ![](../images/logo-edite.pdf){width=1.8cm} $~~~~~$ ![](../images/epita.pdf){width=2cm} $~~~~~$
- ![](../images/lrde-big.png){width=2cm} $~~~~~$ ![](../images/Logo_of_Sorbonne_University.pdf){width=2.5cm}
+ ![](../../images/logo-edite.pdf){width=1.8cm} $~~~~~$ ![](../../images/epita.pdf){width=2cm} $~~~~~$
+ ![](../../images/lrde-big.png){width=2cm} $~~~~~$ ![](../../images/Logo_of_Sorbonne_University.pdf){width=2.5cm}
 controls: false
 slideNumber: true
 transition: none
@@ -72,7 +72,7 @@ Algorithm must support combination whose cardinality increases with:
 ::::
 
 :::: column
-![Specter of possibilities\label{specter-possibilities}](../figures/possibility_space.pdf)
+![Specter of possibilities\label{specter-possibilities}](../../figures/possibility_space.pdf)
 ::::
 
 :::
@@ -146,11 +146,11 @@ void fill(image4D img, const std::array<double, 4>& v) {
 ::: columns
 
 :::: column
-![](../figures/inclupoly.pdf)
+![](../../figures/inclupoly.pdf)
 ::::
 
 :::: column
-![](../figures/inclupoly_code.pdf)
+![](../../figures/inclupoly_code.pdf)
 ::::
 
 :::
@@ -164,11 +164,11 @@ void fill(image4D img, const std::array<double, 4>& v) {
 ::: columns
 
 :::: column
-![](../figures/parapoly.pdf)
+![](../../figures/parapoly.pdf)
 ::::
 
 :::: column
-![](../figures/parapoly_code.pdf)
+![](../../figures/parapoly_code.pdf)
 ::::
 
 :::
@@ -435,11 +435,11 @@ $fill(I, v)\colon \forall{i}\in I.LUT, i = v$
 ::: columns
 
 :::: {.column width="38.5%"}
-![](../figures/image_version.pdf)
+![](../../figures/image_version.pdf)
 ::::
 
 :::: {.column width="61.5%"}
-![](../figures/image_version_specialization.pdf)
+![](../../figures/image_version_specialization.pdf)
 ::::
 
 :::
@@ -475,7 +475,7 @@ auto dilate(Img img, SE se) {
 ::::
 
 :::: {.column width="40%"}
-![](../figures/dilation_specialization_diagram.pdf)
+![](../../figures/dilation_specialization_diagram.pdf)
 ::::
 
 :::
@@ -500,27 +500,27 @@ auto dilate(Img img, SE se) {
 ::: columns
 
 :::: column
-![](../figures/dilation_code.pdf)
+![](../../figures/dilation_code.pdf)
 ::::
 
 :::: column
-![](../figures/erosion_code.pdf)
+![](../../figures/erosion_code.pdf)
 ::::
 
 :::
 
 * They can be rewritten in a common canvas:
 
-![](../figures/local_op_code.pdf)
+![](../../figures/local_op_code.pdf)
 
 ::: columns
 
 :::: column
-![](../figures/local_op_dilation_code.pdf)
+![](../../figures/local_op_dilation_code.pdf)
 ::::
 
 :::: column
-![](../figures/local_op_erosion_code.pdf)
+![](../../figures/local_op_erosion_code.pdf)
 ::::
 
 :::
@@ -592,7 +592,7 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 
 ## Fundamentals : Pixel concept
 
-![](../figures/concepts/pixel.pdf)
+![](../../figures/concepts/pixel.pdf)
 
 \scriptsize
 
@@ -605,7 +605,7 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 
 ## Fundamentals : Domain concept
 
-![](../figures/concepts/domain.pdf){width=85%}
+![](../../figures/concepts/domain.pdf){width=85%}
 
 \scriptsize
 
@@ -621,7 +621,7 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 
 ## Fundamentals : Image concept (diagram)
 
-![](../figures/concepts/image.pdf)
+![](../../figures/concepts/image.pdf)
 
 ## Fundamentals : Image concept (code usage)
 
@@ -649,7 +649,7 @@ Fundamental concepts are necessary to be able to do basic manipulations over an 
 
 ## Advanced concepts to manipulate images: Diagram
 
-![](../figures/concepts/images_all.pdf)
+![](../../figures/concepts/images_all.pdf)
 
 ## Concept support for local algorithms
 
@@ -669,7 +669,7 @@ Typical usage in local algorithms:
 
 ## Concept support for local algorithms (diagram)
 
-![](../figures/concepts/se_extension.pdf)
+![](../../figures/concepts/se_extension.pdf)
 
 ## Views for Image Processing (outline)
 
@@ -707,7 +707,7 @@ Typical usage in local algorithms:
 
 \bigskip
 
-![](../figures/alphablend.pdf)
+![](../../figures/alphablend.pdf)
 
 ## Views for Image Processing: Expression tree & Composability
 
@@ -716,7 +716,7 @@ Typical usage in local algorithms:
 ::: columns
 
 :::: {.column width="45%"}
-![](../figures/view_ast2.pdf)
+![](../../figures/view_ast2.pdf)
 ::::
 
 :::: {.column width="55%"}
@@ -786,7 +786,7 @@ auto ret = mln::view::ifelse(dil < ero, ero - dil, zero); // Hit-or-miss
 
 ## View properties
 
-![Views: property conservation](../figures/view_property.pdf)
+![Views: property conservation](../../figures/view_property.pdf)
 
 ## Concrete view use-case: border-management
 
@@ -829,33 +829,33 @@ algorithms will need this issue to be solved.
 :::: columns
 
 ::: {.column width="33%"}
-![Border None](../figures/extensions/none.pdf){height=3.3cm}
+![Border None](../../figures/extensions/none.pdf){height=3.3cm}
 $~~~~~$ 
 *Border None* \newline
 $~~~~~$
-![Border periodize](../figures/extensions/periodize.pdf){height=3.3cm}
+![Border periodize](../../figures/extensions/periodize.pdf){height=3.3cm}
 $~~~~~$ 
 *Border Periodize*
 $~~~~~$
 :::
  
 ::: {.column width="33%"}
-![Border fill](../figures/extensions/fill.pdf){height=3.3cm}
+![Border fill](../../figures/extensions/fill.pdf){height=3.3cm}
 $~~~~~$ 
 *Border Fill* \newline
 $~~~~~$
-![Border clamp](../figures/extensions/clamp.pdf){height=3.3cm}
+![Border clamp](../../figures/extensions/clamp.pdf){height=3.3cm}
 $~~~~~$ 
 *Border Clamp*
 $~~~~~$
 :::
 
 ::: {.column width="33%"}
-![Border mirror](../figures/extensions/mirror.pdf){height=3.3cm}
+![Border mirror](../../figures/extensions/mirror.pdf){height=3.3cm}
 $~~~~~$ 
 *Border Mirror* \newline
 $~~~~~$
-![Border image](../figures/extensions/image.pdf){height=3.3cm}
+![Border image](../../figures/extensions/image.pdf){height=3.3cm}
 $~~~~~$ 
 *Border Image*
 $~~~~~$
@@ -898,13 +898,13 @@ local_algorithm(Ima ima, SE se, BM bm)
 :::: columns
 
 ::: column
-![Range-v3's ranges](../figures/linear_rng.pdf)
+![Range-v3's ranges](../../figures/linear_rng.pdf)
 $~~~~~$
 *Range-v3's ranges*
 :::
 
 ::: column
-![Range-v3's ranges](../figures/segmented_rng.pdf)
+![Range-v3's ranges](../../figures/segmented_rng.pdf)
 *Segmented ranges*
 :::
 
@@ -977,7 +977,7 @@ auto dilate(I input, const SE& se) {
 
 * Pipeline:
 
-![](../figures/pipeline_bg_sub_comp.pdf)
+![](../../figures/pipeline_bg_sub_comp.pdf)
 
 * Corresponding code with views:
 
@@ -1018,21 +1018,21 @@ operators with the namespace _view_.*
 
 * Compile-time:
 
-![](../figures/static_compiletime.pdf)
+![](../../figures/static_compiletime.pdf)
 
 * Runtime:
 
-![](../figures/static_runtime.pdf)
+![](../../figures/static_runtime.pdf)
 
 ## Interpreted languages
 
 * Runtime:
 
-![](../figures/dynamic_pipeline.pdf)
+![](../../figures/dynamic_pipeline.pdf)
 
 ## Summary
 
-![](../figures/comp_inter_hybrid_summary.pdf)
+![](../../figures/comp_inter_hybrid_summary.pdf)
 
 ## Information that is static and/or dynamic
 

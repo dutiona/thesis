@@ -1,7 +1,5 @@
 BUNDLE_DIR = roynard.thesis.2022
 SUBDIRS = figures manuscript
-INE = 1600008776Z
-CDROM = cdrom/these_archivage_${INE}
 
 all : $(SUBDIRS) bundle
 
@@ -17,7 +15,7 @@ bundle : ${BUNDLE_DIR}.tar.gz
 $(SUBDIRS) :
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
-.PHONY : $(SUBDIRS) cdrom
+.PHONY : $(SUBDIRS)
 
 clean : subdirclean
 	rm -rf ${BUNDLE_DIR} ${BUNDLE_DIR}.tar.gz
