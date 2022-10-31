@@ -13,6 +13,8 @@ all: $(PDF) handout compressed embedded
 
 %.pdf : %.tex Makefile
 	$(TEX) $< -jobname="$(basename $<)"
+	rm -rf $(basename $<).metadata
+	pdftk $@ dump_data_utf8 > $(basename $<).metadata
 
 %.handout.pdf : %.tex
 	cp $(basename $<).pdf $@
@@ -31,6 +33,9 @@ handout : $(PDF:.pdf=.handout.pdf)
 
 %.embedded.pdf : %.tex ${DEP}
 	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).pdf
+	mv $@ $(basename $<).embedded.tmp.pdf
+	pdftk "$(basename $<).embedded.tmp.pdf" update_info_utf8 "$(basename $<).metadata" output "$@"
+	rm -rf $(basename $<).embedded.tmp.pdf
 
 %.handout.embedded.pdf : %.tex ${DEP}
 	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).handout.pdf
@@ -41,5 +46,5 @@ embedded : $(PDF:.pdf=.embedded.pdf) $(PDF:.pdf=.handout.embedded.pdf)
 
 clean :
 	latexmk -C *.tex
-	rm -rf $(PDF) $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.handout.pdf) $(PDF:.pdf=.handout.compressed.pdf) *.bbl *.run.xml *.nav *.snm *.vrb build _minted-*
+	rm -rf $(PDF) $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.handout.pdf) $(PDF:.pdf=.handout.compressed.pdf) $(PDF:.pdf=.embedded.pdf) $(PDF:.pdf=.handout.embedded.pdf) *.bbl *.run.xml *.nav *.snm *.vrb build _minted-* *.metadata
 
