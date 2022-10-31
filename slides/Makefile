@@ -1,11 +1,11 @@
-GSCOMPRESS = ghostscript -dEmbedAllFonts=true -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH
+TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
+GSCOMPRESS = ghostscript -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/printer
 GSEMBEDDED = ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
 	-dPDFX -dPDFSETTINGS=/prepress -dPrinted=true \
 	-dEmbedAllFonts=true -dSubsetFonts=true \
 	-dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode \
 	-dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode \
 	-dAutoFilterMonoImages=false -dMonoImageFilter=/CCITTFaxEncode
-TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
 SRC = $(filter-out header.tex, $(wildcard *.tex))
 PDF = $(SRC:.tex=.pdf)
 

@@ -1,5 +1,5 @@
 TEX = latexmk --pdf -pdflatex="pdflatex --shell-escape"
-GSCOMPRESS = ghostscript -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/printer 
+GSCOMPRESS = ghostscript -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/printer
 GSEMBEDDED = ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
 	-dPDFX -dPDFSETTINGS=/prepress -dPrinted=true \
 	-dEmbedAllFonts=true -dSubsetFonts=true \

@@ -7,8 +7,8 @@ build-latex:
   image: mroynard/latex-maker:latest
   script:
     - make -C figures
-    - cd manuscript && make manuscript.pdf && make compressed && make embedded
-    - cd slides && make slides.pdf && make compressed && make embedded
+    - cd manuscript && make manuscript.pdf && make compressed && make embedded && cd ..
+    - cd slides && make slides.pdf && make compressed && make embedded && cd ..
     - make
   artifacts:
     name: "build-latex"
