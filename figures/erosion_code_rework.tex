@@ -1,4 +1,4 @@
-\documentclass[varwidth=5cm, border={0.1cm 0.1cm 0.1cm 0.1cm}]{standalone}
+\documentclass[varwidth=5.5cm, border={0.1cm 0.1cm 0.1cm 0.1cm}]{standalone}
 
 \usepackage{minted}
 
@@ -6,7 +6,7 @@
 
 \begin{document}
 
-\begin{minted}[highlightlines=5]{python}
+\begin{minted}[highlightlines=5,highlightcolor=yellow!60!white]{python}
 def erode(img, se, out):
   for pnt in img.points():
     out(pnt) = img(pnt)

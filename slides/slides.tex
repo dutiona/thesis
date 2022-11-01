@@ -23,6 +23,7 @@
 \usepackage[absolute,overlay]{textpos}
 \usepackage{etoolbox}
 \usepackage{microtype}
+\usepackage{tcolorbox}
 %\usepackage{setspace}
 
 % Grid
@@ -34,7 +35,7 @@
 \newcommand{\xmark}{\textcolor{red!50!white}{\ding{55}}}%
 \newcommand{\eqmark}{{\bf \(\approx\)}}
 
-\definecolor{lightgray}{rgb}{0.83, 0.83, 0.83}
+\definecolor{lightgray}{rgb}{0.68, 0.68, 0.68}
 \definecolor{lightblue}{rgb}{0.68, 0.85, 0.9}
 \definecolor{lightgreen}{rgb}{0.56, 0.93, 0.56}
 \definecolor{thistle}{rgb}{0.85, 0.75, 0.85}
@@ -126,10 +127,10 @@
 
 \begin{frame}[fragile]{Image processing nowadays}
   \begin{itemize}
-    \item Image processing is everywhere, in most of the devices \GRAYOUT{(computer, phone, embedded devices, etc.)}
-    \item Applications are multiples \GRAYOUT{(medical imaging, social network filters, facial recognition, etc.)}
     \item Every industry and research domain is using it \GRAYOUT{(production line automation, automatic document
             reading, social network apps, etc.)}
+    \item Image processing is everywhere, in most of the devices \GRAYOUT{(computer, phone, embedded devices, etc.)}
+    \item Applications are multiples \GRAYOUT{(medical imaging, social network filters, facial recognition, etc.)}
     \item Image Processing is costly in resources. Performance is crucial.
   \end{itemize}
   \begin{figure}[bl]
@@ -223,21 +224,25 @@
   Algorithm must support combination whose cardinality increases with:
 
   \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
+    \column{0.52\textwidth}
     \begin{itemize}
       \item supported underlying image value type (grayscale, rgb, floating-point, \ldots)
       \item supported data structure (ND-buffers, graphs, meshes, \ldots)
       \item additional data type (structuring element, masks, \ldots)
     \end{itemize}
 
-    \column{0.48\textwidth}
+    \column{0.47\textwidth}
     \begin{figure}[htbp]
       \centering
-      \includegraphics[width=0.8\textwidth]{../figures/possibility_space}
+      \includegraphics[width=0.7\textwidth]{../figures/possibility_space}
       \caption{Space of possibilities.}
       \label{fig:int.possibility_space}
     \end{figure}
   \end{columns}
+
+  \begin{alertblock}{What is a generic algorithm?}
+    An algorithm is generic when it is written once to perform over a wide array of data structures.
+  \end{alertblock}
 \end{frame}
 
 %
@@ -425,15 +430,15 @@
     \begin{threeparttable}
       %\caption{Genericity approaches: pros.~\&~cons.}
       \begin{tabular}[width=0.8\linewidth]{l|ccccc}
-        Paradigm             & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
+        Paradigm                 & TC\tnote{1} & CS\tnote{2} & E\tnote{3} & One IA\tnote{4} & EA\tnote{5} \\
         \hline
-        Code Duplication     & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
-        Code Generalization  & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
-        Object-Orientation   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
-        Generic Programming: &             &             &            &                 &             \\
-        \quad with C++11     & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
-        \quad with C++17     & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
-        \quad with C++20     & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
+        Code Duplication         & \cmark      & \xmark      & \cmark     & \xmark          & \xmark      \\
+        Code Generalization      & \xmark      & \eqmark     & \eqmark    & \cmark          & \xmark      \\
+        Inclusion Polymorphism   & \eqmark     & \cmark      & \xmark     & \cmark          & \cmark      \\
+        Parametric Polymorphism: &             &             &            &                 &             \\
+        \quad with C++11         & \cmark      & \eqmark     & \cmark     & \cmark          & \eqmark     \\
+        \quad with C++17         & \cmark      & \cmark      & \cmark     & \cmark          & \eqmark     \\
+        \quad with C++20         & \cmark      & \cmark      & \cmark     & \cmark          & \cmark      \\
       \end{tabular}
       \begin{tablenotes}
         \item[1] TC: type checking.
@@ -677,7 +682,7 @@ concept WritableImage =
   \begin{minted}{C++}
       auto se = se::disc(.radius=3); // get a structuring element
       for(auto pnt : ima.domain())   // traverse image's points
-        for(auto nbp : se(pix))      // traverse neighboring points
+        for(auto nbp : se(pnt))      // traverse neighboring points
           // nbp is a range of points
 
       // OR
@@ -708,51 +713,51 @@ concept WritableImage =
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
     \begin{minted}{C++}
-template <Image Img, StructuringElement SE>
-auto dilate(Img img, SE se) {
-  if (se.is_decomposable()) {
-    lst_small_se = se.decompose();
-    for (auto small_se : lst_small_se)
-      // Recursive call
-      img = dilate(img, small_se);
-    return img;
-  }
-    \end{minted}
+      template <Image Img, StructuringElement SE>
+      auto dilate(Img img, SE se) {
+        if (se.is_decomposable()) {
+          lst_small_se = se.decompose();
+          for (auto small_se : lst_small_se)
+            // Recursive call
+            img = dilate(img, small_se);
+          return img;
+        }
+          \end{minted}
 
     \column{0.50\textwidth}
     \begin{minted}{C++}
-  else if (is_pediodic_line(se))
-      // Van Herk's algorithm
-    return fast_dilate1d(img, se);
-  else
-      // Classic algorithm
-    return dilate_normal(img, se);
-}
-    \end{minted}
-
-    %\column{0.40\textwidth}
-    %\includegraphics[width=0.99\textwidth]{../figures/dilation_specialization_diagram}
+        else if (is_pediodic_line(se))
+            // Van Herk's algorithm
+          return fast_dilate1d(img, se);
+        else
+            // Classic algorithm
+          return dilate_normal(img, se);
+      }
+      \end{minted}
   \end{columns}
+
+  %\column{0.40\textwidth}
+  %\includegraphics[width=0.99\textwidth]{../figures/dilation_specialization_diagram}
 \end{frame}
 
 \begin{frame}[fragile]{Taxonomy for Image Processing: Canvas for Dilation \& Erosion}
   Dilation and Erosion have the same shape:
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
-    \includegraphics[width=0.7\textwidth]{../figures/dilation_code}
+    \includegraphics[width=0.7\textwidth]{../figures/dilation_code_rework}
 
     \column{0.50\textwidth}
-    \includegraphics[width=0.7\textwidth]{../figures/erosion_code}
+    \includegraphics[width=0.7\textwidth]{../figures/erosion_code_rework}
   \end{columns}
   \bigskip
   They can be rewritten in a common canvas:
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
-    \includegraphics[width=1.1\textwidth]{../figures/local_op_code}
+    \includegraphics[width=0.7\textwidth]{../figures/local_op_code_rework}
 
     \column{0.50\textwidth}
-    \includegraphics[width=0.6\textwidth]{../figures/local_op_dilation_code}
-    \includegraphics[width=0.6\textwidth]{../figures/local_op_erosion_code}
+    \includegraphics[width=0.55\textwidth]{../figures/local_op_dilation_code}
+    \includegraphics[width=0.55\textwidth]{../figures/local_op_erosion_code}
   \end{columns}
 \end{frame}
 
@@ -838,29 +843,35 @@ void blend_inplace(
   float alpha, int width,
   int height, int stride1,
   int stride2,
-  int offset_width,
-  int offset_height);
+  int width_b, int width_e
+  int height_b, int height_e);
     \end{minted}
   \end{textblock*}
 \end{frame}
 
 \begin{frame}[fragile]{Views for Image Processing: Raising abstraction level}
   \begin{alertblock}{Lazy-evaluated, Non-owning}
+    \vspace{0.5cm}
     \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+      \begin{tcolorbox}
+        \begin{minted}{C++}
+  auto alphablend =
+  [](auto ima1, auto ima2, float alpha) {
+    return alpha * ima1 +
+                  (1 - alpha) * ima2;
+  };
+      \end{minted}
+      \end{tcolorbox}
+
       \column{0.45\textwidth}
       \centering
-      \begin{figure}
-        \includegraphics[width=0.7\textwidth]{../figures/view_ast2}
-      \end{figure}
+      \begin{tcolorbox}
+        \begin{figure}
+          \includegraphics[width=0.68\textwidth]{../figures/view_ast2}
+        \end{figure}
+      \end{tcolorbox}
 
-      \column{0.55\textwidth}
-      \begin{minted}{C++}
-auto alphablend =
-[](auto ima1, auto ima2, float alpha) {
-  return alpha * ima1 +
-                (1 - alpha) * ima2;
-};
-  \end{minted}
     \end{columns}
   \end{alertblock}
 
@@ -986,8 +997,8 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
       \toprule
       Framework          & Compute Time            & Memory usage & \(\Delta{}\)Memory usage \\ \midrule
       Pylene (w/o views) & \(2.11s\) \mystd{144ms} & 106 MB       & \mydelta{+0}             \\
-      OpenCV             & \(2.41s\) \mystd{134ms} & 59 MB        & \mydelta{-44}            \\
       Pylene (views)     & \(2.13s\) \mystd{164ms} & 51 MB        & \mydelta{-52}            \\
+      OpenCV             & \(2.41s\) \mystd{134ms} & 59 MB        & \mydelta{-44}            \\
       \bottomrule
     \end{tabular}
     \caption{Benchmarks of the previous pipeline on a dataset (12 images) of 10MPix images. Average
@@ -1009,6 +1020,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 %
 %
 %
+
 \section{General Conclusion \& Perspective}
 
 \begin{frame}{Our Hybrid solution}
@@ -1056,6 +1068,12 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
           researched further in the future.
   \end{itemize}
 \end{frame}
+
+%FIXME perspectives haut niveau
+%ouverture, continuer travail concepts non limité morpho maths
+%synthèse image, 3D (+t vidéo?), maillages, graphs, (structures non-rectangulaires) etc.
+% etc.
+% champs des possibles
 
 \begin{frame}[allowframebreaks]{Publications}
   \footnotesize

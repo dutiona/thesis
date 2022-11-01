@@ -117,11 +117,37 @@
 			<text x="4" y="175.06" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Disc, rectangle, sphere, cube</text>		</g>
 		<g id="shape39-34" v:mID="39" v:groupContext="shape" v:layerMember="0" transform="translate(68.3563,-108.557)">
 			<title>Lien dynamique</title>
-			<desc>Range of point</desc>
+			<desc>Range of points</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="7.08661" cy="197.293" width="57.36" height="17.6036"/>
+			<v:textRect cx="7.08661" cy="197.293" width="60.49" height="17.6036"/>
 			<path d="M7.09 181.17 L7.09 206.38" class="st6"/>
-			<rect v:rectContext="textBkgnd" x="-16.6845" y="192.494" width="47.5425" height="9.59985" class="st8"/>
-			<text x="-16.68" y="199.69" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Range of point</text>		</g>
+			<rect v:rectContext="textBkgnd" x="-18.249" y="192.494" width="50.6714" height="9.59985" class="st8"/>
+			<text x="-18.25" y="199.69" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Range of points</text>		</g>
+		<g id="shape40-41" v:mID="40" v:groupContext="shape" transform="translate(142.643,-108.526)">
+			<title>Rectangle.16</title>
+			<desc>Pixel</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+				<v:ud v:nameU="visMasterStencil" v:prompt="" v:val="VT4(Basic_M.vssx)"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="56.6929" cy="154.236" width="113.39" height="53.8583"/>
+			<rect x="0" y="127.307" width="113.386" height="53.8583" class="st1"/>
+			<text x="47.16" y="140.31" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Pixel</text>		</g>
+		<g id="shape41-45" v:mID="41" v:groupContext="shape" transform="translate(148.819,-113.559)">
+			<title>Sheet.41</title>
+			<desc>(pnt2D, rgb8)</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="49.6063" cy="171.244" width="99.22" height="19.8425"/>
+			<rect x="0" y="161.323" width="99.2126" height="19.8425" class="st3"/>
+			<text x="27.84" y="173.64" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>(pnt2D, rgb8)</text>		</g>
+		<g id="shape42-48" v:mID="42" v:groupContext="shape" v:layerMember="0" transform="translate(160.579,-108.526)">
+			<title>Lien dynamique.42</title>
+			<desc>Range of pixels</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="-23.1897" cy="197.278" width="58.67" height="17.6036"/>
+			<path d="M0 181.17 L-40.6 209.37" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="-47.615" y="192.478" width="48.851" height="9.59985" class="st8"/>
+			<text x="-47.62" y="199.68" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Range of pixels</text>		</g>
 	</g>
 </svg>
