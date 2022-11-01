@@ -406,14 +406,15 @@
   All existing library do not fall into one single category and combine those techniques to achieve diverse degree of
   genericity.
   \vspace{-0.2cm}\small\begin{itemize}
-    \item CImg mixes \emph{Generalization} and \emph{Parametric polymorphism} by considering only 4D-images parametrized
-          by their value type.
-    \item OpenCV's algorithms take polymorphic input types (Inclusion polymorphism) but dispatch on the value type on
-          specialized algorithm (code duplication) that then re-dispatch on generic routines (parametric polymorphism).
-    \item Scikit-image relies on Scipy which uses dynamic abstraction (inclusion polymorphism) for its nd-array and
-          sometimes dispatch on specialized routine (code duplication) for performance.
-    \item Many other libraries have chosen to leverage Parametric polymorphism at diverse degree (Boost.GIL, Higra,
-          Vigra, GrAL, DGTal, Milena and Pylene)
+    \item CImg mixes \emph{Generalization} and \emph{Parametric polymorphism} \GRAYOUT{by considering only 4D-images
+            parametrized by their value type.}
+    \item OpenCV's \GRAYOUT{algorithms take polymorphic input types} (Inclusion polymorphism) \GRAYOUT{but dispatch on
+            the value type on specialized algorithm} (code duplication) \GRAYOUT{that then re-dispatch on generic
+            routines} (parametric polymorphism).
+    \item Scikit-image\GRAYOUT{ relies on Scipy which uses dynamic abstraction} (inclusion polymorphism) \GRAYOUT{for
+            its nd-array and sometimes dispatch on specialized routine} (code duplication) for performance.
+    \item \GRAYOUT{Many other libraries have chosen to leverage} Parametric polymorphism at diverse degree (Boost.GIL,
+          Higra, Vigra, GrAL, DGTal, Milena and Pylene)
   \end{itemize}
 \end{frame}
 
@@ -546,7 +547,7 @@ concept WritableImage =
   \vfill
   \begin{center}\textbf{This is the final (most generalized) version of the algorithm.}\end{center}
   \begin{textblock*}{4cm}(11.5cm,3.2cm)
-    \textbf{A \emph{Concept} is a set of behavioral requirement (constraints) applied to a type.}
+    \textbf{A \emph{Concept} is a set of behavioral requirements (constraints) applied to a type.}
   \end{textblock*}
 \end{frame}
 
