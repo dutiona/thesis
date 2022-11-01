@@ -67,15 +67,15 @@
             defernumbers=true,
             sorting=ynt,
             %style=numeric,
-            %style=authortitle,
             style=apa,
+            %style=apa,
             %style=draft,
             backref=true]{biblatex}
 \addbibresource{../bibliography.bib}
 
 \usepackage{xpatch}
-% nom conf, shorten author
-%\xapptobibmacro{cite}{\setunit{\nametitledelim}\printfield{year}}{}{}
+% shorten author
+\xapptobibmacro{cite}{\setunit{\nametitledelim}\printfield{booktitle}}{}{}
 
 \title{Generic programming in modern C++ for\\ Image Processing}
 %\subtitle{}
@@ -207,7 +207,7 @@
       \\
     \end{tabular}
     \label{fig:type.vs.algo}
-    \caption{Watershed algorithm applied to three different image types.~\footnote{\bibentry{levillain.2014.ciarp}}}
+    \caption{Watershed algorithm applied to three different image types.~\footcite{levillain.2014.ciarp}}
     %\vspace{-0.5cm}
     %\text{\textbf{Algorithms are intrinsically generics.}}
   \end{figure}
@@ -311,20 +311,55 @@
     }; // specific types w/ conversion routines
     struct image2D { image4D to(); void from(image4D); };
     struct image3D { image4D to(); void from(image4D); };
-    void gamma_correction(image4D img, double gamma) {
-      for(auto row : img.rows())
-        for(auto z_row : row.rows())
-          for(auto y_row : z_row.rows())
-            for(auto x : y_row.pixels())
-              auto& v = x.val(); // image4D::value_type
+    void gamma_correction(image4D ima, double gamma) {
+      for(auto t : ima.time())
+        for(auto z : ima.depth())
+          for(auto y : ima.width())
+            for(auto x : ima.height())
+              auto& v = ima(x, y, z, t); // image4D::value_type
               // correct v with gamma
     }
   \end{minted}
 \end{frame}
-% FIXME: x, y, z, t même modèle que slide Non-generic
-% s16 et 17 entre 11 et 12
-% unifier code s12 s13 avec get_iterator -> .pixels(), .get_pixel -> ima(p) etc.
-% unifier .value() .val()
+
+\begin{frame}[fragile]{Toward Genericity: Step 1}
+  Lifting RGB constraint:
+  \begin{minted}[linenos,highlightlines={3,6,10},highlightcolor=yellow!60!white]{C++}
+    void gamma_correction(Image& ima, double gamma)
+    {
+      using value_t = typename Image::value_type;
+
+      const auto gamma_corr = 1.f / gamma;
+      const auto max_val = std::numeric_limits<value_t>::max();
+    
+      for(int x = 0; x < ima.width(); ++x)
+        for(int y = 0; y < ima.height(); ++y)
+          ima(x, y) = max_val * std::pow(ima(x, y) / max_val, gamma_corr);
+    }
+  \end{minted}
+  \begin{textblock*}{4cm}(11.5cm,1.5cm)
+    \textbf{There is no valid reason to constrain this algorithm to RGB images.}
+  \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]{Toward Genericity: Step 2}
+  Lifting 2-dimensional constraint:
+  \begin{minted}[linenos,highlightlines={8-9},highlightcolor=yellow!60!white]{C++}
+    void gamma_correction(Image& ima, double gamma)
+    {
+      using value_t = typename Image::value_type;
+
+      const auto gamma_corr = 1.f / gamma;
+      const auto max_val = std::numeric_limits<value_t>::max();
+    
+      for (auto&& pix : ima.pixels())
+        pix.val() = max_val * std::pow(pix.val() / max_val, gamma_corr);
+    }
+  \end{minted}
+  \begin{textblock*}{4cm}(11.5cm,3cm)
+    \textbf{There is no valid reason to constrain this algorithm to 2D-images.}
+  \end{textblock*}
+\end{frame}
 
 \begin{frame}[fragile]{3rd approach: Inclusion Polymorphism}
   \begin{itemize}
@@ -337,12 +372,11 @@
   \begin{columns}[T,onlytextwidth]
     \column{0.48\textwidth}
     \centering
-    \includegraphics[width=0.8\textwidth]{../figures/inclupoly}
-    % FIXME: highlight AnyNDImage
+    \includegraphics[width=0.8\textwidth]{../figures/inclupoly_rework}
 
     \column{0.48\textwidth}
     \centering
-    \includegraphics[width=0.8\textwidth]{../figures/inclupoly_code_gamma}
+    \includegraphics[width=0.8\textwidth]{../figures/inclupoly_code_gamma_rework}
   \end{columns}
 \end{frame}
 
@@ -357,12 +391,11 @@
   \begin{columns}[T,onlytextwidth]
     \column{0.48\textwidth}
     \centering
-    \includegraphics[width=0.65\textwidth]{../figures/parapoly}
-    % FIXME: highlight template <class InImage>
+    \includegraphics[width=0.65\textwidth]{../figures/parapoly_rework}
 
     \column{0.48\textwidth}
     \centering
-    \includegraphics[width=0.8\textwidth]{../figures/parapoly_code_gamma}
+    \includegraphics[width=0.8\textwidth]{../figures/parapoly_code_gamma_rework}
   \end{columns}
 \end{frame}
 
@@ -410,33 +443,8 @@
   \end{table}
 \end{frame}
 
-\subsection[Toward constrained Genericity]{Toward constrained Genericity}
-
-% FIXME: Toward Genericity
-
-\begin{frame}[fragile]{Toward constrained genericity: Step 1}
-  Lifting RGB constraint:
-  \begin{minted}[linenos,highlightlines={3,6,10},highlightcolor=yellow!60!white]{C++}
-    void gamma_correction(Image& ima, double gamma)
-    {
-      using value_t = typename Image::value_type;
-
-      const auto gamma_corr = 1.f / gamma;
-      const auto max_val = std::numeric_limits<value_t>::max();
-    
-      for(int x = 0; x < ima.width(); ++x)
-        for(int y = 0; y < ima.height(); ++y)
-          ima(x, y) = max_val * std::pow(ima(x, y) / max_val, gamma_corr);
-    }
-  \end{minted}
-  \begin{textblock*}{4cm}(11.5cm,3cm)
-    \textbf{There is no valid reason to constrain this algorithm to RGB images.}
-  \end{textblock*}
-\end{frame}
-
-\begin{frame}[fragile]{Toward constrained genericity: Step 2}
-  Lifting 2-dimensional constraint:
-  \begin{minted}[linenos,highlightlines={8-9},highlightcolor=yellow!60!white]{C++}
+\begin{frame}[fragile]{Toward Genericity: Constraints so far}
+  \begin{minted}[linenos,highlightlines={3,6,8-9},highlightcolor=yellow!60!white]{C++}
     void gamma_correction(Image& ima, double gamma)
     {
       using value_t = typename Image::value_type;
@@ -445,15 +453,9 @@
       const auto max_val = std::numeric_limits<value_t>::max();
     
       for (auto&& pix : ima.pixels())
-        pix.val() = max_val * std::pow(pix.value() / max_val, gamma_corr);
+        pix.val() = max_val * std::pow(pix.val() / max_val, gamma_corr);
     }
   \end{minted}
-  \begin{textblock*}{4cm}(11.5cm,3cm)
-    \textbf{There is no valid reason to constrain this algorithm to 2D-images.}
-  \end{textblock*}
-\end{frame}
-
-\begin{frame}[fragile]{Toward constrained genericity: Constraints so far}
   \begin{alertblock}{Prerequisite for the algorithm}
     \begin{itemize}
       \item \texttt{Image} type provides subtype \texttt{value\_type}.
@@ -463,12 +465,12 @@
     \end{itemize}
   \end{alertblock}
   \textbf{Issue: Genericity is unconstrained, so the check is done late and error messages are infamously complicated.}
-  % FIXME: add code back on same slide
 \end{frame}
 
-% FIXME : toward constrained genericity
 
-\begin{frame}[fragile]{Old techniques (pre-C++20)}
+\subsection[Toward constrained Genericity]{Toward constrained Genericity}
+
+\begin{frame}[fragile]{Toward constrained Genericity: Old techniques (pre-C++20)}
   Before C++20 (2020) we relied on metaprogramming techniques to achieve constrained Genericity:
   \vspace{-0.2cm}\begin{itemize}
     \item Functions on types: metafunctions or type-traits
@@ -535,7 +537,7 @@ concept WritableImage =
       const auto max_val = std::numeric_limits<value_t>::max();
     
       for (auto&& pix : ima.pixels())
-        pix.val() = max_val * std::pow(pix.value() / max_val, gamma_corr);
+        pix.val() = max_val * std::pow(pix.val() / max_val, gamma_corr);
     }
   \end{minted}
   \vfill
@@ -566,14 +568,27 @@ concept WritableImage =
 \end{frame}
 
 \begin{frame}[fragile]{Taxonomy of Image Processing algorithms: three families}
+  \small
   \begin{itemize}
     \item Pixel-wise algorithms: thresholding, gamma correction.
     \item Local algorithms: dilation, erosion, closing, hit-or-miss, gradient, rank filter, etc.
     \item Global algorithms: Chamfer distance transform, labeling, union-find, max-tree, etc.
   \end{itemize}
-  From those families emerge several concepts.
+  \begin{figure}[bl]
+    \centering
+    \hfill
+    \includegraphics[height=2.2cm]{../figures/pixel_wise_algorithm}
+    \hfill
+    \includegraphics[height=2.2cm]{../figures/local_algorithm} \\
+    \vspace{-0.05cm}
+    \flushleft
+    \hspace{0.53cm}\includegraphics[height=2.2cm]{../figures/global_algorithm}
+    \hfill
+  \end{figure}
+  \begin{textblock*}{5.5cm}(9.2cm,7.3cm)
+    From those families emerge several concepts.
+  \end{textblock*}
 \end{frame}
-% FIXME illustrations
 
 \subsection{Concepts for Image Processing algorithms}
 
@@ -594,8 +609,8 @@ concept WritableImage =
   \begin{minted}{C++}
     auto ima = Image();           // Get an image
     for(auto pix : ima.pixels()) {  // Traverse the image
-      auto pnt = pix.point();       // Get the pixel's point
-      auto& val = pix.value();      // Get the pixel's value
+      auto pnt = pix.pnt();       // Get the pixel's point
+      auto& val = pix.val();      // Get the pixel's value
       val = 42;                     // Set the pixel's value
     }
   \end{minted}
@@ -622,7 +637,7 @@ concept WritableImage =
   \begin{minted}{C++}
   auto pix = Pixel();     // Get a pixel
   auto val = pix.val();   // yield the pixel value
-  auto pnt = pix.point(); // yield the pixel point
+  auto pnt = pix.pnt(); // yield the pixel point
   pix.val() = 42;         // Assign a value
   \end{minted}
 \end{frame}
@@ -785,10 +800,9 @@ auto dilate(Img img, SE se) {
 
 \subsection{Genesis of a new abstraction layer: Views}
 
-% FIXME: attention redondance entre 2 slides
 \begin{frame}[fragile]{Views for Image Processing}
   \begin{alertblock}{View definition}
-    A view is an \emph{image} which embarks an algorithm and features properties. They are inspired from Milena's
+    A view \hl{is an \emph{image}} which embarks an algorithm and features properties. They are inspired from Milena's
     morphers~\footcite{levillain.2009.ismm} and STL ranges~\footcite{niebler.2014.ranges}. We published our take
     in~\footcite{roynard.2022.gpce}.
 
@@ -825,8 +839,6 @@ auto dilate(Img img, SE se) {
 
 \subsection{Raising abstraction level}
 
-% FIXME: insister sur les overload pour ROI
-% FIXME: ajouter le protoytpe ?
 \begin{frame}[fragile]{Raising abstraction level}
   Views enable the Image Processing practitioner to rewrite the following alpha-blending algorithm at image level.
   \begin{minted}{C++}
@@ -840,10 +852,23 @@ auto dilate(Img img, SE se) {
     }
   }
   \end{minted}
-  \centering
   \begin{figure}
+    \flushleft
     \includegraphics[width=0.7\textwidth]{../figures/alphablend}
   \end{figure}
+  \begin{textblock*}{4.5cm}(11.5cm,3.2cm)
+    \begin{minted}[highlightlines={8-9},highlightcolor=yellow!60!white]{C++}
+// ROI overload
+void blend_inplace(
+  const uint8_t* ima1,
+  uint8_t* ima2,
+  float alpha, int width,
+  int height, int stride1,
+  int stride2,
+  int offset_width,
+  int offset_height);
+    \end{minted}
+  \end{textblock*}
 \end{frame}
 
 \begin{frame}[fragile]{Views for Image Processing: Raising abstraction level}
@@ -1031,7 +1056,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 \end{frame}
 
 % FIXME: perspective trop ciblée sur pont static/dynamique
-% Perspective plus générale ( à réfléchir)
+% Perspective plus générale (à réfléchir)
 \begin{frame}{Perspective: JIT}
   \begin{alertblock}{JIT infrastructure for C++/Python}
     \begin{itemize}
@@ -1047,7 +1072,6 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 % limitations à l'utilisation de la bibliothèque
 % pourquoi c'est compliqué à utiliser
 % language ? tooling ?
-
 \begin{frame}{Conclusion}
   \begin{itemize}
     \item We have shown the progress in generic programming in C++20 and how it serves our purpose.

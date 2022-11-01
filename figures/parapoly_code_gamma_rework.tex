@@ -1,0 +1,18 @@
+\documentclass[varwidth=4.5cm,border={0.1cm 0.1cm 0.1cm 0.1cm}]{standalone}
+
+\usepackage{minted}
+
+\setminted[c++]{fontsize=\scriptsize}
+
+\begin{document}
+\begin{minted}[highlightlines={1},highlightcolor=yellow!60!white]{c++}
+template <class InImage>
+void gamma_correction(
+  InImage& in, double gamma)
+{
+  for (auto pnt : in.points())
+    auto& v = in(pnt);
+    // correct v with gamma
+}
+\end{minted}
+\end{document}
