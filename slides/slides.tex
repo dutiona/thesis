@@ -39,6 +39,8 @@
 \definecolor{lightgreen}{rgb}{0.56, 0.93, 0.56}
 \definecolor{thistle}{rgb}{0.85, 0.75, 0.85}
 
+\newcommand{\GRAYOUT}[1]{\textcolor{lightgray}{#1}}%
+
 \setbeamerfont{subsection in toc}{size=\scriptsize}
 
 %\makeatletter
@@ -124,9 +126,10 @@
 
 \begin{frame}[fragile]{Image processing nowadays}
   \begin{itemize}
-    \item Image processing is everywhere, in most of the devices (computer, phone, embedded devices, etc.)
-    \item Applications are multiples (medical imaging, social network filters, facial recognition, etc.).
-    \item Every industry and research domain is using it (production line automation, automatic document reading, social network apps, etc.)
+    \item Image processing is everywhere, in most of the devices \GRAYOUT{(computer, phone, embedded devices, etc.)}
+    \item Applications are multiples \GRAYOUT{(medical imaging, social network filters, facial recognition, etc.)}
+    \item Every industry and research domain is using it \GRAYOUT{(production line automation, automatic document
+            reading, social network apps, etc.)}
     \item Image Processing is costly in resources. Performance is crucial.
   \end{itemize}
   \begin{figure}[bl]
@@ -162,10 +165,10 @@
 \begin{frame}[fragile]{Image processing nowadays}
   \begin{alertblock}{Different user profiles and their use cases}
     \begin{itemize}
-      \item The end user (non-programmer, wants UI interface).
-      \item The practitioner (end user of an image processing library).
-      \item The contributor (advanced user of a library familiar with its internals).
-      \item The maintainer (founder/creator of the library or took it over to make it grow).
+      \item The end user \GRAYOUT{(non-programmer, wants UI interface).}
+      \item The practitioner \GRAYOUT{(end user of an image processing library).}
+      \item The contributor \GRAYOUT{(advanced user of a library familiar with its internals).}
+      \item The maintainer \GRAYOUT{(founder/creator of the library or took it over to make it grow).}
     \end{itemize}
   \end{alertblock}
 
@@ -175,15 +178,15 @@
 \begin{frame}[fragile]{Image processing nowadays}
   \begin{alertblock}{Different tools}
     \begin{itemize}
-      \item Graphic editors (GIMP, Photoshop).
-      \item Command line utilities (ImageMagick, GraphicsMagick or MegaWave).
-      \item Visual programming environment (Mathcad).
-      \item Integrated environment (Matlab, Scilab, Octave, Mathematica and Jupyter).
-      \item Package for Python (SciPy, NumPy, Scikit-image, Pillow or OpenCV bindings, via PyPi or Conda).
-      \item \hl{Programming libraries (IPP, ITK, Boost.GIL, Vigra, Higra, GrAL, DGTal, OpenCV, CImg, Video++, Generic
-              Graphic Library, Milena and Pylena.}
-      \item Domain Specific Languages (DSL) (Eigen, Blaze, Blitz++ or Armadillo via C++ Expression template, or Halide
-            and SYCL with their own toolchain).
+      \item Graphic editors \GRAYOUT{(GIMP, Photoshop).}
+      \item Command line utilities \GRAYOUT{(ImageMagick, GraphicsMagick or MegaWave).}
+      \item Visual programming environment \GRAYOUT{(Mathcad).}
+      \item Integrated environment \GRAYOUT{(Matlab, Scilab, Octave, Mathematica and Jupyter).}
+      \item Package for Python \GRAYOUT{(SciPy, NumPy, Scikit-image, Pillow or OpenCV bindings, via PyPi or Conda).}
+      \item \hl{Programming libraries} \GRAYOUT{(IPP, ITK, Boost.GIL, Vigra, Higra, GrAL, DGTal, OpenCV, CImg, Video++,
+              Generic Graphic Library, Milena and Pylena).}
+      \item Domain Specific Languages (DSL) \GRAYOUT{(Eigen, Blaze, Blitz++ or Armadillo via C++ Expression template, or
+              Halide and SYCL with their own toolchain).}
     \end{itemize}
   \end{alertblock}
 \end{frame}
@@ -220,7 +223,7 @@
   Algorithm must support combination whose cardinality increases with:
 
   \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
+    \column{0.50\textwidth}
     \begin{itemize}
       \item supported underlying image value type (grayscale, rgb, floating-point, \ldots)
       \item supported data structure (ND-buffers, graphs, meshes, \ldots)
@@ -301,7 +304,7 @@
 
 \begin{frame}[fragile]{2nd approach: Generalization}
   \begin{itemize}
-    \item Necessity to have a common denominator to all the supported types: the super-type.
+    \item Necessity to have a common denominator to all the supported types: \hl{the super-type}.
     \item All supported data types must be convertible to and from this super-type.
     \item Good for maintenance but conversions impact performance.
   \end{itemize}
@@ -556,6 +559,7 @@ concept WritableImage =
 
 \begin{frame}{Taxonomy for Image Processing: Goal}
   \begin{alertblock}{Taxonomy definition}
+    \vspace{0.2cm}
     Act of doing a classification of something in a systematic way.
   \end{alertblock}
   \begin{itemize}
@@ -595,11 +599,11 @@ concept WritableImage =
 \begin{frame}[fragile]{Our Concepts for Image Processing: fundamentals}
   Fundamental concepts are necessary to be able to do basic manipulations over an image.
   \begin{itemize}
-    \item Value, Point, Pixels: represent the trivial building blocks of an image.
-    \item Domain: represent the set of points valid for a given image (definition domain).
-    \item Image: represent the algebraic relation \(y = f(x)\) where \(y\) is a value generated by the image \(f\) for
-          the input (point) \(x\).
-    \item Aside from generating a value, an image can also store a value, as in \(f(x) = y\).
+    \item Value, Point, Pixels: \GRAYOUT{represent the trivial building blocks of an image.}
+    \item Domain: \GRAYOUT{represent the set of points valid for a given image (definition domain).}
+    \item Image: \GRAYOUT{represent the algebraic relation \(y = f(x)\) where \(y\) is a value generated by the image \(f\) for
+            the input (point) \(x\).}
+    \item An image can also store a value, as in \(f(x) = y\).
   \end{itemize}
   Concepts interact with each other's through \hl{composition} and \hl{refinement} (close to inheritance).
 \end{frame}
