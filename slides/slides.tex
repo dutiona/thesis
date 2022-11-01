@@ -605,24 +605,18 @@ concept WritableImage =
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: fundamentals}
-  The basic use case of an image is illustrated by the following code:
+  The basic use case of a pixel-wise algorithm on an image is illustrated by the following code:
   \begin{minted}{C++}
     auto ima = Image();           // Get an image
-    for(auto pix : ima.pixels()) {  // Traverse the image
-      auto pnt = pix.pnt();       // Get the pixel's point
-      auto& val = pix.val();      // Get the pixel's value
-      val = 42;                     // Set the pixel's value
-    }
+    for (auto pnt : ima.domain()) // traverse image
+      ima(pnt) = 42;              // Set the image's value at pnt
+    
+    // OR
+
+    for (auto pix : ima.pixels()) // 0 cost abstraction
+      pix.val() = 42;             // Set the pixel's value
   \end{minted}
 \end{frame}
-% Besoin algorithmique
-% FIXME: écrire un vrai algorithme point-wise en pseudo-code pour justifier:
-% for (p in ima.domain())
-%   ima(p) = 42
-% OU 
-% for (pix in ima.pixels()) // 0 cost abstraction
-%   pix.val() = 42
-% 
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Image concept}
   \centering
@@ -631,81 +625,60 @@ concept WritableImage =
   \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{Our Concepts for Image Processing: Pixel concept}
-  \centering
-  \includegraphics[width=0.5\textwidth]{../figures/concepts/pixel}
-  \begin{minted}{C++}
-  auto pix = Pixel();     // Get a pixel
-  auto val = pix.val();   // yield the pixel value
-  auto pnt = pix.pnt(); // yield the pixel point
-  pix.val() = 42;         // Assign a value
-  \end{minted}
-\end{frame}
-
-\begin{frame}[fragile]{Our Concepts for Image Processing: Domain concept}
-  \centering
-  \includegraphics[width=0.45\textwidth]{../figures/concepts/domain}
-  \begin{minted}{C++}
-    auto dom = Domain();          // Get a domain
-    auto pnt = Point(..., ...);   // Get a random point
-    bool ret = dom.has(pnt);      // Check wether the domain contains the point
-    bool is_empty = dom.empty();  // Check wether the domain is empty
-    auto dim = dom.dim();         // Yield the domain's dimension information
-    for(auto pnt : dom)           // browse the definition domain
-      // use pnt as a point of the domain
-  \end{minted}
-\end{frame}
-
-% FIXME : IndexableImage, besoin pour trier les pixels
 \begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
   \begin{itemize}
-    \item IndexableImage: traversing an image via indexes.
+    \item IndexableImage: traversing an image via indexes. Needed for sorting pixels.
           \begin{minted}{C++}
-      auto v = ima[k]; // Access value from an index
+    auto v = ima[k];                                    // Access value from an index
     \end{minted}
     \item AccessibleImage: accessing image's value through points (seen above)
     \item BidirectionalImage: traversing image forward and backward for global algorithm such as Chamfer distance
           transform that needs a forward pass and a backward pass.
           \begin{minted}{C++}
-      for(auto pix : ima.pixels()) // forward pass
-            pix.val() = /* ... */;
-      for(auto pix : reversed(ima.pixels())) // backward pass
-        pix.val() = /* ... */;
+    for(auto pix : ima.pixels())                        // Forward pass
+      pix.val() = /* ... */;
+    for(auto pix : reversed(ima.pixels()))              // Backward pass
+      pix.val() = /* ... */;
     \end{minted}
     \item RawImage: direct access to the image's data buffer.
           \begin{minted}{C++}
-      const int* data = ima.data(); // Access the underlying buffer
-      auto dim = ima.domain().dim(); // Get the dimension of the image
-      // Retrieve information about strides
-      auto strides = std::vector<std::ptrdiff_t>(0, dim)
-      for (int i = 0; i < dim; ++i)
-        strides[i] = ima.stride(i)
+    const int* data = ima.data();                       // Access the underlying buffer
+    auto dim = ima.domain().dim();                      // Dimension of the image
+    auto strides = std::vector<std::ptrdiff_t>(0, dim); // Information about strides
+    for (int i = 0; i < dim; ++i)
+      strides[i] = ima.stride(i)
       \end{minted}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
-  \centering
   \begin{figure}
-    \includegraphics[width=0.65\textwidth]{../figures/concepts/images_all}
-    % FIXME: virer Index/ReversibleMdrange
-    % FIXME ajouter un plan text + Writability à droite du schéma + en parler à l'oral
+    \flushleft
+    \includegraphics[width=0.65\textwidth]{../figures/concepts/images_all_rework}
   \end{figure}
+  \begin{textblock*}{4cm}(11cm,5cm)
+    \Large\textbf{\(+\) Writability}
+  \end{textblock*}
 \end{frame}
 
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Local algorithms}
-  % FIXME: virer ce qui est lié à l'extension
   \begin{itemize}
     \item Support for structuring elements (disc, rectangle, sphere, cube, etc.)
-    \item Support for extension (flat buffer, unique value, mirroring, etc.)
+    \item Support retrieving neighboring pixels via the structuring element.
   \end{itemize}
   Typical usage in local algorithms:
 
   \begin{minted}{C++}
       auto se = se::disc(.radius=3); // get a structuring element
-      for(auto pix : ima.pixels())   // traverse image
-        for(auto nbx : se(pix))       // traverse neighboring pixels
+      for(auto pnt : ima.domain())   // traverse image's points
+        for(auto nbp : se(pix))      // traverse neighboring points
+          // nbp is a range of points
+
+      // OR
+
+      for(auto pix : ima.pixels())   // 0 cost abstraction
+        for(auto nbx : se(pix))      // traverse neighboring pixels
           // nbx is a range of pixels
   \end{minted}
 \end{frame}
@@ -713,12 +686,7 @@ concept WritableImage =
 \begin{frame}[fragile]{Our Concepts for Image Processing: Local algorithms}
   \centering
   \begin{figure}
-    % FIXME: virer ce qui est lié à l'extension
-    \includegraphics[width=0.7\textwidth]{../figures/concepts/se_extension}
-    % FIXME: rajouter lien se -> image via se(pix) qui récupère les pixels voisins (image connait les pixels/points
-    % voisins)
-    % se(p) -> range de points (faire les 2 interfaces)
-    % avec la 2nd version (pixel) -> 0-overhead
+    \includegraphics[width=0.7\textwidth]{../figures/concepts/se_extension_rework}
   \end{figure}
 \end{frame}
 
