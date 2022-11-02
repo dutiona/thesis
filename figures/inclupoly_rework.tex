@@ -1,6 +1,8 @@
 \documentclass[svgnames,tikz]{standalone}
 
 \usepackage{tikz-uml}
+\usepackage{xcolor}
+
 \usetikzlibrary{3d,calc,positioning}
 \tikzumlset{font=\scriptsize\tt}
 
@@ -8,16 +10,16 @@
 \begin{tikzpicture}[scale=.5]
   \umlclass[type=abstract class]{AnyNDImage}
   {
-    \umlvirt{+ points() const : any\_point\_iterator}\\
-    \umlvirt{+ operator() (p : any\_point) const : std::any}\\
-    \umlvirt{+ operator() (p : any\_point) : std::any\&}\\
+    \umlvirt{+ points() const -> \colorbox{red!50!white}{any}\_point\_iterator}\\
+    \umlvirt{+ operator() (p : \colorbox{red!50!white}{any}\_point) const -> std::\colorbox{red!50!white}{any}}\\
+    \umlvirt{+ operator() (p : \colorbox{red!50!white}{any}\_point) -> std::\colorbox{red!50!white}{any}\&}\\
   }
 
   \umlclass[below=1cm of AnyNDImage]{image2d-uint8}
   {
-    points() const : any\_point\_iterator\\
-    operator() (p : any\_point) const : std::any\\
-    operator() (p : any\_point) : std::any\&\\
+    points() const -> \colorbox{red!50!white}{any}\_point\_iterator\\
+    operator() (p : \colorbox{red!50!white}{any}\_point) const -> std::\colorbox{red!50!white}{any}\\
+    operator() (p : \colorbox{red!50!white}{any}\_point) -> std::\colorbox{red!50!white}{any}\&\\
   }
 
   \umlinherit{image2d-uint8}{AnyNDImage}

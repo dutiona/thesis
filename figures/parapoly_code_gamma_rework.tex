@@ -5,13 +5,14 @@
 \setminted[c++]{fontsize=\scriptsize}
 
 \begin{document}
-\begin{minted}[highlightlines={1},highlightcolor=yellow!60!white]{c++}
+\begin{minted}[highlightlines={1,3},highlightcolor=yellow!60!white]{c++}
 template <class InImage>
 void gamma_correction(
-  InImage& in, double gamma)
+  InImage& ima,
+  double gamma)
 {
-  for (auto pnt : in.points())
-    auto& v = in(pnt);
+  for (auto pnt : ima.points())
+    auto& v = ima(pnt);
     // correct v with gamma
 }
 \end{minted}

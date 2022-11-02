@@ -5,12 +5,13 @@
 \setminted[c++]{fontsize=\scriptsize}
 
 \begin{document}
-\begin{minted}[escapeinside=||]{c++}
+\begin{minted}[highlightlines={2},highlightcolor=yellow!60!white,escapeinside=||]{c++}
 void gamma_correction(
-  |\colorbox{yellow!60!white}{AnyNDImage}|& in, double gamma)
+  |\colorbox{red!50!white}{Any}NDImage|& ima,
+  double gamma)
 {
-  for (auto pnt : in.points())
-    auto& v = in(pnt);
+  for (auto pnt : ima.points())
+    auto& v = ima(pnt);
     // correct v with gamma
 }
 \end{minted}

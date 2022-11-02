@@ -1,4 +1,4 @@
-\documentclass[varwidth=4cm, border={0.1cm 0.1cm 0.1cm 0.1cm}]{standalone}
+\documentclass[varwidth=12cm, border={0.1cm 0.1cm 0.1cm 0.1cm}]{standalone}
 
 \usepackage{minted}
 \usepackage{xcolor}
@@ -7,9 +7,11 @@
 
 \begin{document}
 
-\begin{minted}[highlightlines=2,escapeinside=||,highlightcolor=yellow!60!white]{python}
-def erode(img, se, out):
-  local_op(img, se, |\colorbox{red}{min}|, out)
+\begin{minted}[highlightlines=3,escapeinside=||,highlightcolor=yellow!60!white]{c++}
+  template <Image In, StructuringElement SE, WritableImage Out>
+  void erode(const In& ima, const SE& se, Out& out){
+    local_op(img, se, |\colorbox{red!50!white}{min}|, out);
+  }
 \end{minted}
 
 \end{document}

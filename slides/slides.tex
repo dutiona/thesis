@@ -26,7 +26,7 @@
 \usepackage{tcolorbox}
 %\usepackage{setspace}
 
-\usepackage{pdfpcnotes}
+%\usepackage{pdfpcnotes}
 
 % Grid
 %\usepackage[texcoord,grid,gridunit=mm,gridcolor=red!10,subgridcolor=green!10]{eso-pic}
@@ -80,7 +80,7 @@
 
 \usepackage{xpatch}
 % shorten author
-\xapptobibmacro{cite}{\setunit{\nametitledelim}\printfield{booktitle}}{}{}
+%\xapptobibmacro{cite}{\setunit{\nametitledelim}\printfield{booktitle}}{}{}
 
 \title{Generic programming in modern C++ for\\ Image Processing}
 %\subtitle{}
@@ -125,7 +125,7 @@
 %
 %
 
-\section[General introduction]{General introduction}
+\section[Introduction]{Introduction}
 
 \begin{frame}[fragile]{Image processing nowadays}
   \begin{itemize}
@@ -142,15 +142,15 @@
     \includegraphics[height=3cm]{../illustrations/camera}
     \hspace{1cm}
   \end{figure}
-  \pnote{
-    Différents secteurs
-
-    Différents périphériques/appareils
-
-    Différentes Applications
-
-    Coût en ressources de calcul élevée
-  }
+%  \pnote{
+%    Différents secteurs
+%
+%    Différents périphériques/appareils
+%
+%    Différentes Applications
+%
+%    Coût en ressources de calcul élevée
+%  }
 \end{frame}
 
 \begin{frame}[fragile]{Image processing nowadays}
@@ -222,7 +222,8 @@
       \\
     \end{tabular}
     \label{fig:type.vs.algo}
-    \caption{Watershed algorithm applied to three different image types.~\footcite{levillain.2014.ciarp}}
+    \caption{Watershed algorithm applied to three different image types.~\footnote{Levillain et al., Practical
+        genericity: Writing image processing algorithms both reusable and efficient. CIARP, 2014}}
     %\vspace{-0.5cm}
     %\text{\textbf{Algorithms are intrinsically generics.}}
   \end{figure}
@@ -230,6 +231,12 @@
     \textbf{Algorithms are intrinsically generic.}
   \end{textblock*}
 \end{frame}
+
+% levillain.2014.ciarp
+% Levillain, R., Géraud, T., Najman, L., & Carlinet, E. (2014). Practical genericity: Writing image processing
+% algorithms both reusable and efficient. In E. Bayro & E. Hancock (Eds.), Progress in pattern recognition, image
+% analysis, computer vision, and applications - proceedings of the 19th iberoamerican congress on pattern recognition
+% (ciarp) (pp. 70–79, Vol. 8827). Springer-Verlag. (Cit. on p. 8).
 
 \begin{frame}[fragile]{Need of Genericity for image processing}
   Algorithm must support combination whose cardinality increases with:
@@ -270,12 +277,13 @@
   \end{frame}
 }
 
-\section[Context and history of Generic Programming]{Context and history of Generic Programming}
+\section[Context and history of generic programming]{Context and history of generic programming}
 
 \subsection[Unconstrained Genericity]{Unconstrained Genericity}
 
 \begin{frame}[fragile]{Non-generic algorithm: gamma correction}
-  Introducing the process of (generic) \textbf{Generalization}~\footcite{roynard.2019.rrpr}. \\
+  Introducing the process of (generic) \textbf{Generalization}~\footnote{Roynard et al., An image processing library in
+    modern C++: Getting simplicity and efficiency with generic programming. RRPR, 2019}. \\
   Non-generic gamma-correction algorithm:
   \vspace{-0.3cm}
   \begin{minted}[linenos]{C++}
@@ -296,6 +304,11 @@
     How can we make it \textbf{Generic}?
   \end{textblock*}
 \end{frame}
+
+% roynard.2019.rrpr
+% Roynard, M., Carlinet, E., & Géraud, T. (2019). An image processing library in modern C++: Getting simplicity and
+% efficiency with generic programming. In B. Kerautret, M. Colom, D. Lopresti, P. Monasse, & H. Talbot (Eds.),
+% Reproducible research in pattern recognition (pp. 121–137). Springer International Publishing. (Cit. on pp. 11, 54).
 
 \begin{frame}[fragile]{1rst approach: Code duplication}
   \begin{itemize}
@@ -320,7 +333,8 @@
 
 \begin{frame}[fragile]{2nd approach: Generalization}
   \begin{itemize}
-    \item Necessity to have a common denominator to all the supported types: \hl{the super-type}.
+    \item Necessity to have a common denominator to all the supported types:\\
+          \hl{the super-type}.
     \item All supported data types must be convertible to and from this super-type.
     \item Good for maintenance but conversions impact performance.
   \end{itemize}
@@ -495,11 +509,18 @@
   \vspace{-0.2cm}\begin{itemize}
     \item Functions on types: metafunctions or type-traits
     \item SFINAE: Substitution Failure Is Not An Error
-    \item CRTP: Curiously Recurring Template Pattern (used in the SCOOP paradigm~\footcite{geraud.2008.mpool} in Milena).
+    \item CRTP: Curiously Recurring Template Pattern (used in the SCOOP paradigm~\footnote{G\'{e}raud et al.,
+          Semantics-driven genericity: A sequel to the static C++ object-oriented programming paradigm (SCOOP 2). MPOOL,
+          2008} in Milena).
   \end{itemize}
   \vspace{-0.3cm}
   \begin{center}\textbf{We do not want this anymore!}\end{center}
 \end{frame}
+
+% geraud.2008.mpool
+% Géraud, T., & Levillain, R. (2008). Semantics-driven genericity: A sequel to the static C++ object-oriented
+% programming paradigm (SCOOP 2). Proceedings of the 6th International Workshop on Multiparadigm Programming with
+% Object-Oriented Languages (MPOOL) (cit. on p. 21).
 
 \begin{frame}[fragile]{Final step: Conceptification 1/2}
   C++ introduce the syntax for Concepts:
@@ -528,11 +549,11 @@ concept WritableImage =
     \begin{minted}{C++}
     template <class P>
     concept Pixel = requires {
-        typename I::value_type; // type of value
-        typename I::point_type; // type of points
+        typename P::value_type; // type of value
+        typename P::point_type; // type of points
       } && requires (P pix) {
-        { pix.val() } -> I::value_type;
-        { pix.pnt() } -> I::point_type;
+        { pix.val() } -> P::value_type;
+        { pix.pnt() } -> P::point_type;
       };
     template <Pixel P>
     concept WritablePixel = 
@@ -545,7 +566,7 @@ concept WritableImage =
 
 \begin{frame}[fragile]{Final step: Conceptification 2/2}
   \begin{minted}[linenos,highlightlines={1-4},highlightcolor=yellow!60!white,escapeinside=||]{C++}
-    template <|\colorbox{red}{WritableImage}| Image>
+    template <|\colorbox{red!50!white}{WritableImage}| Image>
       requires requires(Image::value_type v, double d) {
         { std::pow(v, d) } -> Image::value_type;
       }
@@ -570,7 +591,7 @@ concept WritableImage =
 %
 %
 %
-\section[Generic Programming for Image Processing in the static world (contribution)]{Generic programming for Image Processing in the static world (contribution)}
+\section[Generic programming for image processing in the static world (contribution)]{Generic programming for image processing in the static world (contribution)}
 
 \subsection{Taxonomy of Image Processing algorithms}
 
@@ -581,7 +602,7 @@ concept WritableImage =
   \end{alertblock}
   \begin{itemize}
     \item Provide zero-costs abstractions so that algorithm families can work on image type families.
-    \item Code will be easy and efficient by default.
+    \item Code will be easy and efficient \textbf{by default}.
   \end{itemize}
   \begin{center}
     \textbf{Concepts are not designed after data structures but after algorithms.}
@@ -628,7 +649,6 @@ concept WritableImage =
 \begin{frame}[fragile]{Our Concepts for Image Processing: fundamentals}
   The basic use case of a pixel-wise algorithm on an image is illustrated by the following code:
   \begin{minted}{C++}
-    auto ima = Image();           // Get an image
     for (auto pnt : ima.domain()) // traverse image
       ima(pnt) = 42;              // Set the image's value at pnt
     
@@ -648,27 +668,19 @@ concept WritableImage =
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
   \begin{itemize}
-    \item IndexableImage: traversing an image via indexes. Needed for sorting pixels.
+    \item IndexableImage: access an image via indexes. \GRAYOUT{Needed for sorting pixels.}
           \begin{minted}{C++}
     auto v = ima[k];                                    // Access value from an index
     \end{minted}
     \item AccessibleImage: accessing image's value through points (seen above)
-    \item BidirectionalImage: traversing image forward and backward for global algorithm such as Chamfer distance
-          transform that needs a forward pass and a backward pass.
+    \item BidirectionalImage: traversing image forward and backward \GRAYOUT{(such as Chamfer distance transform}.
           \begin{minted}{C++}
     for(auto pix : ima.pixels())                        // Forward pass
       pix.val() = /* ... */;
     for(auto pix : reversed(ima.pixels()))              // Backward pass
       pix.val() = /* ... */;
     \end{minted}
-    \item RawImage: direct access to the image's data buffer.
-          \begin{minted}{C++}
-    const int* data = ima.data();                       // Access the underlying buffer
-    auto dim = ima.domain().dim();                      // Dimension of the image
-    auto strides = std::vector<std::ptrdiff_t>(0, dim); // Information about strides
-    for (int i = 0; i < dim; ++i)
-      strides[i] = ima.stride(i)
-      \end{minted}
+    \item RawImage: direct interface for accessing the image's data buffer. \GRAYOUT{Interface for experts.}
   \end{itemize}
 \end{frame}
 
@@ -767,8 +779,8 @@ concept WritableImage =
     \includegraphics[width=0.7\textwidth]{../figures/local_op_code_rework}
 
     \column{0.50\textwidth}
-    \includegraphics[width=0.55\textwidth]{../figures/local_op_dilation_code_rework}
-    \includegraphics[width=0.55\textwidth]{../figures/local_op_erosion_code_rework}
+    \includegraphics[width=0.9\textwidth]{../figures/local_op_dilation_code_rework}
+    \includegraphics[width=0.9\textwidth]{../figures/local_op_erosion_code_rework}
   \end{columns}
 \end{frame}
 
@@ -785,21 +797,38 @@ concept WritableImage =
 %
 %
 %
-\section[Views for Image Processing (contribution)]{Views for Image Processing (contribution)}
+\section[Views for image processing (contribution)]{Views for image processing (contribution)}
 
 \subsection{Genesis of a new abstraction layer: Views}
 
 \begin{frame}[fragile]{Views for Image Processing}
   \begin{alertblock}{View definition}
     A view \hl{is an \emph{image}} which embarks an algorithm and features properties. They are inspired from Milena's
-    morphers~\footcite{levillain.2009.ismm} and STL ranges~\footcite{niebler.2014.ranges}. We published our take
-    in~\footcite{roynard.2022.gpce}.
+    morphers~\footnote{Levillain et al., Milena: Write generic morphological algorithms once, run on many kinds of
+      images. ISMM 2009.} and STL ranges~\footnote{Niebler et al., Ranges for the standard library: Revision 1. ISO WG21,
+      2014.}. We published our take in~\footnote{Roynard et al., A modern C++ point of View of programming in image
+      processing. ACM SIGPLAN GPCE, 2022.}.
 
     %In Pylene, \hl{a View \textbf{IS} an Image} and \hl{all Image are lightweight} objects (cheap-to-copy). Images have
     %\hl{value semantic} and copies perform \emph{shallow-copies} with a shared data buffer by default.
   \end{alertblock}
   \begin{center}\textbf{Views can replace pixel-wise algorithms.}\end{center}
 \end{frame}
+
+% levillain.2009.ismm
+% Levillain, R., Géraud, T., & Najman, L. (2009). Milena: Write generic morphological algorithms once, run on many kinds
+% of images. In M. H. F. Wilkinson & J. B. T. M. Roerdink (Eds.), Mathematical morphology and its application to signal
+% and image processing — proceedings of the ninth international symposium on mathematical morphology (ismm) (pp.
+% 295–306, Vol. 5720). Springer Berlin / Heidelberg. (Cit. on p. 38).
+
+% niebler.2014.ranges
+% Eric Niebler, A. S., Sean Parent. (2014). Ranges for the standard library: Revision 1.
+% https://ericniebler.github.io/std/wg21/D4128.html (cit. on p. 38).
+
+% roynard.2022.gpce
+% Roynard, M., Carlinet, E., & Géraud, T. (2022). A modern C++ point of View of programming in image processing.
+% Proceedings of the 21st ACM SIGPLAN International Conference on Generative Programming: Concepts and Experiences (GPCE
+% ’22), December 06–07, 2022, Auckland, New Zealand. https://doi.org/10.1145/3564719.3568692 (cit. on pp. 38, 54).
 
 \begin{frame}[fragile]{View properties}
   Views feature interesting properties.
@@ -862,7 +891,7 @@ void blend_inplace(
 
 \begin{frame}[fragile]{Views for Image Processing: Raising abstraction level}
   \begin{alertblock}{Lazy-evaluated, Non-owning}
-    \vspace{0.5cm}
+    \vspace{0.1cm}
     \begin{columns}[T,onlytextwidth]
       \column{0.5\textwidth}
       \begin{tcolorbox}
@@ -1028,13 +1057,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
   \end{itemize}
 \end{frame}
 
-%
-%
-%
-
-\section{General Conclusion \& Perspective}
-
-\begin{frame}{Our Hybrid solution}
+\begin{frame}{Static-dynamic bridge: a hybrid solution}
   \begin{alertblock}{Hybrid solution}
     \begin{itemize}
       \item Provide type-erased interface to the static-world.
@@ -1050,6 +1073,12 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
     \end{itemize}
   \end{alertblock}
 \end{frame}
+
+%
+%
+%
+
+\section[Conclusion \& perspectives]{Conclusion \& perspectives}
 
 % limitations à l'utilisation de la bibliothèque
 % pourquoi c'est compliqué à utiliser
@@ -1110,6 +1139,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 
 \appendix
 
+\nocite{geraud.2008.mpool,levillain.2014.ciarp,levillain.2009.ismm,niebler.2014.ranges,roynard.2022.gpce,roynard.2019.rrpr}
 \begin{frame}[allowframebreaks]{References}
   \AtNextBibliography{\footnotesize}
   \printbibliography[heading=none]

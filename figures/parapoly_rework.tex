@@ -8,19 +8,19 @@
 \begin{tikzpicture}[scale=.5]
   \umlclass[type=concept]{Image}
   {
-    typedef iterator\\
-    typedef value\_type\\
-    typedef point\_type\\[.2cm]
-    points() const : iterator\\
-    operator() (p : point\_type) const : value\_type\\
-    operator() (p : point\_type) : value\_type\&\\
+    typedef \colorbox{red!50!white}{iterator}\\
+    typedef \colorbox{red!50!white}{value\_type}\\
+    typedef \colorbox{red!50!white}{point\_type}\\[.2cm]
+    points() const : \colorbox{red!50!white}{iterator}\\
+    operator() (p : \colorbox{red!50!white}{point\_type}) const : \colorbox{red!50!white}{value\_type}\\
+    operator() (p : \colorbox{red!50!white}{point\_type}) : \colorbox{red!50!white}{value\_type}\&\\
   }
 
   \umlclass[below=.5cm of Image, template=T]{image2d}
   {
-    using iterator = iterator2d<T>\\
-    using value\_type = T\\
-    using point\_type = point2d\\[.2cm]
+    using \colorbox{red!50!white}{iterator} = iterator2d<T>\\
+    using \colorbox{red!50!white}{value\_type} = T\\
+    using \colorbox{red!50!white}{point\_type} = point2d\\[.2cm]
     points() const : iterator2d<T>\\
     operator() (p : point2d) const : T\\
     operator() (p : point2d) : T\&\\
