@@ -7,9 +7,9 @@
 
 \begin{document}
 
-\begin{minted}[highlightlines=2]{python}
-def dilate(img, se, out):
-  local_op(img, se, max, out)
+\begin{minted}[highlightlines=2,escapeinside=||,highlightcolor=yellow!60!white]{python}
+def erode(img, se, out):
+  local_op(img, se, |\colorbox{red}{min}|, out)
 \end{minted}
 
 \end{document}
