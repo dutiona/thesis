@@ -1149,20 +1149,20 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
     \column{0.50\textwidth}
     Milena's algorithm (unvectorized):
     \begin{minted}{C++}
-template<class I, class SE>
-mln_concrete(I) dilate(const I& f, const SE& se) {
-  mln_concrete(I) g;
-  initialize(g, f);
-  mln_piter(I) p(f.domain());
-  mln_qiter(SE) q(se, p);
-  for_all(p) { // for all p in f domain
-    mln_value(I) v = f(p);
-    for_all(q) // for all q in se(p)
-      if(f.has(q) and f(q) > v)
-        v = f(q);
-    g(p) = v;
-  }
-  return g;
+template <class I, class O, class SE>
+void dilate(const Image<I>& input_, Image<O>& output_, const SE& se)
+{
+    const I& input = exact(input_);
+    O& output = exact(output_);
+    mln_piter(I)  p(input.domain());
+    mln_qiter(SE) n(se, p);
+    for_all(p)
+    {
+        mln_value(I) M = f(p);
+        for_all(q)
+            M = max(f(q), M);
+        output(p) = M;
+    }
 }
     \end{minted}
     \column{0.50\textwidth}
@@ -1174,40 +1174,35 @@ mln_concrete(I) dilate(const I& f, const SE& se) {
   Compiler needs explicit contiguous dimension to generate vectorized instructions.
   \begin{columns}[T,onlytextwidth]
     \column{0.50\textwidth}
-    Pylene's unvectorized algorithm:
+    Pylene's v1, unoptimized algorithm:
     \begin{minted}{C++}
-template<class I, , class SE>
-auto dilate(I input, const SE& se) {
-  // clone image
-  auto output = input.concretize();
-  for(auto [in_px, out_px] :
-        view::zip(f.pixels(), g.pixels()))
-  {
-    out_px.val() = out_px.val();
-    for(auto nhx : se(in_px))
-      out_pix.val() =
-        std::max(nhx.val(), out_px.val());
-  }
-  return output;
+template<Image I, OutputImage O, class SE>
+  requires (StructuringElement<SE,
+              image_point_t<I>>)
+void dilate(I input, O output, SE se) {
+    mln_foreach(auto p, input.domain()) {
+        auto M = input(p);
+        for(auto n : se(p))
+            M = std::max(M, f(n));
+        output(p) = M;
+    }
 }
     \end{minted}
     \column{0.50\textwidth}
-    Pylene's vectorized algorithm:
-    \begin{minted}[highlightlines={8},highlightcolor=yellow!60!white]{C++}
-template<class I, class SE>
-auto dilate(I input, const SE& se) {
-  auto output = input.concretize(); // clone image
-  // this line is needed to avoid dangling reference
-  auto zipped_pixels =
-        view::zip(input.pixels(), output.pixels());
-  // optimized traversing of the segment
-  mln_foreach(auto [in_px, out_px], zipped_pixels) {
-    out_px.val() = out_px.val();
-    for(auto nhx : se(in_px))
-      out_pix.val() =
-        std::max(in_px.val(), out_px.val());
-  }
-  return output;
+    Pylene's v2, optimized algorithm using pixels (segmented ranges under the hood):
+    \begin{minted}{C++}
+template<Image I, OutputImage O, class SE>
+  requires (StructuringElement<SE,
+              image_point_t<I>>)
+void dilate(I input, O output, SE se) {
+    auto z = view::zip(input.pixels(),
+                output.pixels());
+    mln_foreach((auto [pxin, pxout]), z) {
+        auto M = pxin.val();
+        for(auto nx : se(pxin))
+            M = std::max(M, nx.val());
+        pxout.val() = M;
+    }
 }
     \end{minted}
   \end{columns}
