@@ -8,13 +8,18 @@ GSEMBEDDED = ghostscript -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -dSAFER \
 	-dAutoFilterMonoImages=false -dMonoImageFilter=/CCITTFaxEncode
 SRC = $(filter-out header.tex, $(wildcard *.tex))
 PDF = $(SRC:.tex=.pdf)
+PDFNOTE = $(PDF:.pdf=.pdfpc)
 
-all: $(PDF) handout compressed embedded
+all: $(PDF) $(PDFNOTE) handout compressed embedded
 
 %.pdf : %.tex Makefile
 	$(TEX) $< -jobname="$(basename $<)"
 	rm -rf $(basename $<).metadata
-	pdftk $@ dump_data_utf8 > $(basename $<).metadata
+#	pdftk $@ dump_data_utf8 > $(basename $<).metadata
+
+%.pdfpc : %.pdf
+	sed -i 's/\\\\/\n/g' $(basename $<).pdfpc
+	sed -i 's/\\par/\n\n/g' $(basename $<).pdfpc
 
 %.handout.pdf : %.tex
 	cp $(basename $<).pdf $@
@@ -33,9 +38,9 @@ handout : $(PDF:.pdf=.handout.pdf)
 
 %.embedded.pdf : %.tex ${DEP}
 	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).pdf
-	mv $@ $(basename $<).embedded.tmp.pdf
-	pdftk "$(basename $<).embedded.tmp.pdf" update_info_utf8 "$(basename $<).metadata" output "$@"
-	rm -rf $(basename $<).embedded.tmp.pdf
+#	mv $@ $(basename $<).embedded.tmp.pdf
+#	pdftk "$(basename $<).embedded.tmp.pdf" update_info_utf8 "$(basename $<).metadata" output "$@"
+#	rm -rf $(basename $<).embedded.tmp.pdf
 
 %.handout.embedded.pdf : %.tex ${DEP}
 	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).handout.pdf
