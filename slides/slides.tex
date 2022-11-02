@@ -1051,33 +1051,38 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
   \end{alertblock}
 \end{frame}
 
-% FIXME: perspective trop ciblée sur pont static/dynamique
-% Perspective plus générale (à réfléchir)
-\begin{frame}{Perspective: JIT}
-  \begin{alertblock}{JIT infrastructure for C++/Python}
-    \begin{itemize}
-      \item Cython: transpile Python code into C code (for foreign type injection).
-      \item AutoWIG/Cppyy: python binding generators relying on LLVM infrastructure.
-      \item Xeus-cling: ready-to-use Jupyter kernel for C++.
-    \end{itemize}
-  \end{alertblock}
-  All these existing framework can be leveraged to devise a better solution (more versatile, efficient and generic) in
-  order to provide Python bindings for Pylene.
-\end{frame}
-
 % limitations à l'utilisation de la bibliothèque
 % pourquoi c'est compliqué à utiliser
 % language ? tooling ?
 \begin{frame}{Conclusion}
   \begin{itemize}
     \item We have shown the progress in generic programming in C++20 and how it serves our purpose.
-    \item We have designed a Concept framework for Image Processing leveraging these progresses to write an \emph{easy to
-            use}, \emph{efficient} and \emph{generic} Image processing library: \textbf{Pylene}.
-    \item We have show-case a new abstraction layer: \emph{Image Views}, that are fully-fledged image type embedding Image
-          Processing algorithm.
+    \item We have designed a Concept framework for Image Processing leveraging these progresses to write an \emph{easy
+            to use}, \emph{efficient} and \emph{generic} Image processing library: \textbf{Pylene}.
+    \item We have show-case a new abstraction layer: \emph{Image Views}, that are fully-fledged image type embedding
+          Image Processing algorithm.
     \item We have explored way to provide those tools to the dynamic world via a static-dynamic bridge, which will be
           researched further in the future.
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Limitations \& Perspective}
+  \begin{alertblock}{Limitations}
+    \begin{itemize}
+      \item The C++ languages has inertia and is slow to evolve.
+      \item Tooling is poor.
+      \item Requires proper configuration to use Pylene as of now (state-of-the-art compiler + package manager for
+            dependencies)
+    \end{itemize}
+  \end{alertblock}
+  \begin{alertblock}{Perspectives}
+    \begin{itemize}
+      \item Cython, AutoWIG/Cppyy, Xeus-cling for static-dynamic bridge.
+      \item Improve Concept framework to encompass more use-cases for other algorithm families from other area than
+            mathematical morphology.
+      \item Research heterogeneous computation and how to integrate it in our Pylene library.
+    \end{itemize}
+  \end{alertblock}
 \end{frame}
 
 %FIXME perspectives haut niveau

@@ -11,6 +11,7 @@ ${BUNDLE_DIR}.tar.gz : $(SUBDIRS)
 	cp -f manuscript/long_summary_fr_standalone.embedded.pdf ${BUNDLE_DIR}/resume_long.pdf
 	cp -f manuscript/long_summary_en_standalone.embedded.pdf ${BUNDLE_DIR}/long_summary.pdf
 	cp -f slides/slides.embedded.pdf ${BUNDLE_DIR}/slides.pdf
+	cp -f slides/slides.pdfpc ${BUNDLE_DIR}/slides.pdfpc
 	cp -f slides/slides.handout.embedded.pdf ${BUNDLE_DIR}/handout.pdf
 	tar cvzf ${BUNDLE_DIR}.tar.gz ${BUNDLE_DIR}
 

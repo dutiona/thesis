@@ -36,5 +36,6 @@
 slides/reveal.js
 slides/*.html
 roynard.thesis.2022.tar.gz
+roynard.thesis.2022/*
 cdrom/
 *.metadata
