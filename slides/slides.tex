@@ -27,7 +27,7 @@
 \usepackage[author={Micha\"{e}l Roynard}]{pdfcomment}
 %\usepackage{setspace}
 
-%\usepackage{pdfpcnotes}
+\usepackage{pdfpcnotes}
 
 % Grid
 %\usepackage[texcoord,grid,gridunit=mm,gridcolor=red!10,subgridcolor=green!10]{eso-pic}
@@ -112,6 +112,12 @@
 }
 \makeatother
 
+% diapo accorche
+% diapo 16
+% enchainement 29-30
+% 32, 34, 38, 48
+% transition conclusion
+
 \begin{document}
 
 \maketitle
@@ -120,16 +126,32 @@
   \setbeamertemplate{section in toc}[sections numbered]
   %\singlespacing
   \tableofcontents[hideallsubsections]
-  %\pdfcomment[icon=Note]{Introduction -> Domaine du traitement d'image et justifier le besoin en généricité}
-  %\pdfcomment[icon=Note]{   }
-  %\pdfcomment[icon=Note]{Context \& History -> Comment on passe d'un algorithme non-générique à un algorithme générique
-  %  Généricité non contrainte à généricité contrainte}
-  %\pdfcomment[icon=Note]{   }
-  %\pdfcomment[icon=Note]{Programmation générique pour le traitement d'image -> 1ère contribution framework pour faire de
-  %  la généricité contraintes pour le traitement d'image dans un monde statique (compilation)}
-  %\pdfcomment[icon=Note]{   }
-  %\pdfcomment[icon=Note]{Vues pour le traitement d'image -> 2nd contribution -> Design d'un nouveau niveau d'abstration
-  %  (utilisant le 1er framework) : les Vues -> ce sont des types d'images embarquant des algorithmes}
+  \pdfcomment[icon=Note]{Introduction -> Domaine du traitement d'image et justifier le besoin en généricité}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Context \& History -> Comment on passe d'un algorithme non-générique à un algorithme générique
+    Généricité non contrainte à généricité contrainte}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Programmation générique pour le traitement d'image -> 1ère contribution framework pour faire de
+    la généricité contraintes pour le traitement d'image dans un monde statique (compilation)}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Vues pour le traitement d'image -> 2nd contribution -> Design d'un nouveau niveau d'abstration
+    (utilisant le 1er framework) : les Vues -> ce sont des types d'images embarquant des algorithmes}
+  \pdfcomment[icon=Note]{Conclusion \& perspectives -> nous conclurons sur notre travail et discuterons des pistes à explorer à l'avenir}
+  \pnote{
+    Introduction -> Domaine du traitement d'image et justifier le besoin en généricité
+
+    Context & History -> Comment on passe d'un algorithme non-générique à un algorithme générique
+    Généricité non contrainte à généricité contrainte
+
+    Programmation générique pour le traitement d'image -> 1ère contribution
+    framework pour faire de la généricité contraintes pour le traitement d'image dans un monde statique (compilation)
+
+    Vues pour le traitement d'image -> 2nd contribution
+    design d'un nouveau niveau d'abstraction (utilisant le 1er framework) : les vues
+    ce sont des types d'images embarquant des algorithmes
+
+    Conclusion & perspectives -> nous conclurons sur notre travail et discuterons des pistes à explorer à l'avenir
+  }
 \end{frame}
 
 %
@@ -153,13 +175,22 @@
     \includegraphics[height=3cm]{../illustrations/camera}
     \hspace{1cm}
   \end{figure}
-  %\pdfcomment[icon=Note]{Différents secteurs de l'industrie (lourde, des lignes de recyclage des déchets, au GAFAM sur internet, en passant le médical et le spatial)}
-  %\pdfcomment[icon=Note]{   }
-  %\pdfcomment[icon=Note]{Différents appareils (des ordinateurs/téléphones aux machines lourdes, en passant par James Webb et les IRM)}
-  %\pdfcomment[icon=Note]{   }
-  %\pdfcomment[icon=Note]{Différentes applications (retoucher ses photos, reconnaître des visages, appliquer des filtres snapshats, trouver des tumeurs, trouver des étoiles)}
-  %\pdfcomment[icon=Note]{   }
-  %\pdfcomment[icon=Note]{Le traitement d'image coûte des ressources !}
+  \pdfcomment[icon=Note]{Différents secteurs de l'industrie (lourde, des lignes de recyclage des déchets, au GAFAM sur internet, en passant le médical et le spatial)}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Différents appareils (des ordinateurs/téléphones aux machines lourdes, en passant par James Webb et les IRM)}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Différentes applications (retoucher ses photos, reconnaître des visages, appliquer des filtres snapshats, trouver des tumeurs, trouver des étoiles)}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Le traitement d'image coûte des ressources !}
+  \pnote{
+    Différents secteurs de l'industrie (lourde, des lignes de recyclage des déchets, au GAFAM sur internet, en passant le médical et le spatial)
+
+    Différents appareils (des ordinateurs/téléphones aux machines lourdes, en passant par James Webb et les IRM)
+
+    Différentes applications (retoucher ses photos, reconnaître des visages, appliquer des filtres snapshats, trouver des tumeurs, trouver des étoiles)
+
+    Le traitement d'image coûte des ressources !
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Image processing nowadays}
@@ -181,6 +212,18 @@
     \includegraphics[height=2.3cm]{../illustrations/hexagonal_grid2}
     \hspace{1cm}
   \end{figure}
+  \pdfcomment[icon=Note]{Différents domaines/applications/appareils -> différents besoin -> différents types de données / façon de modéliser ses données}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Image 2D classique pour la reconnaissance}
+  \pdfcomment[icon=Note]{Images 3D pour le médical}
+  \pdfcomment[icon=Note]{Images graph, image complex cubique etc.}
+  \pnote{
+    Différents domaines/applications/appareils -> différents besoin -> différents types de données / façon de modéliser ses données
+
+    Image 2D classique pour la reconnaissance
+    Images 3D pour le médical
+    Images graph, image complex cubique etc.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Image processing nowadays}
@@ -194,6 +237,26 @@
   \end{alertblock}
 
   Our work is aimed toward the \emph{practitioner}, the \emph{contributor} and the \emph{maintainer}.
+  \pdfcomment[icon=Note]{Différents types d'utilisateurs}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{L'utilisateur final veut une interface graphique pour retoucher ses photos ou utiliser une application riche (snapchat, instagram) qui embarque les fonctionnalités dont il a besoin}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Le praticien veut des bibliothèques accessibles et documenter et travailler dans des environnements où on peut itérer rapidement pour développer son application complexe}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Le contributeur veut pouvoir mettre les mains dans les détails interne d'une bibliothèque pour implémenter ses algorithmes et répondre aux besoin, par exemple, d'un praticien}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Le mainteneur se charge de faire vivre une bibliothèque de TI dans le temps, donc d'implémenter les nouveaux algorithmes de l'état de l'art au fur et à mesure du temps}
+  \pnote{
+    Différents types d'utilisateurs
+
+    L'utilisateur final veut une interface graphique pour retoucher ses photos ou utiliser une application riche (snapchat, instagram) qui embarque les fonctionnalités dont il a besoin
+
+    Le praticien veut des bibliothèques accessibles et documenter et travailler dans des environnements où on peut itérer rapidement pour développer son application complexe
+
+    Le contributeur veut pouvoir mettre les mains dans les détails interne d'une bibliothèque pour implémenter ses algorithmes et répondre aux besoin, par exemple, d'un praticien
+
+    Le mainteneur se charge de faire vivre une bibliothèque de TI dans le temps, donc d'implémenter les nouveaux algorithmes de l'état de l'art au fur et à mesure du temps
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Image processing nowadays}
@@ -210,6 +273,29 @@
               Halide and SYCL with their own toolchain).}
     \end{itemize}
   \end{alertblock}
+  \pdfcomment[icon=Note]{Différents outils pour différents utilisateurs}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Outils de programmation intégrés et visuels, pour le patricien}
+  \pdfcomment[icon=Note]{Packages dynamiques pour le patricien}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Bibliothèque de TI pour le contributeur (pour les faire évoluer, ou les packager pour les langages dynamiques pour la patricien)}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{DSL permet d'exprimer son problème, dans un langage de programmation, son problème pour qu'il soit ensuite résolu par le compilateur qui le transforme en code compréhensible pour la machine.
+    Utilisé par écrire des équations d'algèbre via frameworks type Eigen ou Armadillo).}
+  \pdfcomment[icon=Note]{Utilisé pour abstraire la couche architecture et faire de la programmation hétérogène dans Halide et et les langages implémentant le standard SYCL.}
+  \pnote{
+    Différents outils pour différents utilisateurs
+
+    Outils graphique et en ligne de commande pour l'utilisateur final
+
+    Outils de programmation intégrés et visuels, pour le patricien
+    Packages dynamiques pour le patricien
+
+    Bibliothèque de TI pour le contributeur (pour les faire évoluer, ou les packager pour les langages dynamiques pour la patricien)
+
+    DSL permet d'exprimer son problème, dans un langage de programmation, son problème pour qu'il soit ensuite résolu par le compilateur qui le transforme en code compréhensible pour la machine.
+    Utilisé par écrire des équations d'algèbre via frameworks type Eigen ou Armadillo). Utilisé pour abstraire la couche architecture et faire de la programmation hétérogène dans Halide et et les langages implémentant le standard SYCL.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Need of Genericity for image processing}
@@ -239,6 +325,26 @@
   \begin{textblock*}{4cm}(11cm,4cm)
     \textbf{Algorithms are intrinsically generic.}
   \end{textblock*}
+  \pdfcomment[icon=Note]{On se retrouve avec une multitudes de domaines d'applications, de périphériques, d'utilisateurs, de type de bibliothèque, et bien entendu, d'algorithmes.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Les algorithmes ne sont pas spécifiques à un seul type d'image ou de valeurs, mais sont intrinsèquement générique.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Par ex: watershed = ligne de partage des eaux = algorithme de segmentation qui va considérer tous les niveaux de gris d'une image comme du relief topographique pour extraire les régions.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{L'expression de cet algorithme est censée marcher sur imageND, mesh, graphs etc.}
+  \pdfcomment[icon=Note]{Seul l'implémentation contraint la structure de donnée et ce n'est pas justifié.}
+  \pdfcomment[icon=Note]{On a donc un besoin d'implémenter notre algorithem de manière générique pour qu'il fonctionne sur tous les types d'image.}
+  \pnote{
+    On se retrouve avec une multitudes de domaines d'applications, de périphériques, d'utilisateurs, de type de bibliothèque, et bien entendu, d'algorithmes.
+
+    Les algorithmes ne sont pas spécifiques à un seul type d'image ou de valeurs, mais sont intrinsèquement générique.
+
+    Par ex: watershed = ligne de partage des eaux = algorithme de segmentation qui va considérer tous les niveaux de gris d'une image comme du relief topographique pour extraire les régions.
+
+    L'expression de cet algorithme est censée marcher sur imageND, mesh, graphs etc.
+    Seul l'implémentation contraint la structure de donnée et ce n'est pas justifié.
+    On a donc un besoin d'implémenter notre algorithem de manière générique pour qu'il fonctionne sur tous les types d'image.
+  }
 \end{frame}
 
 % levillain.2014.ciarp
@@ -270,23 +376,52 @@
   \begin{alertblock}{What is a generic algorithm?}
     An algorithm is generic when it is written once to perform over a wide array of data structures.
   \end{alertblock}
+  \pdfcomment[icon=Note]{En effet, un algorithme non-générique a son implémentation qui grossit en complexité en fonction de tous les types de données d'entré qu'il doit gérer.}
+  \pdfcomment[icon=Note]{Données qui peuvent être relatives à la dimension, la représentation (grille rectangle, hexa, graphe), le type sous-jascentes des valeurs des pixels (rgb, niveau de gris, floatant, bool) et les structures auxiliaries (élément structurant, valeurs de seuil, labels, etc.)}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{espace des possibilités surface -> volume (avec structures auxiliaires).}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{--> On dit qu'un algorithme est générique lorsqu'il a une seule implémentation qui va fonctionner pour un large éventails de structures de données.}
+  \pnote{
+    En effet, un algorithme non-générique a son implémentation qui grossit en complexité en fonction de tous les types de données d'entré qu'il doit gérer.
+    Données qui peuvent être relatives à la dimension, la représentation (grille rectangle, hexa, graphe), le type sous-jascentes des valeurs des pixels (rgb, niveau de gris, floatant, bool) et les structures auxiliaries (élément structurant, valeurs de seuil, labels, etc.)
+
+    espace des possibilités surface -> volume (avec structures auxiliaires)
+
+    ---> On dit qu'un algorithme est générique lorsqu'il a une seule implémentation qui va fonctionner pour un large éventails de structures de données.
+  }
 \end{frame}
 
 %
 %
 %
 
-\AtBeginSection[]
-{
-  \begin{frame}{Outline}
-    \setbeamertemplate{section in toc}[sections numbered]
-    \vspace{0.2cm}
-    \small%\singlespacing
-    \tableofcontents[currentsection]
-  \end{frame}
-}
+% \AtBeginSection[]
+% {
+%   \begin{frame}{Outline}
+%     \setbeamertemplate{section in toc}[sections numbered]
+%     \vspace{0.2cm}
+%     \small%\singlespacing
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
 
 \section[Context and history of generic programming]{Context and history of generic programming}
+
+\begin{frame}{Outline}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \vspace{0.2cm}
+  \small%\singlespacing
+  \tableofcontents[currentsection]
+  \pdfcomment[icon=Note]{Maintenant que nous avons vu le besoin de généricité des algorithmes de traitement d'image, passons à comment nous pouvons rendre générique un algorithme de traitement d'image.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{--> 8min <--}
+  \pnote{
+    Maintenant que nous avons vu le besoin de généricité des algorithmes de traitement d'image, passons à comment nous pouvons rendre générique un algorithme de traitement d'image.
+
+    --> 8min <--
+  }
+\end{frame}
 
 \subsection[Unconstrained Genericity]{Unconstrained Genericity}
 
@@ -312,6 +447,24 @@
     This algorithm is \textbf{over-constrained}. \\
     How can we make it \textbf{Generic}?
   \end{textblock*}
+  \pdfcomment[icon=Note]{Prenons par exemple l'algorithme de correction gamma}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Cet algorithme fait une double boucle (2D)}
+  \pdfcomment[icon=Note]{Il corrige notre triplet RGB en nombre flottant en supposant que la valeur max ici est 256.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Cette algorithme est sur-contraint et ce n'est pas justifié.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Essayons d'abord plusieurs approches pour rendre cette algorithme générique = Comment on le généralise}
+  \pnote{
+    Prenons par exemple l'algorithme de correction gamma
+
+    Cet algorithme fait une double boucle (2D)
+    Il corrige notre triplet RGB en nombre flottant en supposant que la valeur max ici est 256.
+
+    Cette algorithme est sur-contraint et ce n'est pas justifié.
+
+    Essayons d'abord plusieurs approches pour rendre cette algorithme générique = Comment on le généralise
+  }
 \end{frame}
 
 % roynard.2019.rrpr
@@ -338,6 +491,17 @@
       }
     }
   \end{minted}
+  \pdfcomment[icon=Note]{Première approche, naive.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{On écrit un algorithme car combinaison de structure de données puis on dispatch depuis l'algorithme "générique" dans un grand switch case.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Devient très rapidement un enfer à maintenantir. Pas viable sur le long terme.}
+  \pnote{
+    Première approche, naive.
+
+    On écrit un algorithme car combinaison de structure de données puis on dispatch depuis l'algorithme "générique" dans un grand switch case.
+    Devient très rapidement un enfer à maintenantir. Pas viable sur le long terme.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{2nd approach: Generalization}
@@ -362,6 +526,22 @@
               // correct v with gamma
     }
   \end{minted}
+  \pdfcomment[icon=Note]{Deuxième approche: la généralisation (au sens super-type).}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{On fait en sorte que tous nos types supportées soit convertibles vers et depuis ce super-type.}
+  \pdfcomment[icon=Note]{On écrit une fois l'algorithme pour le super-type.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Très intéressant côté maintenance.}
+  \pdfcomment[icon=Note]{Pertes d'opportunités d'optimisations (ex ici 4 boucles alors que image 1d = 1 boucle).}
+  \pnote{
+    Deuxième approche: la généralisation (au sens super-type).
+
+    On fait en sorte que tous nos types supportées soit convertibles vers et depuis ce super-type.
+    On écrit une fois l'algorithme pour le super-type
+
+    Très intéressant côté maintenance
+    Pertes d'opportunités d'optimisations (ex ici 4 boucles alors que image 1d = 1 boucle)
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Toward Genericity: Step 1}
@@ -382,6 +562,18 @@
   \begin{textblock*}{4cm}(11.5cm,1.5cm)
     \textbf{There is no valid reason to constrain this algorithm to RGB images.}
   \end{textblock*}
+  \pdfcomment[icon=Note]{Essayons maintenant une autre façon d'écrire notre algorithme pour qu'il ne soit plus sur-contraint et devienne générique.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Aucune raison pour qu'il ne fonctionne qu'avec les images rgb flotantes.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Nous le réécrivons de façon à abstraire les opérations sur la valeur des pixels de l'image.}
+  \pnote{
+    Essayons maintenant une autre façon d'écrire notre algorithme pour qu'il ne soit plus sur-contraint et devienne générique.
+
+    Aucune raison pour qu'il ne fonctionne qu'avec les images rgb flotantes.
+
+    Nous le réécrivons de façon à abstraire les opérations sur la valeur des pixels de l'image
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Toward Genericity: Step 2}
@@ -401,6 +593,14 @@
   \begin{textblock*}{4cm}(11.5cm,3cm)
     \textbf{There is no valid reason to constrain this algorithm to 2D-images.}
   \end{textblock*}
+  \pdfcomment[icon=Note]{Aucune raison qu'il ne fonctionne que sur les images 2D.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Nous le réécrivons pour abstraire la façon de parcourir les pixels de l'image.}
+  \pnote{
+    Aucune raison qu'il ne fonctionne que sur les images 2D
+
+    Nous le réécrivons pour abstraire la façon de parcourir les pixels de l'image
+  }
 \end{frame}
 
 \begin{frame}[fragile]{3rd approach: Inclusion Polymorphism}
@@ -420,6 +620,14 @@
     \centering
     \includegraphics[width=0.8\textwidth]{../figures/inclupoly_code_gamma_rework}
   \end{columns}
+  \pdfcomment[icon=Note]{La première façon de modéliser cette nouvelle abstraction se fait via ce qu'on appelle le polymorphisme d'inclusion.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Toute l'interface (notamment les "any") fonctionne avec de l'effacement de type qui induit un coût en performance à l'exécution.}
+  \pnote{
+    La première façon de modéliser cette nouvelle abstraction se fait via ce qu'on appelle le polymorphisme d'inclusion
+
+    Toute l'interface (notamment les "any") fonctionne avec de l'effacement de type qui induit un coût en performance à l'exécution
+  }
 \end{frame}
 
 \begin{frame}[fragile]{4th approach: Parametric Polymorphism}
@@ -439,6 +647,20 @@
     \centering
     \includegraphics[width=0.8\textwidth]{../figures/parapoly_code_gamma_rework}
   \end{columns}
+  \pdfcomment[icon=Note]{La seconde façon de modéliser cette nouvelle abstraction se fait via le polymorphisme paramétrique.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Toute l'interface repose sur des types paramétriques qui sont instanciés et résolus à la compilation.}
+  \pdfcomment[icon=Note]{Donc génération de code machine optimisé donc 0 coût à l'exécution.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{(concepts vus un peu plus loin)}
+  \pnote{
+    La seconde façon de modéliser cette nouvelle abstraction se fait via le polymorphisme paramétrique.
+
+    Toute l'interface repose sur des types paramétriques qui sont instanciés et résolus à la compilation.
+    Donc génération de code machine optimisé donc 0 coût à l'exécution.
+
+    (concepts vus un peu plus loin)
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Genericity within Libraries}
@@ -455,6 +677,14 @@
     \item \GRAYOUT{Many other libraries have chosen to leverage} Parametric polymorphism at diverse degree (Boost.GIL,
           Higra, Vigra, GrAL, DGTal, Milena and Pylene)
   \end{itemize}
+  \pdfcomment[icon=Note]{Il faut comprendre que la notion générale de généricité ne possède pas de solution miracle pour s'implémenter.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Dans l'état de l'art, toutes les bibliothèques sont génériques à divers degrés et mixent les techniques que nous venons de voir pour y arriver.}
+  \pnote{
+    Il faut comprendre que la notion générale de généricité ne possède pas de solution miracle pour s'implémenter
+
+    Dans l'état de l'art, toutes les bibliothèques sont génériques à divers degrés et mixent les techniques que nous venons de voir pour y arriver.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Genericity: Summary}
@@ -484,6 +714,16 @@
       \label{table:gen.approaches}
     \end{threeparttable}
   \end{table}
+  \pdfcomment[icon=Note]{Ce qui nous amène à ce tableau qui liste les techniques, leurs avantages et inconvénients par rapport à nos critères.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Et notamment l'abstraction explicite qui permet de contraindre un type suivant un comportement.}
+  \pdfcomment[icon=Note]{Cette abstraction n'est disponible qu'en C++ avec le polymorphisme paramétrique donc nous n'allons que considérer ce standard pour la suite de la présentation.}
+  \pnote{
+    Ce qui nous amène à ce tableau qui liste les techniques, leurs avantages et inconvénients par rapport à nos critères.
+
+    Et notamment l'abstraction explicite qui permet de contraindre un type suivant un comportement.
+    Cette abstraction n'est disponible qu'en C++ avec le polymorphisme paramétrique donc nous n'allons que considérer ce standard pour la suite de la présentation
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Toward Genericity: Constraints so far}
@@ -508,6 +748,20 @@
     \end{itemize}
   \end{alertblock}
   \textbf{Issue: Genericity is unconstrained, so the check is done late and error messages are infamously complicated.}
+  \pdfcomment[icon=Note]{Petit rappel des contraintes liés à notre algorithme.}
+  \pdfcomment[icon=Note]{- l'image doit fournir un sous-type image_type}
+  \pdfcomment[icon=Note]{- l'image doit pouvoir être parcouru avec une fonction member .pixels()}
+  \pdfcomment[icon=Note]{- type de valeur des pixels doit fournir une valeur max, fonctionner avec les opérateurs arithmétique et d'exponentiation}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{ICI IMPLEMENTATION GENERIQUE NON CONTRAINTE}
+  \pnote{
+    Petit rappel des contraintes liés à notre algorithme
+    - l'image doit fournir un sous-type image_type
+    - l'image doit pouvoir être parcouru avec une fonction member .pixels()
+    - type de valeur des pixels doit fournir une valeur max, fonctionner avec les opérateurs arithmétique et d'exponentiation
+
+    ICI IMPLEMENTATION GENERIQUE NON CONTRAINTE
+  }
 \end{frame}
 
 
@@ -524,6 +778,18 @@
   \end{itemize}
   \vspace{-0.3cm}
   \begin{center}\textbf{We do not want this anymore!}\end{center}
+  \pdfcomment[icon=Note]{Comment exprimait-on ces contraintes avant C++20.}
+  \pdfcomment[icon=Note]{Il y avait des hacks et des tricks, à destinations des experts, non satisfaisant car :}
+  \pdfcomment[icon=Note]{- moins lisible}
+  \pdfcomment[icon=Note]{- moins puissant}
+  \pdfcomment[icon=Note]{- messages d'erreurs absolument horrifiques}
+  \pnote{
+    Comment exprimait-on ces contraintes avant C++20
+    Il y avait des hacks et des tricks, à destinations des experts, non satisfaisant car :
+    - moins lisible
+    - moins puissant
+    - messages d'erreurs absolument horrifiques
+  }
 \end{frame}
 
 % geraud.2008.mpool
@@ -571,6 +837,22 @@ concept WritableImage =
       };
   \end{minted}
   \end{columns}
+  \pdfcomment[icon=Note]{Aujourd'hui nous utilisons les concepts.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Les concepts image et pixel :}
+  \pdfcomment[icon=Note]{- sous-type}
+  \pdfcomment[icon=Note]{- fonctions membres}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Pendant inscriptible pour pouvoir écrire des valeurs}
+  \pnote{
+    Aujourd'hui nous utilisons les concepts
+
+    Les concepts image et pixel
+    - sous-type
+    - fonction membre
+
+    Pendant inscriptible pour pouvoir écrire des valeurs
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Final step: Conceptification 2/2}
@@ -595,12 +877,39 @@ concept WritableImage =
   \begin{textblock*}{4cm}(11.5cm,3.2cm)
     \textbf{A \emph{Concept} is a set of behavioral requirements (constraints) applied to a type.}
   \end{textblock*}
+  \pdfcomment[icon=Note]{Ce qui nous donne la version finale de notre algorithme.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{le corps de l'implémentation ne change pas, les contraintes sont exprimées dans le prototype de notre fonction !}
+  \pnote{
+    Ce qui nous donne la version finale de notre algorithme
+
+    le corps de l'implémentation ne change pas, les contraintes sont exprimées dans le prototype de notre fonction !
+  }
 \end{frame}
 
 %
 %
 %
 \section[Generic programming for image processing in the static world (contribution)]{Generic programming for image processing in the static world (contribution)}
+
+\begin{frame}{Outline}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \vspace{0.2cm}
+  \small%\singlespacing
+  \tableofcontents[currentsection]
+  \pdfcomment[icon=Note]{Nous avons donc vu comment rendre générique (généraliser un algorithme)}
+  \pdfcomment[icon=Note]{Pour cela il faut écrire des concepts}
+  \pdfcomment[icon=Note]{Notre première contribution consiste à proposer un environnement de concepts liés au traitement d'image pour exprimer facilement ses algorithmes de TI avec de la généricité contrainte.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{--> 20min <--}
+  \pnote{
+    Nous avons donc vu comment rendre générique (généraliser un algorithme)
+    Pour cela il faut écrire des concepts
+    Notre première contribution consiste à proposer un environnement de concepts liés au traitement d'image pour exprimer facilement ses algorithmes de TI avec de la généricité contrainte.
+
+    --> 20min <--
+  }
+\end{frame}
 
 \subsection{Taxonomy of Image Processing algorithms}
 
@@ -616,6 +925,26 @@ concept WritableImage =
   \begin{center}
     \textbf{Concepts are not designed after data structures but after algorithms.}
   \end{center}
+  \pdfcomment[icon=Note]{La taxonomie consiste à classifier quelque chose de manière systématique.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Le but est de fournir un environnement de concept complet permettant d'écrire des algorithmes génériques contraintes avec 0 coût supplémentaires en performances.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Le code doit être facile à écrire/lire et efficace, PAR DEFAUT}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Les concepts sont designés à partir des patterns comportementaux extraits des algorithmes et non pas à partir des algorithmes.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Nous avons donc fait la taxonomie des algorithmes de traitement d'image ainsi que celle des structures de données. Nous ne présenteront ici que la taxonomie relative aux algorithmes.}
+  \pnote{
+    La taxonomie consiste à classifier quelque chose de manière systématique.
+
+    Le but est de fournir un environnement de concept complet permettant d'écrire des algorithmes génériques contraintes avec 0 coût supplémentaires en performances.
+
+    Le code doit être facile à écrire/lire et efficace, PAR DEFAUT
+
+    Les concepts sont designés à partir des patterns comportementaux extraits des algorithmes et non pas à partir des algorithmes.
+
+    Nous avons donc fait la taxonomie des algorithmes de traitement d'image ainsi que celle des structures de données. Nous ne présenteront ici que la taxonomie relative aux algorithmes.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Taxonomy of Image Processing algorithms: three families}
@@ -639,6 +968,16 @@ concept WritableImage =
   \begin{textblock*}{5.5cm}(9.2cm,7.3cm)
     From those families emerge several concepts.
   \end{textblock*}
+  \pdfcomment[icon=Note]{Nous avons identifié 3 familles d'algorithme de traitement d'image :}
+  \pdfcomment[icon=Note]{- les algorithmes pixel par pixel}
+  \pdfcomment[icon=Note]{- les algorithmes locaux (fênetre locale autour du pixel considéré, voisinage, élément structurant)}
+  \pdfcomment[icon=Note]{- les algorithmes locaux (besoin de plusieurs passes dans plusieurs sens (avant, arrière, zigzag), besoin de piocher les pixels avec une logique autre qu'un parcour linéaire, besoin de considérer les valeurs tous les pixels de 1 à n-1 pour calculer n, etc.)}
+  \pnote{
+    Nous avons identifié 3 familles d'algorithme de traitement d'image :
+    - les algorithmes pixel par pixel
+    - les algorithmes locaux (fênetre locale autour du pixel considéré, voisinage, élément structurant)
+    - les algorithmes locaux (besoin de plusieurs passes dans plusieurs sens (avant, arrière, zigzag), besoin de piocher les pixels avec une logique autre qu'un parcour linéaire, besoin de considérer les valeurs tous les pixels de 1 à n-1 pour calculer n, etc.)
+  }
 \end{frame}
 
 \subsection{Concepts for Image Processing algorithms}
@@ -653,6 +992,18 @@ concept WritableImage =
     \item An image can also store a value, as in \(f(x) = y\).
   \end{itemize}
   Concepts interact with each other's through \hl{composition} and \hl{refinement} (close to inheritance).
+  \pdfcomment[icon=Note]{De ces algorithmes émergent donc les concepts fondamentaux suivants:}
+  \pdfcomment[icon=Note]{- Pixel, couple point -> valeur}
+  \pdfcomment[icon=Note]{- Domaine de définition d'une image, au sens algébrique du terme}
+  \pdfcomment[icon=Note]{Relation entres concepts : composition et rafinage (proche de l'héritage pour le polymorphisme d'inclusion)}
+  \pnote{
+    De ces algorithmes émergent donc les concepts fondamentaux suivants:
+    - Pixel, couple point -> valeur
+    - Domaine de définition d'une image, au sens algébrique du terme
+    - Image, représente la relation algébrique y = f(x) et f(x) = y pour les images inscriptibles
+
+    Relation entres concepts : composition et rafinage (proche de l'héritage pour le polymorphisme d'inclusion)
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: fundamentals}
@@ -666,6 +1017,18 @@ concept WritableImage =
     for (auto pix : ima.pixels()) // 0 cost abstraction
       pix.val() = 42;             // Set the pixel's value
   \end{minted}
+  \pdfcomment[icon=Note]{Voici le pattern comportemental de base pour une image.}
+  \pdfcomment[icon=Note]{Nous voulons la parcourir de manière linéaire et assigner une valeur au pixel.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Parcour des points -> marche mais n'est pas optimisé}
+  \pdfcomment[icon=Note]{Parcour des pixels -> marche et est optimisé car nous renvons des itérateurs dont l'abstration permet des optimisations similaire à du code C compréhensibles par le compilateur (pour de la vectorisation)}
+  \pnote{
+    Voici le pattern comportemental de base pour une image.
+    Nous voulons la parcourir de manière linéaire et assigner une valeur au pixel.
+
+    Parcour des points -> marche mais n'est pas optimisé
+    Parcour des pixels -> marche et est optimisé car nous renvons des itérateurs dont l'abstration permet des optimisations similaire à du code C compréhensibles par le compilateur (pour de la vectorisation)
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Image concept}
@@ -673,6 +1036,22 @@ concept WritableImage =
   \begin{figure}
     \includegraphics[width=0.9\textwidth]{../figures/concepts/image}
   \end{figure}
+  \pdfcomment[icon=Note]{Cela donne donc la hiérarchie suivante:}
+  \pdfcomment[icon=Note]{- concept pixel composé des concepts points/valeurs}
+  \pdfcomment[icon=Note]{- concept mdrange modélise une range de point/valeurs/pixels}
+  \pdfcomment[icon=Note]{- domaine de définition de l'image}
+  \pdfcomment[icon=Note]{- ima.values() -> parcour de toutes les valeurs de l'image}
+  \pdfcomment[icon=Note]{- ima.domain() -> parcour tous les points de l'image}
+  \pdfcomment[icon=Note]{- ima.pixels() -> parcour tous les pixels de l'image}
+  \pnote{
+    Cela donne donc la hiérarchie suivante:
+    - concept pixel composé des concepts points/valeurs
+    - concept mdrange modélise une range de point/valeurs/pixels
+    - domaine de définition de l'image
+    - ima.values() -> parcour de toutes les valeurs de l'image
+    - ima.domain() -> parcour tous les points de l'image
+    - ima.pixels() -> parcour tous les pixels de l'image
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
@@ -691,6 +1070,26 @@ concept WritableImage =
     \end{minted}
     \item RawImage: direct interface for accessing the image's data buffer. \GRAYOUT{Interface for experts.}
   \end{itemize}
+  \pdfcomment[icon=Note]{Les images possèdent certaines propriétés qui peuvent être utilisé à des fins de caractérisation, discrimination (contraintes des algorithmes) ou encore d'optimisation}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Indexable permet un parcours de toutes les valeurs lorsqu'on connait la dimension de l'image. Nécessaire pour trier les pixels.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Accessible permet d'accèder à une valeur via un point (vu plus haut)}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Bidirectionnelle permet de traverser l'image en sens inverse, nécessaire pour certains algorithmes comme la transformé en distance de Chamfrain}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Image brute permet un accès direct au buffer de donnée pour les utilisateurs expert, souhaitant par exemple couper leur image en tuiles pour l;es envoyer sur GPU.}
+  \pnote{
+    Les images possèdent certaines propriétés qui peuvent être utilisé à des fins de caractérisation, discrimination (contraintes des algorithmes) ou encore d'optimisation
+
+    Indexable permet un parcours de toutes les valeurs lorsqu'on connait la dimension de l'image. Nécessaire pour trier les pixels.
+
+    Accessible permet d'accèder à une valeur via un point (vu plus haut)
+
+    Bidirectionnelle permet de traverser l'image en sens inverse, nécessaire pour certains algorithmes comme la transformé en distance de Chamfrain
+
+    Image brute permet un accès direct au buffer de donnée pour les utilisateurs expert, souhaitant par exemple couper leur image en tuiles pour l;es envoyer sur GPU.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Advanced Image concept}
@@ -701,6 +1100,28 @@ concept WritableImage =
   \begin{textblock*}{4cm}(11cm,5cm)
     \Large\textbf{\(+\) Writability}
   \end{textblock*}
+  \pdfcomment[icon=Note]{Cela engendre donc cette nouvelle hiérarchie de concepts.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Ici nous avons 3 niveaux :}
+  \pdfcomment[icon=Note]{- premier est concept image vu plus haut}
+  \pdfcomment[icon=Note]{- second sont les concepts Indexable, Accessible et Bidirectionnelle qui rafinent le premier}
+  \pdfcomment[icon=Note]{- 2.5 : concept spécial Indexable + Accessible pour faire des correspondances entre les indexes et les points}
+  \pdfcomment[icon=Note]{- 3 image brute. En effet, lorsqu'on a accès au buffer de données, on peut faire tout ce qui est marqué plus haut.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Et SURTOUT PENDANT INSCRIPTIBLE DE CES CONCEPTS}
+  \pdfcomment[icon=Note]{En effet, pour chaque propriété il est possible d'écrire des valeurs dans l'image.}
+  \pnote{
+    Cela engendre donc cette nouvelle hiérarchie de concepts.
+
+    Ici nous avons 3 niveaux :
+    - premier est concept image vu plus haut
+    - second sont les concepts Indexable, Accessible et Bidirectionnelle qui rafinent le premier
+    - 2.5 : concept spécial Indexable + Accessible pour faire des correspondances entre les indexes et les points
+    - 3 image brute. En effet, lorsqu'on a accès au buffer de données, on peut faire tout ce qui est marqué plus haut.
+
+    Et SURTOUT PENDANT INSCRIPTIBLE DE CES CONCEPTS
+    En effet, pour chaque propriété il est possible d'écrire des valeurs dans l'image.
+  }
 \end{frame}
 
 
@@ -723,6 +1144,14 @@ concept WritableImage =
         for(auto nbx : se(pix))      // traverse neighboring pixels
           // nbx is a range of pixels
   \end{minted}
+  \pdfcomment[icon=Note]{Maintenant que nous avons tout le nécessaire pour les algorithmes locaux, il faut étendre un peu notre environnement pour supporter les algorithmes locaux.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Pattern comportemental typique : récupérer tous les points/pixels du voisinages et itérer dessus pour les traiter.}
+  \pnote{
+    Maintenant que nous avons tout le nécessaire pour les algorithmes locaux, il faut étendre un peu notre environnement pour supporter les algorithmes locaux.
+
+    Pattern comportemental typique : récupérer tous les points/pixels du voisinages et itérer dessus pour les traiter.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Our Concepts for Image Processing: Local algorithms}
@@ -730,6 +1159,16 @@ concept WritableImage =
   \begin{figure}
     \includegraphics[width=0.7\textwidth]{../figures/concepts/se_extension_rework}
   \end{figure}
+  \pdfcomment[icon=Note]{Cela donne donc lieu à la hiérchie de concepts suivante.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Ici se(pix) renvoie une range de pixels. se(pnt) renvoie une range de points.}
+  \pdfcomment[icon=Note]{Et Pixel connait l'image car il peut donner ses pixels voisins.}
+  \pnote{
+    Cela donne donc lieu à la hiérchie de concepts suivante.
+
+    Ici se(pix) renvoie une range de pixels. se(pnt) renvoie une range de points.
+    Et Pixel connait l'image car il peut donner ses pixels voisins.
+  }
 \end{frame}
 
 \subsection{Algorithms canvas}
@@ -770,6 +1209,26 @@ concept WritableImage =
 
   %\column{0.40\textwidth}
   %\includegraphics[width=0.99\textwidth]{../figures/dilation_specialization_diagram}
+  \pdfcomment[icon=Note]{Nous ayons designé un environnement de concepts dont le but et d'avoir un surcoût de 0 à l'exécution et d'être optimisé par le compilateur.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Dans l'imense majorité des cas, le code par dafaut sera donc le plus performant.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Dans de rare cas, cependant, il est possible d'aller encore plus vite en exploitant certaines propriétés liées à l'image ou aux structures auxiliaires utilisées dans ces algorithmes.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Par ex, dilatation ici, on utilise la propriété relative à la decomposabilité et à la périodicité pour améliorer les performance.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Ces propriété peuvent être dynamic ou statique (transformer if par if constexpr).}
+  \pnote{
+    Nous ayons designé un environnement de concepts dont le but et d'avoir un surcoût de 0 à l'exécution et d'être optimisé par le compilateur.
+
+    Dans l'imense majorité des cas, le code par dafaut sera donc le plus performant.
+
+    Dans de rare cas, cependant, il est possible d'aller encore plus vite en exploitant certaines propriétés liées à l'image ou aux structures auxiliaires utilisées dans ces algorithmes.
+
+    Par ex, dilatation ici, on utilise la propriété relative à la decomposabilité et à la périodicité pour améliorer les performance.
+
+    Ces propriété peuvent être dynamic ou statique (transformer if par if constexpr).
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Taxonomy for Image Processing: Canvas for Dilation \& Erosion}
@@ -791,6 +1250,22 @@ concept WritableImage =
     \includegraphics[width=0.9\textwidth]{../figures/local_op_dilation_code_rework}
     \includegraphics[width=0.9\textwidth]{../figures/local_op_erosion_code_rework}
   \end{columns}
+  \pdfcomment[icon=Note]{En faisant la taxonomie liée au algorithmes locaux, nous nous sommes aperçu que les algorithmes avaient la même forme computationnelle.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Cela veut dire que nous pouvons factoriser le schéma algorithmique en meta-algorithmes que l'on appelle les canvas d'algorithme.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Par exemple ici dilatation erosion -> min/max, réécriture en passant l'opérateur en paramètre.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Canvas d'algorithme local simplifié.}
+  \pnote{
+    En faisant la taxonomie liée au algorithmes locaux, nous nous sommes aperçu que les algorithmes avaient la même forme computationnelle.
+
+    Cela veut dire que nous pouvons factoriser le schéma algorithmique en meta-algorithmes que l'on appelle les canvas d'algorithme.
+
+    Par exemple ici dilatation erosion -> min/max, réécriture en passant l'opérateur en paramètre.
+
+    Canvas d'algorithme local simplifié.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Taxonomy for Image Processing: Algorithms over-generalization}
@@ -801,12 +1276,35 @@ concept WritableImage =
     \item This canvas allows reusing code easily.
     \item This canvas allows the maintainer to factorize optimizations (GPU offloading, etc.)
   \end{itemize}
+  \pdfcomment[icon=Note]{Possible opportinutés d'optimisations implémenté une fois et factorisé pour tous les algorithmes.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{En revanche on passe d'un paradigme d'implémentation procédurial de nos algorithmes à un paradigme de description de nos algorithmes (pour le canvas), ce qui peut rendre l'implémentation moins lisible, surtout lorsqu'il y a des callbacks.}
+  \pnote{
+    Possible opportinutés d'optimisations implémenté une fois et factorisé pour tous les algorithmes.
+
+    En revanche on passe d'un paradigme d'implémentation procédurial de nos algorithmes à un paradigme de description de nos algorithmes (pour le canvas), ce qui peut rendre l'implémentation moins lisible, surtout lorsqu'il y a des callbacks.
+  }
 \end{frame}
 
 %
 %
 %
 \section[Views for image processing (contribution)]{Views for image processing (contribution)}
+
+\begin{frame}{Outline}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \vspace{0.2cm}
+  \small%\singlespacing
+  \tableofcontents[currentsection]
+  \pdfcomment[icon=Note]{Maintenant que nous avons designé un environnement complet de concepts pour faire de la généricité contrainte en traitement d'image, utilisons le pour créer des nouveaux type d'image : les vues, qui utilisent ces concepts (propriétés) pour abstraires des algorithmes, tout en respectant le principe d'abstration à coût 0.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{--> 30min <--}
+  \pnote{
+    Maintenant que nous avons designé un environnement complet de concepts pour faire de la généricité contrainte en traitement d'image, utilisons le pour créer des nouveaux type d'image : les vues, qui utilisent ces concepts (propriétés) pour abstraires des algorithmes, tout en respectant le principe d'abstration à coût 0.
+
+    --> 30min <--
+  }
+\end{frame}
 
 \subsection{Genesis of a new abstraction layer: Views}
 
@@ -822,6 +1320,22 @@ concept WritableImage =
     %\hl{value semantic} and copies perform \emph{shallow-copies} with a shared data buffer by default.
   \end{alertblock}
   \begin{center}\textbf{Views can replace pixel-wise algorithms.}\end{center}
+  \pdfcomment[icon=Note]{Les vues sont des images.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Elles emarquent des algorithmes pixel par pixel en leur sein.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Elles sont inspirées des morphers de Milena et des ranges de la STL.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Les vues ont vocation à complétement remplacer les algorithmes pixel par pixel.}
+  \pnote{
+    Les vues sont des images.
+
+    Elles emarquent des algorithmes pixel par pixel en leur sein.
+
+    Elles sont inspirées des morphers de Milena et des ranges de la STL.
+
+    Les vues ont vocation à complétement remplacer les algorithmes pixel par pixel.
+  }
 \end{frame}
 
 % levillain.2009.ismm
@@ -862,6 +1376,30 @@ concept WritableImage =
       \label{fig.view.threshold}
     \end{figure}
   \end{columns}
+  \pdfcomment[icon=Note]{Voici un exemple de vue pour effectuer une binarisation.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Cette vu contient 2 pointeurs (fonction + image de base)}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Sémantique de partage du buffer de donné (pour éviter les violations mémoires)}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Sémantique de copie superficielle}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Evaluation paresseuse}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Composables}
+  \pnote{
+    Voici un exemple de vue pour effectuer une binarisation.
+
+    Cette vu contient 2 pointeurs (fonction + image de base)
+
+    Sémantique de partage du buffer de donné (pour éviter les violations mémoires)
+
+    Sémantique de copie superficielle
+
+    Evaluation paresseuse
+
+    Composables
+  }
 \end{frame}
 
 \subsection{Raising abstraction level}
@@ -896,11 +1434,34 @@ void blend_inplace(
   int height_b, int height_e);
     \end{minted}
   \end{textblock*}
+  \pdfcomment[icon=Note]{Par exemple algorithme alphablending.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Code C basique, double boucle, arithmétique de pointeurs, strides etc.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Si l'on veut n'opérer que dans une région spécifique (région d'intérêt), on devrait définir une nouvelle implémentation avec un prototype différents.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{En revanche, avec les vues cet algorithme s'exprime très simplement. Et comme les vues sont composables (slide suivante)}
+  \pnote{
+    Par exemple algorithme alphablending.
+
+    Code C basique, double boucle, arithmétique de pointeurs, strides etc.
+
+    Si l'on veut n'opérer que dans une région spécifique (région d'intérêt), on devrait définir une nouvelle implémentation avec un prototype différents.
+
+    En revanche, avec les vues cet algorithme s'exprime très simplement. Et comme les vues sont composables (slide suivante)
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Views for Image Processing: Raising abstraction level}
+  \begin{alertblock}{Composable:}
+    \begin{minted}{C++}
+auto roi = /* ... */;
+auto blend_roi = alphablend(view::clip(ima1, roi), view::clip(ima2, roi), 0.2);
+auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
+    \end{minted}
+  \end{alertblock}
   \begin{alertblock}{Lazy-evaluated, Non-owning}
-    \vspace{0.1cm}
+    \vspace{0.2cm}
     \begin{columns}[T,onlytextwidth]
       \column{0.5\textwidth}
       \begin{tcolorbox}
@@ -923,22 +1484,26 @@ void blend_inplace(
 
     \end{columns}
   \end{alertblock}
-
   \begin{alertblock}{Cheap-to-copy:}
     \begin{minted}{C++}
 auto ima1, ima2 = /* ... */;
 auto ima_blended = alphablend(ima1, ima2, 0.2);
     \end{minted}
   \end{alertblock}
+  \pdfcomment[icon=Note]{On peut directement écrite vue clip de notre image puis la passer à notre algorithme.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Notre algorithme s'écrit très simplement}
+  \pdfcomment[icon=Note]{Arbre de calcul généré et résolu lors du parcour de l'image (évaluation paresseuse)}
+  \pdfcomment[icon=Note]{On prend ima1, ima2 par copie sans impact de performance}
+  \pdfcomment[icon=Note]{On peut copier ima_blended sans dupliquer le buffer de donnée ni calculer l'entièreté de la transformation.}
+  \pnote{
+    On peut directement écrite vue clip de notre image puis la passer à notre algorithme.
 
-  \begin{alertblock}{Composable:}
-    \begin{minted}{C++}
-auto roi = /* ... */;
-auto blend_roi = alphablend(view::clip(ima1, roi), view::clip(ima2, roi), 0.2);
-auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
-    \end{minted}
-  \end{alertblock}
-
+    Notre algorithme s'écrit très simplement
+    Arbre de calcul généré et résolu lors du parcour de l'image (évaluation paresseuse)
+    On prend ima1, ima2 par copie sans impact de performance
+    On peut copier ima_blended sans dupliquer le buffer de donnée ni calculer l'entièreté de la transformation.
+  }
 \end{frame}
 
 % FIXME: discours vues similaire aux opérateurs de programmation fonctionnelle
@@ -955,7 +1520,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
     \end{columns}
   \end{alertblock}
 
-  \begin{alertblock}{Value-transforming view: transform, zip, etc.}
+  \begin{alertblock}{Value-transforming view: transform, zip, cast, \(+\), \(\times\), etc.}
     \begin{columns}[T,onlytextwidth]
       \column{0.40\textwidth}
       \vspace{0.5cm}
@@ -966,6 +1531,22 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
       \includegraphics[width=0.9\textwidth]{../figures/views/zip}
     \end{columns}
   \end{alertblock}
+  \pdfcomment[icon=Note]{Les vues sont très similaires aux opérateurs de base de la programmation fonctionnelle.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{En effet on retrouve les vues qui vont restreindre le domaine de définition de nos images, filter, clip , mask.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{On retrouve les vues qui vont transformer les valeurs de nos image zip, cast, +, * et transform}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Transform va appliquer une fonction de transformation. Zip va assembler les valeurs en paire/triplet, très utile lorsqu'on itère sur une image d'entrée et une image de sortie en même temps.}
+  \pnote{
+    Les vues sont très similaires aux opérateurs de base de la programmation fonctionnelle.
+
+    En effet on retrouve les vues qui vont restreindre le domaine de définition de nos images, filter, clip , mask.
+
+    On retrouve les vues qui vont transformer les valeurs de nos image zip, cast, +, * et transform
+
+    Transform va appliquer une fonction de transformation. Zip va assembler les valeurs en paire/triplet, très utile lorsqu'on itère sur une image d'entrée et une image de sortie en même temps.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Property preservation (of concepts) through views}
@@ -973,6 +1554,22 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
   \begin{figure}
     \includegraphics[width=0.9\textwidth]{../figures/view_property}
   \end{figure}
+  \pdfcomment[icon=Note]{Les images sont des vues et en tant que tel il va être possible de vérifier quelles sont les propriétés vérifiables via des concepts qui sont conservées lorsque l'on compose ces images/vues.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Toutes les propriétés relatives au parcour et à l'accès aux valeurs sont conservés sauf celle relative au buffer de donnée.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{En ce qui concerne l'inscriptibilité, il est intéressant de remarquer que la vue transform peut la conserver lorsque func est une projection.}
+  \pdfcomment[icon=Note]{Ex triplet rgb -> rouge}
+  \pdfcomment[icon=Note]{Mais triplet rgb -> gris, on ne retrouuve pas le triplet rgb en assignant une nouvelle valeure de niveau de gris. La recolorisation est un domaine de recherche à part entière.}
+  \pnote{
+    Les images sont des vues et en tant que tel il va être possible de vérifier quelles sont les propriétés vérifiables via des concepts qui sont conservées lorsque l'on compose ces images/vues.
+
+    Toutes les propriétés relatives au parcour et à l'accès aux valeurs sont conservés sauf celle relative au buffer de donnée.
+
+    En ce qui concerne l'inscriptibilité, il est intéressant de remarquer que la vue transform peut la conserver lorsque func est une projection.
+    Ex triplet rgb -> rouge
+    Mais triplet rgb -> gris, on ne retrouuve pas le triplet rgb en assignant une nouvelle valeure de niveau de gris. La recolorisation est un domaine de recherche à part entière.
+  }
 \end{frame}
 
 \subsection{Background subtraction benchmark}
@@ -993,6 +1590,18 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
     \caption{Background detection: data set samples.}
     \label{fig:bg_sub.dataset_samples}
   \end{figure}
+  \pdfcomment[icon=Note]{Nous avons vu en détail que les vues fonctionnait avec notre environement de concept et remplaçait les algorithmes pixel par pixel.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Il nous faut maintenant valider que cette abstraction est bel et bien 0-cost.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Voici l'algorithme de soustraction d'arrière plan que nous avons utiliser dans notre benchmark...}
+  \pnote{
+    Nous avons vu en détail que les vues fonctionnait avec notre environement de concept et remplaçait les algorithmes pixel par pixel.
+
+    Il nous faut maintenant valider que cette abstraction est bel et bien 0-cost.
+
+    Voici l'algorithme de soustraction d'arrière plan que nous avons utiliser dans notre benchmark...
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Background subtraction pipeline with algorithms}
@@ -1003,6 +1612,18 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
       \tikz\draw[blue,fill=lightblue] (0,0) circle (1ex);}
   \end{figure}
   \begin{center}\textbf{5 intermediary images in memory.}\end{center}
+  \pdfcomment[icon=Note]{La pipeline de cet algorithme se compose de la façon suivante...}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Distinction algorithmes pixel par pixel et algorithmes locaux.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Ici pipeline d'algos : 5 images temporaires intermédiaires.}
+  \pnote{
+    La pipeline de cet algorithme se compose de la façon suivante...
+
+    Distinction algorithmes pixel par pixel et algorithmes locaux.
+
+    Ici pipeline d'algos : 5 images temporaires intermédiaires.
+  }
 \end{frame}
 
 
@@ -1014,10 +1635,15 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
       \colorbox{thistle}{views}.}
   \end{figure}
   \begin{center}\textbf{1 intermediary image in memory.}\end{center}
-\end{frame}
+  \pdfcomment[icon=Note]{Alors qu'en réécrivant la pipeline avec des vues à la place des algorithmes pixel par pixel nosu arrivons à la pipeline suivante.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Une seule image temporaire.}
+  \pnote{
+    Alors qu'en réécrivant la pipeline avec des vues à la place des algorithmes pixel par pixel nosu arrivons à la pipeline suivante.
 
-\newcommand{\mystd}[1]{{\itshape(\(\pm\) #1)}}
-\newcommand{\mydelta}[1]{{\itshape\bfseries #1\%}}
+    Une seule image temporaire.
+  }
+\end{frame}
 
 \begin{frame}[fragile]{Background subtraction concrete code}
   \begin{figure}
@@ -1037,7 +1663,18 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
       prefixing operators with the namespace \texttt{view}.}
     \label{fig:view.comp.sub_bg.view_code}
   \end{figure}
+  \pdfcomment[icon=Note]{De plus le code implémentant cet algorithme est aussi simple que cela.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Il s'écrit de manière procédurial sans qu'à aucun moment une boucle sur les pixels apparaisse.}
+  \pnote{
+    De plus le code implémentant cet algorithme est aussi simple que cela.
+
+    Il s'écrit de manière procédurial sans qu'à aucun moment une boucle sur les pixels apparaisse.
+  }
 \end{frame}
+
+\newcommand{\mystd}[1]{{\itshape(\(\pm\) #1)}}
+\newcommand{\mydelta}[1]{{\itshape\bfseries #1\%}}
 
 \begin{frame}[fragile]{Background subtraction benchmark result}
   \begin{table}
@@ -1055,6 +1692,22 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
     \label{table:views.perf}
     %\vspace{-1em}
   \end{table}
+  \pdfcomment[icon=Note]{Les résultat de ce benchmark montre que tout d'abord le temps d'exécution est parfaitement cohérent par rapport aux standards de l'industrie aujourd'hui.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Pylene sans les vues consomme 2 fois plus de mémoire que Pylene avec vues.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Temps d'exécution relativement similaire (différence dans l'écart type).}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Nous avons validé donc le 0-cost de notre abstraction par rapport à du code à boucle optimisé.}
+  \pnote{
+    Les résultat de ce benchmark montre que tout d'abord le temps d'exécution est parfaitement cohérent par rapport aux standards de l'industrie aujourd'hui.
+
+    Pylene sans les vues consomme 2 fois plus de mémoire que Pylene avec vues.
+
+    Temps d'exécution relativement similaire (différence dans l'écart type).
+
+    Nous avons validé donc le 0-cost de notre abstraction par rapport à du code à boucle optimisé.
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Genericity limitations: C++ templates in the dynamic world}
@@ -1064,6 +1717,18 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
     \item Python belongs to the dynamic world (interpreted multiple time)
     \item Specific work is needed to make our library available for Python.
   \end{itemize}
+  \pdfcomment[icon=Note]{La limitation majeure de notre design est qu'il est cantonné aux bibliothèques de traitement d'image dans le monde statique (compilation) et passe difficilement la barrière vers le monde dynamique (runtime). Pourtant c'est là que se trouve la majorité de nos utilisateurs (les praticiens).}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Le code générique est distribué sous forme de code source, et ce n'est que lors de son utilisation que les types paramètriques sont connu et que le compilateur peut générer le binaire final optimisé.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Un travail spécifique supplémentaire est donc nécessaire pour rendre disponible notre bibliothèque générique aux praticien qui travaillent avec Python.}
+  \pnote{
+    La limitation majeure de notre design est qu'il est cantonné aux bibliothèques de traitement d'image dans le monde statique (compilation) et passe difficilement la barrière vers le monde dynamique (runtime). Pourtant c'est là que se trouve la majorité de nos utilisateurs (les praticiens).
+
+    Le code générique est distribué sous forme de code source, et ce n'est que lors de son utilisation que les types paramètriques sont connu et que le compilateur peut générer le binaire final optimisé.
+
+    Un travail spécifique supplémentaire est donc nécessaire pour rendre disponible notre bibliothèque générique aux praticien qui travaillent avec Python.
+  }
 \end{frame}
 
 \begin{frame}{Static-dynamic bridge: a hybrid solution}
@@ -1081,6 +1746,26 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
       \item Still experimental.
     \end{itemize}
   \end{alertblock}
+  \pdfcomment[icon=Note]{Nous avons fait un travail expérimental en ce sens, que nous n'aborderons pas ici par manque de temps (mais qui figure dans le manuscrit), qui consiste à faire un pont statique dynamique entre C++ et Python.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Notre pont fourni un type effacé qui est exposé à Python. Par la suite, à chaque fois qu'un algorithme est appellé, une routine va lire des informations de type (runtime) et dispatcher vers une version précompilée en amont de cette algorithme pour cette combinaison de type.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Donc le code de chaque algorithme est généré en amont par le compilateur pour chaque combinaison de type supportés. Cela entraine du code bloat.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Nous avons mis en place des techniques pour rendre ce code bloat minimal et ne dispatcher qu'avant le code important (boucles de parcour) pour n'avoir qu'un seul algorithme compilé}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Il est également possible d'injecter des types depuis python, au pris de performances fortement dégradées, à des fins de prototypage.}
+  \pnote{
+    Nous avons fait un travail expérimental en ce sens, que nous n'aborderons pas ici par manque de temps (mais qui figure dans le manuscrit), qui consiste à faire un pont statique dynamique entre C++ et Python.
+
+    Notre pont fourni un type effacé qui est exposé à Python. Par la suite, à chaque fois qu'un algorithme est appellé, une routine va lire des informations de type (runtime) et dispatcher vers une version précompilée en amont de cette algorithme pour cette combinaison de type.
+
+    Donc le code de chaque algorithme est généré en amont par le compilateur pour chaque combinaison de type supportés. Cela entraine du code bloat.
+
+    Nous avons mis en place des techniques pour rendre ce code bloat minimal et ne dispatcher qu'avant le code important (boucles de parcour) pour n'avoir qu'un seul algorithme compilé
+
+    Il est également possible d'injecter des types depuis python, au pris de performances fortement dégradées, à des fins de prototypage.
+  }
 \end{frame}
 
 %
@@ -1088,6 +1773,21 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 %
 
 \section[Conclusion \& perspectives]{Conclusion \& perspectives}
+
+\begin{frame}{Outline}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \vspace{0.2cm}
+  \small%\singlespacing
+  \tableofcontents[currentsection]
+  \pdfcomment[icon=Note]{Nous voici donc maintenant rendu à la conclusion de cet exposé.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{--> 40min <--}
+  \pnote{
+    Nous voici donc maintenant rendu à la conclusion de cet exposé.
+
+    --> 40min <--
+  }
+\end{frame}
 
 \begin{frame}{Conclusion}
   \begin{itemize}
@@ -1099,6 +1799,24 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
     \item We have explored way to provide those tools to the dynamic world via a static-dynamic bridge, which will be
           researched further in the future.
   \end{itemize}
+  \pdfcomment[icon=Note]{Nous avons montré comment un apport récent dans la norme du langage C++ (C++20), les concepts, permettant d'exprimer de la généricité contraintes avec 0 surcoûts, une grande lisibilité et une facilité d'utilisation bien supérieure à ce qui existait auparavant.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Nous avons présenté notre première contribution : un environement de concepts pour le traitement d'image afin d'écrire des algorithmes lisibles facilement et performant par défaut.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Nous avons montré notre seconde contribution : un abstration complète des algorithmes pixel par pixel qui utilise cet environement de concept afin de raisonner en terme d'image lors du design d'application et non en terme de pixel.}
+  \pdfcomment[icon=Note]{Nous avons donc validé les performances, à la fois de notre environement de concepts et à la fois de notre nouvelle abstraction.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Enfin, nous avons exploré une façon de mettre à disposition notre travail aux traiteurs d'image sous PYthon, bien qu'il reste du travail de recherche à faire de ce côté là pour arriver à une solution qui soit satisfaisante (lisible, performante, facile d'accès et facile à maintenir).}
+  \pnote{
+    Nous avons montré comment un apport récent dans la norme du langage C++ (C++20), les concepts, permettant d'exprimer de la généricité contraintes avec 0 surcoûts, une grande lisibilité et une facilité d'utilisation bien supérieure à ce qui existait auparavant.
+
+    Nous avons présenté notre première contribution : un environement de concepts pour le traitement d'image afin d'écrire des algorithmes lisibles facilement et performant par défaut.
+
+    Nous avons montré notre seconde contribution : un abstration complète des algorithmes pixel par pixel qui utilise cet environement de concept afin de raisonner en terme d'image lors du design d'application et non en terme de pixel.
+    Nous avons donc validé les performances, à la fois de notre environement de concepts et à la fois de notre nouvelle abstraction.
+
+    Enfin, nous avons exploré une façon de mettre à disposition notre travail aux traiteurs d'image sous PYthon, bien qu'il reste du travail de recherche à faire de ce côté là pour arriver à une solution qui soit satisfaisante (lisible, performante, facile d'accès et facile à maintenir).
+  }
 \end{frame}
 
 \begin{frame}{Limitations \& Perspective}
@@ -1112,12 +1830,38 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
   \end{alertblock}
   \begin{alertblock}{Perspectives}
     \begin{itemize}
-      \item Cython, AutoWIG/Cppyy, Xeus-cling for static-dynamic bridge.
+      \item JIT compilation for the static-dynamic bridge via Cython, AutoWIG/Cppyy, Xeus-cling or Pythran.
       \item Improve the Concept framework to encompass more use-cases for other algorithm families from other domains
             than image processing.
       \item Research on heterogeneous computation and how to integrate it in our Pylene library.
     \end{itemize}
   \end{alertblock}
+  \pdfcomment[icon=Note]{Est-ce que le C++ reste le bon choix pour continuer les travaux relatifs à la généricité.}
+  \pdfcomment[icon=Note]{En effet, il manque toujours la reflexion et les contrats, le langage est lent à évoluer (20 ans pour avoir les concepts) du à sa façon de standardiser et à l'inerti que cela engendre.}
+  \pdfcomment[icon=Note]{L'état du tooling et des package manager est relativement peu satisfaisant.}
+  \pdfcomment[icon=Note]{Il serait intéressant de regarder du côté de rust qui fourni un écosystème intégré plaisant à utiliser et une généricité basée sur les traits intéressante à explorer.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Il est actuellement relativement difficile de quantifier le gain de facilité d'utilisation de manière empirique. Pourtant il serait très intéressant de valider cette affirmation par une étude empiriques avec des échantillons de développeurs aprenant à développer d'une façon, puis d'une autre, pour obtenir des données.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Ensuite, il serait évidement intéressant d'explorer à l'avenir les pistes pour fournir une solution de pont statique dynamique satisfaisante et pérenne, réutilisable par d'autres projets génériques par exemple.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Il serait également intéressant d'étendre l'environement de concepts à d'autres domaines que le traitement d'image. Par exemple la synthèse d'image, ou la visualisation de scènes 3D temps réel, ou à des problématiques liées à la réalité augmentée.}
+  \pdfcomment[icon=Note]{   }
+  \pdfcomment[icon=Note]{Enfin, il serait relativement intéressant de se pencher sérieusement sur la programmation hétérogène afin de fournir un environnement permetant de construire des canvas d'algorithme permettant d'utiliser les pleines ressources disponibles par un appareils.}
+  \pnote{
+    Est-ce que le C++ reste le bon choix pour continuer les travaux relatifs à la généricité.
+    En effet, il manque toujours la reflexion et les contrats, le langage est lent à évoluer (20 ans pour avoir les concepts) du à sa façon de standardiser et à l'inerti que cela engendre.
+    L'état du tooling et des package manager est relativement peu satisfaisant.
+    Il serait intéressant de regarder du côté de rust qui fourni un écosystème intégré plaisant à utiliser et une généricité basée sur les traits intéressante à explorer.
+
+    Il est actuellement relativement difficile de quantifier le gain de facilité d'utilisation de manière empirique. Pourtant il serait très intéressant de valider cette affirmation par une étude empiriques avec des échantillons de développeurs aprenant à développer d'une façon, puis d'une autre, pour obtenir des données.
+
+    Ensuite, il serait évidement intéressant d'explorer à l'avenir les pistes pour fournir une solution de pont statique dynamique satisfaisante et pérenne, réutilisable par d'autres projets génériques par exemple.
+
+    Il serait également intéressant d'étendre l'environement de concepts à d'autres domaines que le traitement d'image. Par exemple la synthèse d'image, ou la visualisation de scènes 3D temps réel, ou à des problématiques liées à la réalité augmentée.
+
+    Enfin, il serait relativement intéressant de se pencher sérieusement sur la programmation hétérogène afin de fournir un environnement permetant de construire des canvas d'algorithme permettant d'utiliser les pleines ressources disponibles par un appareils.
+  }
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Publications}

@@ -1,159 +1,311 @@
-[font_size]
-23
 [notes]
 ### 1
-Remercier président du jury
+ Introduction -> Domaine du traitement d'image et justifier le besoin en généricité 
 
-Remercier jury
+ Context & History -> Comment on passe d'un algorithme non-générique à un algorithme générique Généricité non contrainte à généricité contrainte 
+
+ Programmation générique pour le traitement d'image -> 1ère contribution framework pour faire de la généricité contraintes pour le traitement d'image dans un monde statique (compilation) 
+
+ Vues pour le traitement d'image -> 2nd contribution design d'un nouveau niveau d'abstraction (utilisant le 1er framework) : les vues ce sont des types d'images embarquant des algorithmes 
+
+ Conclusion & perspectives -> nous conclurons sur notre travail et discuterons des pistes à explorer à l'avenir 
 ### 2
-Introduction -> Domaine du traitement d'image et justifier le besoin en généricité
+ Différents secteurs de l'industrie (lourde, des lignes de recyclage des déchets, au GAFAM sur internet, en passant le médical et le spatial) 
 
-Context & History -> Comment on passe d'un algorithme non-générique à un algorithme générique
-				  Généricité non contrainte à généricité contrainte
+ Différents appareils (des ordinateurs/téléphones aux machines lourdes, en passant par James Webb et les IRM) 
 
-Programmation générique pour le traitement d'image -> 1ère contribution
-				framework pour faire de la généricité contraintes pour le traitement d'image dans un monde statique (compilation)
+ Différentes applications (retoucher ses photos, reconnaître des visages, appliquer des filtres snapshats, trouver des tumeurs, trouver des étoiles) 
 
-Vues pour le traitement d'image -> 2nd contribution
-				design d'un nouveau niveau d'abstraction (utilisant le 1er framework) : les vues
-				ce sont des types d'images embarquant des algorithmes
-
-Conclusion & perspectives  -> nous conclurons sur notre travail et discuterons des pistes à explorer à l'avenir
+ Le traitement d'image coûte des ressources ! 
 ### 3
-Différents secteurs de l'industrie (lourde, des lignes de recyclage des déchets, au GAFAM sur internet, en passant le médical et le spatial)
+ Différents domaines/applications/appareils -> différents besoin -> différents types de données / façon de modéliser ses données 
 
-Différents appareils (des ordinateurs/téléphones aux machines lourdes, en passant par James Webb et les IRM)
-
-Différentes applications (retoucher ses photos, reconnaître des visages, appliquer des filtres snapshats, trouver des tumeurs, trouver des étoiles)
-
-Le traitement d'image coûte des ressources !
+ Image 2D classique pour la reconnaissance Images 3D pour le médical Images graph, image complex cubique etc. 
 ### 4
-Différents domaines/applications/appareils -> différents besoin -> différents types de données / façon de modéliser ses données
+ Différents types d'utilisateurs 
 
-Image 2D classique pour la reconnaissance
-Images 3D pour le médical
-Images graph, image complex cubique etc.
+ L'utilisateur final veut une interface graphique pour retoucher ses photos ou utiliser une application riche (snapchat, instagram) qui embarque les fonctionnalités dont il a besoin 
+
+ Le praticien veut des bibliothèques accessibles et documenter et travailler dans des environnements où on peut itérer rapidement pour développer son application complexe 
+
+ Le contributeur veut pouvoir mettre les mains dans les détails interne d'une bibliothèque pour implémenter ses algorithmes et répondre aux besoin, par exemple, d'un praticien 
+
+ Le mainteneur se charge de faire vivre une bibliothèque de TI dans le temps, donc d'implémenter les nouveaux algorithmes de l'état de l'art au fur et à mesure du temps 
 ### 5
-Différents types d'utilisateurs
+ Différents outils pour différents utilisateurs 
 
-L'utilisateur final veut une interface graphique pour retoucher ses photos ou utiliser une application riche (snapchat, instagram) qui embarque les fonctionnalités dont il a besoin
+ Outils graphique et en ligne de commande pour l'utilisateur final 
 
-Le praticien veut des bibliothèques accessibles et documenter et travailler dans des environnements où on peut itérer rapidement pour développer son application complexe
+ Outils de programmation intégrés et visuels, pour le patricien Packages dynamiques pour le patricien 
 
-Le contributeur veut pouvoir mettre les mains dans les détails interne d'une bibliothèque pour implémenter ses algorithmes et répondre aux besoin, par exemple, d'un praticien
+ Bibliothèque de TI pour le contributeur (pour les faire évoluer, ou les packager pour les langages dynamiques pour la patricien) 
 
-Le mainteneur se charge de faire vivre une bibliothèque de TI dans le temps, donc d'implémenter les nouveaux algorithmes de l'état de l'art au fur et à mesure du temps
+ DSL permet d'exprimer son problème, dans un langage de programmation, son problème pour qu'il soit ensuite résolu par le compilateur qui le transforme en code compréhensible pour la machine. Utilisé par écrire des équations d'algèbre via frameworks type Eigen ou Armadillo). Utilisé pour abstraire la couche architecture et faire de la programmation hétérogène dans Halide et et les langages implémentant le standard SYCL. 
 ### 6
-Différents outils pour différents utilisateurs
+ On se retrouve avec une multitudes de domaines d'applications, de périphériques, d'utilisateurs, de type de bibliothèque, et bien entendu, d'algorithmes. 
 
-Outils graphique et en ligne de commande pour l'utilisateur final
+ Les algorithmes ne sont pas spécifiques à un seul type d'image ou de valeurs, mais sont intrinsèquement générique. 
 
-Outils de programmation intégrés et visuels, pour le patricien
-Packages dynamiques pour le patricien
+ Par ex: watershed = ligne de partage des eaux = algorithme de segmentation qui va considérer tous les niveaux de gris d'une image comme du relief topographique pour extraire les régions. 
 
-Bibliothèque de TI pour le contributeur (pour les faire évoluer, ou les packager pour les langages dynamiques pour la patricien)
-
-DSL permet d'exprimer son problème, dans un langage de programmation, son problème pour qu'il soit ensuite résolu par le compilateur qui le transforme en code compréhensible pour la machine.
-Utilisé par écrire des équations d'algèbre via frameworks type Eigen ou Armadillo). Utilisé pour abstraire la couche architecture et faire de la programmation hétérogène dans Halide et et les langages implémentant le standard SYCL.
+ L'expression de cet algorithme est censée marcher sur imageND, mesh, graphs etc. Seul l'implémentation contraint la structure de donnée et ce n'est pas justifié. On a donc un besoin d'implémenter notre algorithem de manière générique pour qu'il fonctionne sur tous les types d'image. 
 ### 7
-On se retrouve avec une multitudes de domaines d'applications, de périphériques, d'utilisateurs, de type de bibliothèque, et bien entendu, d'algorithmes.
+ En effet, un algorithme non-générique a son implémentation qui grossit en complexité en fonction de tous les types de données d'entré qu'il doit gérer. Données qui peuvent être relatives à la dimension, la représentation (grille rectangle, hexa, graphe), le type sous-jascentes des valeurs des pixels (rgb, niveau de gris, floatant, bool) et les structures auxiliaries (élément structurant, valeurs de seuil, labels, etc.) 
 
-Les algorithmes ne sont pas spécifiques à un seul type d'image ou de valeurs, mais sont intrinsèquement générique.
+ espace des possibilités surface -> volume (avec structures auxiliaires) 
 
-Par ex: watershed = ligne de partage des eaux = algorithme de segmentation qui va considérer tous les niveaux de gris d'une image comme du relief topographique pour extraire les régions.
-
-L'expression de cet algorithme est censée marcher sur imageND, mesh, graphs etc.
-Seul l'implémentation contraint la structure de donnée et ce n'est pas justifié.
-On a donc un besoin d'implémenter notre algorithem de manière générique pour qu'il fonctionne sur tous les types d'image.
+ ---> On dit qu'un algorithme est générique lorsqu'il a une seule implémentation qui va fonctionner pour un large éventails de structures de données. 
 ### 8
-En effet, un algorithme non-générique a son implémentation qui grossit en complexité en fonction de tous les types de données d'entré qu'il doit gérer.
-Données qui peuvent être relatives à la dimension, la représentation (grille rectangle, hexa, graphe), le type sous-jascentes des valeurs des pixels (rgb, niveau de gris, floatant, bool) et les structures auxiliaries (élément structurant, valeurs de seuil, labels, etc.)
+ Maintenant que nous avons vu le besoin de généricité des algorithmes de traitement d'image, passons à comment nous pouvons rendre générique un algorithme de traitement d'image. 
 
-espace des possibilités surface -> volume (avec structures auxiliaires)
-
----> On dit qu'un algorithme est générique lorsqu'il a une seule implémentation qui va fonctionner pour un large éventails de structures de données.
-
---> 8min <--
+ --> 8min <-- 
 ### 9
-Maintenant que nous avons vu le besoin de généricité des algorithmes de traitement d'image, passons à comment nous pouvons rendre générique un algorithme de traitement d'image
+ Prenons par exemple l'algorithme de correction gamma 
+
+ Cet algorithme fait une double boucle (2D) Il corrige notre triplet RGB en nombre flottant en supposant que la valeur max ici est 256. 
+
+ Cette algorithme est sur-contraint et ce n'est pas justifié. 
+
+ Essayons d'abord plusieurs approches pour rendre cette algorithme générique = Comment on le généralise 
 ### 10
-Prenons par exemple l'algorithme de correction gamma
+ Première approche, naive. 
 
-Cet algorithme fait une double boucle (2D)
-Il corrige notre triplet RGB en nombre flottant en supposant que la valeur max ici est 256.
-
-Cette algorithme est sur-contraint et ce n'est pas justifié.
-
-Essayons d'abord plusieurs approches pour rendre cette algorithme générique = Comment on le généralise
+ On écrit un algorithme car combinaison de structure de données puis on dispatch depuis l'algorithme "générique" dans un grand switch case. Devient très rapidement un enfer à maintenantir. Pas viable sur le long terme. 
 ### 11
-Première approche, naive.
+ Deuxième approche: la généralisation (au sens super-type). 
 
-On écrit un algorithme car combinaison de structure de données puis on dispatch depuis l'algorithme "générique" dans un grand switch case.
-Devient très rapidement un enfer à maintenantir. Pas viable sur le long terme.
+ On fait en sorte que tous nos types supportées soit convertibles vers et depuis ce super-type. On écrit une fois l'algorithme pour le super-type 
+
+ Très intéressant côté maintenance Pertes d'opportunités d'optimisations (ex ici 4 boucles alors que image 1d = 1 boucle) 
 ### 12
-Deuxième approche: la généralisation (au sens super-type).
+ Essayons maintenant une autre façon d'écrire notre algorithme pour qu'il ne soit plus sur-contraint et devienne générique. 
 
-On fait en sorte que tous nos types supportées soit convertibles vers et depuis ce super-type.
-On écrit une fois l'algorithme pour le super-type
+ Aucune raison pour qu'il ne fonctionne qu'avec les images rgb flotantes. 
 
-Très intéressant côté maintenance
-Pertes d'opportunités d'optimisations (ex ici 4 boucles alors que image 1d = 1 boucle)
+ Nous le réécrivons de façon à abstraire les opérations sur la valeur des pixels de l'image 
 ### 13
-Essayons maintenant une autre façon d'écrire notre algorithme pour qu'il ne soit plus sur-contraint et devienne générique.
+ Aucune raison qu'il ne fonctionne que sur les images 2D 
 
-Aucune raison pour qu'il ne fonctionne qu'avec les images rgb flotantes.
-
-Nous le réécrivons de façon à abstraire les opérations sur la valeur des pixels de l'image
+ Nous le réécrivons pour abstraire la façon de parcourir les pixels de l'image 
 ### 14
-Aucune raison qu'il ne fonctionne que sur les images 2D
+ La première façon de modéliser cette nouvelle abstraction se fait via ce qu'on appelle le polymorphisme d'inclusion 
 
-Nous le réécrivons pour abstraire la façon de parcourir les pixels de l'image
+ Toute l'interface (notamment les "any") fonctionne avec de l'effacement de type qui induit un coût en performance à l'exécution 
 ### 15
-La première façon de modéliser cette nouvelle abstraction se fait via ce qu'on appelle le polymorphisme d'inclusion
+ La seconde façon de modéliser cette nouvelle abstraction se fait via le polymorphisme paramétrique. 
 
-Toute l'interface (notamment les "any") fonctionne avec de l'effacement de type qui induit un coût en performance à l'exécution
+ Toute l'interface repose sur des types paramétriques qui sont instanciés et résolus à la compilation. Donc génération de code machine optimisé donc 0 coût à l'exécution. 
+
+ (concepts vus un peu plus loin) 
 ### 16
-La seconde façon de modéliser cette nouvelle abstraction se fait via le polymorphisme paramétrique
+ Il faut comprendre que la notion générale de généricité ne possède pas de solution miracle pour s'implémenter 
 
-Toute l'interface repose sur des types paramétriques qui sont instanciés et résolus à la compilation.
-Donc génération de code machine optimisé donc 0 coût à l'exécution.
-
-(concepts vus un peu plus loin)
+ Dans l'état de l'art, toutes les bibliothèques sont génériques à divers degrés et mixent les techniques que nous venons de voir pour y arriver. 
 ### 17
-Il faut comprendre que la notion générale de généricité ne possède pas de solution miracle pour s'implémenter
+ Ce qui nous amène à ce tableau qui liste les techniques, leurs avantages et inconvénients par rapport à nos critères. 
 
-Dans l'état de l'art, toutes les bibliothèques sont génériques à divers degrés et mixes les techniques que nous venons de voir pour y arriver.
+ Et notamment l'abstraction explicite qui permet de contraindre un type suivant un comportement. Cette abstraction n'est disponible qu'en C++ avec le polymorphisme paramétrique donc nous n'allons que considérer ce standard pour la suite de la présentation 
 ### 18
-Ce qui nous amène à ce tableau qui liste les techniques, leurs avantages et inconvénients par rapport à nos critères.
+ Petit rappel des contraintes liés à notre algorithme - l'image doit fournir un sous-type image_type - l'image doit pouvoir être parcouru avec une fonction member .pixels() - type de valeur des pixels doit fournir une valeur max, fonctionner avec les opérateurs arithmétique et d'exponentiation 
 
-Et notamment l'abstraction explicite qui permet de contraindre un type suivant un comportement.
-Cette abstraction n'est disponible qu'en C++ avec le polymorphisme paramétrique donc nous n'allons que considérer ce standard pour la suite de la présentation
+ ICI IMPLEMENTATION GENERIQUE NON CONTRAINTE 
 ### 19
-Petit rappel des contraintes liés à notre algorithme
-- l'image doit fournir un sous-type image_type
-- l'image doit pouvoir être parcouru avec une fonction member .pixels()
-- type de valeur des pixels doit fournir une valeur max, fonctionner avec les opérateurs arithmétique et d'exponentiation
-
-ICI IMPLEMENTATION GENERIQUE NON CONTRAINTE
+ Comment exprimait-on ces contraintes avant C++20 Il y avait des hacks et des tricks, à destinations des experts, non satisfaisant car : - moins lisible - moins puissant - messages d'erreurs absolument horrifiques 
 ### 20
-Comment exprimait-on ces contraintes avant C++20
-Il y avait des hacks et des tricks, à destinations des experts, non satisfaisant car :
-- moins lisible
-- moins puissant
-- messages d'erreurs absolument horrifiques
+ Aujourd'hui nous utilisons les concepts 
+
+ Les concepts image et pixel - sous-type - fonction membre 
+
+ Pendant inscriptible pour pouvoir écrire des valeurs 
 ### 21
-Aujourd'hui nous utilisons les concepts
+ Ce qui nous donne la version finale de notre algorithme 
 
-Les concepts image et pixel
-- sous-type
-- fonction membre
-
-Pendant inscriptible pour pouvoir écrire des valeurs
+ le corps de l'implémentation ne change pas, les contraintes sont exprimées dans le prototype de notre fonction ! 
 ### 22
-Ce qui nous donne la version finale de notre algorithme
+ Nous avons donc vu comment rendre générique (généraliser un algorithme) Pour cela il faut écrire des concepts Notre première contribution consiste à proposer un environnement de concepts liés au traitement d'image pour exprimer facilement ses algorithmes de TI avec de la généricité contrainte. 
 
-le corps de l'implémentation ne change pas, les contraintes sont exprimées dans le prototype de notre fonction !
+ --> 20min <-- 
 ### 23
-Nous avons donc vu comment rendre générique (généraliser un algorithme)
-Pour cela il faut écrire des concepts
-Notre première contribution consiste à proposer un environnement de concepts liés au traitement d'image pour exprimer facilement ses algorithmes de TI avec de la généricité contrainte.
+ La taxonomie consiste à classifier quelque chose de manière systématique. 
+
+ Le but est de fournir un environnement de concept complet permettant d'écrire des algorithmes génériques contraintes avec 0 coût supplémentaires en performances. 
+
+ Le code doit être facile à écrire/lire et efficace, PAR DEFAUT 
+
+ Les concepts sont designés à partir des patterns comportementaux extraits des algorithmes et non pas à partir des algorithmes. 
+
+ Nous avons donc fait la taxonomie des algorithmes de traitement d'image ainsi que celle des structures de données. Nous ne présenteront ici que la taxonomie relative aux algorithmes. 
+### 24
+ Nous avons identifié 3 familles d'algorithme de traitement d'image : - les algorithmes pixel par pixel - les algorithmes locaux (fênetre locale autour du pixel considéré, voisinage, élément structurant) - les algorithmes locaux (besoin de plusieurs passes dans plusieurs sens (avant, arrière, zigzag), besoin de piocher les pixels avec une logique autre qu'un parcour linéaire, besoin de considérer les valeurs tous les pixels de 1 à n-1 pour calculer n, etc.) 
+### 25
+ De ces algorithmes émergent donc les concepts fondamentaux suivants: - Pixel, couple point -> valeur - Domaine de définition d'une image, au sens algébrique du terme - Image, représente la relation algébrique y = f(x) et f(x) = y pour les images inscriptibles 
+
+ Relation entres concepts : composition et rafinage (proche de l'héritage pour le polymorphisme d'inclusion) 
+### 26
+ Voici le pattern comportemental de base pour une image. Nous voulons la parcourir de manière linéaire et assigner une valeur au pixel. 
+
+ Parcour des points -> marche mais n'est pas optimisé Parcour des pixels -> marche et est optimisé car nous renvons des itérateurs dont l'abstration permet des optimisations similaire à du code C compréhensibles par le compilateur (pour de la vectorisation) 
+### 27
+ Cela donne donc la hiérarchie suivante: - concept pixel composé des concepts points/valeurs - concept mdrange modélise une range de point/valeurs/pixels - domaine de définition de l'image - ima.values() -> parcour de toutes les valeurs de l'image - ima.domain() -> parcour tous les points de l'image - ima.pixels() -> parcour tous les pixels de l'image 
+### 28
+ Les images possèdent certaines propriétés qui peuvent être utilisé à des fins de caractérisation, discrimination (contraintes des algorithmes) ou encore d'optimisation 
+
+ Indexable permet un parcours de toutes les valeurs lorsqu'on connait la dimension de l'image. Nécessaire pour trier les pixels. 
+
+ Accessible permet d'accèder à une valeur via un point (vu plus haut) 
+
+ Bidirectionnelle permet de traverser l'image en sens inverse, nécessaire pour certains algorithmes comme la transformé en distance de Chamfrain 
+
+ Image brute permet un accès direct au buffer de donnée pour les utilisateurs expert, souhaitant par exemple couper leur image en tuiles pour l;es envoyer sur GPU. 
+### 29
+ Cela engendre donc cette nouvelle hiérarchie de concepts. 
+
+ Ici nous avons 3 niveaux : - premier est concept image vu plus haut - second sont les concepts Indexable, Accessible et Bidirectionnelle qui rafinent le premier - 2.5 : concept spécial Indexable + Accessible pour faire des correspondances entre les indexes et les points - 3 image brute. En effet, lorsqu'on a accès au buffer de données, on peut faire tout ce qui est marqué plus haut. 
+
+ Et SURTOUT PENDANT INSCRIPTIBLE DE CES CONCEPTS En effet, pour chaque propriété il est possible d'écrire des valeurs dans l'image. 
+### 30
+ Maintenant que nous avons tout le nécessaire pour les algorithmes locaux, il faut étendre un peu notre environnement pour supporter les algorithmes locaux. 
+
+ Pattern comportemental typique : récupérer tous les points/pixels du voisinages et itérer dessus pour les traiter. 
+### 31
+ Cela donne donc lieu à la hiérchie de concepts suivante. 
+
+ Ici se(pix) renvoie une range de pixels. se(pnt) renvoie une range de points. Et Pixel connait l'image car il peut donner ses pixels voisins. 
+### 32
+ Nous ayons designé un environnement de concepts dont le but et d'avoir un surcoût de 0 à l'exécution et d'être optimisé par le compilateur. 
+
+ Dans l'imense majorité des cas, le code par dafaut sera donc le plus performant. 
+
+ Dans de rare cas, cependant, il est possible d'aller encore plus vite en exploitant certaines propriétés liées à l'image ou aux structures auxiliaires utilisées dans ces algorithmes. 
+
+ Par ex, dilatation ici, on utilise la propriété relative à la decomposabilité et à la périodicité pour améliorer les performance. 
+
+ Ces propriété peuvent être dynamic ou statique (transformer if par if constexpr). 
+### 33
+ En faisant la taxonomie liée au algorithmes locaux, nous nous sommes aperçu que les algorithmes avaient la même forme computationnelle. 
+
+ Cela veut dire que nous pouvons factoriser le schéma algorithmique en meta-algorithmes que l'on appelle les canvas d'algorithme. 
+
+ Par exemple ici dilatation erosion -> min/max, réécriture en passant l'opérateur en paramètre. 
+
+ Canvas d'algorithme local simplifié. 
+### 34
+ Possible opportinutés d'optimisations implémenté une fois et factorisé pour tous les algorithmes. 
+
+ En revanche on passe d'un paradigme d'implémentation procédurial de nos algorithmes à un paradigme de description de nos algorithmes (pour le canvas), ce qui peut rendre l'implémentation moins lisible, surtout lorsqu'il y a des callbacks. 
+### 35
+ Maintenant que nous avons designé un environnement complet de concepts pour faire de la généricité contrainte en traitement d'image, utilisons le pour créer des nouveaux type d'image : les vues, qui utilisent ces concepts (propriétés) pour abstraires des algorithmes, tout en respectant le principe d'abstration à coût 0. 
+
+ --> 30min <-- 
+### 36
+ Les vues sont des images. 
+
+ Elles emarquent des algorithmes pixel par pixel en leur sein. 
+
+ Elles sont inspirées des morphers de Milena et des ranges de la STL. 
+
+ Les vues ont vocation à complétement remplacer les algorithmes pixel par pixel. 
+### 37
+ Voici un exemple de vue pour effectuer une binarisation. 
+
+ Cette vu contient 2 pointeurs (fonction + image de base) 
+
+ Sémantique de partage du buffer de donné (pour éviter les violations mémoires) 
+
+ Sémantique de copie superficielle 
+
+ Evaluation paresseuse 
+
+ Composables 
+### 38
+ Par exemple algorithme alphablending. 
+
+ Code C basique, double boucle, arithmétique de pointeurs, strides etc. 
+
+ Si l'on veut n'opérer que dans une région spécifique (région d'intérêt), on devrait définir une nouvelle implémentation avec un prototype différents. 
+
+ En revanche, avec les vues cet algorithme s'exprime très simplement. Et comme les vues sont composables (slide suivante) 
+### 39
+ On peut directement écrite vue clip de notre image puis la passer à notre algorithme. 
+
+ Notre algorithme s'écrit très simplement Arbre de calcul généré et résolu lors du parcour de l'image (évaluation paresseuse) On prend ima1, ima2 par copie sans impact de performance On peut copier ima_blended sans dupliquer le buffer de donnée ni calculer l'entièreté de la transformation. 
+### 40
+ Les vues sont très similaires aux opérateurs de base de la programmation fonctionnelle. 
+
+ En effet on retrouve les vues qui vont restreindre le domaine de définition de nos images, filter, clip , mask. 
+
+ On retrouve les vues qui vont transformer les valeurs de nos image zip, cast, +, * et transform 
+
+ Transform va appliquer une fonction de transformation. Zip va assembler les valeurs en paire/triplet, très utile lorsqu'on itère sur une image d'entrée et une image de sortie en même temps. 
+### 41
+ Les images sont des vues et en tant que tel il va être possible de vérifier quelles sont les propriétés vérifiables via des concepts qui sont conservées lorsque l'on compose ces images/vues. 
+
+ Toutes les propriétés relatives au parcour et à l'accès aux valeurs sont conservés sauf celle relative au buffer de donnée. 
+
+ En ce qui concerne l'inscriptibilité, il est intéressant de remarquer que la vue transform peut la conserver lorsque func est une projection. Ex triplet rgb -> rouge Mais triplet rgb -> gris, on ne retrouuve pas le triplet rgb en assignant une nouvelle valeure de niveau de gris. La recolorisation est un domaine de recherche à part entière. 
+### 42
+ Nous avons vu en détail que les vues fonctionnait avec notre environement de concept et remplaçait les algorithmes pixel par pixel. 
+
+ Il nous faut maintenant valider que cette abstraction est bel et bien 0-cost. 
+
+ Voici l'algorithme de soustraction d'arrière plan que nous avons utiliser dans notre benchmark... 
+### 43
+ La pipeline de cet algorithme se compose de la façon suivante... 
+
+ Distinction algorithmes pixel par pixel et algorithmes locaux. 
+
+ Ici pipeline d'algos : 5 images temporaires intermédiaires. 
+### 44
+ Alors qu'en réécrivant la pipeline avec des vues à la place des algorithmes pixel par pixel nosu arrivons à la pipeline suivante. 
+
+ Une seule image temporaire. 
+### 45
+ De plus le code implémentant cet algorithme est aussi simple que cela. 
+
+ Il s'écrit de manière procédurial sans qu'à aucun moment une boucle sur les pixels apparaisse. 
+### 46
+ Les résultat de ce benchmark montre que tout d'abord le temps d'exécution est parfaitement cohérent par rapport aux standards de l'industrie aujourd'hui. 
+
+ Pylene sans les vues consomme 2 fois plus de mémoire que Pylene avec vues. 
+
+ Temps d'exécution relativement similaire (différence dans l'écart type). 
+
+ Nous avons validé donc le 0-cost de notre abstraction par rapport à du code à boucle optimisé. 
+### 47
+ La limitation majeure de notre design est qu'il est cantonné aux bibliothèques de traitement d'image dans le monde statique (compilation) et passe difficilement la barrière vers le monde dynamique (runtime). Pourtant c'est là que se trouve la majorité de nos utilisateurs (les praticiens). 
+
+ Le code générique est distribué sous forme de code source, et ce n'est que lors de son utilisation que les types paramètriques sont connu et que le compilateur peut générer le binaire final optimisé. 
+
+ Un travail spécifique supplémentaire est donc nécessaire pour rendre disponible notre bibliothèque générique aux praticien qui travaillent avec Python. 
+### 48
+ Nous avons fait un travail expérimental en ce sens, que nous n'aborderons pas ici par manque de temps (mais qui figure dans le manuscrit), qui consiste à faire un pont statique dynamique entre C++ et Python. 
+
+ Notre pont fourni un type effacé qui est exposé à Python. Par la suite, à chaque fois qu'un algorithme est appellé, une routine va lire des informations de type (runtime) et dispatcher vers une version précompilée en amont de cette algorithme pour cette combinaison de type. 
+
+ Donc le code de chaque algorithme est généré en amont par le compilateur pour chaque combinaison de type supportés. Cela entraine du code bloat. 
+
+ Nous avons mis en place des techniques pour rendre ce code bloat minimal et ne dispatcher qu'avant le code important (boucles de parcour) pour n'avoir qu'un seul algorithme compilé 
+
+ Il est également possible d'injecter des types depuis python, au pris de performances fortement dégradées, à des fins de prototypage. 
+### 49
+ Nous voici donc maintenant rendu à la conclusion de cet exposé. 
+
+ --> 40min <-- 
+### 50
+ Nous avons montré comment un apport récent dans la norme du langage C++ (C++20), les concepts, permettant d'exprimer de la généricité contraintes avec 0 surcoûts, une grande lisibilité et une facilité d'utilisation bien supérieure à ce qui existait auparavant. 
+
+ Nous avons présenté notre première contribution : un environement de concepts pour le traitement d'image afin d'écrire des algorithmes lisibles facilement et performant par défaut. 
+
+ Nous avons montré notre seconde contribution : un abstration complète des algorithmes pixel par pixel qui utilise cet environement de concept afin de raisonner en terme d'image lors du design d'application et non en terme de pixel. Nous avons donc validé les performances, à la fois de notre environement de concepts et à la fois de notre nouvelle abstraction. 
+
+ Enfin, nous avons exploré une façon de mettre à disposition notre travail aux traiteurs d'image sous PYthon, bien qu'il reste du travail de recherche à faire de ce côté là pour arriver à une solution qui soit satisfaisante (lisible, performante, facile d'accès et facile à maintenir). 
+### 51
+ Est-ce que le C++ reste le bon choix pour continuer les travaux relatifs à la généricité. En effet, il manque toujours la reflexion et les contrats, le langage est lent à évoluer (20 ans pour avoir les concepts) du à sa façon de standardiser et à l'inerti que cela engendre. L'état du tooling et des package manager est relativement peu satisfaisant. Il serait intéressant de regarder du côté de rust qui fourni un écosystème intégré plaisant à utiliser et une généricité basée sur les traits intéressante à explorer. 
+
+ Il est actuellement relativement difficile de quantifier le gain de facilité d'utilisation de manière empirique. Pourtant il serait très intéressant de valider cette affirmation par une étude empiriques avec des échantillons de développeurs aprenant à développer d'une façon, puis d'une autre, pour obtenir des données. 
+
+ Ensuite, il serait évidement intéressant d'explorer à l'avenir les pistes pour fournir une solution de pont statique dynamique satisfaisante et pérenne, réutilisable par d'autres projets génériques par exemple. 
+
+ Il serait également intéressant d'étendre l'environement de concepts à d'autres domaines que le traitement d'image. Par exemple la synthèse d'image, ou la visualisation de scènes 3D temps réel, ou à des problématiques liées à la réalité augmentée. 
+
+ Enfin, il serait relativement intéressant de se pencher sérieusement sur la programmation hétérogène afin de fournir un environnement permetant de construire des canvas d'algorithme permettant d'utiliser les pleines ressources disponibles par un appareils. 
