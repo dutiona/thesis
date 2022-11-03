@@ -15,7 +15,7 @@ all: $(PDF) $(PDFNOTE) handout compressed embedded
 %.pdf : %.tex Makefile
 	$(TEX) $< -jobname="$(basename $<)"
 	rm -rf $(basename $<).metadata
-#	pdftk $@ dump_data_utf8 > $(basename $<).metadata
+	pdftk $@ dump_data_utf8 > $(basename $<).metadata
 
 %.pdfpc : %.pdf
 	sed -i 's/\\\\/\n/g' $(basename $<).pdfpc
@@ -38,9 +38,9 @@ handout : $(PDF:.pdf=.handout.pdf)
 
 %.embedded.pdf : %.tex ${DEP}
 	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).pdf
-#	mv $@ $(basename $<).embedded.tmp.pdf
-#	pdftk "$(basename $<).embedded.tmp.pdf" update_info_utf8 "$(basename $<).metadata" output "$@"
-#	rm -rf $(basename $<).embedded.tmp.pdf
+	mv $@ $(basename $<).embedded.tmp.pdf
+	pdftk "$(basename $<).embedded.tmp.pdf" update_info_utf8 "$(basename $<).metadata" output "$@"
+	rm -rf $(basename $<).embedded.tmp.pdf
 
 %.handout.embedded.pdf : %.tex ${DEP}
 	$(GSEMBEDDED) -sOutputFile=$@ $(basename $<).handout.pdf

@@ -9,7 +9,7 @@
 \begin{minted}[highlightlines=8,highlightcolor=yellow!60!white,escapeinside=||]{c++}
   template <Image In, StructuringElement SE,
             WritableImage Out, class Op>
-  void dilate(const In& ima, const SE& se,
+  void local_op(const In& ima, const SE& se,
               Out& out, Op&& op){
     for(auto pnt : ima.points()) {
       out(pnt) = ima(pnt);
