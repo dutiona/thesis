@@ -24,6 +24,7 @@
 \usepackage{etoolbox}
 \usepackage{microtype}
 \usepackage{tcolorbox}
+\usepackage[author={Micha\"{e}l Roynard}]{pdfcomment}
 %\usepackage{setspace}
 
 %\usepackage{pdfpcnotes}
@@ -119,6 +120,16 @@
   \setbeamertemplate{section in toc}[sections numbered]
   %\singlespacing
   \tableofcontents[hideallsubsections]
+  %\pdfcomment[icon=Note]{Introduction -> Domaine du traitement d'image et justifier le besoin en généricité}
+  %\pdfcomment[icon=Note]{   }
+  %\pdfcomment[icon=Note]{Context \& History -> Comment on passe d'un algorithme non-générique à un algorithme générique
+  %  Généricité non contrainte à généricité contrainte}
+  %\pdfcomment[icon=Note]{   }
+  %\pdfcomment[icon=Note]{Programmation générique pour le traitement d'image -> 1ère contribution framework pour faire de
+  %  la généricité contraintes pour le traitement d'image dans un monde statique (compilation)}
+  %\pdfcomment[icon=Note]{   }
+  %\pdfcomment[icon=Note]{Vues pour le traitement d'image -> 2nd contribution -> Design d'un nouveau niveau d'abstration
+  %  (utilisant le 1er framework) : les Vues -> ce sont des types d'images embarquant des algorithmes}
 \end{frame}
 
 %
@@ -142,15 +153,13 @@
     \includegraphics[height=3cm]{../illustrations/camera}
     \hspace{1cm}
   \end{figure}
-  %  \pnote{
-  %    Différents secteurs
-  %
-  %    Différents périphériques/appareils
-  %
-  %    Différentes Applications
-  %
-  %    Coût en ressources de calcul élevée
-  %  }
+  %\pdfcomment[icon=Note]{Différents secteurs de l'industrie (lourde, des lignes de recyclage des déchets, au GAFAM sur internet, en passant le médical et le spatial)}
+  %\pdfcomment[icon=Note]{   }
+  %\pdfcomment[icon=Note]{Différents appareils (des ordinateurs/téléphones aux machines lourdes, en passant par James Webb et les IRM)}
+  %\pdfcomment[icon=Note]{   }
+  %\pdfcomment[icon=Note]{Différentes applications (retoucher ses photos, reconnaître des visages, appliquer des filtres snapshats, trouver des tumeurs, trouver des étoiles)}
+  %\pdfcomment[icon=Note]{   }
+  %\pdfcomment[icon=Note]{Le traitement d'image coûte des ressources !}
 \end{frame}
 
 \begin{frame}[fragile]{Image processing nowadays}
@@ -1095,7 +1104,7 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 \begin{frame}{Limitations \& Perspective}
   \begin{alertblock}{Limitations}
     \begin{itemize}
-      \item Is C++ the best choice (slow to evolve, inertia, tooling, state of package management, difficult languages
+      \item Is C++ the best choice (slow to evolve, inertia, tooling, state of package management, difficult language
             to learn compared to others).
       \item Evaluate the gain in usage simplicity is not trivial (metrics, studies with people experiencing writing
             code).
@@ -1104,9 +1113,9 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
   \begin{alertblock}{Perspectives}
     \begin{itemize}
       \item Cython, AutoWIG/Cppyy, Xeus-cling for static-dynamic bridge.
-      \item Improve Concept framework to encompass more use-cases for other algorithm families from other area using
-            image processing.
-      \item Research heterogeneous computation and how to integrate it in our Pylene library.
+      \item Improve the Concept framework to encompass more use-cases for other algorithm families from other domains
+            than image processing.
+      \item Research on heterogeneous computation and how to integrate it in our Pylene library.
     \end{itemize}
   \end{alertblock}
 \end{frame}
