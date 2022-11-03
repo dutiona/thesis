@@ -18,10 +18,10 @@
 		.st3 {fill:none;stroke:none;stroke-width:0.25}
 		.st4 {fill:#4672c4;font-family:Calibri;font-size:0.666664em}
 		.st5 {font-size:1em}
-		.st6 {marker-end:url(#mrkr4-27);stroke:#4672c4;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st6 {marker-end:url(#mrkr4-30);stroke:#4672c4;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
 		.st7 {fill:#4672c4;fill-opacity:1;stroke:#4672c4;stroke-opacity:1;stroke-width:0.28409090909091}
 		.st8 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
-		.st9 {fill:#3c63ac;font-family:Calibri;font-size:0.666664em}
+		.st9 {fill:#3c63ac;font-family:Calibri;font-size:0.499992em}
 		.st10 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
@@ -37,7 +37,7 @@
 		<g id="lend4">
 			<path d="M 2 1 L 0 0 L 2 -1 L 2 1 " style="stroke:none"/>
 		</g>
-		<marker id="mrkr4-27" class="st7" v:arrowType="4" v:arrowSize="2" v:setback="7.04" refX="-7.04" orient="auto"
+		<marker id="mrkr4-30" class="st7" v:arrowType="4" v:arrowSize="2" v:setback="7.04" refX="-7.04" orient="auto"
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend4" transform="scale(-3.52,-3.52) "/>
 		</marker>
@@ -50,7 +50,7 @@
 		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
 				v:shadowOffsetY="-8.50394"/>
 		<v:layer v:name="Lien" v:index="0"/>
-		<g id="shape3-1" v:mID="3" v:groupContext="shape" transform="translate(210.441,-22.3602)">
+		<g id="shape3-1" v:mID="3" v:groupContext="shape" transform="translate(197.193,-109.307)">
 			<title>Rectangle.17</title>
 			<desc>Image</desc>
 			<v:userDefs>
@@ -72,14 +72,14 @@
 			<v:textRect cx="56.6929" cy="154.236" width="113.39" height="53.8583"/>
 			<rect x="0" y="127.307" width="113.386" height="53.8583" class="st1"/>
 			<text x="17.2" y="140.31" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>StructuringElement</text>		</g>
-		<g id="shape9-10" v:mID="9" v:groupContext="shape" transform="translate(217.527,-18.25)">
+		<g id="shape9-10" v:mID="9" v:groupContext="shape" transform="translate(213.83,-113.386)">
 			<title>Sheet.9</title>
 			<desc>image2D, image3D, imageComplex,</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="49.6063" cy="163.449" width="99.22" height="35.4331"/>
-			<rect x="0" y="145.732" width="99.2126" height="35.4331" class="st3"/>
-			<text x="17.93" y="161.05" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>image2D, image3D, <tspan
-						x="24.53" dy="1.2em" class="st5">imageComplex, </tspan> </text>		</g>
+			<v:textRect cx="40.0552" cy="166.86" width="80.12" height="28.6108"/>
+			<rect x="0" y="152.555" width="80.1104" height="28.6108" class="st3"/>
+			<text x="8.37" y="164.46" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>image2D, image3D, <tspan
+						x="14.98" dy="1.2em" class="st5">imageComplex, </tspan> </text>		</g>
 		<g id="shape26-14" v:mID="26" v:groupContext="shape" transform="translate(18.75,-108.557)">
 			<title>Rectangle.10</title>
 			<desc>Point</desc>
@@ -99,31 +99,23 @@
 			<rect x="0" y="164.158" width="102.047" height="17.0079" class="st3"/>
 			<text x="4" y="170.26" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>2D (x, y); 3D (x, y, z); <tspan x="4"
 						dy="1.2em" class="st5">Complex (1 face, 2 faces)</tspan></text>		</g>
-		<g id="shape32-22" v:mID="32" v:groupContext="shape" v:layerMember="0" transform="translate(132.136,-56.4)">
-			<title>Lien dynamique.32</title>
-			<desc>se(pix) yields image’s pixels</desc>
-			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="39.1525" cy="188.252" width="55" height="27.2035"/>
-			<path d="M0 188.23 L71.26 188.27" class="st6"/>
-			<rect v:rectContext="textBkgnd" x="16.5592" y="178.652" width="45.1868" height="19.1997" class="st8"/>
-			<text x="18.21" y="185.85" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>se(pix) yields<v:newlineChar/><tspan
-						x="16.56" dy="1.2em" class="st5">image</tspan>’s pixels</text>		</g>
-		<g id="shape34-31" v:mID="34" v:groupContext="shape" transform="translate(26.2618,-29.813)">
+		<g id="shape34-22" v:mID="34" v:groupContext="shape" transform="translate(26.2618,-29.813)">
 			<title>Sheet.34</title>
 			<desc>Disc, rectangle, sphere, cube</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="51.0236" cy="172.661" width="102.05" height="17.0079"/>
 			<rect x="0" y="164.158" width="102.047" height="17.0079" class="st3"/>
 			<text x="4" y="175.06" class="st4" v:langID="1036"><v:paragraph/><v:tabList/>Disc, rectangle, sphere, cube</text>		</g>
-		<g id="shape39-34" v:mID="39" v:groupContext="shape" v:layerMember="0" transform="translate(68.3563,-108.557)">
+		<g id="shape39-25" v:mID="39" v:groupContext="shape" v:layerMember="0" transform="translate(68.3563,-108.557)">
 			<title>Lien dynamique</title>
-			<desc>Range of points</desc>
+			<desc>se(pnt) -&#62; Range of points</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="7.08661" cy="197.293" width="60.49" height="17.6036"/>
+			<v:textRect cx="6.76181" cy="195.187" width="47.37" height="22.4034"/>
 			<path d="M7.09 181.17 L7.09 206.38" class="st6"/>
-			<rect v:rectContext="textBkgnd" x="-18.249" y="192.494" width="50.6714" height="9.59985" class="st8"/>
-			<text x="-18.25" y="199.69" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Range of points</text>		</g>
-		<g id="shape40-41" v:mID="40" v:groupContext="shape" transform="translate(142.643,-108.526)">
+			<rect v:rectContext="textBkgnd" x="-12.2399" y="187.987" width="38.0036" height="14.4001" class="st8"/>
+			<text x="-4.97" y="193.39" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>se(pnt) -&#62;<v:newlineChar/><tspan
+						x="-12.24" dy="1.2em" class="st5">Range of points</tspan></text>		</g>
+		<g id="shape40-34" v:mID="40" v:groupContext="shape" transform="translate(197.193,-22.4429)">
 			<title>Rectangle.16</title>
 			<desc>Pixel</desc>
 			<v:userDefs>
@@ -134,20 +126,30 @@
 			<v:textRect cx="56.6929" cy="154.236" width="113.39" height="53.8583"/>
 			<rect x="0" y="127.307" width="113.386" height="53.8583" class="st1"/>
 			<text x="47.16" y="140.31" class="st2" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Pixel</text>		</g>
-		<g id="shape41-45" v:mID="41" v:groupContext="shape" transform="translate(148.819,-113.559)">
+		<g id="shape41-38" v:mID="41" v:groupContext="shape" transform="translate(204.279,-29.7638)">
 			<title>Sheet.41</title>
 			<desc>(pnt2D, rgb8)</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="49.6063" cy="171.244" width="99.22" height="19.8425"/>
 			<rect x="0" y="161.323" width="99.2126" height="19.8425" class="st3"/>
 			<text x="27.84" y="173.64" class="st4" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>(pnt2D, rgb8)</text>		</g>
-		<g id="shape42-48" v:mID="42" v:groupContext="shape" v:layerMember="0" transform="translate(160.579,-108.526)">
+		<g id="shape42-41" v:mID="42" v:groupContext="shape" v:layerMember="0" transform="translate(197.193,-42.2854)">
 			<title>Lien dynamique.42</title>
-			<desc>Range of pixels</desc>
+			<desc>se(pix) -&#62; Range of pixels</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="-23.1897" cy="197.278" width="58.67" height="17.6036"/>
-			<path d="M0 181.17 L-40.6 209.37" class="st6"/>
-			<rect v:rectContext="textBkgnd" x="-47.615" y="192.478" width="48.851" height="9.59985" class="st8"/>
-			<text x="-47.62" y="199.68" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Range of pixels</text>		</g>
+			<v:textRect cx="-32.5285" cy="174.079" width="46" height="22.4034"/>
+			<path d="M0 174.08 L-58.02 174.08" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="-50.8475" y="166.879" width="36.6383" height="14.4001" class="st8"/>
+			<text x="-43.67" y="172.28" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>se(pix) -&#62;<v:newlineChar/><tspan
+						x="-50.85" dy="1.2em" class="st5">Range of pixels</tspan></text>		</g>
+		<g id="shape43-49" v:mID="43" v:groupContext="shape" v:layerMember="0" transform="translate(246.799,-109.307)">
+			<title>Lien dynamique.43</title>
+			<desc>Knowledge of neighboring pixels</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="7.18521" cy="196.079" width="53.81" height="22.4034"/>
+			<path d="M7.09 181.17 L7.09 207.13" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="-15.0374" y="188.879" width="44.4455" height="14.4001" class="st8"/>
+			<text x="-9.51" y="194.28" class="st9" v:langID="1036"><v:paragraph v:horizAlign="1"/><v:tabList/>Knowledge of<v:newlineChar/><tspan
+						x="-15.04" dy="1.2em" class="st5">neighboring pixels</tspan></text>		</g>
 	</g>
 </svg>

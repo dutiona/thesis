@@ -142,15 +142,15 @@
     \includegraphics[height=3cm]{../illustrations/camera}
     \hspace{1cm}
   \end{figure}
-%  \pnote{
-%    Différents secteurs
-%
-%    Différents périphériques/appareils
-%
-%    Différentes Applications
-%
-%    Coût en ressources de calcul élevée
-%  }
+  %  \pnote{
+  %    Différents secteurs
+  %
+  %    Différents périphériques/appareils
+  %
+  %    Différentes Applications
+  %
+  %    Coût en ressources de calcul élevée
+  %  }
 \end{frame}
 
 \begin{frame}[fragile]{Image processing nowadays}
@@ -1080,9 +1080,6 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 
 \section[Conclusion \& perspectives]{Conclusion \& perspectives}
 
-% limitations à l'utilisation de la bibliothèque
-% pourquoi c'est compliqué à utiliser
-% language ? tooling ?
 \begin{frame}{Conclusion}
   \begin{itemize}
     \item We have shown the progress in generic programming in C++20 and how it serves our purpose.
@@ -1098,27 +1095,21 @@ auto blend_red = alphablend(view::red(ima1), view::red(ima2), 0.2);
 \begin{frame}{Limitations \& Perspective}
   \begin{alertblock}{Limitations}
     \begin{itemize}
-      \item The C++ languages has inertia and is slow to evolve.
-      \item Tooling is poor.
-      \item Requires proper configuration to use Pylene as of now (state-of-the-art compiler + package manager for
-            dependencies)
+      \item Is C++ the best choice (slow to evolve, inertia, tooling, state of package management, difficult languages
+            to learn compared to others).
+      \item Evaluate the gain in usage simplicity is not trivial (metrics, studies with people experiencing writing
+            code).
     \end{itemize}
   \end{alertblock}
   \begin{alertblock}{Perspectives}
     \begin{itemize}
       \item Cython, AutoWIG/Cppyy, Xeus-cling for static-dynamic bridge.
-      \item Improve Concept framework to encompass more use-cases for other algorithm families from other area than
-            mathematical morphology.
+      \item Improve Concept framework to encompass more use-cases for other algorithm families from other area using
+            image processing.
       \item Research heterogeneous computation and how to integrate it in our Pylene library.
     \end{itemize}
   \end{alertblock}
 \end{frame}
-
-%FIXME perspectives haut niveau
-%ouverture, continuer travail concepts non limité morpho maths
-%synthèse image, 3D (+t vidéo?), maillages, graphs, (structures non-rectangulaires) etc.
-% etc.
-% champs des possibles
 
 \begin{frame}[allowframebreaks]{Publications}
   \footnotesize
