@@ -31,6 +31,7 @@
 *.nav
 *.snm
 *.vrb
+*.upa
 /**/_minted-*/
 .DS_Store
 slides/reveal.js

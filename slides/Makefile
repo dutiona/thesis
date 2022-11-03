@@ -51,5 +51,5 @@ embedded : $(PDF:.pdf=.embedded.pdf) $(PDF:.pdf=.handout.embedded.pdf)
 
 clean :
 	latexmk -C *.tex
-	rm -rf $(PDF) $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.handout.pdf) $(PDF:.pdf=.handout.compressed.pdf) $(PDF:.pdf=.embedded.pdf) $(PDF:.pdf=.handout.embedded.pdf) *.bbl *.run.xml *.nav *.snm *.vrb build _minted-* *.metadata
+	rm -rf $(PDF) $(PDF:.pdf=.compressed.pdf) $(PDF:.pdf=.handout.pdf) $(PDF:.pdf=.handout.compressed.pdf) $(PDF:.pdf=.embedded.pdf) $(PDF:.pdf=.handout.embedded.pdf) *.bbl *.run.xml *.nav *.snm *.vrb *.upa build _minted-* *.metadata
 
