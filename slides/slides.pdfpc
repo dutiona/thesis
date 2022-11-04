@@ -140,7 +140,7 @@
 
  Nous ne présenteront ici que la taxonomie relative aux algorithmes. 
 ### 24
- Nous avons identifié 3 familles d'algorithme de traitement d'image : - les algorithmes pixel par pixel - les algorithmes locaux (fênetre locale autour du pixel considéré, voisinage, élément structurant) - les algorithmes globaux (besoin de plusieurs passes dans plusieurs sens (avant, arrière, zigzag), besoin de piocher les pixels avec une logique autre qu'un parcours linéaire, besoin de considérer les valeurs tous les pixels de 1 à n-1 pour calculer n, etc.) 
+ Nous avons identifié 3 familles d'algorithme de traitement d'image : - les algorithmes pixel par pixel - les algorithmes locaux (fenêtre locale autour du pixel considéré, voisinage, élément structurant) - les algorithmes globaux (besoin de plusieurs passes dans plusieurs sens (avant, arrière, zigzag), besoin de piocher les pixels avec une logique autre qu'un parcours linéaire, besoin de considérer les valeurs tous les pixels de 1 à n-1 pour calculer n, etc.) 
 ### 25
  De ces algorithmes émergent donc les concepts fondamentaux suivants: - Pixel, couple point -> valeur - Domaine de définition d'une image, au sens algébrique du terme - Image, représente la relation algébrique y = f(x) et f(x) = y pour les images inscriptibles 
 
@@ -148,7 +148,7 @@
 ### 26
  Voici le pattern comportemental de base pour une image. Nous voulons la parcourir de manière linéaire et assigner une valeur au pixel. 
 
- parcours des points -> marche mais n'est pas optimisé parcours des pixels -> marche et est optimisé car nous renvons des itérateurs dont l'abstration permet des optimisations similaire à du code C compréhensibles par le compilateur (pour de la vectorisation) 
+ parcours des points -> marche mais n'est pas optimisé parcours des pixels -> marche et est optimisé car nous renvoyons des itérateurs dont l'abstraction permet des optimisations similaire à du code C compréhensibles par le compilateur (pour de la vectorisation) 
 ### 27
  Cela donne donc la hiérarchie suivante: - concept pixel composé des concepts points/valeurs - concept mdrange modélise une range de point/valeurs/pixels - domaine de définition de l'image - ima.values() -> parcours de toutes les valeurs de l'image - ima.domain() -> parcours tous les points de l'image - ima.pixels() -> parcours tous les pixels de l'image 
 ### 28
@@ -156,7 +156,7 @@
 
  Indexable permet un parcours de toutes les valeurs lorsqu'on connait la dimension de l'image. Nécessaire pour trier les pixels. 
 
- Accessible permet d'accèder à une valeur via un point (vu plus haut) 
+ Accessible permet d'accéder à une valeur via un point (vu plus haut) 
 
  Bidirectionnelle permet de traverser l'image en sens inverse, nécessaire pour certains algorithmes comme la transformé en distance de Chamfrain 
 
@@ -164,7 +164,7 @@
 ### 29
  Cela engendre donc cette nouvelle hiérarchie de concepts. 
 
- Ici nous avons 3 niveaux : - premier est concept image vu plus haut - second sont les concepts Indexable, Accessible et Bidirectionnelle qui rafinent le premier - 2.5 : concept spécial Indexable + Accessible pour faire des correspondances entre les indexes et les points - 3 image brute. En effet, lorsqu'on a accès au buffer de données, on peut faire tout ce qui est marqué plus haut. 
+ Ici nous avons 3 niveaux : - premier est concept image vu plus haut - second sont les concepts Indexable, Accessible et Bidirectionnelle qui raffinent le premier - 2.5 : concept spécial Indexable + Accessible pour faire des correspondances entre les indexes et les points - 3 image brute. En effet, lorsqu'on a accès au buffer de données, on peut faire tout ce qui est marqué plus haut. 
 
  Et SURTOUT PENDANT INSCRIPTIBLE DE CES CONCEPTS En effet, pour chaque propriété il est possible d'écrire des valeurs dans l'image. 
 ### 30
@@ -172,17 +172,17 @@
 
  Pattern comportemental typique : récupérer tous les points/pixels du voisinages et itérer dessus pour les traiter. 
 ### 31
- Cela donne donc lieu à la hiérchie de concepts suivante. 
+ Cela donne donc lieu à la hiérarchie de concepts suivante. 
 
  Ici se(pix) renvoie une range de pixels. se(pnt) renvoie une range de points. Et Pixel connait l'image car il peut donner ses pixels voisins. 
 ### 32
  Nous ayons designé un environnement de concepts dont le but et d'avoir un surcoût de 0 à l'exécution et d'être optimisé par le compilateur. 
 
- Dans l'imense majorité des cas, le code par dafaut sera donc le plus performant. 
+ Dans l'immense majorité des cas, le code par défaut sera donc le plus performant. 
 
  Dans de rare cas, cependant, il est possible d'aller encore plus vite en exploitant certaines propriétés liées à l'image ou aux structures auxiliaires utilisées dans ces algorithmes. 
 
- Par ex, dilatation ici, on utilise la propriété relative à la decomposabilité et à la périodicité pour améliorer les performance. 
+ Par ex, dilatation ici, on utilise la propriété relative à la décomposabilité et à la périodicité pour améliorer les performance. 
 
  Ces propriété peuvent être dynamic ou statique (transformer if par if constexpr). 
 ### 33
@@ -194,21 +194,21 @@
 
  Canvas d'algorithme local simplifié. 
 ### 34
- Possible opportinutés d'optimisations implémenté une fois et factorisé pour tous les algorithmes. 
+ Possible opportunités d'optimisations implémenté une fois et factorisé pour tous les algorithmes. 
 
- En revanche on passe d'un paradigme d'implémentation procédurial de nos algorithmes à un paradigme de description de nos algorithmes (pour le canvas), ce qui peut rendre l'implémentation moins lisible, surtout lorsqu'il y a des callbacks. 
+ En revanche on passe d'un paradigme d'implémentation procédural de nos algorithmes à un paradigme de description de nos algorithmes (pour le canvas), ce qui peut rendre l'implémentation moins lisible, surtout lorsqu'il y a des callbacks. 
 ### 35
- Maintenant que nous avons designé un environnement complet de concepts pour faire de la généricité contrainte en traitement d'image, utilisons le pour créer des nouveaux type d'image : les vues, qui utilisent ces concepts (propriétés) pour abstraires des algorithmes, tout en respectant le principe d'abstration à coût 0. 
+ Maintenant que nous avons designé un environnement complet de concepts pour faire de la généricité contrainte en traitement d'image, utilisons le pour créer des nouveaux type d'image : les vues, qui utilisent ces concepts (propriétés) pour abstraire des algorithmes, tout en respectant le principe d'abstraction à coût 0. 
 
  --> 30min <-- 
 ### 36
  Les vues sont des images. 
 
- Elles emarquent des algorithmes pixel par pixel en leur sein. 
+ Elles embarquent des algorithmes pixel par pixel en leur sein. 
 
  Elles sont inspirées des morphers de Milena et des ranges de la STL. 
 
- Les vues ont vocation à complétement remplacer les algorithmes pixel par pixel. 
+ Les vues ont vocation à complètement remplacer les algorithmes pixel par pixel. 
 ### 37
  Voici un exemple de vue pour effectuer une binarisation. 
 
@@ -246,7 +246,7 @@
 
  Toutes les propriétés relatives au parcours et à l'accès aux valeurs sont conservés sauf celle relative au buffer de donnée. 
 
- En ce qui concerne l'inscriptibilité, il est intéressant de remarquer que la vue transform peut la conserver lorsque func est une projection. Ex triplet rgb -> rouge Mais triplet rgb -> gris, on ne retrouuve pas le triplet rgb en assignant une nouvelle valeure de niveau de gris. La recolorisation est un domaine de recherche à part entière. 
+ En ce qui concerne l'inscriptibilité, il est intéressant de remarquer que la vue transform peut la conserver lorsque func est une projection. Ex triplet rgb -> rouge Mais triplet rgb -> gris, on ne retrouuve pas le triplet rgb en assignant une nouvelle valeur de niveau de gris. La recolorisation est un domaine de recherche à part entière. 
 ### 42
  Nous avons vu en détail que les vues fonctionnait avec notre environement de concept et remplaçait les algorithmes pixel par pixel. 
 
@@ -266,7 +266,7 @@
 ### 45
  De plus le code implémentant cet algorithme est aussi simple que cela. 
 
- Il s'écrit de manière procédurial sans qu'à aucun moment une boucle sur les pixels apparaisse. 
+ Il s'écrit de manière procédural sans qu'à aucun moment une boucle sur les pixels apparaisse. 
 ### 46
  Les résultat de ce benchmark montre que tout d'abord le temps d'exécution est parfaitement cohérent par rapport aux standards de l'industrie aujourd'hui. 
 
@@ -278,15 +278,15 @@
 ### 47
  La limitation majeure de notre design est qu'il est cantonné aux bibliothèques de traitement d'image dans le monde statique (compilation) et passe difficilement la barrière vers le monde dynamique (runtime). Pourtant c'est là que se trouve la majorité de nos utilisateurs (les praticiens). 
 
- Le code générique est distribué sous forme de code source, et ce n'est que lors de son utilisation que les types paramètriques sont connu et que le compilateur peut générer le binaire final optimisé. 
+ Le code générique est distribué sous forme de code source, et ce n'est que lors de son utilisation que les types paramétriques sont connu et que le compilateur peut générer le binaire final optimisé. 
 
  Un travail spécifique supplémentaire est donc nécessaire pour rendre disponible notre bibliothèque générique aux praticien qui travaillent avec Python. 
 ### 48
  Nous avons fait un travail expérimental en ce sens, que nous n'aborderons pas ici car il reste très expérimental (mais qui figure dans le manuscrit), qui consiste à faire un pont statique dynamique entre C++ et Python. 
 
- Notre pont fourni un type effacé qui est exposé à Python. Par la suite, à chaque fois qu'un algorithme est appellé, une routine va lire des informations de type (runtime) et dispatcher vers une version précompilée en amont de cette algorithme pour cette combinaison de type. 
+ Notre pont fourni un type effacé qui est exposé à Python. Par la suite, à chaque fois qu'un algorithme est appelé, une routine va lire des informations de type (runtime) et dispatcher vers une version précompilée en amont de cette algorithme pour cette combinaison de type. 
 
- Donc le code de chaque algorithme est généré en amont par le compilateur pour chaque combinaison de type supportés. Cela entraine du code bloat. 
+ Donc le code de chaque algorithme est généré en amont par le compilateur pour chaque combinaison de type supportés. Cela entraîne du code bloat. 
 
  Nous avons mis en place des techniques pour rendre ce code bloat minimal et ne dispatcher qu'avant le code important (boucles de parcour) pour n'avoir qu'un seul algorithme compilé 
 
@@ -300,13 +300,13 @@
 
  Nous avons présenté notre première contribution : un environement de concepts pour le traitement d'image afin d'écrire des algorithmes lisibles facilement et performant par défaut. 
 
- Nous avons montré notre seconde contribution : un abstration complète des algorithmes pixel par pixel qui utilise cet environement de concept afin de raisonner en terme d'image lors du design d'application et non en terme de pixel. Nous avons donc validé les performances, à la fois de notre environement de concepts et à la fois de notre nouvelle abstraction. 
+ Nous avons montré notre seconde contribution : un abstraction complète des algorithmes pixel par pixel qui utilise cet environement de concept afin de raisonner en terme d'image lors du design d'application et non en terme de pixel. Nous avons donc validé les performances, à la fois de notre environement de concepts et à la fois de notre nouvelle abstraction. 
 
  Enfin, nous avons exploré une façon de mettre à disposition notre travail aux traiteurs d'image sous Python, bien qu'il reste du travail de recherche à faire de ce côté là pour arriver à une solution qui soit satisfaisante (lisible, performante, facile d'accès et facile à maintenir). 
 ### 51
  Est-ce que le C++ reste le bon choix pour continuer les travaux relatifs à la généricité. En effet, il manque toujours la reflexion et les contrats, le langage est lent à évoluer (20 ans pour avoir les concepts) du à sa façon de standardiser et à l'inertie que cela engendre. L'état du tooling et des package manager est relativement peu satisfaisant. Il serait intéressant de regarder du côté de rust qui fourni un écosystème intégré plaisant à utiliser et une généricité basée sur les traits intéressante à explorer. 
 
- Il est actuellement relativement difficile de quantifier le gain de facilité d'utilisation de manière empirique. Pourtant il serait très intéressant de valider cette affirmation par une étude empiriques avec des échantillons de développeurs aprenant à développer d'une façon, puis d'une autre, pour obtenir des données. 
+ Il est actuellement relativement difficile de quantifier le gain de facilité d'utilisation de manière empirique. Pourtant il serait très intéressant de valider cette affirmation par une étude empiriques avec des échantillons de développeurs apprenant à développer d'une façon, puis d'une autre, pour obtenir des données. 
 
  Ensuite, il serait évidement intéressant d'explorer à l'avenir les pistes pour fournir une solution de pont statique dynamique satisfaisante et pérenne, en faisant du JIT et en explorant les solutions existantes de l'état de l'art, réutilisable par d'autres projets génériques par exemple. 
 

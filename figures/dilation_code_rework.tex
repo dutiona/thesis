@@ -6,7 +6,7 @@
 
 \begin{document}
 
-\begin{minted}[highlightlines=8,highlightcolor=yellow!60!white]{c++}
+\begin{minted}[highlightlines=8,highlightcolor=yellow!60!white,escapeinside=||]{c++}
 template <Image In, StructuringElement SE,
           WritableImage Out>
 void dilate(const In& ima, const SE& se,
@@ -14,7 +14,7 @@ void dilate(const In& ima, const SE& se,
   for(auto pnt : ima.points()) {
     out(pnt) = ima(pnt);
     for(auto nbx : se(pnt))
-      out(pnt) = max(out(pnt), img(nx));
+      out(pnt) = |\colorbox{red!50!white}{max}|(out(pnt), img(nx));
   }
 }
 \end{minted}
