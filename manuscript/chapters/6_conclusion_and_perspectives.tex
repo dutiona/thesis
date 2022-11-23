@@ -52,18 +52,45 @@ bloat in the resulting image processing library binary whose size explodes expon
 types multiplied by the number of algorithms multiplied by the number of additional supported data (structuring
 elements, label map, etc.)
 
-We conclude this thesis by offering new avenue of research around the Just-In-Time (JIT) compilation area to further
+We conclude this thesis by offering a new avenue of research around the Just-In-Time (JIT) compilation area to further
 improve the bridge between the static and the dynamic world. The author thinks that this avenue is worth exploring,
 especially with the already promising existing tools (Xeus-cling~\parencite{quantstack.2021.xeus-cling},
 Cppyy~\parencite{wimtlplavrijsen.2016.cppyy}, Cython~\parencite{behnel.2010.cython},
 AutoWIG~\parencite{fernique.2018.autowig}, Pythran~\parencite{guelton.2015.pythran}) in order to solve the code bloat
 issue. Indeed, we would only compile what the user needs, but the entry price may be to statically link a C++
-interpreter (LLVM/cling?) into the image processing library binary which in itself would greatly bloat it. It may be
+interpreter (LLVM/Cling?) into the image processing library binary which in itself would greatly bloat it. It may be
 possible, however, to rely on the user's system-wide infrastructure so that the packaged image processing library does
 not distribute a whole C++ interpreter/compiler alongside the image processing library binary. This is still a new area
 of research and the author would very much want to delve into it to study further what is possible to achieve as of
 today with those tools for the image processing community.
 
+In addition, it would be interesting to expand the Concept framework presented in~\cref{chap:image.algorithms.taxonomy}
+to encompass other areas related to computer vision, such as 3D computer graphics (CGI), visualization of 3D scenes in
+real time or augmented reality. Those areas are booming and are in dire need of performance. We feel that such a
+framework would be useful to improve usability of existing libraries while improving performances.
+
+Also, it would be interesting to question if there are other programming languages, other than C++, with the required
+generic capabilities for image processing and performances. For example, Rust's generic facilities, which are
+trait-based  with a \texttt{where} clause, seems to be promising. Indeed, C++ has a heavy governance with inertia (it is
+an ISO standard) and the language still misses some major key features such as reflection, introspection and contracts.
+It took 20 years to get Concepts into the standard. The state of tooling and package management seems to be, to this
+day, very clunky. There are lots of tools to do the same things in different ways, with different level of compatibility
+and platform support. By contrast, Rust has a full integrated environment, and it is very pleasant to start a project
+with it.
+
+To finish with programming-related research avenue, it would be interesting to do a particular focus on heterogeneous
+computing applied to algorithms canvas. Indeed, we have presented how, in theory, we can factorize optimization
+opportunity with canvas. We now need to leverage this opportunity to make it possible to offload work on, for instance,
+GPU or cloud infrastructure.
+
+Another research avenue would be to find a way to validate our assertion about the library's code being easy to use in
+an empirical way. Indeed, we rely on notion such as code clarity or code expressiveness, but those notions are
+subjective. As we are expert in our area, our point of view about what is friendly and/or expressive is biased. It would
+be interesting to make an experiment with students learning how to program, where one student pool is given a library
+with inexpressive / unfriendly code (in our point of view), and another student pool is given a library with expressive
+/ friendly code (in our point of view) to measure how fast they are able to program complex applications with it. If we
+repeat this experiment over time, following a methodology derived from clinical trial (for ethic and preventing bias),
+we will be able to empirically validate our assertion about the friendliness and expressiveness of code.
 
 % "Understanding why software fails is important, but the real challenge is understanding why software works.
 % - Alexander Stepanov

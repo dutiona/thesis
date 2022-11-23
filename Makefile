@@ -33,7 +33,8 @@ cdrom :
 	$(MAKE) -C ${CDROM}
 	cp ${CDROM}/${BUNDLE_DIR}/manuscript.pdf cdrom/these_archivage_${INE}.pdf
 	$(MAKE) -C ${CDROM} clean
-	rm -rf ${CDROM}/*/*.run.xml ${CDROM}/*/indent.log ${CDROM}/*/pdfa.xmpi
+	rm -rf ${CDROM}/*/*.run.xml ${CDROM}/*/indent.log ${CDROM}/*/pdfa.xmpi \
+		${CDROM}/manuscript/checkcites.lua
 
 $(SUBDIRS) :
 	$(MAKE) -C $@ $(MAKECMDGOALS)
