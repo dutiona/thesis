@@ -6,7 +6,7 @@ build-latex:
   stage: build
   image: mroynard/latex-maker:latest
   script:
-    - make
+    - make -j1
   artifacts:
     name: "build-latex"
     paths:
