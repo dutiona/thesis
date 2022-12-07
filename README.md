@@ -52,31 +52,32 @@ Amphi 0 (Building Voltaire)
 ## Citation
 
 ```latex
-@PhDThesis{	roynard.22.phd,
-  author	= {Micha\"{e}l {R}oynard},
-  title		= {Generic Programming in modern {C}++ for Image Processing},
-  school	= {Sorbonne Universit\'e},
-  year		= 2022,
-  address	= {Paris, France},
-  month		= nov,
-  abstract	= {C++ is a multi-paradigm language that enables the initiated programmer to set up efficient image
-               processing algorithms. This language strength comes from several aspects. C++ is high-level, which
-               enables developing powerful abstractions and mixing different programmingstyles to ease the development.
-               At the same time, C++ is low-level and can fully take advantage of the hardware to deliver the best
-               performance. It is also very portableand highly compatible which allows algorithms to be called from
-               high-level, fast-prototyping languages such as Python or Matlab. One of the most fundamental aspects
-               where ++ really shines is generic programming. Generic programming makes it possible to develop and reuse
-               bricks of software on objects (images) of different natures (types)without performance loss.
-               Nevertheless, conciliating the aspects of genericity, efficiency, and simplicity is not trivial. Modern
-               C++ (post-2011) has brought new featuresthat made the language simpler and more powerful. In this thesis,
-               we first explore one particular C++20 aspect: the concepts, in order to build a concrete taxonomy of image
-               related types and algorithms. Second, we explore another addition to C++20, ranges (and views), and we
-               apply this design to image processing algorithms and image types in order to solve issues such as how
-               hard it is to customize/tweak image processing algorithms. Finally, we explore possibilities regarding
-               how we can offer a bridge betweenstatic (compile-time) generic C++ code and dynamic (runtime) Python
-               code. We offer our own hybrid solution and benchmark its performance as well as discuss what can be done
-               in the future with JIT technologies. Considering those three axes, we will address the issue regarding
-               the way to conciliate generic programming, efficiency and ease of use.}
+@PhDThesis{  roynard.22.phd,
+  abstract = {C++ is a multi-paradigm language that enables the initiated programmer to set up efficient image
+              processing algorithms. This language strength comes from several aspects. C++ is high-level, which
+              enables developing powerful abstractions and mixing different programmingstyles to ease the development.
+              At the same time, C++ is low-level and can fully take advantage of the hardware to deliver the best
+              performance. It is also very portableand highly compatible which allows algorithms to be called from
+              high-level, fast-prototyping languages such as Python or Matlab. One of the most fundamental aspects
+              where ++ really shines is generic programming. Generic programming makes it possible to develop and reuse
+              bricks of software on objects (images) of different natures (types)without performance loss.
+              Nevertheless, conciliating the aspects of genericity, efficiency, and simplicity is not trivial. Modern
+              C++ (post-2011) has brought new featuresthat made the language simpler and more powerful. In this thesis,
+              we first explore one particular C++20 aspect: the concepts, in order to build a concrete taxonomy of image
+              related types and algorithms. Second, we explore another addition to C++20, ranges (and views), and we
+              apply this design to image processing algorithms and image types in order to solve issues such as how
+              hard it is to customize/tweak image processing algorithms. Finally, we explore possibilities regarding
+              how we can offer a bridge betweenstatic (compile-time) generic C++ code and dynamic (runtime) Python
+              code. We offer our own hybrid solution and benchmark its performance as well as discuss what can be done
+              in the future with JIT technologies. Considering those three axes, we will address the issue regarding
+              the way to conciliate generic programming, efficiency and ease of use.},
+  address  = {Paris, France},
+  author   = {Micha\"{e}l {R}oynard},
+  month    = nov,
+  school   = {Sorbonne Universit\'e},
+  title    = {Generic Programming in modern {C}++ for Image Processing},
+  url      = {https://www.theses.fr/s267380},
+  year     = 2022
 }
 ```
 
