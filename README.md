@@ -26,6 +26,10 @@ Amphi 0 (Building Voltaire)
 
 ## Composition du Jury
 
+### Président
+
+* Pr. Hugues Talbot, CentraleSupélec / Université Paris Saclay
+
 ### Rapporteurs
 
 * Pr. Benjamin Perret, ESIEE / LIGM / Université Gustave Eiffel
@@ -33,7 +37,6 @@ Amphi 0 (Building Voltaire)
 
 ### Examinateurs
 
-* Pr. Hugues Talbot, CentraleSupélec / Université Paris Saclay
 * Pr. Laurent Najman, ESIEE / LIGM / Université Gustave Eiffel
 * Dr. Camille Kurtz, LIPADE / SIP Lab / Université Paris Cité
 * Dr. Joël Falcou, LRI / Université Paris Saclay
