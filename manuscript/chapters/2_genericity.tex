@@ -241,7 +241,7 @@ operators) that are required to work over a lot of different data structures (al
 
 The authors explain in~\parencite{roynard.2019.rrpr} how to capitalize on those works to turn a image processing
 algorithm tied to a data structure into a generic algorithm. We also explain how \emph{concepts} can ease the
-implementation of generic algorithms. This approach is implemented in a library~\parencite{carlinet.2018.pylena} which
+implementation of generic algorithms. This approach is implemented in a library~\parencite{carlinet.2018.pylene} which
 allows us to provide a proof of concept over the feasibility of having generic image processing operators running on
 multiple image types with near-native performance. Let us first explain briefly how we have achieved this.
 
@@ -377,7 +377,7 @@ Vigra~\parencite{kothe.2011.generic}, Higra~\parencite{perret.2019.higra}, GrAL~
 DGTal~\parencite{coeurjolly.2016.dgtal},
 Milena~\parencite{geraud.2012.ipolmeeting,levillain.2009.ismm,levillain.2010.icip},
 Olena~\parencite{olena.2000.www,geraud.2000.europlop,levillain.2011.phd,geraud.2012.hdr,levillain.2014.ciarp} and
-Pylena~\parencite{carlinet.2018.pylena}. Most of them have been written in complex C++ whose details remain visible from
+Pylene~\parencite{carlinet.2018.pylene}. Most of them have been written in complex C++ whose details remain visible from
 the user standpoint and thus are often difficult and complex to use. It is also harder to debug because errors in highly
 templated code shows up very deep in compiler error trace.
 
@@ -1003,7 +1003,7 @@ images from disc from multiple image formats), this is a huge drawback.
 With the release of new C++ standards in 2011~\parencite{iso.2011.cpp}, then 2014~\parencite{iso.2014.cpp} and
 2017~\parencite{iso.2017.cpp} where template metaprogramming facilities were greatly improved, it was necessary to
 review once more this design in order to improve it to achieve genericity, performance and ease of use. This is the
-birth of a new library, Pylene~\parencite{carlinet.2018.pylena}. In the end, it was C++20~\parencite{iso.2011.cpp} that
+birth of a new library, Pylene~\parencite{carlinet.2018.pylene}. In the end, it was C++20~\parencite{iso.2011.cpp} that
 marked the shift wanted by
 Stepanov~\parencite{musser.1988.generic,musser.1994.algorithm,dehnert.1998.fundamentals,stepanov.2009.elements} and
 Stroustrup~\parencite{stroustrup.1995.design,stroustrup.1999.hot,stroustrup.2003.concepts,stroustrup.2007.hopl} for

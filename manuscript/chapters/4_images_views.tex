@@ -115,7 +115,7 @@ applies the transformation \(f\) on each pixel of the image \emph{input},\\
 on them all at the same time. From those four fundamentals come out more very useful views such as
 \texttt{cast<T>(input)} or \texttt{mask(input, msk)} that are more specific to the image processing area.
 
-In Pylena, the practitioner can use a large array of views. Those views come into different form and allow the
+In Pylene, the practitioner can use a large array of views. Those views come into different form and allow the
 practitioner to seamlessly use arithmetic or logic operators on images like he would when using expression template. We
 separate the available views in two main families: the views that perform a restriction of the domain (clip, filter) and
 the views that transform the values (transform, zip).
@@ -1117,7 +1117,7 @@ two benefits. First, there are no intermediate images, which is very memory effi
 faster thanks to a better memory cache usage, and performs an optimal selective traversal. Indeed, in our example
 (\cref{summary:fig:view.pipeline}), processing a RGB16 pixel from the dilation algorithm directly converts it in
 grayscale, then sub-quantize it to 8-bits, and finally makes it available for the dilation algorithm. It acts \emph{as
-if} we were writing an optimal operator that would combine all these operations. This approach is somewhat related to
+  if} we were writing an optimal operator that would combine all these operations. This approach is somewhat related to
 the kernel-fusing operations available in some HPC specifications~\parencite{openvx.2019} but views-fusion is optimized
 by the C++ compiler only~\parencite{brown.2018.ranges}. The selective aspect intervenes when a region of interest is
 selected at one point in the processing pipeline. Indeed, the entirety of the pipeline is then executed only on the
