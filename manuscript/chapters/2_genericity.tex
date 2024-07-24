@@ -181,22 +181,22 @@ the same computational shape and can be factorized together.
   \begin{tabular}{cccc}
                                                                            & image 2D
                                                                            & graph    & mesh \\[5pt]
-    input:                                                                 &
-    \fbox{\includegraphics[width=.2\linewidth]{../figures/geninput-000b}}  &
-    \fbox{\includegraphics[width=.2\linewidth]{../figures/geninput-001b}}  &
+    input:                                                                 & 
+    \fbox{\includegraphics[width=.2\linewidth]{../figures/geninput-000b}}  & 
+    \fbox{\includegraphics[width=.2\linewidth]{../figures/geninput-001b}}  & 
     \fbox{\includegraphics[width=.2\linewidth]{../figures/geninput-002b}}
     \\[5pt]
     %
-    output:                                                                &
-    \fbox{\includegraphics[width=.2\linewidth]{../figures/genoutput-000}}  &
-    \fbox{\includegraphics[width=.2\linewidth]{../figures/genoutput-001b}} &
+    output:                                                                & 
+    \fbox{\includegraphics[width=.2\linewidth]{../figures/genoutput-000}}  & 
+    \fbox{\includegraphics[width=.2\linewidth]{../figures/genoutput-001b}} & 
     \fbox{\includegraphics[width=.2\linewidth]{../figures/genoutput-002b}}
     \\
   \end{tabular}
   \bigskip
-
+  
   \text{The same code run on all these inputs.}
-
+  
   \caption{Watershed algorithm applied to three different image types~\parencite{levillain.2014.ciarp}.}
   \label{fig:type.vs.algo}
 \end{figure}
@@ -405,7 +405,7 @@ are interested in.
       \item[2] CS: code simplicity.
       \item[3] E: efficiency.
       \item[4] One IA: one implementation per algorithm.
-      \item[4] EA: explicit abstractions / constrained genericity.
+      \item[5] EA: explicit abstractions / constrained genericity.
     \end{tablenotes}
     \label{table:gen.approaches}
   \end{threeparttable}
@@ -1022,7 +1022,7 @@ years with the arrival of concepts, and all its new possibilities brought to the
       v = val;
   }
   \end{minted}
-
+  
   \caption{Fill algorithm, generic implementation.}
   \label{code:gen.fill}
 \end{figure}
